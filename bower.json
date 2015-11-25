@@ -1,0 +1,30 @@
+{
+  "name": "not-so-shitty",
+  "description": "an app to interact with Trello boards and write daily mails",
+  "main": "gulpfile.js",
+  "authors": [
+    "nicgirault <nic.girault@gmail.com>"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "scrum"
+  ],
+  "homepage": "https://github.com/nicgirault/not-so-shitty2",
+  "moduleType": [],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular-parse": "*",
+    "angular-ui-router": "0.2.15",
+    "angular": "1.4.8",
+    "bootstrap": "3.3.6",
+    "lodash": "3.10.1",
+    "moment": "2.10.6",
+    "angular-resource": "~1.4.8"
+  }
+}

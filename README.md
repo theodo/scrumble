@@ -1,0 +1,3 @@
+# Not So shitty
+
+TODO

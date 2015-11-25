@@ -1,0 +1,4 @@
+src: src-public/assets/**/*
+dest: public/
+
+cache: true
