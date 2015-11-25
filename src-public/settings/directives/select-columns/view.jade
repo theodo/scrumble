@@ -1,0 +1,11 @@
+.column(
+  layout-gt-lg="row"
+  layout="column"
+  ng-repeat="type in listTypes"
+) 
+  .list-type Select {{ type }} column
+    span.required(ng-if="type == 'done'")  (required)
+  select.form-control(
+    ng-options="column.id as column.name for column in boardColumns"
+    ng-model="columnIds[type]"
+  )

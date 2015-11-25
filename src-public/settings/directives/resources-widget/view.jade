@@ -1,0 +1,68 @@
+h4 The team
+trello-avatar(
+  ng-repeat="id in team.dev"
+  member-id="{{id}}"
+)
+trello-avatar(
+  ng-repeat="id in team.rest"
+  member-id="{{id}}"
+)
+hr
+button.btn.btn-primary(
+  ng-click="clearTeam()"
+) 
+  span  Clear
+
+.select-teams
+  .select-dev-team
+    div Select the dev team
+    select-people(
+      members="boardMembers"
+      selected-members="team.dev"
+    )
+  .select-rest-team
+    div Select the rest of the team
+    select-people(
+      members="boardMembers"
+      selected-members="team.rest"
+    )
+h4 Choose your sprint's start and end dates
+label
+  span Start day
+  input(
+    type="date"
+    ng-model="dates.start"
+  )
+label
+  span End day
+  input(
+    type="date"
+    ng-model="dates.end"
+  )
+.man-days(
+  ng-if="dates.days"
+) 
+h4 Setup your sprint resources
+p TOTAL MAN-DAYS: {{ resources.totalManDays }}
+resources-by-day(
+  days="dates.days"
+  matrix="resources.matrix"
+  members="team.dev"
+)
+p Sprint points and speed:
+.sprint-points
+  label Total sprint points
+  input(
+    type="number"
+    min="1"
+    step="1"
+    ng-model="resources.totalPoints"
+  )
+.sprint-speed
+  label Sprint speed
+  input(
+    type="number"
+    min="0"
+    step="0.1"
+    ng-model="resources.speed"
+  )

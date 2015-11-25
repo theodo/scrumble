@@ -4,7 +4,7 @@ jade = require 'gulp-jade'
 templateCache = require 'gulp-angular-templatecache'
 
 gulp.task 'jade', (done) ->
-  gulp.src(['src-public/views/**/*.jade', 'src-public/directives/**/*.jade'])
+  gulp.src(['src-public/**/*.jade'])
     .pipe(jade(doctype: 'html'))
     .on 'error', gutil.log
     .pipe(templateCache(

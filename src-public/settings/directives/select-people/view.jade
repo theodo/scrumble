@@ -1,0 +1,15 @@
+.member-select(
+  ng-repeat="member in members"
+  ng-class="{'selected': teamCheck[member.id]}"
+)
+  label(
+    ng-click="check()"
+  )
+    trello-avatar.member-select-image(
+      member-id="{{member.id}}"
+    )
+    input(
+      type="checkbox"
+      ng-model="teamCheck[member.id]"
+    )
+    

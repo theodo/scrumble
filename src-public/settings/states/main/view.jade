@@ -1,0 +1,35 @@
+.container
+  h1 Settings
+  md-button.md-fab.md-hue-3.main-button(
+    aria-label="Setup"
+    md-theme="blue"
+    ui-sref="scrumboard"
+  )
+    i.fa.fa-line-chart
+
+  .panel.panel-default
+    .panel-heading Board
+    .panel-body
+      select-board(
+        boards="boards"
+        board-id="settings.boardId"
+      )
+      
+  .panel.panel-default
+    .panel-heading Columns
+    .panel-body
+      select-columns(
+        board-columns="boardColumns"
+        column-ids="settings.columnIds"
+      )
+  
+  .panel.panel-default
+    .panel-heading Resources
+    .panel-body
+      resources-widget(
+        board-members="boardMembers"
+        team="settings.team"
+        dates="settings.dates"
+        resources="settings.resources"
+      )
+  button.btn.btn-primary(ng-click="save()") Save

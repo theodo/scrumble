@@ -1,0 +1,5 @@
+label Select a board: 
+select.form-control(
+  ng-options="board.id as board.name for board in boards"
+  ng-model="boardId"
+)
