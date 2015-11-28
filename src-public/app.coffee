@@ -8,7 +8,9 @@ app = angular.module 'NotSoShitty', [
   'app.templates'
   'Parse'
   'LocalStorageModule'
-  'trello'
+  'satellizer'
+  'trello-api-client'
+
 
   'NotSoShitty.login'
   'NotSoShitty.settings'
@@ -32,16 +34,13 @@ app.config (
 app.config (localStorageServiceProvider) ->
   localStorageServiceProvider.setPrefix ''
 
-app.config (TrelloApiProvider) ->
-
-  TrelloApiProvider.init
+app.config (TrelloClientProvider) ->
+  TrelloClientProvider.init {
     key: '2dcb2ba290c521d2b5c2fd69cc06830e'
-    secret: '38ddbedae05395a1a13323f60f5d95e0a40c7737938e449fe7ba669a0d72dae0'
-    scopes:
-      read: true
-      write: true
-      account: true
-    AppName: 'Not So Shitty 2'
+    appName: 'Not So Shitty'
+    tokenExpiration: 'never'
+    scope: ['read', 'write', 'account']
+  }
 
 app.run ($rootScope, $state) ->
   $rootScope.$state = $state

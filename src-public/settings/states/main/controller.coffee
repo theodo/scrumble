@@ -2,17 +2,12 @@ angular.module 'NotSoShitty.settings'
 .controller 'SettingsCtrl', (
   $scope
   boards
-  TrelloApi
+  TrelloClient
   localStorageService
   UserBoardStorage
   Settings
   settings
 ) ->
-  console.log settings
-  # tmp
-  token = localStorageService.get 'trello_token'
-  if token?
-    Trello.setToken token
   $scope.boards = boards
 
   unless settings?
@@ -26,12 +21,12 @@ angular.module 'NotSoShitty.settings'
   $scope.$watch 'settings.boardId', (next, prev) ->
     return unless next
     UserBoardStorage.setBoardId next
-    TrelloApi.Rest 'GET', 'boards/' + next + '/lists'
-    .then (columns) ->
-      $scope.boardColumns = columns
-    TrelloApi.Rest 'GET', 'boards/' + next + '/members'
-    .then (boardMembers) ->
-      $scope.boardMembers = boardMembers
+    TrelloClient.get('/boards/' + next + '/lists')
+    .then (response) ->
+      $scope.boardColumns = response.data
+    TrelloClient.get('/boards/' + next + '/members')
+    .then (response) ->
+      $scope.boardMembers = response.data
 
   $scope.save = ->
     return unless $scope.settings.boardId?

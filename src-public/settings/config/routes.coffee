@@ -8,11 +8,10 @@ angular.module 'NotSoShitty.settings'
     resolve:
       settings: (UserBoardStorage, SettingsStorage) ->
         UserBoardStorage.getBoardId().then (boardId) ->
-          console.log 'boardId', boardId
           return null unless boardId?
           SettingsStorage.get(boardId).then (settings) ->
-            console.log 'settings', settings
+            console.log settings
             return settings
-      boards: (TrelloApi) ->
-        TrelloApi.Rest('GET', 'members/me/boards').then (response) ->
-          return response
+      boards: (TrelloClient) ->
+        TrelloClient.get('/members/me/boards').then (response) ->
+          return response.data

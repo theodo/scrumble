@@ -1,9 +1,12 @@
 angular.module 'NotSoShitty.login'
 .controller 'LoginCtrl', (
   $scope
-  TrelloApi
+  TrelloClient
   $state
+  $auth
 ) ->
+  if $auth.isAuthenticated()
+    $state.go 'settings'
   $scope.login = ->
-    TrelloApi.Authenticate().then ->
+    TrelloClient.authenticate().then ->
       $state.go 'settings'

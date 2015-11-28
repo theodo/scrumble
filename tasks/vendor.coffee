@@ -8,8 +8,9 @@ gulp.task 'vendor', (done) ->
     'bower_components/angular-resource/angular-resource.min.js'
     'bower_components/angular-ui-router/release/angular-ui-router.min.js'
     'bower_components/angular-parse/angular-parse.js'
+    'bower_components/satellizer/satellizer.min.js'
+    'bower_components/angular-trello-api-client/dist/angular-trello-api-client.js'
     'bower_components/angular-local-storage/dist/angular-local-storage.min.js'
-    'bower_components/angular-trello/dist/angular-trello.js'
     'bower_components/moment/moment.js'
     'bower_components/lodash/dist/lodash.js'
   ]

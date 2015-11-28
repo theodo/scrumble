@@ -1,18 +1,18 @@
 angular.module 'NotSoShitty.settings'
-.factory 'Avatar', (TrelloApi) ->
+.factory 'Avatar', (TrelloClient) ->
   getMember: (memberId) ->
     return unless memberId
-    TrelloApi.members memberId
-    .then (member) ->
-      if member.uploadedAvatarHash
-        hash = member.uploadedAvatarHash
-      else if member.avatarHash
-        hash = member.avatarHash
+    TrelloClient.get('/members/' + memberId)
+    .then (response) ->
+      if response.data.uploadedAvatarHash
+        hash = response.data.uploadedAvatarHash
+      else if response.data.avatarHash
+        hash = response.data.avatarHash
       else
         hash = null
       return {
-        username: member.username
-        fullname: member.fullname
+        username: response.data.username
+        fullname: response.data.fullname
         hash: hash
-        initials: member.initials
+        initials: response.data.initials
       }
