@@ -4,11 +4,15 @@ html(lang="en", ng-app="NotSoShitty")
     title Not so shitty
     meta(charset="utf-8")
     meta(name="viewport", content="width=device-width, initial-scale=1")
+    link(rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.0.0-rc1/angular-material.min.css")
     link(rel="stylesheet", href="css/app.css")
     link(rel="icon", type="image/x-icon", href="/favicon.ico")
   body
     main.container(ui-view)
 
     script(src="js/vendor.js")
+    script(src='https://ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular-aria.min.js')
+    script(src='https://ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular-animate.min.js')
+    script(src='https://ajax.googleapis.com/ajax/libs/angular_material/1.0.0-rc1/angular-material.min.js')
     script(src="js/templates.js")
     script(src="js/app.js")

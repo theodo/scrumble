@@ -29,16 +29,10 @@ button.btn.btn-primary(
 h4 Choose your sprint's start and end dates
 label
   span Start day
-  input(
-    type="date"
-    ng-model="dates.start"
-  )
+  md-datepicker(ng-model='dates.start', md-placeholder='Enter date')
 label
   span End day
-  input(
-    type="date"
-    ng-model="dates.end"
-  )
+  md-datepicker(ng-model='dates.end', md-placeholder='Enter date')
 .man-days(
   ng-if="dates.days"
 ) 

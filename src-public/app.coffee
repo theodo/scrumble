@@ -3,6 +3,8 @@
 app = angular.module 'NotSoShitty', [
   'ng'
   'ngResource'
+  'ngAnimate'
+  'ngMaterial'
   'ui.router'
   # 'ui.bootstrap'
   'app.templates'
