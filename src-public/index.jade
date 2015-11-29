@@ -4,15 +4,29 @@ html(lang="en", ng-app="NotSoShitty")
     title Not so shitty
     meta(charset="utf-8")
     meta(name="viewport", content="width=device-width, initial-scale=1")
-    link(rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.0.0-rc1/angular-material.min.css")
+    link(rel="stylesheet", href="css/vendor.css")
     link(rel="stylesheet", href="css/app.css")
     link(rel="icon", type="image/x-icon", href="/favicon.ico")
   body
-    main.container(ui-view)
+    md-content
+      md-toolbar.md-tall(layout='row', layout-align='center end')
+        div(flex='', flex-sm='100', flex-gt-sm='95', flex-gt-md='80', layout='column')
+          span(layout='row')
+            md-button.menu(hide-gt-sm='', aria-label='Show User List')
+              md-icon(md-svg-icon='menu')
+            h2  Not So Shitty
+          span(flex='')
+          md-tabs.md-primary.md-hue-2(md-stretch-tabs='always')
+            md-tab(data-ui-sref="settings")
+              md-tab-label  Settings
+            md-tab(data-ui-sref="burn-down-chart")
+              md-tab-label  Burn Down Chart
+            md-tab
+              md-tab-label  Daily Mail
+
+      main.container(ui-view)
 
     script(src="js/vendor.js")
-    script(src='https://ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular-aria.min.js')
-    script(src='https://ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular-animate.min.js')
-    script(src='https://ajax.googleapis.com/ajax/libs/angular_material/1.0.0-rc1/angular-material.min.js')
+    //- script(src='https://ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular-aria.min.js')
     script(src="js/templates.js")
     script(src="js/app.js")

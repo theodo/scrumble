@@ -17,6 +17,7 @@ app = angular.module 'NotSoShitty', [
   'NotSoShitty.login'
   'NotSoShitty.settings'
   'NotSoShitty.storage'
+  'NotSoShitty.bdc'
 ]
 
 app.config (
@@ -43,6 +44,10 @@ app.config (TrelloClientProvider) ->
     tokenExpiration: 'never'
     scope: ['read', 'write', 'account']
   }
+
+app.config ($mdThemingProvider) ->
+  $mdThemingProvider.theme('default').primaryPalette('blue').accentPalette 'grey'
+  return
 
 app.run ($rootScope, $state) ->
   $rootScope.$state = $state

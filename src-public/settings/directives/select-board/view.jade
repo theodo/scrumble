@@ -1,5 +1,4 @@
-label Select a board: 
-select.form-control(
-  ng-options="board.id as board.name for board in boards"
-  ng-model="boardId"
-)
+md-input-container
+  label Select a board: 
+  md-select(ng-model="boardId")
+    md-option(ng-value="board.id" ng-repeat="board in boards") {{ board.name }}
