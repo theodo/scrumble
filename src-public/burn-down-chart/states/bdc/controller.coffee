@@ -1,3 +1,3 @@
 angular.module 'NotSoShitty.bdc'
-.controller 'BurnDownChartCtrl', ($scope) ->
+.controller 'BurnDownChartCtrl', ($scope, BDCDataProvider) ->
   return

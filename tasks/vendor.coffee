@@ -16,6 +16,7 @@ gulp.task 'vendor', (done) ->
     'bower_components/angular-local-storage/dist/angular-local-storage.min.js'
     'bower_components/moment/moment.js'
     'bower_components/lodash/dist/lodash.js'
+    'bower_components/d3/d3.min.js'
   ]
   .pipe(concat('vendor.js'))
   .on 'error', gutil.log

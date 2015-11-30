@@ -29,7 +29,8 @@
     "angular-local-storage": "~0.2.3",
     "angular-trello": "*",
     "angular-trello-api-client": "~1.0.4",
-    "angular-material": "~0.11.4"
+    "angular-material": "~0.11.4",
+    "d3": "~3.5.10"
   },
   "resolutions": {
     "angular": "1.4.8"
