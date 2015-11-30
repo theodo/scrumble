@@ -5,6 +5,7 @@ angular.module 'NotSoShitty.settings'
   TrelloClient
   localStorageService
   UserBoardStorage
+  $mdToast
   Settings
   settings
 ) ->
@@ -31,5 +32,10 @@ angular.module 'NotSoShitty.settings'
   $scope.save = ->
     return unless $scope.settings.boardId?
     settings.boardId = $scope.settings.boardId
-    settings.save()
+    saveFeedback = $mdToast.simple()
+      .hideDelay(1000)
+      .position('top right')
+      .content('Saved!')
+    settings.save().then ->
+      $mdToast.show saveFeedback
   return

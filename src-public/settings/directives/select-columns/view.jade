@@ -1,8 +1,4 @@
-md-input-container(
-  layout-gt-lg="row"
-  layout="column"
-  ng-repeat="type in listTypes"
-)
+md-input-container(ng-repeat="type in listTypes")
   label Select {{ type }} column
     span.required(ng-if="type == 'done'")  (required)
   md-select(ng-model="columnIds[type]")

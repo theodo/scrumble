@@ -1,0 +1,67 @@
+@bdcgraph-bg-color: #F3EDD3;
+@bdcgraph-fg-color: #19BEC0;
+@bdcgraph-fg-light-color: #20D6C7;
+@bdcgraph-standard-color: #D54F58;
+@bdcgraph-default-color: #113F59;
+@bdcgraph-warning-color: #FA6E69;
+@bdcgraph-success-color: #97D17A;
+
+burndown {
+  position: relative;
+  width: 100%;
+}
+
+#bdcgraph svg {
+
+  text {
+    font-size: small;
+  }
+  .axis path,
+  .axis line {
+    fill: none;
+    stroke: rgba(0, 1, 0, 0.2);
+    color: rgba(0, 1, 0, 0.5);
+    shape-rendering: crispEdges;
+  }
+
+  .x .domain {
+    stroke: rgba(0,0,0,0);
+  }
+
+  path {
+    &.standard {
+      stroke: @bdcgraph-standard-color;
+      stroke-dasharray: 10 5;
+    }
+  }
+  .tick text, text {
+    fill: @bdcgraph-default-color;
+    &.standard-legend, &.jh-legend, &.jhmep-legend {
+      fill: @bdcgraph-default-color;
+    }
+  }
+
+  rect, text {
+
+    &.done {
+      fill: @bdcgraph-fg-color;
+    }
+    &.standard {
+      fill: @bdcgraph-standard-color;
+    }
+  }
+
+  text {
+    &.done-values {
+
+      &.good {
+        fill: @bdcgraph-success-color;
+      }
+      &.bad {
+        fill: @bdcgraph-warning-color;
+      }
+    }
+  }
+
+
+}

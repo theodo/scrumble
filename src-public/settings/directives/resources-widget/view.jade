@@ -1,18 +1,16 @@
-h4 The team
-trello-avatar(
-  ng-repeat="id in team.dev"
-  member-id="{{id}}"
-)
-trello-avatar(
-  ng-repeat="id in team.rest"
-  member-id="{{id}}"
-)
+md-content
+  h4.md-title The team
+    md-button.md-warn(ng-click="clearTeam()") Clear
+  md-list
+    trello-avatar(
+      ng-repeat="id in team.dev"
+      member-id="{{id}}"
+    )
+    trello-avatar(
+      ng-repeat="id in team.rest"
+      member-id="{{id}}"
+    )
 hr
-button.btn.btn-primary(
-  ng-click="clearTeam()"
-) 
-  span  Clear
-
 .select-teams
   .select-dev-team
     div Select the dev team
@@ -44,7 +42,7 @@ resources-by-day(
   members="team.dev"
 )
 p Sprint points and speed:
-.sprint-points
+md-input-container
   label Total sprint points
   input(
     type="number"
@@ -52,7 +50,7 @@ p Sprint points and speed:
     step="1"
     ng-model="resources.totalPoints"
   )
-.sprint-speed
+md-input-container
   label Sprint speed
   input(
     type="number"

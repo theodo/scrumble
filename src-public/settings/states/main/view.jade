@@ -1,26 +1,25 @@
-h1 Settings
-div(flex='', layout='column', layout-align='center center')
-  .md-whiteframe-z2(flex-sm='100', flex-gt-sm='90', flex-gt-md='70', flex-gt-lg='50' flex='80')
-    md-content.md-padding
-      div(flex-sm='100', flex-gt-sm='80', layout-sm='column')
-        select-board(
-          boards="boards"
-          board-id="settings.boardId"
-        )
-        
-        select-columns(
-          board-columns="boardColumns"
-          column-ids="settings.columnIds"
-        )
-  
-  md-divider
-  .md-whiteframe-z2(flex-sm='100', flex-gt-sm='90', flex-gt-md='70', flex-gt-lg='50')
-    md-content.md-padding
-      div(flex-sm='100', flex-gt-sm='80', layout-sm='column')
-        resources-widget(
-          board-members="boardMembers"
-          team="settings.team"
-          dates="settings.dates"
-          resources="settings.resources"
-        )
-        button.btn.btn-primary(ng-click="save()") Save
+md-content
+  div(layout="row")
+    div.md-padding(flex)
+      h2.md-title Trello Mapping
+        md-button.md-raised.md-primary(ng-click="save()") Save
+      select-board(
+        boards="boards"
+        board-id="settings.boardId"
+      )
+      
+      select-columns(
+        ng-if="settings.boardId"
+        board-columns="boardColumns"
+        column-ids="settings.columnIds"
+      )
+    div.md-padding(flex)
+      h2.md-title Resources
+        md-button.md-raised.md-primary(ng-click="save()") Save
+      resources-widget(
+        ng-if="settings.boardId"
+        board-members="boardMembers"
+        team="settings.team"
+        dates="settings.dates"
+        resources="settings.resources"
+      )
