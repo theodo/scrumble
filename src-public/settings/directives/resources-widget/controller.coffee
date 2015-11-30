@@ -1,9 +1,9 @@
 angular.module 'NotSoShitty.settings'
 .controller 'ResourcesWidgetCtrl',
 ($scope, Computer) ->
-  $scope.dates.start = moment($scope.dates.start).toDate()
-  $scope.dates.end = moment($scope.dates.end).toDate()
-  
+  $scope.dates?.start = moment($scope.dates?.start).toDate()
+  $scope.dates?.end = moment($scope.dates?.end).toDate()
+
   $scope.clearTeam = ->
     $scope.team.rest = []
     $scope.team.dev = []
