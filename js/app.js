@@ -1,7 +1,7 @@
 'use strict';
 var app;
 
-app = angular.module('NotSoShitty', ['ng', 'ngResource', 'ngAnimate', 'ngMaterial', 'ui.router', 'app.templates', 'Parse', 'LocalStorageModule', 'satellizer', 'trello-api-client', 'NotSoShitty.login', 'NotSoShitty.settings', 'NotSoShitty.storage', 'NotSoShitty.bdc']);
+app = angular.module('NotSoShitty', ['ng', 'ngResource', 'ngAnimate', 'ngMaterial', 'ui.router', 'app.templates', 'Parse', 'LocalStorageModule', 'satellizer', 'trello-api-client', 'NotSoShitty.login', 'NotSoShitty.settings', 'NotSoShitty.storage', 'NotSoShitty.bdc', 'NotSoShitty.daily-report']);
 
 app.config(function($locationProvider, $urlRouterProvider, ParseProvider) {
   $locationProvider.hashPrefix('!');
@@ -32,6 +32,8 @@ app.run(function($rootScope, $state) {
 
 angular.module('NotSoShitty.bdc', []);
 
+angular.module('NotSoShitty.daily-report', []);
+
 angular.module('NotSoShitty.login', []);
 
 angular.module('NotSoShitty.settings', []);
@@ -48,7 +50,7 @@ angular.module('NotSoShitty.bdc').config(function($stateProvider) {
     templateUrl: 'burn-down-chart/states/bdc/view.html'
   }).state('burn-down-table', {
     url: '/burn-down-table',
-    controller: 'BurnDownTableCtrl',
+    controller: 'BDCTableCtrl',
     templateUrl: 'burn-down-chart/states/table/view.html'
   });
 });
@@ -163,23 +165,21 @@ angular.module('NotSoShitty.bdc').factory('BDCDataProvider', function() {
   };
 });
 
+angular.module('NotSoShitty.daily-report').config(function($stateProvider) {
+  return $stateProvider.state('daily-report', {
+    url: '/daily-report',
+    templateUrl: 'daily-report/states/view.html'
+  });
+});
+
+angular.module('NotSoShitty.daily-report').controller('DailyReportCtrl', function($scope) {});
+
 angular.module('NotSoShitty.login').config(function($stateProvider) {
   return $stateProvider.state('login', {
     url: '/login',
     controller: 'LoginCtrl',
     templateUrl: 'login/states/login/view.html'
   });
-});
-
-angular.module('NotSoShitty.login').service('trelloCurrentUser', function($auth, TrelloClient) {
-  var user;
-  user = null;
-  if ($auth.isAuthenticated()) {
-    TrelloClient.get('/member/me').then(function(response) {
-      return user = response.data;
-    });
-  }
-  return user;
 });
 
 angular.module('NotSoShitty.settings').config(function($stateProvider) {
@@ -514,23 +514,7 @@ angular.module('NotSoShitty.bdc').directive('burndown', function() {
 
 angular.module('NotSoShitty.bdc').controller('BurnDownChartCtrl', function($scope, BDCDataProvider) {});
 
-angular.module('NotSoShitty.bdc').controller('BurnDownTableCtrl', function($scope, BDCDataProvider) {
-  $scope.days = [
-    {
-      label: 'Daily du Mercredi',
-      standard: 10,
-      done: 12
-    }, {
-      label: 'Daily du Jeudi',
-      standard: 10,
-      done: 12
-    }, {
-      label: 'Daily du Vendredi',
-      standard: 10,
-      done: 12
-    }
-  ];
-});
+
 
 angular.module('NotSoShitty.login').controller('LoginCtrl', function($scope, TrelloClient, $state, $auth) {
   if ($auth.isAuthenticated()) {
@@ -813,9 +797,8 @@ angular.module('NotSoShitty.settings').directive('trelloAvatar', function() {
   };
 });
 
-angular.module('NotSoShitty.settings').controller('SettingsCtrl', function($scope, boards, TrelloClient, localStorageService, UserBoardStorage, trelloCurrentUser, $mdToast, Settings, settings) {
+angular.module('NotSoShitty.settings').controller('SettingsCtrl', function($scope, boards, TrelloClient, localStorageService, UserBoardStorage, $mdToast, Settings, settings) {
   var _base;
-  console.log(trelloCurrentUser);
   $scope.boards = boards;
   if (settings == null) {
     settings = new Settings();
