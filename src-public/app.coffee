@@ -13,11 +13,11 @@ app = angular.module 'NotSoShitty', [
   'satellizer'
   'trello-api-client'
 
-
   'NotSoShitty.login'
   'NotSoShitty.settings'
   'NotSoShitty.storage'
   'NotSoShitty.bdc'
+  'NotSoShitty.daily-report'
 ]
 
 app.config (

@@ -1,0 +1,17 @@
+md-content.layout-padding
+  form(name="dailyReportCreate")
+    h2.md-title Daily Mail
+    div(layout-padding)
+      md-input-container
+        label A
+        input(ng-model="dr.to")
+      md-input-container
+        label Cc
+        input(ng-model="dr.cc")
+      md-input-container
+        label Objet
+        input(ng-model="dr.title")
+      md-input-container(class="md-block")
+        label Corps
+        text-area(ng-model="dr.body" columns="1" md-maxlength="150" rows="5")
+      md-button.md-raised.md-primary(ng-click="send()") Send
