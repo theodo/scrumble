@@ -1,17 +1,21 @@
-md-content.layout-padding
+
+md-content(layout-padding)
   form(name="dailyReportCreate")
     h2.md-title Daily Mail
-    div(layout-padding)
-      md-input-container
+    div(layout layout-sm="column")
+      md-input-container(flex)
         label A
-        input(ng-model="dr.to")
-      md-input-container
+        input(ng-model="dr.to" type="email")
+      md-input-container(flex)
         label Cc
-        input(ng-model="dr.cc")
-      md-input-container
+        input(ng-model="dr.cc" type="email")
+    div(layout layout-sm="column")
+      md-input-container(flex)
         label Objet
         input(ng-model="dr.title")
-      md-input-container(class="md-block")
+    div
+      md-input-container.md-block
         label Corps
-        text-area(ng-model="dr.body" columns="1" md-maxlength="150" rows="5")
+        textarea(ng-model="dr.body" columns="1" rows="5")
+      
       md-button.md-raised.md-primary(ng-click="send()") Send
