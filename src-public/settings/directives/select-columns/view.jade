@@ -1,5 +1,6 @@
-md-input-container(ng-repeat="type in listTypes")
-  label Select {{ type }} column
-    span.required(ng-if="type == 'done'")  (required)
-  md-select(ng-model="columnIds[type]")
-    md-option(ng-value="column.id" ng-repeat="column in boardColumns") {{ column.name }}
+div(ng-repeat="type in listTypes" layout="column")
+  md-input-container(layout="row")
+    label Select {{ type }} column
+      span.required(ng-if="type == 'done'")  (required)
+    md-select.column-width-80(ng-model="columnIds[type]")
+      md-option(ng-value="column.id" ng-repeat="column in boardColumns") {{ column.name }}
