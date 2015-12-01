@@ -4,18 +4,18 @@ md-content(layout-padding)
     h2.md-title Daily Mail
     div(layout layout-sm="column")
       md-input-container(flex)
-        label A
-        input(ng-model="dr.to" type="email")
+        label To
+        input(ng-model="daily-report.to" type="email")
       md-input-container(flex)
         label Cc
-        input(ng-model="dr.cc" type="email")
+        input(ng-model="daily-report.cc" type="email")
     div(layout layout-sm="column")
       md-input-container(flex)
-        label Objet
-        input(ng-model="dr.title")
+        label Title
+        input(ng-model="daily-report.title")
     div
       md-input-container.md-block
-        label Corps
-        textarea(ng-model="dr.body" columns="1" rows="5")
+        label Body
+        textarea(ng-model="daily-report.body" columns="1" rows="5")
       
       md-button.md-raised.md-primary(ng-click="send()") Send
