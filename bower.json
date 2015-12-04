@@ -19,7 +19,7 @@
     "tests"
   ],
   "dependencies": {
-    "angular-parse": "*",
+    "angular-parse": "master",
     "angular-ui-router": "0.2.15",
     "angular": "1.4.8",
     "bootstrap": "3.3.6",
@@ -29,7 +29,7 @@
     "angular-local-storage": "~0.2.3",
     "angular-trello": "*",
     "angular-trello-api-client": "~1.0.4",
-    "angular-material": "1.0.0-rc1",
+    "angular-material": "1.0.0-rc5",
     "d3": "~3.5.10",
     "angular-permission": "~1.1.1"
   },

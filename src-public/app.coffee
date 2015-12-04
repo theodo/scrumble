@@ -14,12 +14,12 @@ app = angular.module 'NotSoShitty', [
   'permission'
   'trello-api-client'
 
-
   'NotSoShitty.login'
   'NotSoShitty.settings'
   'NotSoShitty.storage'
   'NotSoShitty.bdc'
   'NotSoShitty.common'
+  'NotSoShitty.daily-report'
 ]
 
 app.config (
