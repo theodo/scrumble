@@ -5,17 +5,17 @@ md-content(layout-padding)
     div(layout layout-sm="column")
       md-input-container(flex)
         label To
-        input(ng-model="daily-report.to" type="email")
+        input(ng-model="dailyReport.to" type="email")
       md-input-container(flex)
         label Cc
-        input(ng-model="daily-report.cc" type="email")
+        input(ng-model="dailyReport.cc" type="email")
     div(layout layout-sm="column")
       md-input-container(flex)
         label Title
-        input(ng-model="daily-report.title")
+        input(ng-model="dailyReport.title")
     div
       md-input-container.md-block
         label Body
-        textarea(ng-model="daily-report.body" columns="1" rows="5")
+        textarea(ng-model="dailyReport.body" columns="1" rows="5")
       
       md-button.md-raised.md-primary(ng-click="send()") Send
