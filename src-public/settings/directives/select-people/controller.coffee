@@ -6,7 +6,7 @@ angular.module 'NotSoShitty.settings'
     team = []
     for key, checked of $scope.teamCheck
       if checked
-        team.push key
+        team.push _.find $scope.members, (member) -> member.id
     $scope.selectedMembers = team
 
   $scope.$watch 'selectedMembers', (newVal) ->
@@ -14,5 +14,5 @@ angular.module 'NotSoShitty.settings'
     if newVal.length > 0
       $scope.teamCheck ?= {}
       for member in $scope.selectedMembers
-        $scope.teamCheck[member] = true
+        $scope.teamCheck[member.id] = true
     else $scope.teamCheck = {}

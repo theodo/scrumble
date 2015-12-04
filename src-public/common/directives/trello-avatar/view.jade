@@ -1,0 +1,10 @@
+div
+  img.md-avatar.member-avatar(
+    ng-if="hash"
+    alt="{{ member.username }}"
+    ng-src="https://trello-avatars.s3.amazonaws.com/{{hash}}/{{size}}.png"
+    style="border-radius: 50%;"
+  )
+  .member-avatar.initials(
+    ng-if="!hash"
+  ) {{ member.initials }}

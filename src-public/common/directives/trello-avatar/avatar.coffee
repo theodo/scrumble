@@ -1,4 +1,4 @@
-angular.module 'NotSoShitty.settings'
+angular.module 'NotSoShitty.common'
 .factory 'Avatar', (TrelloClient) ->
   getMember: (memberId) ->
     return unless memberId

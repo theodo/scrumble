@@ -11,6 +11,7 @@ app = angular.module 'NotSoShitty', [
   'Parse'
   'LocalStorageModule'
   'satellizer'
+  'permission'
   'trello-api-client'
 
 
@@ -18,6 +19,7 @@ app = angular.module 'NotSoShitty', [
   'NotSoShitty.settings'
   'NotSoShitty.storage'
   'NotSoShitty.bdc'
+  'NotSoShitty.common'
 ]
 
 app.config (

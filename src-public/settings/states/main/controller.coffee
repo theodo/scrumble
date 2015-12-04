@@ -25,7 +25,7 @@ angular.module 'NotSoShitty.settings'
     TrelloClient.get('/boards/' + next + '/lists')
     .then (response) ->
       $scope.boardColumns = response.data
-    TrelloClient.get('/boards/' + next + '/members')
+    TrelloClient.get('/boards/' + next + '/members?fields=avatarHash,fullName,initials,username')
     .then (response) ->
       $scope.boardMembers = response.data
 
