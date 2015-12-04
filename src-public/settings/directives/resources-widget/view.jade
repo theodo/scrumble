@@ -46,16 +46,12 @@ p Sprint points and speed:
 md-input-container
   label Total sprint points
   input(
-    type="number"
-    min="1"
-    step="1"
+    nss-round
     ng-model="resources.totalPoints"
   )
 md-input-container
   label Sprint speed
   input(
-    type="number"
-    min="0"
-    step="0.1"
+    nss-round
     ng-model="resources.speed"
   )

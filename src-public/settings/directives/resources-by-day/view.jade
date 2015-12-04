@@ -1,15 +1,28 @@
-table.table.table-bordered
-  tr
-    th(
-      ng-repeat="(j, member) in members"
-    )
+.resources-by-day(
+  layout="row"
+)
+  .column(
+    flex="30"
+    layout="column"
+    layout-align="center center"
+  )
+    .row-avatar &nbsp;
+    .row(
+      layout
+      layout-align="center center"
+      ng-repeat="(i, day) in days"
+    ) {{ day.label }}
+  .column(
+    flex
+    layout="column"
+    layout-align="center center"
+    ng-repeat="(j, member) in members"
+  )
+    .row-avatar
       trello-avatar(
-        member-id="{{ member }}"
+        member="member"
       )
-  tr(
-    ng-repeat="(i, day) in days"
-  ) {{ day.label }}
-    td(
+    md-button.md-primary.row(
       ng-click="resourceClick(i,j)"
-      ng-repeat="(j, member) in members"
+      ng-repeat="(i, day) in days"
     ) {{ matrix[i][j] }}
