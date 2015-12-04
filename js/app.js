@@ -36,9 +36,9 @@ angular.module('NotSoShitty.common', []);
 
 angular.module('NotSoShitty.daily-report', []);
 
-angular.module('NotSoShitty.settings', ['NotSoShitty.common']);
-
 angular.module('NotSoShitty.login', []);
+
+angular.module('NotSoShitty.settings', ['NotSoShitty.common']);
 
 angular.module('NotSoShitty.storage', []);
 
@@ -169,6 +169,30 @@ angular.module('NotSoShitty.daily-report').config(function($stateProvider) {
 
 angular.module('NotSoShitty.daily-report').controller('DailyReportCtrl', function($scope) {});
 
+angular.module('NotSoShitty.login').run(function(Permission, $auth, $q) {
+  return Permission.defineRole('trello-authenticated', function() {
+    return $auth.isAuthenticated();
+  });
+});
+
+angular.module('NotSoShitty.login').config(function($stateProvider) {
+  return $stateProvider.state('login', {
+    url: '/login',
+    controller: 'LoginCtrl',
+    templateUrl: 'login/states/login/view.html'
+  });
+});
+
+angular.module('NotSoShitty.login').service('User', function($auth, TrelloClient) {
+  return {
+    getTrelloInfo: function() {
+      return TrelloClient.get('/member/me').then(function(response) {
+        return response.data;
+      });
+    }
+  };
+});
+
 angular.module('NotSoShitty.settings').config(function($stateProvider) {
   return $stateProvider.state('settings', {
     url: '/settings',
@@ -245,30 +269,6 @@ angular.module('NotSoShitty.settings').service('Computer', function() {
     calculateSpeed: calculateSpeed,
     calculateTotalPoints: calculateTotalPoints,
     getTotalManDays: getTotalManDays
-  };
-});
-
-angular.module('NotSoShitty.login').run(function(Permission, $auth, $q) {
-  return Permission.defineRole('trello-authenticated', function() {
-    return $auth.isAuthenticated();
-  });
-});
-
-angular.module('NotSoShitty.login').config(function($stateProvider) {
-  return $stateProvider.state('login', {
-    url: '/login',
-    controller: 'LoginCtrl',
-    templateUrl: 'login/states/login/view.html'
-  });
-});
-
-angular.module('NotSoShitty.login').service('User', function($auth, TrelloClient) {
-  return {
-    getTrelloInfo: function() {
-      return TrelloClient.get('/member/me').then(function(response) {
-        return response.data;
-      });
-    }
   };
 });
 
@@ -639,6 +639,50 @@ angular.module('NotSoShitty.common').directive('trelloAvatar', function() {
   };
 });
 
+angular.module('NotSoShitty.login').controller('ProfilInfoCtrl', function($rootScope, $scope, $auth, User, $state) {
+  var getTrelloInfo;
+  $scope.logout = function() {
+    $auth.logout();
+    $scope.userInfo = null;
+    $state.go('login');
+    return $scope.showProfilCard = false;
+  };
+  getTrelloInfo = function() {
+    if ($auth.isAuthenticated()) {
+      return User.getTrelloInfo().then(function(info) {
+        return $scope.userInfo = info;
+      });
+    }
+  };
+  getTrelloInfo();
+  $rootScope.$on('refresh-profil', getTrelloInfo);
+  $scope.showProfilCard = false;
+  return $scope.toggleProfilCard = function() {
+    return $scope.showProfilCard = !$scope.showProfilCard;
+  };
+});
+
+angular.module('NotSoShitty.login').directive('profilInfo', function() {
+  return {
+    restrict: 'E',
+    templateUrl: 'login/directives/profil-info/view.html',
+    scope: {},
+    controller: 'ProfilInfoCtrl'
+  };
+});
+
+angular.module('NotSoShitty.login').controller('LoginCtrl', function($scope, $rootScope, TrelloClient, $state, $auth) {
+  if ($auth.isAuthenticated()) {
+    $state.go('settings');
+  }
+  return $scope.login = function() {
+    return TrelloClient.authenticate().then(function() {
+      $rootScope.$broadcast('refresh-profil');
+      return $state.go('settings');
+    });
+  };
+});
+
 angular.module('NotSoShitty.settings').controller('ResourcesByDayCtrl', function($scope) {
   var changeResource;
   changeResource = function(dayIndex, memberIndex, matrix) {
@@ -891,50 +935,6 @@ angular.module('NotSoShitty.settings').controller('SettingsCtrl', function($scop
     saveFeedback = $mdToast.simple().hideDelay(1000).position('top right').content('Saved!');
     return settings.save().then(function() {
       return $mdToast.show(saveFeedback);
-    });
-  };
-});
-
-angular.module('NotSoShitty.login').controller('ProfilInfoCtrl', function($rootScope, $scope, $auth, User, $state) {
-  var getTrelloInfo;
-  $scope.logout = function() {
-    $auth.logout();
-    $scope.userInfo = null;
-    $state.go('login');
-    return $scope.showProfilCard = false;
-  };
-  getTrelloInfo = function() {
-    if ($auth.isAuthenticated()) {
-      return User.getTrelloInfo().then(function(info) {
-        return $scope.userInfo = info;
-      });
-    }
-  };
-  getTrelloInfo();
-  $rootScope.$on('refresh-profil', getTrelloInfo);
-  $scope.showProfilCard = false;
-  return $scope.toggleProfilCard = function() {
-    return $scope.showProfilCard = !$scope.showProfilCard;
-  };
-});
-
-angular.module('NotSoShitty.login').directive('profilInfo', function() {
-  return {
-    restrict: 'E',
-    templateUrl: 'login/directives/profil-info/view.html',
-    scope: {},
-    controller: 'ProfilInfoCtrl'
-  };
-});
-
-angular.module('NotSoShitty.login').controller('LoginCtrl', function($scope, $rootScope, TrelloClient, $state, $auth) {
-  if ($auth.isAuthenticated()) {
-    $state.go('settings');
-  }
-  return $scope.login = function() {
-    return TrelloClient.authenticate().then(function() {
-      $rootScope.$broadcast('refresh-profil');
-      return $state.go('settings');
     });
   };
 });
