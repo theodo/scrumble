@@ -1,1 +1,1 @@
-angular.module 'NotSoShitty.settings', []
+angular.module 'NotSoShitty.settings', ['NotSoShitty.common']

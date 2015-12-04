@@ -3,12 +3,12 @@ md-content
     md-button.md-warn(ng-click="clearTeam()") Clear
   md-list
     trello-avatar(
-      ng-repeat="id in team.dev"
-      member-id="{{id}}"
+      ng-repeat="dev in team.dev"
+      member="dev"
     )
     trello-avatar(
-      ng-repeat="id in team.rest"
-      member-id="{{id}}"
+      ng-repeat="rest in team.rest"
+      member="rest"
     )
 hr
 .select-teams

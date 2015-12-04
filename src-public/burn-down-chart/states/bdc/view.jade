@@ -1,2 +1,14 @@
-h2 Burn Down Chart
 burndown(data="bdcData")
+md-card
+  table.table.table-responsive-vertical.shadow-z-1
+    thead
+      tr
+        th Day
+        th Standard
+        th Done
+    tbody
+      tr(ng-repeat="day in days")
+        td {{ day.label }}
+        td {{ day.standard }}
+        td
+          input(ng-model="day.done")

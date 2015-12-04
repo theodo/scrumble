@@ -10,8 +10,11 @@ angular.module 'NotSoShitty.settings'
         UserBoardStorage.getBoardId().then (boardId) ->
           return null unless boardId?
           SettingsStorage.get(boardId).then (settings) ->
-            console.log settings
             return settings
       boards: (TrelloClient) ->
         TrelloClient.get('/members/me/boards').then (response) ->
           return response.data
+    data:
+      permissions:
+        only: ['trello-authenticated']
+        redirectTo: 'login'
