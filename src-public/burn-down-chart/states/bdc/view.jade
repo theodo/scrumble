@@ -1,4 +1,4 @@
-burndown(data="bdcData")
+burndown(data="tableData")
 md-card
   table.table.table-responsive-vertical.shadow-z-1
     thead
@@ -7,7 +7,7 @@ md-card
         th Standard
         th Done
     tbody
-      tr(ng-repeat="day in days")
+      tr(ng-repeat="day in tableData")
         td {{ day.label }}
         td {{ day.standard }}
         td
