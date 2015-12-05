@@ -71,9 +71,6 @@ angular.module 'NotSoShitty.bdc'
         return unless data[i]?
         dateFormat = d3.time.format '%A'
         dateFormat data[i].date
-      # display vertical grids
-      .innerTickSize(-height)
-      .outerTickSize(0)
 
       yAxis = d3.svg.axis()
       .scale(y)
@@ -89,6 +86,27 @@ angular.module 'NotSoShitty.bdc'
       .append("g")
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
 
+      # define the shape of an arrowhead
+      chart.append("defs").append("marker")
+      .attr("id", "arrowhead")
+      .attr("markerWidth", "12")
+      .attr("markerHeight", "12")
+      .attr("viewBox", "-6 -6 12 12")
+      .attr("refX", "-2")
+      .attr("refY", "0")
+      .attr("markerUnits", "strokeWidth")
+      .attr("orient", "auto")
+      .append("polygon")
+      .attr("points", "-2,0 -5,5 5,0 -5,-5")
+      .attr("class", "arrowhead")
+
+      addArrow = (selection) ->
+        selection.selectAll('line')
+        .attr('marker-end', (d, i) ->
+          return if i > 0
+          'url(#arrowhead)'
+        )
+
       adjustTextLabels = (selection) ->
         selection.selectAll('text')
         .attr('transform', 'translate(0, 6)')
@@ -101,7 +119,7 @@ angular.module 'NotSoShitty.bdc'
       .call(adjustTextLabels)
       .append("text")
       .attr('class', 'daily')
-      .attr("transform", "translate(" + width + ", 20)")
+      .attr("transform", "translate(" + width + ", 25)")
       .attr("x", 20)
       .style("text-anchor", "end")
       .text("Daily meetings")
@@ -110,6 +128,7 @@ angular.module 'NotSoShitty.bdc'
       chart.append("g")
       .attr("class", "y axis")
       .call(yAxis)
+      .call(addArrow)
 
       # Paint the standard line
       chart.append("path")
