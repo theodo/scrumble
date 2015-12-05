@@ -64,6 +64,7 @@ angular.module 'NotSoShitty.bdc'
       .orient("bottom")
       .ticks(data.length - 1)
       .tickFormat (d, i, j) ->
+        return "Start" if i == 0
         return unless data[i]?
         dateFormat = d3.time.format '%A'
         dateFormat data[i].date
