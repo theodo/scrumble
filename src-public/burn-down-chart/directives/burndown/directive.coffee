@@ -167,34 +167,33 @@ angular.module 'NotSoShitty.bdc'
       # this in order for svg to canvas to work
       d3.selectAll '.tick text'
       .attr 'font-size', '16px'
-      #
-      # drawValues = (color) ->
-      #
-      #   values = _.filter data, (d) ->
-      #     return d.left? and d.standard? and d.diff?
-      #
-      #   vis.selectAll 'text .done-values'
-      #   .data values
-      #   .enter()
-      #   .append 'text'
-      #   .attr 'class', 'done-values'
-      #   .attr 'font-size', '16px'
-      #   .attr 'class', (d) ->
-      #     if d.diff >= 0
-      #       'good done-values'
-      #     else
-      #       'bad done-values'
-      #   .attr 'x', (d, i) ->
-      #     xRange i + 1
-      #   .attr 'y', (d) ->
-      #     - 10 + yRange(Math.max(d.standard, d.left))
-      #   .attr 'fill', cfg.color.done
-      #   .attr 'text-anchor', 'start'
-      #   .text (d) ->
-      #     if d.diff >= 0
-      #       return '+' + d.diff.toPrecision(2) + ' :)'
-      #     else
-      #       return d.diff.toPrecision(2) + ' :('
+
+      # display difference
+      chart.selectAll 'text .done-values'
+      .data data
+      .enter()
+      .append 'text'
+      .attr 'class', 'done-values'
+      .attr 'font-size', '16px'
+      .attr 'class', (d, i) ->
+        return unless d.done? or i == 0
+        if d.done - d.standard >= 0
+          'good done-values'
+        else
+          'bad done-values'
+      .attr 'x', (d, i) -> x(i)
+      .attr 'y', (d) ->
+        - 10 + y(initialNumberOfPoints - Math.min(d.standard, d.done))
+      .attr 'fill', cfg.color.done
+      .attr 'text-anchor', 'start'
+      .text (d, i) ->
+        return if i == 0
+        return unless d.done?
+        diff = d.done - d.standard
+        if diff >= 0
+          return '+' + diff.toFixed(1) + ' :)'
+        else
+          return diff.toFixed(1) + ' :('
 
     scope.$watch 'data', (data) ->
       return unless data
