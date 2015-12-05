@@ -18,6 +18,7 @@ angular.module 'NotSoShitty.bdc'
         height = window.innerHeight - 128
         width = height / whRatio
       config =
+        containerId: '#bdcgraph'
         width: width
         height: height
         margins:
@@ -25,14 +26,20 @@ angular.module 'NotSoShitty.bdc'
           right: 70
           bottom: 30
           left: 50
-        tickSize: 5
         color:
-          standard: '#D93F8E' # default colors
+          standard: '#D93F8E'
           done: '#5AA6CB'
+        startLabel: 'Start'
+        dateFormat: '%A'
+        xTitle: 'Daily meetings'
+        dotRadius: 4
+        standardStrokeWidth: 2
+        doneStrokeWidth: 2
+        goodSuffix: ' :)'
+        badSuffix: ' :('
       config
 
     config = computeDimensions()
-    bdcgraph = d3.select '#bdcgraph'
 
     window.onresize = ->
       config = computeDimensions()
@@ -42,6 +49,7 @@ angular.module 'NotSoShitty.bdc'
       [first, ..., last] = data
       initialNumberOfPoints = last.standard
 
+      bdcgraph = d3.select cfg.containerId
       bdcgraph.select('*').remove()
 
       x = d3.scale.linear() # x scale can't be d3.time because we don't want to display weekends
@@ -69,8 +77,8 @@ angular.module 'NotSoShitty.bdc'
       .ticks data.length # number of ticks to display
       .tickFormat (d, i, j) ->
         return unless data[i]?
-        return 'Start' if i == 0
-        dateFormat = d3.time.format '%A'
+        return cfg.startLabel if i == 0
+        dateFormat = d3.time.format cfg.dateFormat
         dateFormat data[i].date
 
       yAxis = d3.svg.axis()
@@ -126,7 +134,7 @@ angular.module 'NotSoShitty.bdc'
       .attr 'transform', 'translate(' + cfg.width + ', 25)'
       .attr 'x', 20
       .style 'text-anchor', 'end'
-      .text 'Daily meetings'
+      .text cfg.xTitle
 
       # display the y-axis
       chart.append 'g'
@@ -136,11 +144,11 @@ angular.module 'NotSoShitty.bdc'
       .call addArrowHead
 
       # display the standard line
-      chart.append('path')
+      chart.append 'path'
       .attr 'class', 'standard'
       .attr 'd', standardLine data
       .attr 'stroke', cfg.color.standard
-      .attr 'stroke-width', 2
+      .attr 'stroke-width', cfg.standardStrokeWidth
       .attr 'fill', 'none'
 
       # display the actual line
@@ -148,7 +156,7 @@ angular.module 'NotSoShitty.bdc'
       .attr 'class', 'done-line'
       .attr 'd', actualLine (d for d in data when d.done?)
       .attr 'stroke', cfg.color.done
-      .attr 'stroke-width', 2
+      .attr 'stroke-width', cfg.doneStrokeWidth
       .attr 'fill', 'none'
 
       # display standard dots
@@ -159,7 +167,7 @@ angular.module 'NotSoShitty.bdc'
       .attr 'class', 'standard-point'
       .attr 'cx', (d, i) -> x(i)
       .attr 'cy', (d) -> y initialNumberOfPoints - d.standard
-      .attr 'r', 4
+      .attr 'r', cfg.dotRadius
       .attr 'fill', cfg.color.standard
 
 
@@ -171,7 +179,7 @@ angular.module 'NotSoShitty.bdc'
       .attr 'class', 'done-point'
       .attr 'cx', (d, i) -> x(i)
       .attr 'cy', (d) -> y initialNumberOfPoints - d.done
-      .attr 'r', 4
+      .attr 'r', cfg.dotRadius
       .attr 'fill', cfg.color.done
 
       # display difference
@@ -196,9 +204,9 @@ angular.module 'NotSoShitty.bdc'
         return unless d.done?
         diff = d.done - d.standard
         if diff >= 0
-          return '+' + diff.toFixed(1) + ' :)'
+          return '+' + diff.toFixed(1) + cfg.goodSuffix
         else
-          return diff.toFixed(1) + ' :('
+          return diff.toFixed(1) + cfg.badSuffix
 
     scope.$watch 'data', (data) ->
       return unless data
