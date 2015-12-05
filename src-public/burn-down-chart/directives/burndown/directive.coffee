@@ -26,7 +26,7 @@ angular.module 'NotSoShitty.bdc'
         margins:
           top: 20
           right: 70
-          bottom: 20
+          bottom: 30
           left: 50
         tickSize: 5
         color:
@@ -45,13 +45,9 @@ angular.module 'NotSoShitty.bdc'
       bdcgraph.select '*'
       .remove()
 
-      margin = {top: 20, right: 20, bottom: 30, left: 50}
-      width = 960 - margin.left - margin.right
-      height = 500 - margin.top - margin.bottom
-
       # I recommend using a linear scale and computing the day number
-      x = d3.time.scale().range([0, width])
-      y = d3.scale.linear().range([height, 0])
+      x = d3.time.scale().range([0, cfg.width])
+      y = d3.scale.linear().range([cfg.height, 0])
 
       standardLine = d3.svg.line()
       .x (d, i) -> x(i)
@@ -76,15 +72,15 @@ angular.module 'NotSoShitty.bdc'
       .scale(y)
       .orient("left")
       # display horizontal grids
-      .innerTickSize(-width)
+      .innerTickSize(-cfg.width)
       .outerTickSize(0)
 
       chart = bdcgraph.append("svg")
       .attr("class", "chart")
-      .attr("width", width + margin.left + margin.right)
-      .attr("height", height + margin.top + margin.bottom)
+      .attr("width", cfg.width + cfg.margins.left + cfg.margins.right)
+      .attr("height", cfg.height + cfg.margins.top + cfg.margins.bottom)
       .append("g")
-      .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+      .attr("transform", "translate(" + cfg.margins.left + "," + cfg.margins.top + ")")
 
       # define the shape of an arrowhead
       chart.append("defs").append("marker")
@@ -114,12 +110,12 @@ angular.module 'NotSoShitty.bdc'
       #Create the x-axis
       chart.append("g")
       .attr("class", "x axis")
-      .attr("transform", "translate(0," + height + ")")
+      .attr("transform", "translate(0," + cfg.height + ")")
       .call(xAxis)
       .call(adjustTextLabels)
       .append("text")
       .attr('class', 'daily')
-      .attr("transform", "translate(" + width + ", 25)")
+      .attr("transform", "translate(" + cfg.width + ", 25)")
       .attr("x", 20)
       .style("text-anchor", "end")
       .text("Daily meetings")
