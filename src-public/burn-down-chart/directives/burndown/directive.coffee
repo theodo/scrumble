@@ -8,9 +8,6 @@ angular.module 'NotSoShitty.bdc'
     maxWidth = 1000
     whRatio = 0.54
 
-    [first, ..., last] = scope.data
-    initialNumberOfPoints = last.standard
-
     computeDimensions = ->
       if window.innerWidth > maxWidth
         width = 800
@@ -42,108 +39,119 @@ angular.module 'NotSoShitty.bdc'
       render scope.data, config
 
     render = (data, cfg) ->
-      bdcgraph.select '*'
-      .remove()
+      [first, ..., last] = data
+      initialNumberOfPoints = last.standard
 
-      # I recommend using a linear scale and computing the day number
-      x = d3.time.scale().range([0, cfg.width])
-      y = d3.scale.linear().range([cfg.height, 0])
+      bdcgraph.select('*').remove()
+
+      x = d3.scale.linear() # x scale can't be d3.time because we don't want to display weekends
+      .domain [0, data.length]
+      .range [0, cfg.width]
+
+      y = d3.scale.linear()
+      .domain [
+        Math.min(0, initialNumberOfPoints - last.done)
+        initialNumberOfPoints
+      ]
+      .range [cfg.height, 0]
 
       standardLine = d3.svg.line()
       .x (d, i) -> x(i)
-      .y((d) -> y initialNumberOfPoints - d.standard)
+      .y (d) -> y initialNumberOfPoints - d.standard
+
       actualLine = d3.svg.line()
       .x (d, i) -> x(i)
-      .y((d) -> y initialNumberOfPoints - d.done)
-
-      x.domain [0, data.length]
-      y.domain d3.extent data, (d) -> d.standard
+      .y (d) -> y initialNumberOfPoints - d.done
 
       xAxis = d3.svg.axis()
-      .scale(x)
-      .orient("bottom")
-      .ticks(data.length - 1)
+      .scale x
+      .orient 'bottom'
+      .ticks data.length # number of ticks to display
       .tickFormat (d, i, j) ->
-        return "Start" if i == 0
         return unless data[i]?
+        return 'Start' if i == 0
         dateFormat = d3.time.format '%A'
         dateFormat data[i].date
 
       yAxis = d3.svg.axis()
-      .scale(y)
-      .orient("left")
-      # display horizontal grids
-      .innerTickSize(-cfg.width)
-      .outerTickSize(0)
+      .scale y
+      .orient 'left'
+      .innerTickSize -cfg.width # display horizontal grids
+      .outerTickSize 0
 
-      chart = bdcgraph.append("svg")
-      .attr("class", "chart")
-      .attr("width", cfg.width + cfg.margins.left + cfg.margins.right)
-      .attr("height", cfg.height + cfg.margins.top + cfg.margins.bottom)
-      .append("g")
-      .attr("transform", "translate(" + cfg.margins.left + "," + cfg.margins.top + ")")
+      chart = bdcgraph.append 'svg'
+      .attr 'class', 'chart'
+      .attr 'width', cfg.width + cfg.margins.left + cfg.margins.right
+      .attr 'height', cfg.height + cfg.margins.top + cfg.margins.bottom
+      .append 'g'
+      .attr 'transform', 'translate(' + cfg.margins.left + ',' + cfg.margins.top + ')'
 
       # define the shape of an arrowhead
-      chart.append("defs").append("marker")
-      .attr("id", "arrowhead")
-      .attr("markerWidth", "12")
-      .attr("markerHeight", "12")
-      .attr("viewBox", "-6 -6 12 12")
-      .attr("refX", "-2")
-      .attr("refY", "0")
-      .attr("markerUnits", "strokeWidth")
-      .attr("orient", "auto")
-      .append("polygon")
-      .attr("points", "-2,0 -5,5 5,0 -5,-5")
-      .attr("class", "arrowhead")
+      chart.append 'defs'
+      .append 'marker'
+      .attr 'id', 'arrowhead'
+      .attr 'markerWidth', '12'
+      .attr 'markerHeight', '12'
+      .attr 'viewBox', '-6 -6 12 12'
+      .attr 'refX', '-2'
+      .attr 'refY', '0'
+      .attr 'markerUnits', 'strokeWidth'
+      .attr 'orient', 'auto'
+      .append 'polygon'
+      .attr 'points', '-2,0 -5,5 5,0 -5,-5'
+      .attr 'class', 'arrowhead'
 
-      addArrow = (selection) ->
-        selection.selectAll('line')
-        .attr('marker-end', (d, i) ->
-          return if i > 0
+      addArrowHead = (selection) ->
+        selection.selectAll 'line'
+        .attr 'marker-end', (d, i) ->
+          return if i > 0 # the arrow is only for the first grid
           'url(#arrowhead)'
-        )
 
-      adjustTextLabels = (selection) ->
-        selection.selectAll('text')
-        .attr('transform', 'translate(0, 6)')
+      adjustDaysLabels = (selection) ->
+        selection.selectAll 'text'
+        .attr 'transform', 'translate(0, 6)'
 
-      #Create the x-axis
-      chart.append("g")
-      .attr("class", "x axis")
-      .attr("transform", "translate(0," + cfg.height + ")")
-      .call(xAxis)
-      .call(adjustTextLabels)
-      .append("text")
-      .attr('class', 'daily')
-      .attr("transform", "translate(" + cfg.width + ", 25)")
-      .attr("x", 20)
-      .style("text-anchor", "end")
-      .text("Daily meetings")
+      adjustPointsLabels = (selection) ->
+        selection.selectAll 'text'
+        .attr 'transform', 'translate(-6, 0)'
 
-      #  Create the y-axis
-      chart.append("g")
-      .attr("class", "y axis")
-      .call(yAxis)
-      .call(addArrow)
+      # display the x-axis
+      chart.append 'g'
+      .attr 'class', 'x axis'
+      .attr 'transform', 'translate(0,' + cfg.height + ')'
+      .call xAxis
+      .call adjustDaysLabels
+      .append 'text'
+      .attr 'class', 'daily'
+      .attr 'transform', 'translate(' + cfg.width + ', 25)'
+      .attr 'x', 20
+      .style 'text-anchor', 'end'
+      .text 'Daily meetings'
 
-      # Paint the standard line
-      chart.append("path")
+      # display the y-axis
+      chart.append 'g'
+      .attr 'class', 'y axis'
+      .call yAxis
+      .call adjustPointsLabels
+      .call addArrowHead
+
+      # display the standard line
+      chart.append('path')
       .attr 'class', 'standard'
       .attr 'd', standardLine data
       .attr 'stroke', cfg.color.standard
       .attr 'stroke-width', 2
       .attr 'fill', 'none'
 
-      # Paint the actual line
-      chart.append("path")
+      # display the actual line
+      chart.append 'path'
       .attr 'class', 'done-line'
       .attr 'd', actualLine (d for d in data when d.done?)
       .attr 'stroke', cfg.color.done
       .attr 'stroke-width', 2
       .attr 'fill', 'none'
 
-
+      # display standard dots
       chart.selectAll 'circle .standard-point'
       .data data
       .enter()
@@ -155,6 +163,7 @@ angular.module 'NotSoShitty.bdc'
       .attr 'fill', cfg.color.standard
 
 
+      # display done dots
       chart.selectAll 'circle .done-point'
       .data (d for d in data when d.done?)
       .enter()
@@ -165,16 +174,11 @@ angular.module 'NotSoShitty.bdc'
       .attr 'r', 4
       .attr 'fill', cfg.color.done
 
-      # this in order for svg to canvas to work
-      d3.selectAll '.tick text'
-      .attr 'font-size', '16px'
-
       # display difference
       chart.selectAll 'text .done-values'
       .data data
       .enter()
       .append 'text'
-      .attr 'class', 'done-values'
       .attr 'font-size', '16px'
       .attr 'class', (d, i) ->
         return unless d.done? or i == 0

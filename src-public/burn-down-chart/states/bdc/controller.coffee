@@ -23,6 +23,6 @@ angular.module 'NotSoShitty.bdc'
   ,
     date: new Date(2015,12,8)
     standard: 40
-    done: 38
+    done: 45
   ]
   return
