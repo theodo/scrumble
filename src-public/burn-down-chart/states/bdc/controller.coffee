@@ -1,16 +1,28 @@
 angular.module 'NotSoShitty.bdc'
 .controller 'BurnDownChartCtrl', ($scope, BDCDataProvider) ->
   $scope.tableData = [
-    label: 'Daily du Mercredi'
+    date: new Date(2015,12,1)
     standard: 0
     done: 0
   ,
-    label: 'Daily du Jeudi'
+    date: new Date(2015,12,2)
     standard: 8
     done: 12
   ,
-    label: 'Daily du Vendredi'
+    date: new Date(2015,12,3)
     standard: 16
-    done: 20
+    done: 13
+  ,
+    date: new Date(2015,12,6)
+    standard: 22
+    done: 24
+  ,
+    date: new Date(2015,12,7)
+    standard: 30
+    done: 28
+  ,
+    date: new Date(2015,12,8)
+    standard: 40
+    done: 38
   ]
   return
