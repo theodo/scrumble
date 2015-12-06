@@ -33,6 +33,7 @@ angular.module 'NotSoShitty.bdc'
           bad: '#FA6E69'
           labels: '#113F59'
         startLabel: 'Start'
+        endLabel: 'End'
         dateFormat: '%A'
         xTitle: 'Daily meetings'
         dotRadius: 4
@@ -46,7 +47,7 @@ angular.module 'NotSoShitty.bdc'
 
     window.onresize = ->
       config = computeDimensions()
-      render scope.data, config
+      renderBDC scope.data, config
 
     scope.$watch 'data', (data) ->
       return unless data
