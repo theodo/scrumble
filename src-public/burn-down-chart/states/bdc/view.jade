@@ -8,7 +8,6 @@ md-card.md-whiteframe-z2.bdc-table
           th(name="Day")
           th(name="Standard")
           th(name="Done")
-          th(name="")
       tbody
         tr(ng-repeat="day in tableData" ng-class="{'md-selected': currentDayIndex == $index}")
           td {{ day.date | date : 'EEEE' }}
@@ -17,9 +16,5 @@ md-card.md-whiteframe-z2.bdc-table
             md-input-container(flex)
               label Done
               input(ng-model="day.done")
-          td
-            md-button.md-raised.md-primary(
-              ng-if="currentDayIndex == $index"
-              ng-click="fetchTrelloDonePoints()"
-            ) Fetch from Trello
-  md-button.md-raised.md-primary(ng-click="goToNextDay()" ng-disabled="!tableData[currentDayIndex].done") Go to next day
+            .bbb(ng-if="currentDayIndex == $index") (fetched from Trello)
+  md-button.md-raised.md-primary(ng-click="save()") Save

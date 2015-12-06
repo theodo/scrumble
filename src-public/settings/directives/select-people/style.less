@@ -5,10 +5,13 @@ select-people {
     input[type="checkbox"] {
       display: none;
     }
-    border-bottom: transparent solid 3px;
-    &.selected {
-      border-bottom: @select-color solid 3px;
-      // background-color: red;
+
+    img {
+      border: transparent solid 4px;
+
+    }
+    &.selected img {
+      border: solid 2px rgb(229,115,115);
     }
     label {
       width: 100%;

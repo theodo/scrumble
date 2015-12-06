@@ -19,12 +19,9 @@ angular.module 'NotSoShitty.bdc'
       return i unless day.done?
   $scope.currentDayIndex = getCurrentDayIndex $scope.tableData
 
-  $scope.goToNextDay = ->
-    return unless $scope.tableData[$scope.currentDayIndex].done?
+  $scope.save = ->
     settings.save().then ->
-      return if $scope.currentDayIndex >= $scope.tableData.length
-      $scope.currentDayIndex += 1
+      $scope.currentDayIndex = getCurrentDayIndex $scope.tableData
 
-  $scope.fetchTrelloDonePoints = ->
-    $scope.tableData[$scope.currentDayIndex].done = BDCDataProvider.getDonePoints doneCards
+  $scope.tableData[$scope.currentDayIndex].done = BDCDataProvider.getDonePoints doneCards
   return
