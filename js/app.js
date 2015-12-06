@@ -437,20 +437,12 @@ angular.module('NotSoShitty.bdc').controller('BurnDownChartCtrl', function($scop
     }
   };
   $scope.currentDayIndex = getCurrentDayIndex($scope.tableData);
-  $scope.goToNextDay = function() {
-    if ($scope.tableData[$scope.currentDayIndex].done == null) {
-      return;
-    }
+  $scope.save = function() {
     return settings.save().then(function() {
-      if ($scope.currentDayIndex >= $scope.tableData.length) {
-        return;
-      }
-      return $scope.currentDayIndex += 1;
+      return $scope.currentDayIndex = getCurrentDayIndex($scope.tableData);
     });
   };
-  $scope.fetchTrelloDonePoints = function() {
-    return $scope.tableData[$scope.currentDayIndex].done = BDCDataProvider.getDonePoints(doneCards);
-  };
+  $scope.tableData[$scope.currentDayIndex].done = BDCDataProvider.getDonePoints(doneCards);
 });
 
 angular.module('NotSoShitty.common').directive('nssRound', function() {

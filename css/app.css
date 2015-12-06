@@ -15,6 +15,10 @@ burndown {
   margin-bottom: 50px;
 }
 
+trello-avatar {
+  display: inline-block;
+  margin: 5px;
+}
 trello-avatar .trello-avatar {
   vertical-align: top;
   display: inline-block;
@@ -66,19 +70,18 @@ resources-by-day .row-avatar {
   font-weight: bold;
   color: gray;
 }
-.team-composition .team trello-avatar .member-avatar {
-  border-radius: 50%;
-}
 
 select-people .member-select {
   display: inline-block;
-  border-bottom: transparent solid 3px;
 }
 select-people .member-select input[type="checkbox"] {
   display: none;
 }
-select-people .member-select.selected {
-  border-bottom: #aa00ff solid 3px;
+select-people .member-select img {
+  border: transparent solid 4px;
+}
+select-people .member-select.selected img {
+  border: solid 2px #e57373;
 }
 select-people .member-select label {
   width: 100%;
