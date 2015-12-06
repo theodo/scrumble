@@ -1,7 +1,7 @@
 'use strict';
 var app;
 
-app = angular.module('NotSoShitty', ['ng', 'ngResource', 'ngAnimate', 'ngMaterial', 'ui.router', 'app.templates', 'Parse', 'LocalStorageModule', 'satellizer', 'permission', 'trello-api-client', 'NotSoShitty.login', 'NotSoShitty.settings', 'NotSoShitty.storage', 'NotSoShitty.bdc', 'NotSoShitty.common', 'NotSoShitty.daily-report']);
+app = angular.module('NotSoShitty', ['ng', 'ngResource', 'ngAnimate', 'ngMaterial', 'md.data.table', 'ui.router', 'app.templates', 'Parse', 'LocalStorageModule', 'satellizer', 'permission', 'trello-api-client', 'NotSoShitty.login', 'NotSoShitty.settings', 'NotSoShitty.storage', 'NotSoShitty.bdc', 'NotSoShitty.common', 'NotSoShitty.daily-report']);
 
 app.config(function($locationProvider, $urlRouterProvider, ParseProvider) {
   $locationProvider.hashPrefix('!');
@@ -46,12 +46,34 @@ angular.module('NotSoShitty.bdc').config(function($stateProvider) {
   return $stateProvider.state('burn-down-chart', {
     url: '/burn-down-chart',
     controller: 'BurnDownChartCtrl',
-    templateUrl: 'burn-down-chart/states/bdc/view.html'
+    templateUrl: 'burn-down-chart/states/bdc/view.html',
+    resolve: {
+      settings: function(UserBoardStorage, SettingsStorage) {
+        return UserBoardStorage.getBoardId().then(function(boardId) {
+          return SettingsStorage.get(boardId);
+        })["catch"](function(err) {
+          return null;
+        });
+      },
+      doneCards: function(UserBoardStorage, SettingsStorage, TrelloClient) {
+        return UserBoardStorage.getBoardId().then(function(boardId) {
+          return SettingsStorage.get(boardId);
+        }).then(function(response) {
+          return response.data;
+        }).then(function(settings) {
+          return TrelloClient.get('/lists/' + settings.columnIds.done + '/cards?fields=name');
+        }).then(function(response) {
+          return response.data;
+        })["catch"](function(err) {
+          return null;
+        });
+      }
+    }
   });
 });
 
 angular.module('NotSoShitty.bdc').factory('BDCDataProvider', function() {
-  var generateData, getCardPoints, getDoneBetweenDays, hideFuture;
+  var getCardPoints, getDonePoints, initializeBDC;
   getCardPoints = function(card) {
     var match, matchVal, value, _i, _len;
     if (!card.name) {
@@ -69,94 +91,33 @@ angular.module('NotSoShitty.bdc').factory('BDCDataProvider', function() {
     }
     return value;
   };
-  getDoneBetweenDays = function(doneCards, start, end, lastDay, dailyHour) {
-    var card, donePoints, endDate, startDate, _i, _len;
-    if (!end) {
-      return;
-    }
-    if (dailyHour == null) {
-      dailyHour = 10;
-    }
-    if (lastDay) {
-      endDate = moment();
-    } else {
-      endDate = moment(end.date);
-    }
-    endDate.add(1, 'days').hour(dailyHour);
-    if (start != null) {
-      startDate = moment(start.date).add(1, 'days').hour(dailyHour);
-    }
-    donePoints = 0;
-    for (_i = 0, _len = doneCards.length; _i < _len; _i++) {
-      card = doneCards[_i];
-      if (card.movedDate) {
-        if (moment(card.movedDate).isBefore(endDate)) {
-          if (startDate) {
-            if (moment(card.movedDate).isAfter(startDate)) {
-              donePoints += getCardPoints(card);
-            }
-          } else if (!start) {
-            donePoints += getCardPoints(card);
-          }
-        }
-      }
-    }
-    return donePoints;
+  getDonePoints = function(doneCards) {
+    return _.sum(doneCards, getCardPoints);
   };
-  hideFuture = function(value, day, today) {
-    if (isNaN(value)) {
-      return;
-    }
-    if (moment(today).isBefore(moment(day.date).add(1, 'days'))) {
-      return;
-    }
-    return value;
-  };
-  generateData = function(cards, days, resources, dayPlusOne, dailyHour) {
-    var data, day, diff, donePoints, doneToday, i, ideal, manDays, previousDay, today, _i, _len;
-    if (!(cards && days && resources)) {
-      return;
-    }
-    data = [];
-    ideal = resources.speed * resources.totalManDays;
-    doneToday = 0;
-    diff = 0;
-    today = Date().toString();
-    if (dayPlusOne) {
-      today = moment(today).add(1, 'days').toString();
-    }
-    data.push({
-      day: 'Start',
-      standard: ideal,
-      done: 0,
-      left: ideal,
-      diff: 0
-    });
-    previousDay = void 0;
+  initializeBDC = function(days, resources) {
+    var bdc, day, i, standard, _i, _len;
+    standard = 0;
+    bdc = [];
     for (i = _i = 0, _len = days.length; _i < _len; i = ++_i) {
       day = days[i];
-      manDays = _.reduce(resources.matrix[i], function(s, n) {
-        return s + n;
+      bdc.push({
+        date: moment(day.date).toDate(),
+        standard: standard,
+        done: null
       });
-      donePoints = getDoneBetweenDays(cards, days[i - 1], day, i >= days.length - 1, dailyHour);
-      ideal = ideal - resources.speed * manDays;
-      doneToday += donePoints;
-      diff = ideal - (resources.totalPoints - doneToday);
-      data.push({
-        day: day.label,
-        done: donePoints,
-        manDays: manDays,
-        standard: ideal,
-        left: hideFuture(resources.totalPoints - doneToday, day, today),
-        diff: hideFuture(diff, day, today)
-      });
-      previousDay = day;
+      standard += _.sum(resources.matrix[i]) * resources.speed;
     }
-    return data;
+    bdc.push({
+      date: moment(day.date).add(1, 'days').toDate(),
+      standard: standard,
+      done: null
+    });
+    return bdc;
   };
   return {
-    generateData: generateData,
-    getCardPoints: getCardPoints
+    getCardPoints: getCardPoints,
+    initializeBDC: initializeBDC,
+    getDonePoints: getDonePoints
   };
 });
 
@@ -310,23 +271,25 @@ angular.module('NotSoShitty.storage').factory('UserBoard', function(Parse) {
   })(Parse.Model);
 });
 
-angular.module('NotSoShitty.storage').service('SettingsStorage', function(Settings) {
+angular.module('NotSoShitty.storage').service('SettingsStorage', function(Settings, $q) {
   return {
     get: function(boardId) {
-      if (boardId == null) {
-        return null;
+      var deferred;
+      deferred = $q.defer();
+      if (boardId != null) {
+        Settings.query({
+          where: {
+            boardId: boardId
+          }
+        }).then(function(settingsArray) {
+          var settings;
+          settings = settingsArray.length > 0 ? settingsArray[0] : null;
+          return deferred.resolve(settings);
+        })["catch"](deferred.reject);
+      } else {
+        deferred.reject('No boardId');
       }
-      return Settings.query({
-        where: {
-          boardId: boardId
-        }
-      }).then(function(settingsArray) {
-        if (settingsArray.length > 0) {
-          return settingsArray[0];
-        } else {
-          return null;
-        }
-      });
+      return deferred.promise;
     }
   };
 });
@@ -393,7 +356,7 @@ angular.module('NotSoShitty.bdc').directive('burndown', function() {
     },
     templateUrl: 'burn-down-chart/directives/burndown/view.html',
     link: function(scope, elem, attr) {
-      var bdcgraph, computeDimensions, config, maxWidth, render, whRatio;
+      var computeDimensions, config, maxWidth, whRatio;
       maxWidth = 1000;
       whRatio = 0.54;
       computeDimensions = function() {
@@ -409,161 +372,85 @@ angular.module('NotSoShitty.bdc').directive('burndown', function() {
           width = height / whRatio;
         }
         config = {
+          containerId: '#bdcgraph',
           width: width,
           height: height,
           margins: {
             top: 20,
             right: 70,
-            bottom: 20,
+            bottom: 30,
             left: 50
           },
-          tickSize: 5,
-          color: {
+          colors: {
             standard: '#D93F8E',
-            done: '#5AA6CB'
-          }
+            done: '#5AA6CB',
+            good: '#97D17A',
+            bad: '#FA6E69',
+            labels: '#113F59'
+          },
+          startLabel: 'Start',
+          endLabel: 'End',
+          dateFormat: '%A',
+          xTitle: 'Daily meetings',
+          dotRadius: 4,
+          standardStrokeWidth: 2,
+          doneStrokeWidth: 2,
+          goodSuffix: ' :)',
+          badSuffix: ' :('
         };
         return config;
       };
       config = computeDimensions();
-      bdcgraph = d3.select('#bdcgraph');
       window.onresize = function() {
         config = computeDimensions();
-        return render(scope.data, config);
-      };
-      render = function(data, cfg) {
-        var drawDoneLine, drawStandardLine, drawValues, drawZero, vis, xAxis, xRange, yAxis, yRange;
-        bdcgraph.select('*').remove();
-        vis = bdcgraph.append('svg').attr('width', cfg.width).attr('height', cfg.height);
-        xRange = d3.scale.linear().range([cfg.margins.left, cfg.width - cfg.margins.right]).domain([
-          d3.min(data, function(d, i) {
-            return i + 1;
-          }), d3.max(data, function(d, i) {
-            return i + 1;
-          })
-        ]);
-        yRange = d3.scale.linear().range([cfg.height - cfg.margins.bottom, cfg.margins.top]).domain([
-          d3.min(data, function(d, i) {
-            if (d.left) {
-              return (Math.min(d.standard, d.left)) - 1;
-            } else {
-              return d.standard - 1;
-            }
-          }), d3.max(data, function(d, i) {
-            return d.standard + 4;
-          })
-        ]);
-        xAxis = d3.svg.axis().scale(xRange).tickSize(0).ticks(data.length).tickFormat(function(d) {
-          return data[d - 1].day;
-        });
-        yAxis = d3.svg.axis().scale(yRange).tickSize(0).orient('left').tickSubdivide(true).tickFormat(function(d) {
-          return d;
-        });
-        vis.append('svg:g').attr('class', 'x axis').attr('transform', 'translate(0,' + (yRange(0)) + ')').attr('fill', '#000000').call(xAxis);
-        vis.append('svg:g').attr('class', 'y axis').attr('transform', 'translate(' + cfg.margins.left + ',0)').attr('fill', '#000000').call(yAxis);
-        d3.selectAll('.tick text').attr('font-size', '16px');
-        drawZero = d3.svg.line().x(function(d, i) {
-          return xRange(i + 1);
-        }).y(function(d) {
-          return yRange(0);
-        }).interpolate('linear');
-        vis.append('svg:path').attr('class', 'axis').attr('d', drawZero(data)).attr('stroke', cfg.color.done).attr('stroke-width', 1).attr('fill', 'none');
-        drawStandardLine = function(color) {
-          var drawStandard, standardArray;
-          standardArray = _.filter(data, function(d) {
-            return d.standard != null;
-          });
-          standardArray = _.map(standardArray, function(d) {
-            return d.standard;
-          });
-          drawStandard = d3.svg.line().x(function(d, i) {
-            return xRange(i + 1);
-          }).y(function(d) {
-            return yRange(d);
-          }).interpolate('linear');
-          vis.append('svg:path').attr('class', 'standard').attr('d', drawStandard(standardArray)).attr('stroke', color).attr('stroke-width', 2).attr('fill', 'none');
-          return vis.selectAll('circle .standard-point').data(data).enter().append('circle').attr('class', 'standard-point').attr('cx', function(d, i) {
-            return xRange(i + 1);
-          }).attr('cy', function(d) {
-            return yRange(d.standard);
-          }).attr('r', 4).attr('fill', cfg.color.standard);
-        };
-        drawDoneLine = function(color) {
-          var drawLine, values, valuesArray;
-          values = _.filter(data, function(d) {
-            return d.left != null;
-          });
-          valuesArray = _.map(values, function(d) {
-            return d.left;
-          });
-          drawLine = d3.svg.line().x(function(d, i) {
-            return xRange(i + 1);
-          }).y(function(d) {
-            return yRange(d);
-          }).interpolate('linear');
-          vis.append('svg:path').attr('class', 'done-line').attr('d', drawLine(valuesArray)).attr('stroke', color).attr('stroke-width', 2).attr('fill', 'none');
-          return vis.selectAll('circle .done-point').data(values).enter().append('circle').attr('class', 'done-point').attr('cx', function(d, i) {
-            return xRange(i + 1);
-          }).attr('cy', function(d) {
-            if (d.left == null) {
-              return;
-            }
-            return yRange(d.left);
-          }).attr('r', 4).attr('fill', cfg.color.done);
-        };
-        drawValues = function(color) {
-          var values;
-          values = _.filter(data, function(d) {
-            return (d.left != null) && (d.standard != null) && (d.diff != null);
-          });
-          return vis.selectAll('text .done-values').data(values).enter().append('text').attr('class', 'done-values').attr('font-size', '16px').attr('class', function(d) {
-            if (d.diff >= 0) {
-              return 'good done-values';
-            } else {
-              return 'bad done-values';
-            }
-          }).attr('x', function(d, i) {
-            return xRange(i + 1);
-          }).attr('y', function(d) {
-            return -10 + yRange(Math.max(d.standard, d.left));
-          }).attr('fill', cfg.color.done).attr('text-anchor', 'start').text(function(d) {
-            if (d.diff >= 0) {
-              return '+' + d.diff.toPrecision(2) + ' :)';
-            } else {
-              return d.diff.toPrecision(2) + ' :(';
-            }
-          });
-        };
-        drawStandardLine(cfg.color.standard);
-        drawDoneLine(cfg.color.done);
-        return drawValues();
+        return renderBDC(scope.data, config);
       };
       return scope.$watch('data', function(data) {
         if (!data) {
           return;
         }
-        return render(data, config);
-      });
+        return renderBDC(data, config);
+      }, true);
     }
   };
 });
 
-angular.module('NotSoShitty.bdc').controller('BurnDownChartCtrl', function($scope, BDCDataProvider) {
-  $scope.days = [
-    {
-      label: 'Daily du Mercredi',
-      standard: 10,
-      done: 12
-    }, {
-      label: 'Daily du Jeudi',
-      standard: 10,
-      done: 12
-    }, {
-      label: 'Daily du Vendredi',
-      standard: 10,
-      done: 12
+angular.module('NotSoShitty.bdc').controller('BurnDownChartCtrl', function($scope, BDCDataProvider, settings, doneCards) {
+  var day, getCurrentDayIndex, _i, _len, _ref;
+  if (settings.data.bdc != null) {
+    _ref = settings.data.bdc;
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      day = _ref[_i];
+      day.date = moment(day.date).toDate();
     }
-  ];
+  } else {
+    settings.data.bdc = BDCDataProvider.initializeBDC(settings.data.dates.days, settings.data.resources);
+  }
+  $scope.tableData = settings.data.bdc;
+  getCurrentDayIndex = function(bdcData) {
+    var i, _j, _len1;
+    for (i = _j = 0, _len1 = bdcData.length; _j < _len1; i = ++_j) {
+      day = bdcData[i];
+      if (day.done == null) {
+        return i;
+      }
+    }
+  };
+  $scope.currentDayIndex = getCurrentDayIndex($scope.tableData);
+  $scope.goToNextDay = function() {
+    if ($scope.tableData[$scope.currentDayIndex].done == null) {
+      return;
+    }
+    return settings.save().then(function() {
+      if ($scope.currentDayIndex >= $scope.tableData.length) {
+        return;
+      }
+      return $scope.currentDayIndex += 1;
+    });
+  };
+  $scope.fetchTrelloDonePoints = function() {
+    return $scope.tableData[$scope.currentDayIndex].done = BDCDataProvider.getDonePoints(doneCards);
+  };
 });
 
 angular.module('NotSoShitty.common').directive('nssRound', function() {

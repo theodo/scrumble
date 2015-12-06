@@ -4,53 +4,15 @@ md-content {
 .column-width-80 {
   width: 80%;
 }
-
 burndown {
-  position: relative;
-  width: 100%;
+  text-align: center;
 }
-#bdcgraph svg text {
-  font-size: small;
+.bdc-container {
+  margin-top: 40px;
 }
-#bdcgraph svg .axis path,
-#bdcgraph svg .axis line {
-  fill: none;
-  stroke: rgba(0, 1, 0, 0.2);
-  color: rgba(0, 1, 0, 0.5);
-  shape-rendering: crispEdges;
-}
-#bdcgraph svg .x .domain {
-  stroke: rgba(0, 0, 0, 0);
-}
-#bdcgraph svg path.standard {
-  stroke: #d54f58;
-  stroke-dasharray: 10 5;
-}
-#bdcgraph svg .tick text,
-#bdcgraph svg text {
-  fill: #113f59;
-}
-#bdcgraph svg .tick text.standard-legend,
-#bdcgraph svg text.standard-legend,
-#bdcgraph svg .tick text.jh-legend,
-#bdcgraph svg text.jh-legend,
-#bdcgraph svg .tick text.jhmep-legend,
-#bdcgraph svg text.jhmep-legend {
-  fill: #113f59;
-}
-#bdcgraph svg rect.done,
-#bdcgraph svg text.done {
-  fill: #19bec0;
-}
-#bdcgraph svg rect.standard,
-#bdcgraph svg text.standard {
-  fill: #d54f58;
-}
-#bdcgraph svg text.done-values.good {
-  fill: #97d17a;
-}
-#bdcgraph svg text.done-values.bad {
-  fill: #fa6e69;
+.bdc-table {
+  margin-top: 20px;
+  margin-bottom: 50px;
 }
 
 trello-avatar .trello-avatar {
