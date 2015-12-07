@@ -124,11 +124,28 @@ angular.module('NotSoShitty.bdc').factory('BDCDataProvider', function() {
 angular.module('NotSoShitty.daily-report').config(function($stateProvider) {
   return $stateProvider.state('daily-report', {
     url: '/daily-report',
-    templateUrl: 'daily-report/states/view.html'
+    templateUrl: 'daily-report/states/view.html',
+    controller: 'DailyReportCtrl',
+    resolve: {
+      dailyMail: function(UserBoardStorage, DailyMailStorage) {
+        return UserBoardStorage.getBoardId().then(function(boardId) {
+          return DailyMailStorage.get(boardId);
+        });
+      }
+    }
   });
 });
 
-angular.module('NotSoShitty.daily-report').controller('DailyReportCtrl', function($scope) {});
+angular.module('NotSoShitty.daily-report').controller('DailyReportCtrl', function($scope, dailyMail, DailyMail, $mdToast) {
+  $scope.dailyReport = dailyMail;
+  $scope.save = function() {
+    var saveFeedback;
+    saveFeedback = $mdToast.simple().hideDelay(1000).position('top right').content('Saved!');
+    return $scope.dailyReport.save().then(function() {
+      return $mdToast.show(saveFeedback);
+    });
+  };
+});
 
 angular.module('NotSoShitty.login').run(function(Permission, $auth, $q) {
   return Permission.defineRole('trello-authenticated', function() {
@@ -236,6 +253,25 @@ angular.module('NotSoShitty.settings').service('Computer', function() {
 var __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
+angular.module('NotSoShitty.storage').factory('DailyMail', function(Parse) {
+  var DailyMail;
+  return DailyMail = (function(_super) {
+    __extends(DailyMail, _super);
+
+    function DailyMail() {
+      return DailyMail.__super__.constructor.apply(this, arguments);
+    }
+
+    DailyMail.configure("DailyMail", "boardId", "to", "cc", "subject", "body");
+
+    return DailyMail;
+
+  })(Parse.Model);
+});
+
+var __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
 angular.module('NotSoShitty.storage').factory('Settings', function(Parse) {
   var Settings;
   return Settings = (function(_super) {
@@ -269,6 +305,36 @@ angular.module('NotSoShitty.storage').factory('UserBoard', function(Parse) {
     return UserBoard;
 
   })(Parse.Model);
+});
+
+angular.module('NotSoShitty.storage').service('DailyMailStorage', function(DailyMail, $q) {
+  return {
+    get: function(boardId) {
+      var deferred;
+      deferred = $q.defer();
+      if (boardId != null) {
+        DailyMail.query({
+          where: {
+            boardId: boardId
+          }
+        }).then(function(response) {
+          var dailyMail;
+          if (response.length > 0) {
+            return deferred.resolve(response[0]);
+          } else {
+            dailyMail = new DailyMail();
+            dailyMail.boardId = boardId;
+            return dailyMail.save().then(function(object) {
+              return deferred.resolve(object);
+            });
+          }
+        })["catch"](deferred.reject);
+      } else {
+        deferred.reject('No boardId');
+      }
+      return deferred.promise;
+    }
+  };
 });
 
 angular.module('NotSoShitty.storage').service('SettingsStorage', function(Settings, $q) {
