@@ -26,3 +26,10 @@ angular.module 'NotSoShitty.bdc'
           response.data
         .catch (err) ->
           return null
+  .state 'new-sprint',
+    url: '/sprint/new'
+    controller: 'NewSprintCtrl'
+    templateUrl: 'burn-down-chart/states/new-sprint/view.html'
+    resolve:
+      boardId: (UserBoardStorage) ->
+        UserBoardStorage.getBoardId()

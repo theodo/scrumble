@@ -1,0 +1,33 @@
+div.sprint-body(layout="row" layout-align="center end")
+  md-card.layout-padding(flex="80")
+    h2.md-title(layout-align="center end") NEW SPRINT
+    md-input-container
+      label Sprint Number
+      input(ng-model="sprint.number" ng-change="save()")
+    md-input-container
+      label Select the done column
+      md-select(ng-model="settings.columnIds.done" ng-change="save()")
+        md-option(ng-value="column.id" ng-repeat="column in boardLists") {{ column.name }}
+    div(flex)
+      md-datepicker(ng-model="sprint.dates.start", md-placeholder="Start Date")
+      md-datepicker(ng-model="sprint.dates.end", md-placeholder="End date")
+    .man-days(
+      ng-if="sprint.dates.days"
+    ) 
+      resources-by-day(
+        days="sprint.dates.days"
+        matrix="sprint.resources.matrix"
+        members="devTeam"
+      )
+      md-input-container
+        label Total sprint points
+        input(
+          nss-round
+          ng-model="sprint.resources.totalPoints"
+        )
+      md-input-container
+        label Sprint speed
+        input(
+          nss-round
+          ng-model="sprint.resources.speed"
+        )

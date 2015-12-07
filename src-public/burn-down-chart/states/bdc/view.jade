@@ -18,3 +18,6 @@ md-card.md-whiteframe-z2.bdc-table
               input(ng-model="day.done")
             .bbb(ng-if="currentDayIndex == $index") (fetched from Trello)
   md-button.md-raised.md-primary(ng-click="save()") Save
+md-button.md-fab.md-primary.new-sprint-fab(ui-sref="new-sprint")
+  md-icon(md-svg-icon="plus")
+  md-tooltip(md-direction="top") Create a new sprint

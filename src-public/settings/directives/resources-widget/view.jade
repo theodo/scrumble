@@ -24,34 +24,3 @@ hr
       members="boardMembers"
       selected-members="team.rest"
     )
-h4 Choose your sprint's start and end dates
-md-content
-  label
-    span Start day
-    md-datepicker(ng-model='dates.start', md-placeholder='Enter date')
-  label
-    span End day
-    md-datepicker(ng-model='dates.end', md-placeholder='Enter date')
-  .man-days(
-    ng-if="dates.days"
-  ) 
-h4 Setup your sprint resources
-p TOTAL MAN-DAYS: {{ resources.totalManDays }}
-resources-by-day(
-  days="dates.days"
-  matrix="resources.matrix"
-  members="team.dev"
-)
-p Sprint points and speed:
-md-input-container
-  label Total sprint points
-  input(
-    nss-round
-    ng-model="resources.totalPoints"
-  )
-md-input-container
-  label Sprint speed
-  input(
-    nss-round
-    ng-model="resources.speed"
-  )
