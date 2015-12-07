@@ -9,20 +9,17 @@ html(lang="en", ng-app="NotSoShitty")
     link(rel="icon", type="image/x-icon", href="/favicon.ico")
   body
     md-content
-      md-toolbar.md-tall(layout='row', layout-align='center end')
-        div(flex='', flex-sm='100', flex-gt-sm='95', flex-gt-md='80', layout='column')
-          span(layout='row')
-            md-button.menu(hide-gt-sm='', aria-label='Show User List')
-              md-icon(md-svg-icon='menu')
-            h2  Not So Shitty
-          span(flex='')
-          md-tabs.md-primary.md-hue-2(md-stretch-tabs='always')
-            md-tab(data-ui-sref="settings")
-              md-tab-label  Settings
-            md-tab(data-ui-sref="burn-down-chart")
-              md-tab-label  Burn Down Chart
-            md-tab(data-ui-sref="daily-report")
-              md-tab-label  Daily Mail
+      md-toolbar
+        .md-toolbar-tools
+          h2
+            span Not So Shitty
+      md-tabs.md-primary.md-hue-2
+        md-tab(data-ui-sref="settings")
+          md-tab-label  Settings
+        md-tab(data-ui-sref="burn-down-chart")
+          md-tab-label  Burn Down Chart
+        md-tab(data-ui-sref="daily-report")
+          md-tab-label  Daily Mail
       //- profil-info
 
       main.container(ui-view)

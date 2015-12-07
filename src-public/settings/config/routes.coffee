@@ -11,6 +11,7 @@ angular.module 'NotSoShitty.settings'
           return null unless boardId?
           SettingsStorage.get(boardId).then (settings) ->
             return settings
+
       boards: (TrelloClient) ->
         TrelloClient.get('/members/me/boards').then (response) ->
           return response.data

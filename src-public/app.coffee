@@ -5,6 +5,7 @@ app = angular.module 'NotSoShitty', [
   'ngResource'
   'ngAnimate'
   'ngMaterial'
+  'md.data.table' # soon included in ngMaterial
   'ui.router'
   # 'ui.bootstrap'
   'app.templates'

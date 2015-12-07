@@ -19,6 +19,7 @@ gulp.task 'vendor', (done) ->
     'bower_components/lodash/lodash.js'
     'bower_components/d3/d3.min.js'
     'bower_components/d3-bdc/dist/d3-bdc.js'
+    'bower_components/angular-material-data-table/dist/md-data-table.min.js' # should be included soon in angular-material
   ]
   .pipe(concat('vendor.js'))
   .on 'error', gutil.log
