@@ -9,28 +9,8 @@ angular.module 'NotSoShitty.bdc'
         value = parseFloat(matchVal, 10) unless isNaN(parseFloat(matchVal, 10))
     value
 
-  getDoneBetweenDays = (doneCards, start, end, lastDay, dailyHour) ->
-    return unless end
-    dailyHour ?= 10
-    # console.log 'getDoneBetweenDays :', start, end
-    if lastDay
-      endDate = moment()
-    else
-      endDate = moment(end.date)
-    endDate.add(1, 'days').hour(dailyHour)
-    if start?
-      startDate = moment(start.date).add(1, 'days').hour(dailyHour)
-    donePoints = 0
-    for card in doneCards
-      if card.movedDate
-        if moment(card.movedDate).isBefore(endDate)
-          if startDate
-            if moment(card.movedDate).isAfter(startDate)
-              donePoints += getCardPoints card
-          else if not start
-            donePoints += getCardPoints card
-    # console.log donePoints + ' between ' + start?.label + ' and ' + end.label
-    donePoints
+  getDonePoints = (doneCards) ->
+    _.sum doneCards, getCardPoints
 
   hideFuture = (value, day, today) ->
     return if isNaN value
