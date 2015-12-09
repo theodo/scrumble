@@ -719,58 +719,6 @@ angular.module('NotSoShitty.settings').directive('resourcesByDay', function() {
   };
 });
 
-angular.module('NotSoShitty.settings').controller('SelectPeopleCtrl', function($scope) {
-  if ($scope.teamCheck == null) {
-    $scope.teamCheck = {};
-  }
-  $scope.check = function() {
-    var checked, key, team, _ref;
-    team = [];
-    _ref = $scope.teamCheck;
-    for (key in _ref) {
-      checked = _ref[key];
-      if (checked) {
-        team.push(_.find($scope.members, function(member) {
-          return member.id === key;
-        }));
-      }
-    }
-    return $scope.selectedMembers = team;
-  };
-  return $scope.$watch('selectedMembers', function(newVal) {
-    var member, _i, _len, _ref, _results;
-    if (!newVal) {
-      return;
-    }
-    if (newVal.length > 0) {
-      if ($scope.teamCheck == null) {
-        $scope.teamCheck = {};
-      }
-      _ref = $scope.selectedMembers;
-      _results = [];
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        member = _ref[_i];
-        _results.push($scope.teamCheck[member.id] = true);
-      }
-      return _results;
-    } else {
-      return $scope.teamCheck = {};
-    }
-  });
-});
-
-angular.module('NotSoShitty.settings').directive('selectPeople', function() {
-  return {
-    restrict: 'E',
-    templateUrl: 'project/directives/select-people/view.html',
-    scope: {
-      members: '=',
-      selectedMembers: '='
-    },
-    controller: 'SelectPeopleCtrl'
-  };
-});
-
 angular.module('NotSoShitty.settings').controller('SettingsCtrl', function($scope, $timeout, $q, boards, TrelloClient, localStorageService, $mdToast, Project, user) {
   var fetchBoardData, project, promise, saveFeedback;
   $scope.boards = boards;
@@ -849,6 +797,58 @@ angular.module('NotSoShitty.settings').controller('SettingsCtrl', function($scop
         });
       });
     }, 2000);
+  };
+});
+
+angular.module('NotSoShitty.settings').controller('SelectPeopleCtrl', function($scope) {
+  if ($scope.teamCheck == null) {
+    $scope.teamCheck = {};
+  }
+  $scope.check = function() {
+    var checked, key, team, _ref;
+    team = [];
+    _ref = $scope.teamCheck;
+    for (key in _ref) {
+      checked = _ref[key];
+      if (checked) {
+        team.push(_.find($scope.members, function(member) {
+          return member.id === key;
+        }));
+      }
+    }
+    return $scope.selectedMembers = team;
+  };
+  return $scope.$watch('selectedMembers', function(newVal) {
+    var member, _i, _len, _ref, _results;
+    if (!newVal) {
+      return;
+    }
+    if (newVal.length > 0) {
+      if ($scope.teamCheck == null) {
+        $scope.teamCheck = {};
+      }
+      _ref = $scope.selectedMembers;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        member = _ref[_i];
+        _results.push($scope.teamCheck[member.id] = true);
+      }
+      return _results;
+    } else {
+      return $scope.teamCheck = {};
+    }
+  });
+});
+
+angular.module('NotSoShitty.settings').directive('selectPeople', function() {
+  return {
+    restrict: 'E',
+    templateUrl: 'project/directives/select-people/view.html',
+    scope: {
+      members: '=',
+      selectedMembers: '='
+    },
+    controller: 'SelectPeopleCtrl'
   };
 });
 
