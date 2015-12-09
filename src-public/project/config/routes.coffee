@@ -4,7 +4,7 @@ angular.module 'NotSoShitty.settings'
   .state 'project',
     url: '/project'
     controller: 'SettingsCtrl'
-    templateUrl: 'settings/states/main/view.html'
+    templateUrl: 'project/states/main/view.html'
     resolve:
       user: (NotSoShittyUser) ->
         NotSoShittyUser.getCurrentUser()
