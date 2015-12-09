@@ -3,7 +3,7 @@ angular.module 'NotSoShitty.bdc'
   restrict: 'AE'
   scope:
     data: '='
-  templateUrl: 'burn-down-chart/directives/burndown/view.html'
+  templateUrl: 'sprint/directives/burndown/view.html'
   link: (scope, elem, attr) ->
     maxWidth = 1000
     whRatio = 0.54

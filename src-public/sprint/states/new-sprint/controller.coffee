@@ -2,32 +2,66 @@ angular.module 'NotSoShitty.bdc'
 .controller 'NewSprintCtrl', (
   $scope
   $timeout
+  $state
   TrelloClient
-  SettingsStorage
+  project
   sprintService
-  boardId
   Sprint
+  Project
 ) ->
-  $scope.sprint = new Sprint(boardId: boardId)
-  # Sprint.find('vEun76jEao').then (sprint) ->
-  #   $scope.sprint = sprint
+  Project.find("u8o4xBMREA").then (o) ->
+    console.log o
+  $scope.project = project
+  console.log project
+  $scope.sprint = new Sprint
+    project: project
+    number: null
+    doneColumn: null
+    dates:
+      start: null
+      end: null
+      days: []
+    resources:
+      matrix: []
+      speed: null
+      totalPoints: null
+    isActive: false
 
-  TrelloClient.get("/boards/#{boardId}/lists")
+  $scope.sprint.dates ?=
+    start: null
+    end: null
+    days: []
+
+  TrelloClient.get("/boards/#{project.boardId}/lists")
   .then (response) ->
     $scope.boardLists = response.data
 
-  SettingsStorage.get(boardId)
-  .then (settings) ->
-    $scope.devTeam = settings.data.team?.dev
+  $scope.devTeam = project.team?.dev
 
   promise = null
   $scope.save = ->
+    $scope.activable = isActivable()
+
     # wait 2s before saving
     if promise?
       $timeout.cancel promise
     promise = $timeout ->
       $scope.sprint.save()
-    , 2000
+    , 1000
+
+  $scope.activable = false
+  isActivable = ->
+    s = $scope.sprint
+    if s.number? and s.doneColumn? and s.dates.start? and s.dates.end? and s.dates.days.length > 0 and s.resources.matrix.length > 0 and s.resources.totalPoints? and s.resources.speed?
+      true
+    else
+      false
+
+  $scope.activate = ->
+    if isActivable()
+      $scope.sprint.isActive = true
+      $scope.sprint.save().then ->
+        $state.go 'current-sprint'
 
   $scope.$watch 'sprint.dates.end', (newVal, oldVal) ->
     return if newVal is oldVal
@@ -55,12 +89,12 @@ angular.module 'NotSoShitty.bdc'
 
   $scope.$watch 'sprint.resources.totalPoints', (newVal, oldVal) ->
     return if newVal is oldVal
-    return unless newVal and newVal > 0
+    return unless newVal? and newVal > 0
     $scope.sprint.resources.speed = sprintService.calculateSpeed newVal, $scope.sprint.resources.totalManDays
     $scope.save()
 
   $scope.$watch 'sprint.resources.speed', (newVal, oldVal) ->
     return if newVal is oldVal
-    return unless newVal and newVal > 0
+    return unless newVal? and newVal > 0
     $scope.sprint.resources.totalPoints = sprintService.calculateTotalPoints $scope.sprint.resources.totalManDays, newVal
     $scope.save()

@@ -13,11 +13,14 @@ md-card.md-whiteframe-z2.bdc-table
           td {{ day.date | date : 'EEEE' }}
           td {{ day.standard.toFixed(1) }}
           td
-            md-input-container(flex)
-              label Done
-              input(ng-model="day.done")
-            .bbb(ng-if="currentDayIndex == $index") (fetched from Trello)
-  md-button.md-raised.md-primary(ng-click="save()") Save
+            section(layout="row" layout-sm="column" layout-wrap)
+              md-input-container(flex="50")
+                label Done
+                input(ng-model="day.done" type="number")
+              div(layout-align="center center" ng-if="currentDayIndex == $index")
+                md-button.md-primary(ng-click="fetchTrelloDonePoints()") Fetch from Trello
+  section(layout="row" layout-sm="column" layout-align="center center" layout-wrap)
+    md-button.md-raised.md-primary(ng-click="save()") Save
 md-button.md-fab.md-primary.new-sprint-fab(ui-sref="new-sprint")
   md-icon(md-svg-icon="plus")
   md-tooltip(md-direction="top") Create a new sprint
