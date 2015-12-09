@@ -21,6 +21,7 @@ app = angular.module 'NotSoShitty', [
   'NotSoShitty.bdc'
   'NotSoShitty.common'
   'NotSoShitty.daily-report'
+  'NotSoShitty.feedback'
 ]
 
 app.config (
