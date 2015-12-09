@@ -1,7 +1,7 @@
 'use strict';
 var app;
 
-app = angular.module('NotSoShitty', ['ng', 'ngResource', 'ngAnimate', 'ngMaterial', 'md.data.table', 'ui.router', 'app.templates', 'Parse', 'LocalStorageModule', 'satellizer', 'permission', 'trello-api-client', 'NotSoShitty.login', 'NotSoShitty.settings', 'NotSoShitty.storage', 'NotSoShitty.bdc', 'NotSoShitty.common', 'NotSoShitty.daily-report']);
+app = angular.module('NotSoShitty', ['ng', 'ngResource', 'ngAnimate', 'ngMaterial', 'md.data.table', 'ui.router', 'app.templates', 'Parse', 'LocalStorageModule', 'satellizer', 'permission', 'trello-api-client', 'NotSoShitty.login', 'NotSoShitty.settings', 'NotSoShitty.storage', 'NotSoShitty.bdc', 'NotSoShitty.common', 'NotSoShitty.daily-report', 'NotSoShitty.feedback']);
 
 app.config(function($locationProvider, $urlRouterProvider, ParseProvider) {
   $locationProvider.hashPrefix('!');
@@ -38,6 +38,8 @@ angular.module('NotSoShitty.common', []);
 
 angular.module('NotSoShitty.daily-report', []);
 
+angular.module('NotSoShitty.feedback', []);
+
 angular.module('NotSoShitty.login', []);
 
 angular.module('NotSoShitty.settings', ['NotSoShitty.common']);
@@ -52,11 +54,7 @@ angular.module('NotSoShitty.daily-report').config(function($stateProvider) {
     templateUrl: 'daily-report/states/view.html',
     controller: 'DailyReportCtrl',
     resolve: {
-      dailyMail: function(UserBoardStorage, DailyMailStorage) {
-        return UserBoardStorage.getBoardId().then(function(boardId) {
-          return DailyMailStorage.get(boardId);
-        });
-      }
+      dailyMail: function(NotSoShittyUser) {}
     }
   });
 });
@@ -70,6 +68,79 @@ angular.module('NotSoShitty.daily-report').controller('DailyReportCtrl', functio
       return $mdToast.show(saveFeedback);
     });
   };
+});
+
+angular.module('NotSoShitty.feedback').controller('feedbackCallToActionCtrl', function($scope, $mdDialog, $mdMedia) {
+  var DialogController;
+  $scope.customFullscreen = $mdMedia('sm');
+  $scope.openFeedbackModal = function(ev) {
+    $mdDialog.show({
+      controller: DialogController,
+      templateUrl: 'feedback/directives/dialog.html',
+      parent: angular.element(document.body),
+      targetEvent: ev,
+      clickOutsideToClose: true,
+      fullscreen: $mdMedia('sm') && $scope.customFullscreen
+    }).then((function(answer) {
+      $scope.status = 'You said the information was "' + answer + '".';
+    }), function() {
+      $scope.status = 'You cancelled the dialog.';
+    });
+    $scope.$watch((function() {
+      return $mdMedia('sm');
+    }), function(sm) {
+      $scope.customFullscreen = sm === true;
+    });
+  };
+  return DialogController = function($scope, $mdDialog, Feedback, localStorageService) {
+    $scope.message = null;
+    $scope.hide = function() {
+      return $mdDialog.hide();
+    };
+    $scope.cancel = function() {
+      return $mdDialog.cancel();
+    };
+    return $scope.send = function() {
+      var feedback;
+      console.log('yolo');
+      if ($scope.message != null) {
+        feedback = new Feedback();
+        feedback.reporter = localStorageService.get('trello_email');
+        feedback.message = $scope.message;
+        return feedback.save().then(function() {
+          return $mdDialog.hide();
+        });
+      }
+    };
+  };
+});
+
+angular.module('NotSoShitty.feedback').directive('feedback', function() {
+  return {
+    restrict: 'E',
+    templateUrl: 'feedback/directives/call-to-action.html',
+    scope: {},
+    controller: 'feedbackCallToActionCtrl'
+  };
+});
+
+var __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+angular.module('NotSoShitty.feedback').factory('Feedback', function(Parse) {
+  var Feedback;
+  return Feedback = (function(_super) {
+    __extends(Feedback, _super);
+
+    function Feedback() {
+      return Feedback.__super__.constructor.apply(this, arguments);
+    }
+
+    Feedback.configure("Feedback", "reporter", "message");
+
+    return Feedback;
+
+  })(Parse.Model);
 });
 
 angular.module('NotSoShitty.login').run(function(Permission, $auth, $q) {

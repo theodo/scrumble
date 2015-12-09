@@ -34,6 +34,12 @@ h2.md-title {
   right: 16px;
 }
 
+.feedback-call-to-action {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+}
+
 trello-avatar {
   display: inline-block;
   margin: 5px;
