@@ -52,5 +52,9 @@ app.config ($mdThemingProvider) ->
   $mdThemingProvider.theme('default').primaryPalette('blue').accentPalette 'grey'
   return
 
+app.config ($mdIconProvider) ->
+  $mdIconProvider
+    .defaultIconSet 'icons/mdi.svg'
+
 app.run ($rootScope, $state) ->
   $rootScope.$state = $state

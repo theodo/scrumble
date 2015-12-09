@@ -33,7 +33,8 @@
     "d3": "~3.5.10",
     "angular-permission": "~1.1.1",
     "d3-bdc": "~1.0.0",
-    "angular-material-data-table": "~0.8.14"
+    "angular-material-data-table": "~0.8.14",
+    "mdi": "~1.3.41"
   },
   "resolutions": {
     "angular": "1.4.8"

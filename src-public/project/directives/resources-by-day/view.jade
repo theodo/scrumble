@@ -1,0 +1,23 @@
+.resources-by-day(
+  layout="row"
+)
+md-data-table-container
+  table(md-data-table)
+    thead
+      tr
+        td &nbsp;
+        td(
+          layout-align="center center"
+          ng-repeat="(j, member) in members"
+        )
+          trello-avatar(
+            member="member"
+          )
+    tbody
+      tr(ng-repeat="(i, day) in days")
+        td {{ day.date | date : 'EEEE' }}
+        td(ng-repeat="(j, member) in members")
+          md-button.md-primary.row(
+            ng-click="resourceClick(i,j)"
+          ) {{ matrix[i][j] }}
+  

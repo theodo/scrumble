@@ -7,17 +7,18 @@ html(lang="en", ng-app="NotSoShitty")
     link(rel="stylesheet", href="css/vendor.css")
     link(rel="stylesheet", href="css/app.css")
     link(rel="icon", type="image/x-icon", href="/favicon.ico")
+    link(rel="stylesheet" href="//cdn.materialdesignicons.com/1.3.41/css/materialdesignicons.min.css")
   body
-    md-content
+    md-content.container
       md-toolbar
         .md-toolbar-tools
           h2
             span Not So Shitty
       md-tabs.md-primary.md-hue-2
-        md-tab(data-ui-sref="settings")
-          md-tab-label  Settings
-        md-tab(data-ui-sref="burn-down-chart")
-          md-tab-label  Burn Down Chart
+        md-tab(data-ui-sref="project")
+          md-tab-label  Project
+        md-tab(data-ui-sref="current-sprint")
+          md-tab-label  Sprint
         md-tab(data-ui-sref="daily-report")
           md-tab-label  Daily Mail
       //- profil-info
@@ -25,6 +26,5 @@ html(lang="en", ng-app="NotSoShitty")
       main.container(ui-view)
 
     script(src="js/vendor.js")
-    //- script(src='https://ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular-aria.min.js')
     script(src="js/templates.js")
     script(src="js/app.js")
