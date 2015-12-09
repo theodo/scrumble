@@ -170,9 +170,9 @@ angular.module('NotSoShitty.bdc').config(function($stateProvider) {
     controller: 'NewSprintCtrl',
     templateUrl: 'sprint/states/new-sprint/view.html',
     resolve: {
-      project: function(NotSoShittyUser) {
+      project: function(NotSoShittyUser, Project) {
         return NotSoShittyUser.getCurrentUser().then(function(user) {
-          return user.project;
+          return new Project(user.project);
         })["catch"](function(err) {
           console.log(err);
           return null;
@@ -194,16 +194,16 @@ angular.module('NotSoShitty.storage').factory('Sprint', function(Parse) {
       return Sprint.__super__.constructor.apply(this, arguments);
     }
 
-    Sprint.configure("Sprint", "project", "number", "dates", "resources", "bdcData", "isActive");
+    Sprint.configure("Sprint", "project", "number", "dates", "resources", "bdcData", "isActive", "doneColumn");
 
     Sprint.getActiveSprint = function(project) {
       return this.query({
         where: {
-          project: project,
           isActive: true
         }
       }).then(function(sprints) {
         var sprint;
+        console.log(sprints);
         sprint = sprints.length > 0 ? sprints[0] : null;
         return sprint;
       })["catch"](function(err) {
@@ -787,7 +787,7 @@ angular.module('NotSoShitty.bdc').directive('burndown', function() {
     scope: {
       data: '='
     },
-    templateUrl: 'burn-down-chart/directives/burndown/view.html',
+    templateUrl: 'sprint/directives/burndown/view.html',
     link: function(scope, elem, attr) {
       var computeDimensions, config, maxWidth, whRatio;
       maxWidth = 1000;
@@ -848,33 +848,111 @@ angular.module('NotSoShitty.bdc').directive('burndown', function() {
   };
 });
 
-angular.module('NotSoShitty.bdc').controller('BurnDownChartCtrl', function($scope, $state, BDCDataProvider, sprint) {
-  console.log(sprint);
+angular.module('NotSoShitty.bdc').controller('BurnDownChartCtrl', function($scope, $state, BDCDataProvider, TrelloClient, sprint) {
+  var day, getCurrentDayIndex, _i, _len, _ref;
   if (sprint == null) {
-    return $state.go('new-sprint');
+    $state.go('new-sprint');
   }
+  if (sprint.bdcData != null) {
+    _ref = sprint.bdcData;
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      day = _ref[_i];
+      day.date = moment(day.date).toDate();
+    }
+  } else {
+    sprint.bdcData = BDCDataProvider.initializeBDC(sprint.dates.days, sprint.resources);
+  }
+  $scope.tableData = sprint.bdcData;
+  getCurrentDayIndex = function(bdcData) {
+    var i, _j, _len1;
+    for (i = _j = 0, _len1 = bdcData.length; _j < _len1; i = ++_j) {
+      day = bdcData[i];
+      if (day.done == null) {
+        return i;
+      }
+    }
+  };
+  $scope.currentDayIndex = getCurrentDayIndex($scope.tableData);
+  $scope.save = function() {
+    return sprint.save().then(function() {
+      return $scope.currentDayIndex = getCurrentDayIndex($scope.tableData);
+    });
+  };
+  $scope.fetchTrelloDonePoints = function() {
+    if (sprint.doneColumn != null) {
+      return TrelloClient.get('/lists/' + sprint.doneColumn + '/cards?fields=name').then(function(response) {
+        var doneCards;
+        doneCards = response.data;
+        return $scope.tableData[$scope.currentDayIndex].done = BDCDataProvider.getDonePoints(doneCards);
+      })["catch"](function(err) {
+        console.log(err);
+        return null;
+      });
+    }
+  };
 });
 
-angular.module('NotSoShitty.bdc').controller('NewSprintCtrl', function($scope, $timeout, TrelloClient, project, sprintService, Sprint) {
-  var promise, _ref;
-  $scope.activable = false;
+angular.module('NotSoShitty.bdc').controller('NewSprintCtrl', function($scope, $timeout, $state, TrelloClient, project, sprintService, Sprint, Project) {
+  var isActivable, promise, _base, _ref;
+  Project.find("u8o4xBMREA").then(function(o) {
+    return console.log(o);
+  });
   $scope.project = project;
   console.log(project);
   $scope.sprint = new Sprint({
-    project: project
+    project: project,
+    number: null,
+    doneColumn: null,
+    dates: {
+      start: null,
+      end: null,
+      days: []
+    },
+    resources: {
+      matrix: [],
+      speed: null,
+      totalPoints: null
+    },
+    isActive: false
   });
+  if ((_base = $scope.sprint).dates == null) {
+    _base.dates = {
+      start: null,
+      end: null,
+      days: []
+    };
+  }
   TrelloClient.get("/boards/" + project.boardId + "/lists").then(function(response) {
     return $scope.boardLists = response.data;
   });
   $scope.devTeam = (_ref = project.team) != null ? _ref.dev : void 0;
   promise = null;
   $scope.save = function() {
+    $scope.activable = isActivable();
     if (promise != null) {
       $timeout.cancel(promise);
     }
     return promise = $timeout(function() {
       return $scope.sprint.save();
-    }, 2000);
+    }, 1000);
+  };
+  $scope.activable = false;
+  isActivable = function() {
+    var s;
+    s = $scope.sprint;
+    if ((s.number != null) && (s.doneColumn != null) && (s.dates.start != null) && (s.dates.end != null) && s.dates.days.length > 0 && s.resources.matrix.length > 0 && (s.resources.totalPoints != null) && (s.resources.speed != null)) {
+      return true;
+    } else {
+      return false;
+    }
+  };
+  $scope.activate = function() {
+    if (isActivable()) {
+      $scope.sprint.isActive = true;
+      return $scope.sprint.save().then(function() {
+        return $state.go('current-sprint');
+      });
+    }
   };
   $scope.$watch('sprint.dates.end', function(newVal, oldVal) {
     if (newVal === oldVal) {
@@ -887,12 +965,12 @@ angular.module('NotSoShitty.bdc').controller('NewSprintCtrl', function($scope, $
     return $scope.save();
   });
   $scope.$watch('sprint.dates.days', function(newVal, oldVal) {
-    var _base, _ref1;
+    var _base1, _ref1;
     if (newVal === oldVal) {
       return;
     }
-    if ((_base = $scope.sprint).resources == null) {
-      _base.resources = {};
+    if ((_base1 = $scope.sprint).resources == null) {
+      _base1.resources = {};
     }
     $scope.sprint.resources.matrix = sprintService.generateResources((_ref1 = $scope.sprint.dates) != null ? _ref1.days : void 0, $scope.devTeam);
     return $scope.save();
@@ -921,7 +999,7 @@ angular.module('NotSoShitty.bdc').controller('NewSprintCtrl', function($scope, $
     if (newVal === oldVal) {
       return;
     }
-    if (!(newVal && newVal > 0)) {
+    if (!((newVal != null) && newVal > 0)) {
       return;
     }
     $scope.sprint.resources.speed = sprintService.calculateSpeed(newVal, $scope.sprint.resources.totalManDays);
@@ -931,7 +1009,7 @@ angular.module('NotSoShitty.bdc').controller('NewSprintCtrl', function($scope, $
     if (newVal === oldVal) {
       return;
     }
-    if (!(newVal && newVal > 0)) {
+    if (!((newVal != null) && newVal > 0)) {
       return;
     }
     $scope.sprint.resources.totalPoints = sprintService.calculateTotalPoints($scope.sprint.resources.totalManDays, newVal);
