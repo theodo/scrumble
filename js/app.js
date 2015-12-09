@@ -26,11 +26,13 @@ app.config(function($mdThemingProvider) {
   $mdThemingProvider.theme('default').primaryPalette('blue').accentPalette('grey');
 });
 
+app.config(function($mdIconProvider) {
+  return $mdIconProvider.defaultIconSet('icons/mdi.svg');
+});
+
 app.run(function($rootScope, $state) {
   return $rootScope.$state = $state;
 });
-
-angular.module('NotSoShitty.bdc', []);
 
 angular.module('NotSoShitty.common', []);
 
@@ -40,36 +42,178 @@ angular.module('NotSoShitty.login', []);
 
 angular.module('NotSoShitty.settings', ['NotSoShitty.common']);
 
+angular.module('NotSoShitty.bdc', []);
+
 angular.module('NotSoShitty.storage', []);
 
-angular.module('NotSoShitty.bdc').config(function($stateProvider) {
-  return $stateProvider.state('burn-down-chart', {
-    url: '/burn-down-chart',
-    controller: 'BurnDownChartCtrl',
-    templateUrl: 'burn-down-chart/states/bdc/view.html',
+angular.module('NotSoShitty.daily-report').config(function($stateProvider) {
+  return $stateProvider.state('daily-report', {
+    url: '/daily-report',
+    templateUrl: 'daily-report/states/view.html',
+    controller: 'DailyReportCtrl',
     resolve: {
-      settings: function(UserBoardStorage, SettingsStorage) {
+      dailyMail: function(UserBoardStorage, DailyMailStorage) {
         return UserBoardStorage.getBoardId().then(function(boardId) {
-          return SettingsStorage.get(boardId);
+          return DailyMailStorage.get(boardId);
+        });
+      }
+    }
+  });
+});
+
+angular.module('NotSoShitty.daily-report').controller('DailyReportCtrl', function($scope, dailyMail, DailyMail, $mdToast) {
+  $scope.dailyReport = dailyMail;
+  $scope.save = function() {
+    var saveFeedback;
+    saveFeedback = $mdToast.simple().hideDelay(1000).position('top right').content('Saved!');
+    return $scope.dailyReport.save().then(function() {
+      return $mdToast.show(saveFeedback);
+    });
+  };
+});
+
+angular.module('NotSoShitty.login').run(function(Permission, $auth, $q) {
+  return Permission.defineRole('trello-authenticated', function() {
+    return $auth.isAuthenticated();
+  });
+});
+
+angular.module('NotSoShitty.login').config(function($stateProvider) {
+  return $stateProvider.state('login', {
+    url: '/login',
+    controller: 'LoginCtrl',
+    templateUrl: 'login/states/login/view.html'
+  });
+});
+
+
+
+angular.module('NotSoShitty.settings').config(function($stateProvider) {
+  return $stateProvider.state('project', {
+    url: '/project',
+    controller: 'SettingsCtrl',
+    templateUrl: 'project/states/main/view.html',
+    resolve: {
+      user: function(NotSoShittyUser) {
+        return NotSoShittyUser.getCurrentUser();
+      },
+      boards: function(TrelloClient) {
+        return TrelloClient.get('/members/me/boards').then(function(response) {
+          return response.data;
+        });
+      }
+    },
+    data: {
+      permissions: {
+        only: ['trello-authenticated'],
+        redirectTo: 'login'
+      }
+    }
+  });
+});
+
+var __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+angular.module('NotSoShitty.storage').factory('Project', function(Parse, $q) {
+  var Project;
+  return Project = (function(_super) {
+    __extends(Project, _super);
+
+    function Project() {
+      return Project.__super__.constructor.apply(this, arguments);
+    }
+
+    Project.configure("Project", "boardId", "name", "columnMapping", "team", "currentSprint");
+
+    Project.get = function(boardId) {
+      var deferred;
+      deferred = $q.defer();
+      if (boardId != null) {
+        this.query({
+          where: {
+            boardId: boardId
+          }
+        }).then(function(settingsArray) {
+          var settings;
+          settings = settingsArray.length > 0 ? settingsArray[0] : null;
+          return deferred.resolve(settings);
+        })["catch"](deferred.reject);
+      } else {
+        deferred.reject('No boardId');
+      }
+      return deferred.promise;
+    };
+
+    return Project;
+
+  })(Parse.Model);
+});
+
+angular.module('NotSoShitty.bdc').config(function($stateProvider) {
+  return $stateProvider.state('current-sprint', {
+    url: '/sprint/current',
+    controller: 'BurnDownChartCtrl',
+    templateUrl: 'sprint/states/current-sprint/view.html',
+    resolve: {
+      sprint: function(NotSoShittyUser, Sprint) {
+        return NotSoShittyUser.getCurrentUser().then(function(user) {
+          return Sprint.getActiveSprint(user.project);
         })["catch"](function(err) {
+          console.log(err);
           return null;
         });
-      },
-      doneCards: function(UserBoardStorage, SettingsStorage, TrelloClient) {
-        return UserBoardStorage.getBoardId().then(function(boardId) {
-          return SettingsStorage.get(boardId);
-        }).then(function(response) {
-          return response.data;
-        }).then(function(settings) {
-          return TrelloClient.get('/lists/' + settings.columnIds.done + '/cards?fields=name');
-        }).then(function(response) {
-          return response.data;
+      }
+    }
+  }).state('new-sprint', {
+    url: '/sprint/new',
+    controller: 'NewSprintCtrl',
+    templateUrl: 'sprint/states/new-sprint/view.html',
+    resolve: {
+      project: function(NotSoShittyUser) {
+        return NotSoShittyUser.getCurrentUser().then(function(user) {
+          return user.project;
         })["catch"](function(err) {
+          console.log(err);
           return null;
         });
       }
     }
   });
+});
+
+var __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+angular.module('NotSoShitty.storage').factory('Sprint', function(Parse) {
+  var Sprint;
+  return Sprint = (function(_super) {
+    __extends(Sprint, _super);
+
+    function Sprint() {
+      return Sprint.__super__.constructor.apply(this, arguments);
+    }
+
+    Sprint.configure("Sprint", "project", "number", "dates", "resources", "bdcData", "isActive");
+
+    Sprint.getActiveSprint = function(project) {
+      return this.query({
+        where: {
+          project: project,
+          isActive: true
+        }
+      }).then(function(sprints) {
+        var sprint;
+        sprint = sprints.length > 0 ? sprints[0] : null;
+        return sprint;
+      })["catch"](function(err) {
+        return console.warn(err);
+      });
+    };
+
+    return Sprint;
+
+  })(Parse.Model);
 });
 
 angular.module('NotSoShitty.bdc').factory('BDCDataProvider', function() {
@@ -121,132 +265,68 @@ angular.module('NotSoShitty.bdc').factory('BDCDataProvider', function() {
   };
 });
 
-angular.module('NotSoShitty.daily-report').config(function($stateProvider) {
-  return $stateProvider.state('daily-report', {
-    url: '/daily-report',
-    templateUrl: 'daily-report/states/view.html',
-    controller: 'DailyReportCtrl',
-    resolve: {
-      dailyMail: function(UserBoardStorage, DailyMailStorage) {
-        return UserBoardStorage.getBoardId().then(function(boardId) {
-          return DailyMailStorage.get(boardId);
-        });
-      }
-    }
-  });
-});
-
-angular.module('NotSoShitty.daily-report').controller('DailyReportCtrl', function($scope, dailyMail, DailyMail, $mdToast) {
-  $scope.dailyReport = dailyMail;
-  $scope.save = function() {
-    var saveFeedback;
-    saveFeedback = $mdToast.simple().hideDelay(1000).position('top right').content('Saved!');
-    return $scope.dailyReport.save().then(function() {
-      return $mdToast.show(saveFeedback);
-    });
-  };
-});
-
-angular.module('NotSoShitty.login').run(function(Permission, $auth, $q) {
-  return Permission.defineRole('trello-authenticated', function() {
-    return $auth.isAuthenticated();
-  });
-});
-
-angular.module('NotSoShitty.login').config(function($stateProvider) {
-  return $stateProvider.state('login', {
-    url: '/login',
-    controller: 'LoginCtrl',
-    templateUrl: 'login/states/login/view.html'
-  });
-});
-
-angular.module('NotSoShitty.login').service('User', function($auth, TrelloClient) {
+angular.module('NotSoShitty.bdc').service('sprintService', function() {
   return {
-    getTrelloInfo: function() {
-      return TrelloClient.get('/member/me').then(function(response) {
-        return response.data;
-      });
-    }
-  };
-});
-
-angular.module('NotSoShitty.settings').config(function($stateProvider) {
-  return $stateProvider.state('settings', {
-    url: '/settings',
-    controller: 'SettingsCtrl',
-    templateUrl: 'settings/states/main/view.html',
-    resolve: {
-      settings: function(UserBoardStorage, SettingsStorage) {
-        return UserBoardStorage.getBoardId().then(function(boardId) {
-          if (boardId == null) {
-            return null;
-          }
-          return SettingsStorage.get(boardId).then(function(settings) {
-            return settings;
+    generateDayList: function(start, end) {
+      var current, day, days, endM;
+      if (!(start && end)) {
+        return;
+      }
+      current = moment(start);
+      endM = moment(end).add(1, 'days');
+      if (!endM.isAfter(current)) {
+        return;
+      }
+      days = [];
+      while (!current.isSame(endM)) {
+        day = current.isoWeekday();
+        if (day !== 6 && day !== 7) {
+          days.push({
+            date: current.format()
           });
-        });
-      },
-      boards: function(TrelloClient) {
-        return TrelloClient.get('/members/me/boards').then(function(response) {
-          return response.data;
-        });
+        }
+        current.add(1, 'days');
       }
+      return days;
     },
-    data: {
-      permissions: {
-        only: ['trello-authenticated'],
-        redirectTo: 'login'
+    generateResources: function(days, devTeam) {
+      var day, line, matrix, member, _i, _j, _len, _len1;
+      if (!(days && devTeam)) {
+        return;
       }
-    }
-  });
-});
-
-angular.module('NotSoShitty.settings').service('Computer', function() {
-  var calculateSpeed, calculateTotalPoints, generateResources, getTotalManDays;
-  getTotalManDays = function(matrix) {
-    var cell, line, total, _i, _j, _len, _len1;
-    total = 0;
-    for (_i = 0, _len = matrix.length; _i < _len; _i++) {
-      line = matrix[_i];
-      for (_j = 0, _len1 = line.length; _j < _len1; _j++) {
-        cell = line[_j];
-        total += cell;
+      matrix = [];
+      for (_i = 0, _len = days.length; _i < _len; _i++) {
+        day = days[_i];
+        line = [];
+        for (_j = 0, _len1 = devTeam.length; _j < _len1; _j++) {
+          member = devTeam[_j];
+          line.push(1);
+        }
+        matrix.push(line);
       }
-    }
-    return total;
-  };
-  calculateTotalPoints = function(totalManDays, speed) {
-    return totalManDays * speed;
-  };
-  calculateSpeed = function(totalPoints, totalManDays) {
-    if (!(totalManDays > 0)) {
-      return;
-    }
-    return totalPoints / totalManDays;
-  };
-  generateResources = function(days, devTeam) {
-    var day, line, matrix, member, _i, _j, _len, _len1;
-    if (!(days && devTeam)) {
-      return;
-    }
-    matrix = [];
-    for (_i = 0, _len = days.length; _i < _len; _i++) {
-      day = days[_i];
-      line = [];
-      for (_j = 0, _len1 = devTeam.length; _j < _len1; _j++) {
-        member = devTeam[_j];
-        line.push(1);
+      return matrix;
+    },
+    getTotalManDays: function(matrix) {
+      var cell, line, total, _i, _j, _len, _len1;
+      total = 0;
+      for (_i = 0, _len = matrix.length; _i < _len; _i++) {
+        line = matrix[_i];
+        for (_j = 0, _len1 = line.length; _j < _len1; _j++) {
+          cell = line[_j];
+          total += cell;
+        }
       }
-      matrix.push(line);
+      return total;
+    },
+    calculateTotalPoints: function(totalManDays, speed) {
+      return totalManDays * speed;
+    },
+    calculateSpeed: function(totalPoints, totalManDays) {
+      if (!(totalManDays > 0)) {
+        return;
+      }
+      return totalPoints / totalManDays;
     }
-    return matrix;
-  };
-  return {
-    generateResources: generateResources,
-    calculateSpeed: calculateSpeed,
-    calculateTotalPoints: calculateTotalPoints,
-    getTotalManDays: getTotalManDays
   };
 });
 
@@ -272,37 +352,88 @@ angular.module('NotSoShitty.storage').factory('DailyMail', function(Parse) {
 var __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
-angular.module('NotSoShitty.storage').factory('Settings', function(Parse) {
-  var Settings;
-  return Settings = (function(_super) {
-    __extends(Settings, _super);
+angular.module('NotSoShitty.storage').factory('NotSoShittyUser', function(Parse, $q, TrelloClient, Project, localStorageService) {
+  var NotSoShittyUser;
+  return NotSoShittyUser = (function(_super) {
+    __extends(NotSoShittyUser, _super);
 
-    function Settings() {
-      return Settings.__super__.constructor.apply(this, arguments);
+    function NotSoShittyUser() {
+      return NotSoShittyUser.__super__.constructor.apply(this, arguments);
     }
 
-    Settings.configure("Settings", "data", "boardId");
+    NotSoShittyUser.configure("NotSoShittyUser", "email", "project");
 
-    return Settings;
+    NotSoShittyUser.getCurrentUser = function() {
+      return this.query({
+        where: {
+          email: localStorageService.get('trello_email')
+        },
+        include: 'project'
+      }).then(function(user) {
+        if (user.length > 0) {
+          return user[0];
+        } else {
+          return null;
+        }
+      });
+    };
 
-  })(Parse.Model);
-});
+    NotSoShittyUser.getBoardId = function() {
+      var deferred, token;
+      deferred = $q.defer();
+      token = localStorageService.get('trello_token');
+      if (token == null) {
+        deferred.reject('No token');
+      }
+      TrelloClient.get('/member/me').then(function(response) {
+        return response.data;
+      }).then(function(userInfo) {
+        return UserBoard.query({
+          where: {
+            email: userInfo.email
+          }
+        });
+      }).then(function(userBoards) {
+        if (userBoards.length > 0) {
+          return deferred.resolve(userBoards[0].boardId);
+        } else {
+          return deferred.resolve(null);
+        }
+      });
+      return deferred.promise;
+    };
 
-var __hasProp = {}.hasOwnProperty,
-  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+    NotSoShittyUser.setBoardId = function(boardId) {
+      var deferred, token;
+      deferred = $q.defer();
+      token = localStorageService.get('trello_token');
+      if (token == null) {
+        deferred.reject('No token');
+      }
+      return TrelloClient.get('/member/me').then(function(response) {
+        return response.data;
+      }).then(function(userInfo) {
+        return this.query({
+          where: {
+            email: userInfo.email
+          }
+        }).then(function(user) {
+          var project;
+          user = user.length > 0 ? user[0] : null;
+          if (typeof board !== "undefined" && board !== null) {
+            board.boardId = boardId;
+            return board.save();
+          } else {
+            project = new Project();
+            project.boardId = boardId;
+            this.project = project;
+            return this.save();
+          }
+        });
+      });
+    };
 
-angular.module('NotSoShitty.storage').factory('UserBoard', function(Parse) {
-  var UserBoard;
-  return UserBoard = (function(_super) {
-    __extends(UserBoard, _super);
-
-    function UserBoard() {
-      return UserBoard.__super__.constructor.apply(this, arguments);
-    }
-
-    UserBoard.configure("UserBoard", "email", "boardId");
-
-    return UserBoard;
+    return NotSoShittyUser;
 
   })(Parse.Model);
 });
@@ -337,178 +468,27 @@ angular.module('NotSoShitty.storage').service('DailyMailStorage', function(Daily
   };
 });
 
-angular.module('NotSoShitty.storage').service('SettingsStorage', function(Settings, $q) {
+angular.module('NotSoShitty.storage').service('userService', function(NotSoShittyUser) {
   return {
-    get: function(boardId) {
-      var deferred;
-      deferred = $q.defer();
-      if (boardId != null) {
-        Settings.query({
-          where: {
-            boardId: boardId
-          }
-        }).then(function(settingsArray) {
-          var settings;
-          settings = settingsArray.length > 0 ? settingsArray[0] : null;
-          return deferred.resolve(settings);
-        })["catch"](deferred.reject);
-      } else {
-        deferred.reject('No boardId');
-      }
-      return deferred.promise;
-    }
-  };
-});
-
-angular.module('NotSoShitty.storage').service('UserBoardStorage', function(UserBoard, User, localStorageService) {
-  var getBoardId, setBoardId;
-  getBoardId = function() {
-    var token;
-    token = localStorageService.get('trello_token');
-    if (token == null) {
-      return null;
-    }
-    return User.getTrelloInfo().then(function(userInfo) {
-      return UserBoard.query({
+    getOrCreate: function(email) {
+      return NotSoShittyUser.query({
         where: {
-          email: userInfo.email
+          email: email
+        }
+      }).then(function(users) {
+        var user;
+        if (users.length > 0) {
+          return users[0];
+        } else {
+          user = new User();
+          user.email = email;
+          return user.save().then(function(user) {
+            return user;
+          });
         }
       });
-    }).then(function(userBoards) {
-      if (userBoards.length > 0) {
-        return userBoards[0].boardId;
-      } else {
-        return null;
-      }
-    });
-  };
-  setBoardId = function(boardId) {
-    var token;
-    token = localStorageService.get('trello_token');
-    if (token == null) {
-      return null;
-    }
-    return User.getTrelloInfo().then(function(userInfo) {
-      return UserBoard.query({
-        where: {
-          email: userInfo.email
-        }
-      }).then(function(userBoards) {
-        var board, userBoard;
-        board = userBoards.length > 0 ? userBoards[0] : null;
-        if (board != null) {
-          board.boardId = boardId;
-          return board.save();
-        } else {
-          userBoard = new UserBoard();
-          userBoard.email = userInfo.email;
-          userBoard.boardId = boardId;
-          return userBoard.save();
-        }
-      });
-    });
-  };
-  return {
-    getBoardId: getBoardId,
-    setBoardId: setBoardId
-  };
-});
-
-angular.module('NotSoShitty.bdc').directive('burndown', function() {
-  return {
-    restrict: 'AE',
-    scope: {
-      data: '='
-    },
-    templateUrl: 'burn-down-chart/directives/burndown/view.html',
-    link: function(scope, elem, attr) {
-      var computeDimensions, config, maxWidth, whRatio;
-      maxWidth = 1000;
-      whRatio = 0.54;
-      computeDimensions = function() {
-        var config, height, width;
-        if (window.innerWidth > maxWidth) {
-          width = 800;
-        } else {
-          width = window.innerWidth - 80;
-        }
-        height = whRatio * width;
-        if (height + 128 > window.innerHeight) {
-          height = window.innerHeight - 128;
-          width = height / whRatio;
-        }
-        config = {
-          containerId: '#bdcgraph',
-          width: width,
-          height: height,
-          margins: {
-            top: 20,
-            right: 70,
-            bottom: 30,
-            left: 50
-          },
-          colors: {
-            standard: '#D93F8E',
-            done: '#5AA6CB',
-            good: '#97D17A',
-            bad: '#FA6E69',
-            labels: '#113F59'
-          },
-          startLabel: 'Start',
-          endLabel: 'End',
-          dateFormat: '%A',
-          xTitle: 'Daily meetings',
-          dotRadius: 4,
-          standardStrokeWidth: 2,
-          doneStrokeWidth: 2,
-          goodSuffix: ' :)',
-          badSuffix: ' :('
-        };
-        return config;
-      };
-      config = computeDimensions();
-      window.onresize = function() {
-        config = computeDimensions();
-        return renderBDC(scope.data, config);
-      };
-      return scope.$watch('data', function(data) {
-        if (!data) {
-          return;
-        }
-        return renderBDC(data, config);
-      }, true);
     }
   };
-});
-
-angular.module('NotSoShitty.bdc').controller('BurnDownChartCtrl', function($scope, BDCDataProvider, settings, doneCards) {
-  var day, getCurrentDayIndex, _i, _len, _ref;
-  if (settings.data.bdc != null) {
-    _ref = settings.data.bdc;
-    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-      day = _ref[_i];
-      day.date = moment(day.date).toDate();
-    }
-  } else {
-    settings.data.bdc = BDCDataProvider.initializeBDC(settings.data.dates.days, settings.data.resources);
-  }
-  $scope.tableData = settings.data.bdc;
-  getCurrentDayIndex = function(bdcData) {
-    var i, _j, _len1;
-    for (i = _j = 0, _len1 = bdcData.length; _j < _len1; i = ++_j) {
-      day = bdcData[i];
-      if (day.done == null) {
-        return i;
-      }
-    }
-  };
-  $scope.currentDayIndex = getCurrentDayIndex($scope.tableData);
-  $scope.save = function() {
-    return settings.save().then(function() {
-      return $scope.currentDayIndex = getCurrentDayIndex($scope.tableData);
-    });
-  };
-  $scope.tableData[$scope.currentDayIndex].done = BDCDataProvider.getDonePoints(doneCards);
 });
 
 angular.module('NotSoShitty.common').directive('nssRound', function() {
@@ -616,14 +596,27 @@ angular.module('NotSoShitty.login').directive('profilInfo', function() {
   };
 });
 
-angular.module('NotSoShitty.login').controller('LoginCtrl', function($scope, $rootScope, TrelloClient, $state, $auth) {
+angular.module('NotSoShitty.login').controller('LoginCtrl', function($scope, $rootScope, TrelloClient, $state, $auth, NotSoShittyUser, localStorageService) {
   if ($auth.isAuthenticated()) {
-    $state.go('settings');
+    $state.go('project');
   }
   return $scope.login = function() {
     return TrelloClient.authenticate().then(function() {
-      $rootScope.$broadcast('refresh-profil');
-      return $state.go('settings');
+      return TrelloClient.get('/member/me');
+    }).then(function(response) {
+      return response.data;
+    }).then(function(userInfo) {
+      return localStorageService.set('trello_email', userInfo.email);
+    }).then(function() {
+      return NotSoShittyUser.getCurrentUser();
+    }).then(function(user) {
+      if (user == null) {
+        user = new NotSoShittyUser();
+        user.email = localStorageService.get('trello_email');
+        return user.save();
+      }
+    }).then(function() {
+      return $state.go('project');
     });
   };
 });
@@ -645,154 +638,13 @@ angular.module('NotSoShitty.settings').controller('ResourcesByDayCtrl', function
 angular.module('NotSoShitty.settings').directive('resourcesByDay', function() {
   return {
     restrict: 'E',
-    templateUrl: 'settings/directives/resources-by-day/view.html',
+    templateUrl: 'project/directives/resources-by-day/view.html',
     scope: {
       members: '=',
       matrix: '=',
       days: '='
     },
     controller: 'ResourcesByDayCtrl'
-  };
-});
-
-angular.module('NotSoShitty.settings').controller('ResourcesWidgetCtrl', function($scope, Computer) {
-  var generateDayList, _ref, _ref1, _ref2, _ref3;
-  if ((_ref = $scope.dates) != null) {
-    _ref.start = moment((_ref1 = $scope.dates) != null ? _ref1.start : void 0).toDate();
-  }
-  if ((_ref2 = $scope.dates) != null) {
-    _ref2.end = moment((_ref3 = $scope.dates) != null ? _ref3.end : void 0).toDate();
-  }
-  $scope.clearTeam = function() {
-    $scope.team.rest = [];
-    return $scope.team.dev = [];
-  };
-  generateDayList = function(start, end) {
-    var current, day, days, endM;
-    if (!(start && end)) {
-      return;
-    }
-    current = moment(start);
-    endM = moment(end).add(1, 'days');
-    if (!endM.isAfter(current)) {
-      return;
-    }
-    days = [];
-    while (!current.isSame(endM)) {
-      day = current.isoWeekday();
-      if (day !== 6 && day !== 7) {
-        days.push({
-          label: current.format('dddd'),
-          date: current.format()
-        });
-      }
-      current.add(1, 'days');
-    }
-    return days;
-  };
-  $scope.$watch('dates.end', function(newVal, oldVal) {
-    if (newVal === oldVal) {
-      return;
-    }
-    if (newVal == null) {
-      return;
-    }
-    return $scope.dates.days = generateDayList($scope.dates.start, $scope.dates.end);
-  });
-  $scope.$watch('dates.days', function(newVal, oldVal) {
-    var _ref4, _ref5;
-    if (newVal === oldVal) {
-      return;
-    }
-    return $scope.resources.matrix = Computer.generateResources((_ref4 = $scope.dates) != null ? _ref4.days : void 0, (_ref5 = $scope.team) != null ? _ref5.dev : void 0);
-  });
-  $scope.$watch('team.dev', function(newVal, oldVal) {
-    var _ref4, _ref5;
-    if (newVal === oldVal) {
-      return;
-    }
-    return $scope.resources.matrix = Computer.generateResources((_ref4 = $scope.dates) != null ? _ref4.days : void 0, (_ref5 = $scope.team) != null ? _ref5.dev : void 0);
-  });
-  $scope.$watch('resources.matrix', function(newVal, oldVal) {
-    if (newVal === oldVal) {
-      return;
-    }
-    if (!newVal) {
-      return;
-    }
-    return $scope.resources.totalManDays = Computer.getTotalManDays(newVal);
-  });
-  $scope.$watch('resources.totalManDays', function(newVal, oldVal) {
-    if (newVal === oldVal) {
-      return;
-    }
-    if (!(newVal && newVal > 0)) {
-      return;
-    }
-    return $scope.resources.speed = Computer.calculateSpeed($scope.resources.totalPoints, newVal);
-  });
-  $scope.$watch('resources.totalPoints', function(newVal, oldVal) {
-    if (newVal === oldVal) {
-      return;
-    }
-    if (!(newVal && newVal > 0)) {
-      return;
-    }
-    return $scope.resources.speed = Computer.calculateSpeed(newVal, $scope.resources.totalManDays);
-  });
-  return $scope.$watch('resources.speed', function(newVal, oldVal) {
-    if (newVal === oldVal) {
-      return;
-    }
-    if (!(newVal && newVal > 0)) {
-      return;
-    }
-    return $scope.resources.totalPoints = Computer.calculateTotalPoints($scope.resources.totalManDays, newVal);
-  });
-});
-
-angular.module('NotSoShitty.settings').directive('resourcesWidget', function() {
-  return {
-    restrict: 'E',
-    templateUrl: 'settings/directives/resources-widget/view.html',
-    scope: {
-      boardMembers: '=',
-      team: '=',
-      dates: '=',
-      resources: '='
-    },
-    controller: 'ResourcesWidgetCtrl'
-  };
-});
-
-angular.module('NotSoShitty.settings').controller('SelectBoardCtrl', function() {});
-
-angular.module('NotSoShitty.settings').directive('selectBoard', function() {
-  return {
-    restrict: 'E',
-    templateUrl: 'settings/directives/select-board/view.html',
-    scope: {
-      boards: '=',
-      boardId: '='
-    },
-    controller: 'SelectBoardCtrl'
-  };
-});
-
-angular.module('NotSoShitty.settings').controller('SelectColumnsCtrl', function($scope) {
-  $scope.listTypes = ['backlog', 'sprintBacklog', 'doing', 'blocked', 'toValidate', 'done'].reverse();
-  return $scope.columnIds != null ? $scope.columnIds : $scope.columnIds = {};
-});
-
-angular.module('NotSoShitty.settings').directive('selectColumns', function() {
-  return {
-    restrict: 'E',
-    templateUrl: 'settings/directives/select-columns/view.html',
-    scope: {
-      boardColumns: '=',
-      columnIds: '='
-    },
-    controller: 'SelectColumnsCtrl'
   };
 });
 
@@ -839,7 +691,7 @@ angular.module('NotSoShitty.settings').controller('SelectPeopleCtrl', function($
 angular.module('NotSoShitty.settings').directive('selectPeople', function() {
   return {
     restrict: 'E',
-    templateUrl: 'settings/directives/select-people/view.html',
+    templateUrl: 'project/directives/select-people/view.html',
     scope: {
       members: '=',
       selectedMembers: '='
@@ -848,38 +700,241 @@ angular.module('NotSoShitty.settings').directive('selectPeople', function() {
   };
 });
 
-angular.module('NotSoShitty.settings').controller('SettingsCtrl', function($scope, boards, TrelloClient, localStorageService, UserBoardStorage, $mdToast, Settings, settings) {
-  var _base;
+angular.module('NotSoShitty.settings').controller('SettingsCtrl', function($scope, $timeout, $q, boards, TrelloClient, localStorageService, $mdToast, Project, user) {
+  var fetchBoardData, project, promise, saveFeedback;
   $scope.boards = boards;
-  if (settings == null) {
-    settings = new Settings();
-    settings.data = {};
+  if (user.project != null) {
+    project = user.project;
+  } else {
+    project = new Project();
   }
-  $scope.settings = settings.data;
-  if ((_base = $scope.settings).resources == null) {
-    _base.resources = {};
-  }
-  $scope.$watch('settings.boardId', function(next, prev) {
-    if (!next) {
-      return;
-    }
-    UserBoardStorage.setBoardId(next);
-    TrelloClient.get('/boards/' + next + '/lists').then(function(response) {
-      return $scope.boardColumns = response.data;
-    });
-    return TrelloClient.get('/boards/' + next + '/members?fields=avatarHash,fullName,initials,username').then(function(response) {
-      return $scope.boardMembers = response.data;
-    });
-  });
-  $scope.save = function() {
-    var saveFeedback;
-    if ($scope.settings.boardId == null) {
-      return;
-    }
-    settings.boardId = $scope.settings.boardId;
-    saveFeedback = $mdToast.simple().hideDelay(1000).position('top right').content('Saved!');
-    return settings.save().then(function() {
-      return $mdToast.show(saveFeedback);
-    });
+  $scope.project = project;
+  fetchBoardData = function(boardId) {
+    return $q.all([
+      TrelloClient.get("/boards/" + boardId + "/lists").then(function(response) {
+        return $scope.boardColumns = response.data;
+      })["catch"](function(err) {
+        $scope.project.boardId = null;
+        console.warn("Could not fetch Trello board with id " + boardId);
+        return console.log(err);
+      }), TrelloClient.get("/boards/" + boardId + "/members?fields=avatarHash,fullName,initials,username").then(function(response) {
+        return $scope.boardMembers = response.data;
+      })["catch"](function(err) {
+        $scope.project.boardId = null;
+        console.warn("Could not fetch Trello board members");
+        return console.log(err);
+      }), Project.get(boardId).then(function(response) {
+        if (response != null) {
+          return response;
+        }
+        console.log("No project with boardId " + boardId + " found. Creating a new one");
+        project = new Project();
+        project.boardId = boardId;
+        project.team = {
+          rest: [],
+          dev: []
+        };
+        return project.save();
+      }).then(function(project) {
+        return $scope.project = project;
+      })
+    ]);
   };
+  if ($scope.project.boardId != null) {
+    fetchBoardData($scope.project.boardId);
+  }
+  $scope.$watch('project.boardId', function(next, prev) {
+    if (!((next != null) && next !== prev)) {
+      return;
+    }
+    fetchBoardData(next);
+    return $scope.save();
+  });
+  $scope.$watch('project.team', function(next, prev) {
+    if (!((next != null) && !angular.equals(next, prev))) {
+      return;
+    }
+    return $scope.save();
+  }, true);
+  $scope.clearTeam = function() {
+    $scope.project.team.rest = [];
+    $scope.project.team.dev = [];
+    return $scope.save();
+  };
+  saveFeedback = $mdToast.simple().hideDelay(1000).position('top right').content('Saved!');
+  promise = null;
+  $scope.save = function() {
+    if ($scope.project.boardId == null) {
+      return;
+    }
+    if (promise != null) {
+      $timeout.cancel(promise);
+    }
+    return promise = $timeout(function() {
+      return $scope.project.save().then(function(p) {
+        user.project = p;
+        return user.save().then(function() {
+          return $mdToast.show(saveFeedback);
+        });
+      });
+    }, 2000);
+  };
+});
+
+angular.module('NotSoShitty.bdc').directive('burndown', function() {
+  return {
+    restrict: 'AE',
+    scope: {
+      data: '='
+    },
+    templateUrl: 'burn-down-chart/directives/burndown/view.html',
+    link: function(scope, elem, attr) {
+      var computeDimensions, config, maxWidth, whRatio;
+      maxWidth = 1000;
+      whRatio = 0.54;
+      computeDimensions = function() {
+        var config, height, width;
+        if (window.innerWidth > maxWidth) {
+          width = 800;
+        } else {
+          width = window.innerWidth - 80;
+        }
+        height = whRatio * width;
+        if (height + 128 > window.innerHeight) {
+          height = window.innerHeight - 128;
+          width = height / whRatio;
+        }
+        config = {
+          containerId: '#bdcgraph',
+          width: width,
+          height: height,
+          margins: {
+            top: 20,
+            right: 70,
+            bottom: 30,
+            left: 50
+          },
+          colors: {
+            standard: '#D93F8E',
+            done: '#5AA6CB',
+            good: '#97D17A',
+            bad: '#FA6E69',
+            labels: '#113F59'
+          },
+          startLabel: 'Start',
+          endLabel: 'End',
+          dateFormat: '%A',
+          xTitle: 'Daily meetings',
+          dotRadius: 4,
+          standardStrokeWidth: 2,
+          doneStrokeWidth: 2,
+          goodSuffix: ' :)',
+          badSuffix: ' :('
+        };
+        return config;
+      };
+      config = computeDimensions();
+      window.onresize = function() {
+        config = computeDimensions();
+        return renderBDC(scope.data, config);
+      };
+      return scope.$watch('data', function(data) {
+        if (!data) {
+          return;
+        }
+        return renderBDC(data, config);
+      }, true);
+    }
+  };
+});
+
+angular.module('NotSoShitty.bdc').controller('BurnDownChartCtrl', function($scope, $state, BDCDataProvider, sprint) {
+  console.log(sprint);
+  if (sprint == null) {
+    return $state.go('new-sprint');
+  }
+});
+
+angular.module('NotSoShitty.bdc').controller('NewSprintCtrl', function($scope, $timeout, TrelloClient, project, sprintService, Sprint) {
+  var promise, _ref;
+  $scope.activable = false;
+  $scope.project = project;
+  console.log(project);
+  $scope.sprint = new Sprint({
+    project: project
+  });
+  TrelloClient.get("/boards/" + project.boardId + "/lists").then(function(response) {
+    return $scope.boardLists = response.data;
+  });
+  $scope.devTeam = (_ref = project.team) != null ? _ref.dev : void 0;
+  promise = null;
+  $scope.save = function() {
+    if (promise != null) {
+      $timeout.cancel(promise);
+    }
+    return promise = $timeout(function() {
+      return $scope.sprint.save();
+    }, 2000);
+  };
+  $scope.$watch('sprint.dates.end', function(newVal, oldVal) {
+    if (newVal === oldVal) {
+      return;
+    }
+    if (newVal == null) {
+      return;
+    }
+    $scope.sprint.dates.days = sprintService.generateDayList($scope.sprint.dates.start, $scope.sprint.dates.end);
+    return $scope.save();
+  });
+  $scope.$watch('sprint.dates.days', function(newVal, oldVal) {
+    var _base, _ref1;
+    if (newVal === oldVal) {
+      return;
+    }
+    if ((_base = $scope.sprint).resources == null) {
+      _base.resources = {};
+    }
+    $scope.sprint.resources.matrix = sprintService.generateResources((_ref1 = $scope.sprint.dates) != null ? _ref1.days : void 0, $scope.devTeam);
+    return $scope.save();
+  });
+  $scope.$watch('sprint.resources.matrix', function(newVal, oldVal) {
+    if (newVal === oldVal) {
+      return;
+    }
+    if (!newVal) {
+      return;
+    }
+    $scope.sprint.resources.totalManDays = sprintService.getTotalManDays(newVal);
+    return $scope.save();
+  });
+  $scope.$watch('sprint.resources.totalManDays', function(newVal, oldVal) {
+    if (newVal === oldVal) {
+      return;
+    }
+    if (!(newVal && newVal > 0)) {
+      return;
+    }
+    $scope.sprint.resources.speed = sprintService.calculateSpeed($scope.sprint.resources.totalPoints, newVal);
+    return $scope.save();
+  });
+  $scope.$watch('sprint.resources.totalPoints', function(newVal, oldVal) {
+    if (newVal === oldVal) {
+      return;
+    }
+    if (!(newVal && newVal > 0)) {
+      return;
+    }
+    $scope.sprint.resources.speed = sprintService.calculateSpeed(newVal, $scope.sprint.resources.totalManDays);
+    return $scope.save();
+  });
+  return $scope.$watch('sprint.resources.speed', function(newVal, oldVal) {
+    if (newVal === oldVal) {
+      return;
+    }
+    if (!(newVal && newVal > 0)) {
+      return;
+    }
+    $scope.sprint.resources.totalPoints = sprintService.calculateTotalPoints($scope.sprint.resources.totalManDays, newVal);
+    return $scope.save();
+  });
 });

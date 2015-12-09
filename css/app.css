@@ -1,6 +1,9 @@
 md-content {
   min-height: 100%;
 }
+.container {
+  background-color: #efefef;
+}
 .column-width-80 {
   width: 80%;
 }
@@ -13,6 +16,22 @@ burndown {
 .bdc-table {
   margin-top: 20px;
   margin-bottom: 50px;
+}
+.md-button.md-fab.new-sprint-fab {
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+}
+h2.md-title {
+  text-align: center;
+}
+.md-fixed-top {
+  position: fixed;
+  top: 66px;
+}
+.md-fixed-right {
+  position: fixed;
+  right: 16px;
 }
 
 trello-avatar {
@@ -60,15 +79,6 @@ resources-by-day .row {
 resources-by-day .row-avatar {
   height: 50px;
   margin: 0;
-}
-
-.section-title {
-  font-size: 1.2em;
-  font-weight: bold;
-}
-.section-sub-title {
-  font-weight: bold;
-  color: gray;
 }
 
 select-people .member-select {
