@@ -1,25 +1,60 @@
-md-content
-  div(layout="row")
-    div.md-padding(flex)
-      h2.md-title Trello Mapping
-        md-button.md-raised.md-primary(ng-click="save()") Save
-      select-board(
-        boards="boards"
-        board-id="settings.boardId"
-      )
-      
-      select-columns(
-        ng-if="settings.boardId"
-        board-columns="boardColumns"
-        column-ids="settings.columnIds"
-      )
-    div.md-padding(flex)
-      h2.md-title Resources
-        md-button.md-raised.md-primary(ng-click="save()") Save
-      resources-widget(
-        ng-if="settings.boardId"
-        board-members="boardMembers"
-        team="settings.team"
-        dates="settings.dates"
-        resources="settings.resources"
-      )
+div.sprint-body(layout="row" layout-align="center end")
+  md-card.layout-padding(flex="80")
+    h2.md-title(layout-align="center end") PROJECT SETTINGS
+    md-input-container(layout="column")
+      label Select a board: 
+      md-select(ng-model="project.boardId")
+        md-option(ng-value="board.id" ng-repeat="board in boards") {{ board.name }}
+    
+    div(ng-if="project.boardId" layout="column")
+      md-input-container
+        md-tooltip(md-direction="left") To be used in daily mail
+        label Select "blocked" column
+        md-select(ng-model="project.columnMapping.blocked" ng-change="save()")
+          md-option(ng-value="column.id" ng-repeat="column in boardColumns") {{ column.name }}
+      md-input-container
+        md-tooltip(md-direction="left") To be used in daily mail
+        label Select "to validate" column
+        md-select(ng-model="project.columnMapping.toValidate" ng-change="save()")
+          md-option(ng-value="column.id" ng-repeat="column in boardColumns") {{ column.name }}
+
+      h4.md-title The team
+        md-button.md-warn(ng-click="clearTeam()") Clear
+      md-data-table-container
+        table(md-data-table)
+          thead
+            tr
+              th(name="People")
+              th(name="Email")
+          tbody
+            tr(ng-repeat="dev in project.team.dev")
+              td
+                trello-avatar(
+                  member="dev"
+                )
+              td
+                md-input-container
+                  label Email
+                  input(ng-model="dev.email")
+            tr(ng-repeat="rest in project.team.rest")
+              td
+                trello-avatar(
+                  member="rest"
+                )
+              td
+                md-input-container
+                  label Email
+                  input(ng-model="rest.email")
+      .select-teams
+        .select-dev-team
+          div Select the dev team
+          select-people(
+            members="boardMembers"
+            selected-members="project.team.dev"
+          )
+        .select-rest-team
+          div Select the rest of the team
+          select-people(
+            members="boardMembers"
+            selected-members="project.team.rest"
+          )
