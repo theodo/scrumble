@@ -14,6 +14,7 @@ app = angular.module 'NotSoShitty', [
   'satellizer'
   'permission'
   'trello-api-client'
+  'angular-google-gapi'
 
   'NotSoShitty.login'
   'NotSoShitty.settings'
@@ -33,7 +34,7 @@ app.config (
 
   $locationProvider.hashPrefix '!'
 
-  $urlRouterProvider.otherwise '/login'
+  $urlRouterProvider.otherwise '/login/trello'
 
   ParseProvider.initialize(
     "UTkdR7MH2Wok5lyPEm1VHoxyFKWVcdOKAu6A4BWG", # Application ID
@@ -47,7 +48,7 @@ app.config (TrelloClientProvider) ->
     key: '2dcb2ba290c521d2b5c2fd69cc06830e'
     appName: 'Not So Shitty'
     tokenExpiration: 'never'
-    scope: ['read', 'write', 'account']
+    scope: ['read', 'account'] #, 'write']
   }
 
 app.config ($mdThemingProvider) ->

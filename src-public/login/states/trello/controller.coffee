@@ -1,5 +1,5 @@
 angular.module 'NotSoShitty.login'
-.controller 'LoginCtrl', (
+.controller 'TrelloLoginCtrl', (
   $scope
   $rootScope
   TrelloClient
@@ -12,7 +12,7 @@ angular.module 'NotSoShitty.login'
     $state.go 'project'
   $scope.login = ->
     TrelloClient.authenticate()
-    .then -> TrelloClient.get('/member/me')
+    .then (response) -> TrelloClient.get('/member/me')
     .then (response) -> response.data
     .then (userInfo) ->
       localStorageService.set 'trello_email', userInfo.email

@@ -3,7 +3,7 @@ angular.module 'NotSoShitty.login'
   $scope.logout = ->
     $auth.logout()
     $scope.userInfo = null
-    $state.go 'login'
+    $state.go 'trello-login'
     $scope.showProfilCard = false
 
   getTrelloInfo = ->

@@ -11,3 +11,7 @@ angular.module 'NotSoShitty.daily-report'
         # UserBoardStorage.getBoardId()
         # .then (boardId) ->
         #   DailyMailStorage.get(boardId)
+    data:
+      permissions:
+        only: ['google-authenticated']
+        redirectTo: 'google-login'
