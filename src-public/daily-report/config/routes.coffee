@@ -6,7 +6,8 @@ angular.module 'NotSoShitty.daily-report'
     templateUrl: 'daily-report/states/view.html'
     controller: 'DailyReportCtrl'
     resolve:
-      dailyMail: (UserBoardStorage, DailyMailStorage) ->
-        UserBoardStorage.getBoardId()
-        .then (boardId) ->
-          DailyMailStorage.get(boardId)
+      dailyMail: (NotSoShittyUser) ->
+        return
+        # UserBoardStorage.getBoardId()
+        # .then (boardId) ->
+        #   DailyMailStorage.get(boardId)
