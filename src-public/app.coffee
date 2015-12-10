@@ -22,6 +22,7 @@ app = angular.module 'NotSoShitty', [
   'NotSoShitty.common'
   'NotSoShitty.daily-report'
   'NotSoShitty.gmail-client'
+  'NotSoShitty.feedback'
 ]
 
 app.config (

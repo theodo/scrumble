@@ -1,0 +1,17 @@
+md-dialog
+  form
+    md-toolbar
+      .md-toolbar-tools
+        h2 Feedback Form
+        span(flex='')
+        md-button.md-icon-button(ng-click='cancel()')
+          md-icon(md-svg-src='close', aria-label='Close dialog')
+    md-dialog-content
+      .md-dialog-content
+        h2 Your feedback is precious
+        p Something is wrong? You're missing a feature? You like it that way? Please tell us!
+        md-input-container.md-block
+          label Your Feedback
+          textarea(ng-model="message" rows="5" cols="1")
+    md-dialog-actions(layout='row')
+      md-button.md-flat.md-primary(ng-click="send()") Send
