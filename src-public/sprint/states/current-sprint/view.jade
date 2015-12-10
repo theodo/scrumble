@@ -1,26 +1,28 @@
-md-card.md-whiteframe-z2.bdc-container
-  burndown(data="tableData")
-md-card.md-whiteframe-z2.bdc-table
-  md-data-table-container
-    table(md-data-table)
-      thead
-        tr
-          th(name="Day")
-          th(name="Standard")
-          th(name="Done")
-      tbody
-        tr(ng-repeat="day in tableData" ng-class="{'md-selected': currentDayIndex == $index}")
-          td {{ day.date | date : 'EEEE' }}
-          td {{ day.standard.toFixed(1) }}
-          td
-            section(layout="row" layout-sm="column" layout-wrap)
-              md-input-container(flex="50")
-                label Done
-                input(ng-model="day.done" type="number")
-              div(layout-align="center center" ng-if="currentDayIndex == $index")
-                md-button.md-primary(ng-click="fetchTrelloDonePoints()") Fetch from Trello
-  section(layout="row" layout-sm="column" layout-align="center center" layout-wrap)
-    md-button.md-raised.md-primary(ng-click="save()") Save
+div(layout="row" layout-align="center start")
+  md-card.layout-padding(flex="60")
+    h2.md-title(layout-align="center end") BURN DOWN CHART
+      burndown(data="tableData")
+  md-card.layout-padding(flex="40")
+    md-data-table-container
+      table.bdc-data(md-data-table)
+        thead
+          tr
+            th(name="Day")
+            th(name="Standard")
+            th(name="Done")
+        tbody
+          tr(ng-repeat="day in tableData" ng-class="{'md-selected': currentDayIndex == $index}")
+            td {{ day.date | date : 'EEEE' }}
+            td {{ day.standard.toFixed(1) }}
+            td
+              section(layout="row" layout-sm="column" layout-wrap)
+                md-input-container(flex="50" md-no-float="true")
+                  label Done
+                  input(ng-model="day.done" type="number")
+                div(layout-align="center center" ng-if="currentDayIndex == $index")
+                  md-button.md-primary(ng-click="fetchTrelloDonePoints()") Fetch from Trello
+    section(layout="row" layout-sm="column" layout-align="center center" layout-wrap)
+      md-button.md-raised.md-primary(ng-click="save()") Save
 md-button.md-fab.md-primary.new-sprint-fab(ui-sref="new-sprint")
   md-icon(md-svg-icon="plus")
   md-tooltip(md-direction="top") Create a new sprint
