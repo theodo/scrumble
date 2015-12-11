@@ -57,7 +57,7 @@ app.config ($mdThemingProvider) ->
 
 app.config ($mdIconProvider) ->
   $mdIconProvider
-    .defaultIconSet 'icons/mdi.svg'
+    .defaultIconSet 'icons/mdi.light.svg'
 
 app.run ($rootScope, $state) ->
   $rootScope.$state = $state
