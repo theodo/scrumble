@@ -49,9 +49,9 @@ angular.module('NotSoShitty.feedback', []);
 
 angular.module('NotSoShitty.gmail-client', []);
 
-angular.module('NotSoShitty.login', []);
-
 angular.module('NotSoShitty.settings', ['NotSoShitty.common']);
+
+angular.module('NotSoShitty.login', []);
 
 angular.module('NotSoShitty.bdc', []);
 
@@ -277,29 +277,6 @@ angular.module('NotSoShitty.gmail-client').service('mailer', function($state, $r
   };
 });
 
-angular.module('NotSoShitty.login').run(function(Permission, localStorageService, GAuth) {
-  Permission.defineRole('trello-authenticated', function() {
-    return localStorageService.get('trello_token') != null;
-  });
-  return Permission.defineRole('google-authenticated', function() {
-    return GAuth.checkAuth();
-  });
-});
-
-angular.module('NotSoShitty.login').config(function($stateProvider) {
-  return $stateProvider.state('trello-login', {
-    url: '/login/trello',
-    controller: 'TrelloLoginCtrl',
-    templateUrl: 'login/states/trello/view.html'
-  }).state('tab.google-login', {
-    url: '/login/google',
-    controller: 'GoogleLoginCtrl',
-    templateUrl: 'login/states/google/view.html'
-  });
-});
-
-
-
 angular.module('NotSoShitty.settings').config(function($stateProvider) {
   return $stateProvider.state('tab.project', {
     url: '/project',
@@ -361,6 +338,29 @@ angular.module('NotSoShitty.storage').factory('Project', function(Parse, $q) {
 
   })(Parse.Model);
 });
+
+angular.module('NotSoShitty.login').run(function(Permission, localStorageService, GAuth) {
+  Permission.defineRole('trello-authenticated', function() {
+    return localStorageService.get('trello_token') != null;
+  });
+  return Permission.defineRole('google-authenticated', function() {
+    return GAuth.checkAuth();
+  });
+});
+
+angular.module('NotSoShitty.login').config(function($stateProvider) {
+  return $stateProvider.state('trello-login', {
+    url: '/login/trello',
+    controller: 'TrelloLoginCtrl',
+    templateUrl: 'login/states/trello/view.html'
+  }).state('tab.google-login', {
+    url: '/login/google',
+    controller: 'GoogleLoginCtrl',
+    templateUrl: 'login/states/google/view.html'
+  });
+});
+
+
 
 angular.module('NotSoShitty.bdc').config(function($stateProvider) {
   return $stateProvider.state('tab.current-sprint', {
@@ -727,73 +727,6 @@ angular.module('NotSoShitty.common').directive('trelloAvatar', function() {
   };
 });
 
-angular.module('NotSoShitty.login').controller('ProfilInfoCtrl', function($rootScope, $scope, $auth, User, $state) {
-  var getTrelloInfo;
-  $scope.logout = function() {
-    $auth.logout();
-    $scope.userInfo = null;
-    $state.go('trello-login');
-    return $scope.showProfilCard = false;
-  };
-  getTrelloInfo = function() {
-    if ($auth.isAuthenticated()) {
-      return User.getTrelloInfo().then(function(info) {
-        return $scope.userInfo = info;
-      });
-    }
-  };
-  getTrelloInfo();
-  $rootScope.$on('refresh-profil', getTrelloInfo);
-  $scope.showProfilCard = false;
-  return $scope.toggleProfilCard = function() {
-    return $scope.showProfilCard = !$scope.showProfilCard;
-  };
-});
-
-angular.module('NotSoShitty.login').directive('profilInfo', function() {
-  return {
-    restrict: 'E',
-    templateUrl: 'login/directives/profil-info/view.html',
-    scope: {},
-    controller: 'ProfilInfoCtrl'
-  };
-});
-
-angular.module('NotSoShitty.login').controller('GoogleLoginCtrl', function($scope, GAuth) {
-  return $scope.authenticate = function() {
-    return GAuth.login().then(function() {
-      return console.log('authenticated!');
-    }, function() {
-      return console.log('login fail');
-    });
-  };
-});
-
-angular.module('NotSoShitty.login').controller('TrelloLoginCtrl', function($scope, $rootScope, TrelloClient, $state, $auth, NotSoShittyUser, localStorageService) {
-  if ($auth.isAuthenticated()) {
-    $state.go('tab.project');
-  }
-  return $scope.login = function() {
-    return TrelloClient.authenticate().then(function(response) {
-      return TrelloClient.get('/member/me');
-    }).then(function(response) {
-      return response.data;
-    }).then(function(userInfo) {
-      return localStorageService.set('trello_email', userInfo.email);
-    }).then(function() {
-      return NotSoShittyUser.getCurrentUser();
-    }).then(function(user) {
-      if (user == null) {
-        user = new NotSoShittyUser();
-        user.email = localStorageService.get('trello_email');
-        return user.save();
-      }
-    }).then(function() {
-      return $state.go('tab.project');
-    });
-  };
-});
-
 angular.module('NotSoShitty.settings').controller('ResourcesByDayCtrl', function($scope) {
   var changeResource;
   changeResource = function(dayIndex, memberIndex, matrix) {
@@ -951,6 +884,73 @@ angular.module('NotSoShitty.settings').controller('ProjectCtrl', function($scope
         });
       });
     }, 2000);
+  };
+});
+
+angular.module('NotSoShitty.login').controller('ProfilInfoCtrl', function($rootScope, $scope, $auth, User, $state) {
+  var getTrelloInfo;
+  $scope.logout = function() {
+    $auth.logout();
+    $scope.userInfo = null;
+    $state.go('trello-login');
+    return $scope.showProfilCard = false;
+  };
+  getTrelloInfo = function() {
+    if ($auth.isAuthenticated()) {
+      return User.getTrelloInfo().then(function(info) {
+        return $scope.userInfo = info;
+      });
+    }
+  };
+  getTrelloInfo();
+  $rootScope.$on('refresh-profil', getTrelloInfo);
+  $scope.showProfilCard = false;
+  return $scope.toggleProfilCard = function() {
+    return $scope.showProfilCard = !$scope.showProfilCard;
+  };
+});
+
+angular.module('NotSoShitty.login').directive('profilInfo', function() {
+  return {
+    restrict: 'E',
+    templateUrl: 'login/directives/profil-info/view.html',
+    scope: {},
+    controller: 'ProfilInfoCtrl'
+  };
+});
+
+angular.module('NotSoShitty.login').controller('GoogleLoginCtrl', function($scope, GAuth) {
+  return $scope.authenticate = function() {
+    return GAuth.login().then(function() {
+      return console.log('authenticated!');
+    }, function() {
+      return console.log('login fail');
+    });
+  };
+});
+
+angular.module('NotSoShitty.login').controller('TrelloLoginCtrl', function($scope, $rootScope, TrelloClient, $state, $auth, NotSoShittyUser, localStorageService) {
+  if ($auth.isAuthenticated()) {
+    $state.go('tab.project');
+  }
+  return $scope.login = function() {
+    return TrelloClient.authenticate().then(function(response) {
+      return TrelloClient.get('/member/me');
+    }).then(function(response) {
+      return response.data;
+    }).then(function(userInfo) {
+      return localStorageService.set('trello_email', userInfo.email);
+    }).then(function() {
+      return NotSoShittyUser.getCurrentUser();
+    }).then(function(user) {
+      if (user == null) {
+        user = new NotSoShittyUser();
+        user.email = localStorageService.get('trello_email');
+        return user.save();
+      }
+    }).then(function() {
+      return $state.go('tab.project');
+    });
   };
 });
 
