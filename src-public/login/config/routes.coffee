@@ -1,7 +1,12 @@
 angular.module 'NotSoShitty.login'
 .config ($stateProvider) ->
   $stateProvider
-  .state 'login',
-    url: '/login'
-    controller: 'LoginCtrl'
-    templateUrl: 'login/states/login/view.html'
+  .state 'trello-login',
+    url: '/login/trello'
+    controller: 'TrelloLoginCtrl'
+    templateUrl: 'login/states/trello/view.html'
+
+  .state 'google-login',
+    url: '/login/google'
+    controller: 'GoogleLoginCtrl'
+    templateUrl: 'login/states/google/view.html'

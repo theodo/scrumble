@@ -3,7 +3,7 @@ angular.module 'NotSoShitty.settings'
   $stateProvider
   .state 'project',
     url: '/project'
-    controller: 'SettingsCtrl'
+    controller: 'ProjectCtrl'
     templateUrl: 'project/states/main/view.html'
     resolve:
       user: (NotSoShittyUser) ->
@@ -14,4 +14,4 @@ angular.module 'NotSoShitty.settings'
     data:
       permissions:
         only: ['trello-authenticated']
-        redirectTo: 'login'
+        redirectTo: 'trello-login'

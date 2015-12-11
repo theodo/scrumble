@@ -1,5 +1,5 @@
 angular.module 'NotSoShitty.settings'
-.controller 'SettingsCtrl', (
+.controller 'ProjectCtrl', (
   $scope
   $timeout
   $q
