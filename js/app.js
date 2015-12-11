@@ -27,7 +27,7 @@ app.config(function($mdThemingProvider) {
 });
 
 app.config(function($mdIconProvider) {
-  return $mdIconProvider.defaultIconSet('icons/mdi.svg');
+  return $mdIconProvider.defaultIconSet('icons/mdi.light.svg');
 });
 
 app.run(function($rootScope, $state) {
