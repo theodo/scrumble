@@ -6,10 +6,10 @@ angular.module 'NotSoShitty.storage'
     @getActiveSprint = (project) ->
       @query(
         where:
-          # project: project
           isActive: true
+        equalTo:
+          project: project
       ).then (sprints) ->
-        console.log sprints
         sprint = if sprints.length > 0 then sprints[0] else null
         sprint
       .catch (err) ->

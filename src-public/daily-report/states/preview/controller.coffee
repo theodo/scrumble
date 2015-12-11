@@ -1,20 +1,12 @@
 angular.module 'NotSoShitty.daily-report'
-.controller 'DailyReportCtrl', (
-  $scope
-  mailer
-  dailyReport
-  $mdToast
-) ->
-  saveFeedback = $mdToast.simple()
-    .hideDelay(1000)
-    .position('top right')
-    .content('Saved!')
+.controller 'PreviewCtrl', ($scope, $mdDialog, $mdToast, mailer, message) ->
+  $scope.message = message
 
-  $scope.dailyReport = dailyReport
+  $scope.hide = ->
+    $mdDialog.hide()
 
-  $scope.save = ->
-    $scope.dailyReport.save().then ->
-      $mdToast.show saveFeedback
+  $scope.cancel = ->
+    $mdDialog.cancel()
 
   $scope.send = ->
     mailer.send $scope.dailyReport.message, (response) ->
@@ -30,4 +22,3 @@ angular.module 'NotSoShitty.daily-report'
           .position('top right')
           .content('Email sent')
         $mdToast.show sentFeedback
-      console.log response
