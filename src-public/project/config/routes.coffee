@@ -1,7 +1,7 @@
 angular.module 'NotSoShitty.settings'
 .config ($stateProvider) ->
   $stateProvider
-  .state 'project',
+  .state 'tab.project',
     url: '/project'
     controller: 'ProjectCtrl'
     templateUrl: 'project/states/main/view.html'

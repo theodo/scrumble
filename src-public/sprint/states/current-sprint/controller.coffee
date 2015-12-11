@@ -6,7 +6,7 @@ angular.module 'NotSoShitty.bdc'
   TrelloClient
   sprint
 ) ->
-  $state.go 'new-sprint' unless sprint?
+  $state.go 'tab.new-sprint' unless sprint?
 
   if sprint.bdcData?
     # the date is saved as a string so we've to convert it

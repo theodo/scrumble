@@ -9,7 +9,7 @@ angular.module 'NotSoShitty.login'
   localStorageService
 ) ->
   if $auth.isAuthenticated()
-    $state.go 'project'
+    $state.go 'tab.project'
   $scope.login = ->
     TrelloClient.authenticate()
     .then (response) -> TrelloClient.get('/member/me')
@@ -25,4 +25,4 @@ angular.module 'NotSoShitty.login'
         user.save()
     .then ->
       # $rootScope.$broadcast 'refresh-profil'
-      $state.go 'project'
+      $state.go 'tab.project'
