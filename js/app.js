@@ -34,6 +34,13 @@ app.run(function($rootScope, $state) {
   return $rootScope.$state = $state;
 });
 
+app.config(function($stateProvider) {
+  return $stateProvider.state('tab', {
+    abstract: true,
+    templateUrl: 'common/views/base.html'
+  });
+});
+
 angular.module('NotSoShitty.common', []);
 
 angular.module('NotSoShitty.daily-report', []);
@@ -51,7 +58,7 @@ angular.module('NotSoShitty.bdc', []);
 angular.module('NotSoShitty.storage', []);
 
 angular.module('NotSoShitty.daily-report').config(function($stateProvider) {
-  return $stateProvider.state('daily-report', {
+  return $stateProvider.state('tab.daily-report', {
     url: '/daily-report',
     templateUrl: 'daily-report/states/view.html',
     controller: 'DailyReportCtrl',
@@ -73,7 +80,7 @@ angular.module('NotSoShitty.daily-report').config(function($stateProvider) {
     data: {
       permissions: {
         only: ['google-authenticated'],
-        redirectTo: 'google-login'
+        redirectTo: 'tab.google-login'
       }
     }
   });
@@ -264,7 +271,7 @@ angular.module('NotSoShitty.gmail-client').service('mailer', function($state, $r
         });
         return request.execute(callback);
       }, function() {
-        return $state.go('google-login');
+        return $state.go('tab.google-login');
       });
     }
   };
@@ -284,7 +291,7 @@ angular.module('NotSoShitty.login').config(function($stateProvider) {
     url: '/login/trello',
     controller: 'TrelloLoginCtrl',
     templateUrl: 'login/states/trello/view.html'
-  }).state('google-login', {
+  }).state('tab.google-login', {
     url: '/login/google',
     controller: 'GoogleLoginCtrl',
     templateUrl: 'login/states/google/view.html'
@@ -294,7 +301,7 @@ angular.module('NotSoShitty.login').config(function($stateProvider) {
 
 
 angular.module('NotSoShitty.settings').config(function($stateProvider) {
-  return $stateProvider.state('project', {
+  return $stateProvider.state('tab.project', {
     url: '/project',
     controller: 'ProjectCtrl',
     templateUrl: 'project/states/main/view.html',
@@ -356,7 +363,7 @@ angular.module('NotSoShitty.storage').factory('Project', function(Parse, $q) {
 });
 
 angular.module('NotSoShitty.bdc').config(function($stateProvider) {
-  return $stateProvider.state('current-sprint', {
+  return $stateProvider.state('tab.current-sprint', {
     url: '/sprint/current',
     controller: 'BurnDownChartCtrl',
     templateUrl: 'sprint/states/current-sprint/view.html',
@@ -370,7 +377,7 @@ angular.module('NotSoShitty.bdc').config(function($stateProvider) {
         });
       }
     }
-  }).state('new-sprint', {
+  }).state('tab.new-sprint', {
     url: '/sprint/new',
     controller: 'NewSprintCtrl',
     templateUrl: 'sprint/states/new-sprint/view.html',
@@ -764,7 +771,7 @@ angular.module('NotSoShitty.login').controller('GoogleLoginCtrl', function($scop
 
 angular.module('NotSoShitty.login').controller('TrelloLoginCtrl', function($scope, $rootScope, TrelloClient, $state, $auth, NotSoShittyUser, localStorageService) {
   if ($auth.isAuthenticated()) {
-    $state.go('project');
+    $state.go('tab.project');
   }
   return $scope.login = function() {
     return TrelloClient.authenticate().then(function(response) {
@@ -782,7 +789,7 @@ angular.module('NotSoShitty.login').controller('TrelloLoginCtrl', function($scop
         return user.save();
       }
     }).then(function() {
-      return $state.go('project');
+      return $state.go('tab.project');
     });
   };
 });
@@ -1017,7 +1024,7 @@ angular.module('NotSoShitty.bdc').directive('burndown', function() {
 angular.module('NotSoShitty.bdc').controller('BurnDownChartCtrl', function($scope, $state, BDCDataProvider, TrelloClient, sprint) {
   var day, getCurrentDayIndex, _i, _len, _ref;
   if (sprint == null) {
-    $state.go('new-sprint');
+    $state.go('tab.new-sprint');
   }
   if (sprint.bdcData != null) {
     _ref = sprint.bdcData;
@@ -1116,7 +1123,7 @@ angular.module('NotSoShitty.bdc').controller('NewSprintCtrl', function($scope, $
     if (isActivable()) {
       $scope.sprint.isActive = true;
       return $scope.sprint.save().then(function() {
-        return $state.go('current-sprint');
+        return $state.go('tab.current-sprint');
       });
     }
   };
