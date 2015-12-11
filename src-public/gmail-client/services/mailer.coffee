@@ -2,12 +2,18 @@ angular.module 'NotSoShitty.gmail-client'
 .service 'mailer', ($state, $rootScope, GAuth) ->
   send: (message, callback) ->
     GAuth.checkAuth().then ->
+      return callback message: "No 'to' field", code: 400 unless message.to?
+      return callback message: "No 'subject' field", code: 400 unless message.subject?
+      return callback message: "No 'body' field", code: 400 unless message.body?
+
       user = $rootScope.gapi.user
       now = new Date()
       now = now.toString()
       email_lines = []
       email_lines.push "From: #{user.name} <#{user.email}>"
       email_lines.push "To: #{message.to}"
+      if message.cc?
+        email_lines.push "Cc: #{message.cc}"
       email_lines.push 'Content-type: text/html;charset=iso-8859-1'
       email_lines.push 'MIME-Version: 1.0'
       email_lines.push "Subject: #{message.subject}"

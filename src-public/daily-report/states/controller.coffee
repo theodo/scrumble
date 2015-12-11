@@ -2,8 +2,7 @@ angular.module 'NotSoShitty.daily-report'
 .controller 'DailyReportCtrl', (
   $scope
   mailer
-  dailyMail
-  DailyMail
+  dailyReport
   $mdToast
 ) ->
   saveFeedback = $mdToast.simple()
@@ -11,15 +10,15 @@ angular.module 'NotSoShitty.daily-report'
     .position('top right')
     .content('Saved!')
 
-  $scope.dailyReport = dailyMail
+  $scope.dailyReport = dailyReport
 
   $scope.save = ->
     $scope.dailyReport.save().then ->
       $mdToast.show saveFeedback
 
   $scope.send = ->
-    mailer.send $scope.dailyReport, (response) ->
-      if response.code > 300
+    mailer.send $scope.dailyReport.message, (response) ->
+      if response.code? and response.code > 300
         errorFeedback = $mdToast.simple()
           .hideDelay(3000)
           .position('top right')

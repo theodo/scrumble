@@ -6,11 +6,12 @@ angular.module 'NotSoShitty.daily-report'
     templateUrl: 'daily-report/states/view.html'
     controller: 'DailyReportCtrl'
     resolve:
-      dailyMail: (NotSoShittyUser) ->
-        return
-        # UserBoardStorage.getBoardId()
-        # .then (boardId) ->
-        #   DailyMailStorage.get(boardId)
+      dailyReport: (NotSoShittyUser, DailyReport, Project) ->
+        NotSoShittyUser.getCurrentUser().then (user) ->
+          DailyReport.getByProject(user.project).then (report) ->
+            return report if report?
+            report = new DailyReport(project: new Project user.project)
+            report.save()
     data:
       permissions:
         only: ['google-authenticated']
