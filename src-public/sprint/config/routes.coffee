@@ -1,7 +1,7 @@
 angular.module 'NotSoShitty.bdc'
 .config ($stateProvider) ->
   $stateProvider
-  .state 'current-sprint',
+  .state 'tab.current-sprint',
     url: '/sprint/current'
     controller: 'BurnDownChartCtrl'
     templateUrl: 'sprint/states/current-sprint/view.html'
@@ -13,7 +13,7 @@ angular.module 'NotSoShitty.bdc'
         .catch (err) ->
           console.log err
           return null
-  .state 'new-sprint',
+  .state 'tab.new-sprint',
     url: '/sprint/new'
     controller: 'NewSprintCtrl'
     templateUrl: 'sprint/states/new-sprint/view.html'

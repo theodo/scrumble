@@ -29,4 +29,4 @@ angular.module 'NotSoShitty.gmail-client'
           raw: base64EncodedEmail
 
       request.execute callback
-    , -> $state.go 'google-login'
+    , -> $state.go 'tab.google-login'

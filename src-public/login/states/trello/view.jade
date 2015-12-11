@@ -1,6 +1,13 @@
-.container
-  .jumbotron
-    h1 Login
-    a.btn.btn-primary.btn-lg(
-      ng-click="login()"
-    ) Login with trello
+div.landing-page(layout="row" layout-align="center center")
+  div.hgroup
+    h1 Not So Shitty
+    h3 Automate your daily boring tasks
+    md-button.md-raised.md-primary(ng-click="login()")
+      md-icon(md-svg-icon='trello')
+      |   Login with Trello
+        
+footer
+  a(href='http://www.theodo.fr/', target='_blank')
+    img(src='https://www.theodo.fr/bundles/theodowebsite/images/theodo-logo-medium.png')
+  p You Gotta Love Dashboards
+feedback

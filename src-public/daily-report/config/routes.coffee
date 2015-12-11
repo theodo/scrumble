@@ -1,7 +1,7 @@
 angular.module 'NotSoShitty.daily-report'
 .config ($stateProvider) ->
   $stateProvider
-  .state 'daily-report',
+  .state 'tab.daily-report',
     url: '/daily-report'
     templateUrl: 'daily-report/states/view.html'
     controller: 'DailyReportCtrl'
@@ -15,4 +15,4 @@ angular.module 'NotSoShitty.daily-report'
     data:
       permissions:
         only: ['google-authenticated']
-        redirectTo: 'google-login'
+        redirectTo: 'tab.google-login'

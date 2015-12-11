@@ -61,7 +61,7 @@ angular.module 'NotSoShitty.bdc'
     if isActivable()
       $scope.sprint.isActive = true
       $scope.sprint.save().then ->
-        $state.go 'current-sprint'
+        $state.go 'tab.current-sprint'
 
   $scope.$watch 'sprint.dates.end', (newVal, oldVal) ->
     return if newVal is oldVal

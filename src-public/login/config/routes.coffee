@@ -6,7 +6,7 @@ angular.module 'NotSoShitty.login'
     controller: 'TrelloLoginCtrl'
     templateUrl: 'login/states/trello/view.html'
 
-  .state 'google-login',
+  .state 'tab.google-login',
     url: '/login/google'
     controller: 'GoogleLoginCtrl'
     templateUrl: 'login/states/google/view.html'

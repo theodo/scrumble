@@ -61,3 +61,10 @@ app.config ($mdIconProvider) ->
 
 app.run ($rootScope, $state) ->
   $rootScope.$state = $state
+
+app.config ($stateProvider) ->
+  $stateProvider
+  .state 'tab',
+    abstract: true
+    templateUrl: 'common/views/base.html'
+
