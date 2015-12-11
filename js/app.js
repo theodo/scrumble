@@ -56,7 +56,19 @@ angular.module('NotSoShitty.daily-report').config(function($stateProvider) {
     templateUrl: 'daily-report/states/view.html',
     controller: 'DailyReportCtrl',
     resolve: {
-      dailyMail: function(NotSoShittyUser) {}
+      dailyReport: function(NotSoShittyUser, DailyReport, Project) {
+        return NotSoShittyUser.getCurrentUser().then(function(user) {
+          return DailyReport.getByProject(user.project).then(function(report) {
+            if (report != null) {
+              return report;
+            }
+            report = new DailyReport({
+              project: new Project(user.project)
+            });
+            return report.save();
+          });
+        });
+      }
     },
     data: {
       permissions: {
@@ -67,19 +79,52 @@ angular.module('NotSoShitty.daily-report').config(function($stateProvider) {
   });
 });
 
-angular.module('NotSoShitty.daily-report').controller('DailyReportCtrl', function($scope, mailer, dailyMail, DailyMail, $mdToast) {
+var __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+angular.module('NotSoShitty.daily-report').factory('DailyReport', function(Parse) {
+  var DailyReport;
+  return DailyReport = (function(_super) {
+    __extends(DailyReport, _super);
+
+    function DailyReport() {
+      return DailyReport.__super__.constructor.apply(this, arguments);
+    }
+
+    DailyReport.configure("DailyReport", "project", "message");
+
+    DailyReport.getByProject = function(project) {
+      return this.query({
+        equalTo: {
+          project: project
+        }
+      }).then(function(response) {
+        if (response.length > 0) {
+          return response[0];
+        } else {
+          return null;
+        }
+      });
+    };
+
+    return DailyReport;
+
+  })(Parse.Model);
+});
+
+angular.module('NotSoShitty.daily-report').controller('DailyReportCtrl', function($scope, mailer, dailyReport, $mdToast) {
   var saveFeedback;
   saveFeedback = $mdToast.simple().hideDelay(1000).position('top right').content('Saved!');
-  $scope.dailyReport = dailyMail;
+  $scope.dailyReport = dailyReport;
   $scope.save = function() {
     return $scope.dailyReport.save().then(function() {
       return $mdToast.show(saveFeedback);
     });
   };
   return $scope.send = function() {
-    return mailer.send($scope.dailyReport, function(response) {
+    return mailer.send($scope.dailyReport.message, function(response) {
       var errorFeedback, sentFeedback;
-      if (response.code > 300) {
+      if ((response.code != null) && response.code > 300) {
         errorFeedback = $mdToast.simple().hideDelay(3000).position('top right').content("Failed to send message: '" + response.message + "'");
         $mdToast.show(errorFeedback);
       } else {
@@ -175,12 +220,33 @@ angular.module('NotSoShitty.gmail-client').service('mailer', function($state, $r
     send: function(message, callback) {
       return GAuth.checkAuth().then(function() {
         var base64EncodedEmail, email, email_lines, now, request, user;
+        if (message.to == null) {
+          return callback({
+            message: "No 'to' field",
+            code: 400
+          });
+        }
+        if (message.subject == null) {
+          return callback({
+            message: "No 'subject' field",
+            code: 400
+          });
+        }
+        if (message.body == null) {
+          return callback({
+            message: "No 'body' field",
+            code: 400
+          });
+        }
         user = $rootScope.gapi.user;
         now = new Date();
         now = now.toString();
         email_lines = [];
         email_lines.push("From: " + user.name + " <" + user.email + ">");
         email_lines.push("To: " + message.to);
+        if (message.cc != null) {
+          email_lines.push("Cc: " + message.cc);
+        }
         email_lines.push('Content-type: text/html;charset=iso-8859-1');
         email_lines.push('MIME-Version: 1.0');
         email_lines.push("Subject: " + message.subject);
@@ -221,7 +287,7 @@ angular.module('NotSoShitty.login').config(function($stateProvider) {
   }).state('google-login', {
     url: '/login/google',
     controller: 'GoogleLoginCtrl',
-    templateUrl: 'login/states/gmail/view.html'
+    templateUrl: 'login/states/google/view.html'
   });
 });
 
@@ -472,25 +538,6 @@ angular.module('NotSoShitty.bdc').service('sprintService', function() {
 var __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
-angular.module('NotSoShitty.storage').factory('DailyMail', function(Parse) {
-  var DailyMail;
-  return DailyMail = (function(_super) {
-    __extends(DailyMail, _super);
-
-    function DailyMail() {
-      return DailyMail.__super__.constructor.apply(this, arguments);
-    }
-
-    DailyMail.configure("DailyMail", "boardId", "to", "cc", "subject", "body");
-
-    return DailyMail;
-
-  })(Parse.Model);
-});
-
-var __hasProp = {}.hasOwnProperty,
-  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
-
 angular.module('NotSoShitty.storage').factory('NotSoShittyUser', function(Parse, $q, TrelloClient, Project, localStorageService) {
   var NotSoShittyUser;
   return NotSoShittyUser = (function(_super) {
@@ -575,36 +622,6 @@ angular.module('NotSoShitty.storage').factory('NotSoShittyUser', function(Parse,
     return NotSoShittyUser;
 
   })(Parse.Model);
-});
-
-angular.module('NotSoShitty.storage').service('DailyMailStorage', function(DailyMail, $q) {
-  return {
-    get: function(boardId) {
-      var deferred;
-      deferred = $q.defer();
-      if (boardId != null) {
-        DailyMail.query({
-          where: {
-            boardId: boardId
-          }
-        }).then(function(response) {
-          var dailyMail;
-          if (response.length > 0) {
-            return deferred.resolve(response[0]);
-          } else {
-            dailyMail = new DailyMail();
-            dailyMail.boardId = boardId;
-            return dailyMail.save().then(function(object) {
-              return deferred.resolve(object);
-            });
-          }
-        })["catch"](deferred.reject);
-      } else {
-        deferred.reject('No boardId');
-      }
-      return deferred.promise;
-    }
-  };
 });
 
 angular.module('NotSoShitty.storage').service('userService', function(NotSoShittyUser) {
@@ -745,6 +762,31 @@ angular.module('NotSoShitty.login').controller('GoogleLoginCtrl', function($scop
   };
 });
 
+angular.module('NotSoShitty.login').controller('TrelloLoginCtrl', function($scope, $rootScope, TrelloClient, $state, $auth, NotSoShittyUser, localStorageService) {
+  if ($auth.isAuthenticated()) {
+    $state.go('project');
+  }
+  return $scope.login = function() {
+    return TrelloClient.authenticate().then(function(response) {
+      return TrelloClient.get('/member/me');
+    }).then(function(response) {
+      return response.data;
+    }).then(function(userInfo) {
+      return localStorageService.set('trello_email', userInfo.email);
+    }).then(function() {
+      return NotSoShittyUser.getCurrentUser();
+    }).then(function(user) {
+      if (user == null) {
+        user = new NotSoShittyUser();
+        user.email = localStorageService.get('trello_email');
+        return user.save();
+      }
+    }).then(function() {
+      return $state.go('project');
+    });
+  };
+});
+
 angular.module('NotSoShitty.settings').controller('ResourcesByDayCtrl', function($scope) {
   var changeResource;
   changeResource = function(dayIndex, memberIndex, matrix) {
@@ -769,31 +811,6 @@ angular.module('NotSoShitty.settings').directive('resourcesByDay', function() {
       days: '='
     },
     controller: 'ResourcesByDayCtrl'
-  };
-});
-
-angular.module('NotSoShitty.login').controller('TrelloLoginCtrl', function($scope, $rootScope, TrelloClient, $state, $auth, NotSoShittyUser, localStorageService) {
-  if ($auth.isAuthenticated()) {
-    $state.go('project');
-  }
-  return $scope.login = function() {
-    return TrelloClient.authenticate().then(function(response) {
-      return TrelloClient.get('/member/me');
-    }).then(function(response) {
-      return response.data;
-    }).then(function(userInfo) {
-      return localStorageService.set('trello_email', userInfo.email);
-    }).then(function() {
-      return NotSoShittyUser.getCurrentUser();
-    }).then(function(user) {
-      if (user == null) {
-        user = new NotSoShittyUser();
-        user.email = localStorageService.get('trello_email');
-        return user.save();
-      }
-    }).then(function() {
-      return $state.go('project');
-    });
   };
 });
 
