@@ -97,6 +97,27 @@ trello-avatar .trello-avatar .member-avatar.initials {
   font-weight: bold;
 }
 
+.profil-button {
+  position: absolute;
+  right: 5px;
+  top: 5px;
+  z-index: 10;
+}
+.profil-details {
+  position: absolute;
+  right: 5px;
+  top: 40px;
+  z-index: 10;
+}
+.picture-link {
+  width: 70px;
+  margin: 10px;
+}
+md-divider {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
 resources-by-day .row {
   height: 35px;
   margin: 0;
@@ -121,27 +142,6 @@ select-people .member-select.selected img {
 select-people .member-select label {
   width: 100%;
   height: 100%;
-}
-
-.profil-button {
-  position: absolute;
-  right: 5px;
-  top: 5px;
-  z-index: 10;
-}
-.profil-details {
-  position: absolute;
-  right: 5px;
-  top: 40px;
-  z-index: 10;
-}
-.picture-link {
-  width: 70px;
-  margin: 10px;
-}
-md-divider {
-  margin-top: 10px;
-  margin-bottom: 10px;
 }
 
 .bdc-data md-input-container {
