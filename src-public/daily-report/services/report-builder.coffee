@@ -1,12 +1,9 @@
 angular.module 'NotSoShitty.daily-report'
-.service 'reportBuilder', ($q, NotSoShittyUser, Sprint)->
-  deferred = $q.defer()
-  deferred.resolve()
-  promise = deferred.promise
-  project = null
-  sprint =
-    number: '10'
-    # "project", "dates", "resources", "bdcData", "isActive", "doneColumn"
+.service 'reportBuilder', ($q, NotSoShittyUser, Sprint, Project)->
+  promise = undefined
+  project = undefined
+  sprint = undefined
+
   replace = (message, toRemplace, replacement) ->
     message.subject = message.subject.replace toRemplace, replacement
     message.body = message.body.replace toRemplace, replacement
@@ -25,12 +22,13 @@ angular.module 'NotSoShitty.daily-report'
     dateFormat = _dateFormat_
 
   init: ->
-    # promise = NotSoShittyUser.getCurrentUser().then (user) ->
-    #   project = user.project
-    #   project
-    # .then (project) ->
-    #   Sprint.getActiveSprint(new Project project).then (_sprint_) ->
-    #     sprint = _sprint_
+    promise = NotSoShittyUser.getCurrentUser().then (user) ->
+      project = user.project
+      project
+    .then (project) ->
+      Sprint.getActiveSprint(new Project project).then (_sprint_) ->
+        sprint = _sprint_
+
   render: (message) ->
     renderSprintNumber angular.copy message
     .then (message) ->

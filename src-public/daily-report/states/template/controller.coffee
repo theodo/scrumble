@@ -8,6 +8,7 @@ angular.module 'NotSoShitty.daily-report'
   reportBuilder
   dailyReport
 ) ->
+  reportBuilder.init()
 
   saveFeedback = $mdToast.simple()
     .hideDelay(1000)
@@ -30,5 +31,4 @@ angular.module 'NotSoShitty.daily-report'
       fullscreen: $mdMedia 'sm'
       resolve:
         message: ->
-          reportBuilder.dateFormat $scope.dateFormat
           reportBuilder.render $scope.dailyReport.message
