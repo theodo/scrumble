@@ -1,11 +1,7 @@
 'use strict';
 var app;
 
-app = angular.module('NotSoShitty', ['ng', 'ngResource', 'ngAnimate', 'ngMaterial', 'md.data.table', 'ui.router', 'app.templates', 'Parse', 'LocalStorageModule', 'satellizer', 'permission', 'trello-api-client', 'angular-google-gapi', 'angular-redactor', 'NotSoShitty.login', 'NotSoShitty.settings', 'NotSoShitty.storage', 'NotSoShitty.bdc', 'NotSoShitty.common', 'NotSoShitty.daily-report', 'NotSoShitty.gmail-client', 'NotSoShitty.feedback']);
-
-app.config(function(redactorOptions) {
-  return redactorOptions.buttons = ['formatting', '|', 'bold', 'italic'];
-});
+app = angular.module('NotSoShitty', ['ng', 'ngResource', 'ngAnimate', 'ngMaterial', 'md.data.table', 'ui.router', 'app.templates', 'Parse', 'LocalStorageModule', 'satellizer', 'permission', 'trello-api-client', 'angular-google-gapi', 'NotSoShitty.login', 'NotSoShitty.settings', 'NotSoShitty.storage', 'NotSoShitty.bdc', 'NotSoShitty.common', 'NotSoShitty.daily-report', 'NotSoShitty.gmail-client', 'NotSoShitty.feedback']);
 
 app.config(function($locationProvider, $urlRouterProvider, ParseProvider) {
   $locationProvider.hashPrefix('!');
@@ -51,8 +47,6 @@ angular.module('NotSoShitty.daily-report', []);
 
 angular.module('NotSoShitty.feedback', []);
 
-angular.module('NotSoShitty.gmail-client', []);
-
 angular.module('NotSoShitty.login', []);
 
 angular.module('NotSoShitty.settings', ['NotSoShitty.common']);
@@ -60,6 +54,8 @@ angular.module('NotSoShitty.settings', ['NotSoShitty.common']);
 angular.module('NotSoShitty.bdc', []);
 
 angular.module('NotSoShitty.storage', []);
+
+angular.module('NotSoShitty.gmail-client', []);
 
 angular.module('NotSoShitty.daily-report').config(function($stateProvider) {
   return $stateProvider.state('tab.daily-report', {
@@ -220,73 +216,6 @@ angular.module('NotSoShitty.feedback').factory('Feedback', function(Parse) {
   })(Parse.Model);
 });
 
-angular.module('NotSoShitty.gmail-client').run(function(GApi, GAuth) {
-  GApi.load('gmail', 'v1');
-  GAuth.setClient('605908567890-3bg3dmamghq5gd7i9sqsdhvoflef0qku.apps.googleusercontent.com');
-  return GAuth.setScope('https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/gmail.send');
-});
-
-angular.module('NotSoShitty.gmail-client').service('mailer', function($state, $rootScope, GAuth) {
-  var wrapHtmlContent;
-  wrapHtmlContent = function(content) {
-    return "<!DOCTYPE html>\n<head>\n  <!--[if gte mso 9]><xml>\n  <o:OfficeDocumentSettings>\n  <o:AllowPNG/>\n  <o:PixelsPerInch>96</o:PixelsPerInch>\n  </o:OfficeDocumentSettings>\n  </xml><![endif]-->\n  <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">\n      <meta name=\"viewport\" content=\"width=device-width\">\n      <meta http-equiv=\"X-UA-Compatible\" content=\"IE=9; IE=8; IE=7; IE=EDGE\">\n      <title>Template Base</title>\n</head>\n<body style=\"width: 100% !important;min-width: 100%;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100% !important;margin: 0;padding: 0;background-color: #FFFFFF\">" + content + "</body>";
-  };
-  return {
-    send: function(message, callback) {
-      return GAuth.checkAuth().then(function() {
-        var base64EncodedEmail, content, email, email_lines, now, request, template, user;
-        if (message.to == null) {
-          return callback({
-            message: "No 'to' field",
-            code: 400
-          });
-        }
-        if (message.subject == null) {
-          return callback({
-            message: "No 'subject' field",
-            code: 400
-          });
-        }
-        if (message.body == null) {
-          return callback({
-            message: "No 'body' field",
-            code: 400
-          });
-        }
-        content = '<h1>coucou</h1><p><img class="center fullwidth" style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: block;border: none;height: auto;line-height: 100%;margin: 0 auto;float: none;width: 100% !important;max-width: 580px" align="center" border="0" data-custom-width="580" src="http://i.imgur.com/PS65fNY.png" alt="Image" title="Image"></p>';
-        template = "<!DOCTYPE html><head>\n<!--[if gte mso 9]><xml>\n<o:OfficeDocumentSettings>\n<o:AllowPNG/>\n<o:PixelsPerInch>96</o:PixelsPerInch>\n</o:OfficeDocumentSettings>\n</xml><![endif]-->\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">\n    <meta name=\"viewport\" content=\"width=device-width\">\n    <meta http-equiv=\"X-UA-Compatible\" content=\"IE=9; IE=8; IE=7; IE=EDGE\">\n    <title>Template Base</title>\n</head>\n<body style=\"width: 100% !important;min-width: 100%;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100% !important;margin: 0;padding: 0;background-color: #FFFFFF\">\n<img src=\"http://vignette3.wikia.nocookie.net/nintendo/images/e/e2/Artwork_-_MARIO.svg/revision/latest/scale-to-width-down/443?cb=20150524030216&path-prefix=en\" alt=\"Image\" title=\"Image\">\n</body></html>";
-        user = $rootScope.gapi.user;
-        now = new Date();
-        now = now.toString();
-        email_lines = [];
-        email_lines.push("From: " + user.name + " <" + user.email + ">");
-        email_lines.push("To: " + message.to);
-        if (message.cc != null) {
-          email_lines.push("Cc: " + message.cc);
-        }
-        email_lines.push('Content-type: text/html;charset=iso-8859-1');
-        email_lines.push('MIME-Version: 1.0');
-        email_lines.push("Subject: " + message.subject);
-        email_lines.push("Date: " + now);
-        email_lines.push('Message-ID: <1234@local.machine.example>');
-        email_lines.push(template);
-        email = email_lines.join('\r\n').trim();
-        base64EncodedEmail = btoa(email);
-        base64EncodedEmail = base64EncodedEmail.replace(/\+/g, '-').replace(/\//g, '_');
-        request = gapi.client.gmail.users.messages.send({
-          userId: 'me',
-          resource: {
-            raw: base64EncodedEmail
-          }
-        });
-        return request.execute(callback);
-      }, function() {
-        return $state.go('tab.google-login');
-      });
-    }
-  };
-});
-
 angular.module('NotSoShitty.login').run(function(Permission, localStorageService, GAuth) {
   Permission.defineRole('trello-authenticated', function() {
     return localStorageService.get('trello_token') != null;
@@ -420,6 +349,9 @@ angular.module('NotSoShitty.storage').factory('Sprint', function(Parse) {
 
     Sprint.getActiveSprint = function(project) {
       return this.query({
+        equalsTo: {
+          project: project
+        },
         where: {
           isActive: true
         }
@@ -659,6 +591,67 @@ angular.module('NotSoShitty.storage').service('userService', function(NotSoShitt
             return user;
           });
         }
+      });
+    }
+  };
+});
+
+angular.module('NotSoShitty.gmail-client').run(function(GApi, GAuth) {
+  GApi.load('gmail', 'v1');
+  GAuth.setClient('605908567890-3bg3dmamghq5gd7i9sqsdhvoflef0qku.apps.googleusercontent.com');
+  return GAuth.setScope('https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/gmail.send');
+});
+
+angular.module('NotSoShitty.gmail-client').service('mailer', function($state, $rootScope, GAuth) {
+  return {
+    send: function(message, callback) {
+      return GAuth.checkAuth().then(function() {
+        var base64EncodedEmail, email, email_lines, now, request, user;
+        if (message.to == null) {
+          return callback({
+            message: "No 'to' field",
+            code: 400
+          });
+        }
+        if (message.subject == null) {
+          return callback({
+            message: "No 'subject' field",
+            code: 400
+          });
+        }
+        if (message.body == null) {
+          return callback({
+            message: "No 'body' field",
+            code: 400
+          });
+        }
+        user = $rootScope.gapi.user;
+        now = new Date();
+        now = now.toString();
+        email_lines = [];
+        email_lines.push("From: " + user.name + " <" + user.email + ">");
+        email_lines.push("To: " + message.to);
+        if (message.cc != null) {
+          email_lines.push("Cc: " + message.cc);
+        }
+        email_lines.push('Content-type: text/html;charset=iso-8859-1');
+        email_lines.push('MIME-Version: 1.0');
+        email_lines.push("Subject: " + message.subject);
+        email_lines.push("Date: " + now);
+        email_lines.push('Message-ID: <1234@local.machine.example>');
+        email_lines.push("" + message.body);
+        email = email_lines.join('\r\n').trim();
+        base64EncodedEmail = btoa(email);
+        base64EncodedEmail = base64EncodedEmail.replace(/\+/g, '-').replace(/\//g, '_');
+        request = gapi.client.gmail.users.messages.send({
+          userId: 'me',
+          resource: {
+            raw: base64EncodedEmail
+          }
+        });
+        return request.execute(callback);
+      }, function() {
+        return $state.go('tab.google-login');
       });
     }
   };
