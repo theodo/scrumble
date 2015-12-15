@@ -12,5 +12,26 @@
     <g id="plus">
       <path d="M19,13H13V19H11V13H5V11H11V5H13V11H19V13Z" />
     </g>
+    <g id="menu">
+      <path d="M3,6H21V8H3V6M3,11H21V13H3V11M3,16H21V18H3V16Z" />
+    </g>
+    <g id="menu-down">
+      <path d="M7,10L12,15L17,10H7Z" />
+    </g>
+    <g id="menu-left">
+      <path d="M14,7L9,12L14,17V7Z" />
+    </g>
+    <g id="menu-right">
+      <path d="M10,17L15,12L10,7V17Z" />
+    </g>
+    <g id="menu-up">
+      <path d="M7,15L12,10L17,15H7Z" />
+    </g>
+    <g id="more_vert">
+     <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
+    </g>
+    <g id="unfold-more">
+      <path d="M12,18.17L8.83,15L7.42,16.41L12,21L16.59,16.41L15.17,15M12,5.83L15.17,9L16.58,7.59L12,3L7.41,7.59L8.83,9L12,5.83Z" />
+    </g>
   </defs>
 </svg>

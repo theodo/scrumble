@@ -1,8 +1,14 @@
-md-content.container
-  md-toolbar
-    .md-toolbar-tools
-      h2
-        span Not So Shitty
+md-content
+  md-toolbar.md-toolbar-tools
+    md-button.md-icon-button(aria-label='Menu')
+      md-icon(md-svg-icon='menu')
+    h2
+      span Not So Shitty
+    span(flex='')
+    //- md-button.md-icon-button(aria-label='Favorite')
+    //-   md-icon(md-svg-icon='favorite', style='color: greenyellow;')
+    md-button.md-icon-button(aria-label='More')
+      md-icon(md-svg-icon='more_vert')
   md-tabs.md-primary.md-hue-2
     md-tab(data-ui-sref="tab.project")
       md-tab-label  Project
