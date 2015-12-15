@@ -409,11 +409,14 @@ angular.module('NotSoShitty.storage').factory('Sprint', function(Parse) {
     Sprint.configure("Sprint", "project", "number", "dates", "resources", "bdcData", "isActive", "doneColumn");
 
     Sprint.getActiveSprint = function(project) {
+      console.log(project);
       return this.query({
-        equalTo: {
-          project: project
-        },
         where: {
+          project: {
+            __type: "Pointer",
+            className: "Project",
+            objectId: project.objectId
+          },
           isActive: true
         }
       }).then(function(sprints) {
