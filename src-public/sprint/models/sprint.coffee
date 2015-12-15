@@ -16,3 +16,7 @@ angular.module 'NotSoShitty.storage'
         sprint
       .catch (err) ->
         console.warn err
+
+    @close = (sprint) ->
+      sprint.isActive = false
+      sprint.save()
