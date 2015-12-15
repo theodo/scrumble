@@ -1,5 +1,6 @@
 angular.module 'NotSoShitty.settings'
 .controller 'ProjectCtrl', (
+  $location
   $scope
   $timeout
   $q
@@ -85,4 +86,5 @@ angular.module 'NotSoShitty.settings'
       user.project = p
       user.save().then ->
         $mdToast.show saveFeedback
+        $location.path '/sprint/current'
   return
