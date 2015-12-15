@@ -409,7 +409,6 @@ angular.module('NotSoShitty.storage').factory('Sprint', function(Parse) {
     Sprint.configure("Sprint", "project", "number", "dates", "resources", "bdcData", "isActive", "doneColumn");
 
     Sprint.getActiveSprint = function(project) {
-      console.log(project);
       return this.query({
         where: {
           project: {
@@ -421,7 +420,6 @@ angular.module('NotSoShitty.storage').factory('Sprint', function(Parse) {
         }
       }).then(function(sprints) {
         var sprint;
-        console.log(sprints);
         sprint = sprints.length > 0 ? sprints[0] : null;
         return sprint;
       })["catch"](function(err) {
@@ -776,7 +774,7 @@ angular.module('NotSoShitty.login').controller('GoogleLoginCtrl', function($scop
 });
 
 angular.module('NotSoShitty.login').controller('TrelloLoginCtrl', function($scope, $rootScope, TrelloClient, $state, $auth, NotSoShittyUser, localStorageService) {
-  if ($auth.isAuthenticated()) {
+  if (localStorageService.get('trello_token')) {
     $state.go('tab.project');
   }
   return $scope.login = function() {
