@@ -6,9 +6,11 @@ angular.module 'NotSoShitty.storage'
     @getActiveSprint = (project) ->
       @query(
         where:
+          project:
+            __type: "Pointer"
+            className: "Project"
+            objectId: project.objectId
           isActive: true
-        equalTo:
-          project: project
       ).then (sprints) ->
         sprint = if sprints.length > 0 then sprints[0] else null
         sprint
