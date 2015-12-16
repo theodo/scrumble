@@ -16871,11 +16871,376 @@ renderBDC = function(data, cfg) {
 function mdColumnHeader(a,b,c){"use strict";function d(d,e,f,g){var h=g[0],i=g[1],j=angular.element("<div></div>");if(j.text(b.startSymbol()+"name"+b.endSymbol()),f.unit&&j.text(j.text()+" ("+b.startSymbol()+"unit"+b.endSymbol()+")"),angular.isDefined(f.trim)&&j.contents().wrap("<div></div>"),f.orderBy){var k=angular.element("<md-icon></md-icon>"),l=function(){return i.order===d.order||i.order==="-"+d.order},m=function(){l()?d.$apply(i.order=i.order===d.order?"-"+d.order:d.order):d.$apply(i.order=angular.isDefined(f.descendFirst)?"-"+d.order:d.order),i.pullTrigger&&c(i.pullTrigger)};d.getDirection=function(){return l()?"-"===i.order[0]?"down":"up":angular.isDefined(f.descendFirst)?"down":"up"},k.attr("md-svg-icon","templates.arrow.html"),k.attr("ng-class","getDirection()"),angular.isDefined(f.numeric)?j.prepend(k):j.append(k),e.on("click",m),d.$watch(l,function(a){a?e.addClass("md-active"):e.removeClass("md-active")})}e.append(a(j)(d)),i.isSignificant(e.parent())&&(h.setColumn(f),f.ngRepeat?d.$parent.$last&&h.isReady.head.resolve():h.isLastChild(e.parent().children(),e[0])&&h.isReady.head.resolve())}return{link:d,require:["^^mdDataTable","^mdTableHead"],scope:{name:"@",order:"@orderBy",unit:"@"}}}function mdDataTable(){"use strict";function a(a,b){var c=a.find("thead"),d=a.find("tfoot");if(!c.length){if(c=a.find("tbody").eq(0),!c.children().find("th").length)throw new Error("mdDataTable","Expecting <thead></thead> element.");c.replaceWith("<thead>"+c.html()+"</thead>"),c=a.find("thead")}var e=a.find("tbody").find("tr");c.attr("md-table-head",""),e.attr("md-table-row",""),e.find("td").attr("md-table-cell",""),d.length&&(d.attr("md-table-foot",""),b.mdRowSelect&&d.find("tr").prepend("<td></td>")),console.log(b.$normalize(e.attr("ng-repeat"))),b.mdRowSelect&&e.attr("ng-repeat")&&e.attr("md-select-row",""),b.mdRowSelect&&!e.attr("ng-repeat")&&console.warn("Please use ngRepeat to enable row selection."),c.attr("md-order")&&!e.attr("ng-repeat")&&console.warn("Column ordering without ngRepeat is not supported.")}function b(a,b,c,d){var e=this;e.columns=[],e.classes=[],e.isReady={body:c.defer(),head:c.defer()},a.mdRowSelect&&(e.columns.push({isNumeric:!1}),angular.isArray(e.selectedItems)||(e.selectedItems=[],console.warn('md-row-select="'+a.mdRowSelect+'" : '+a.mdRowSelect+" is not defined as an array in your controller, i.e. "+a.mdRowSelect+" = [], two-way data binding will fail."))),a.mdProgress&&d.$watch("$mdDataTableCtrl.progress",function(){var a=e.defer();c.when(e.progress)["finally"](a.resolve)}),["md-primary","md-hue-1","md-hue-2","md-hue-3"].forEach(function(a){b.hasClass(a)&&e.classes.push(a)}),e.defer=function(){return e.deferred?e.deferred.reject("cancel"):e.showProgress&&e.showProgress(),e.deferred=c.defer(),e.deferred.promise.then(e.resolve),e.deferred},e.resolve=function(){e.deferred=void 0,e.hideProgress&&e.hideProgress()},e.isLastChild=function(a,b){return Array.prototype.indexOf.call(a,b)===a.length-1},e.isReady.body.promise.then(function(b){a.mdRowSelect&&b&&(e.listener=d.$parent.$watch(b.items,function(a,b){a!==b&&e.selectedItems.splice(0)}))}),e.setColumn=function(a){e.columns.push({isNumeric:angular.isDefined(a.numeric),unit:a.unit})}}return b.$inject=["$attrs","$element","$q","$scope"],{bindToController:{progress:"=mdProgress",selectedItems:"=mdRowSelect"},compile:a,controller:b,controllerAs:"$mdDataTableCtrl",restrict:"A",scope:{}}}function mdTableCell(){"use strict";function a(a,b){var c=b.find("md-select");c.length&&(c.on("click",function(a){a.stopPropagation()}),b.addClass("clickable").on("click",function(a){a.stopPropagation(),c[0].click()}))}function b(b){return b.find("md-select").attr("md-container-class","md-table-select"),a}return{compile:b}}function mdTableFoot(){"use strict";function a(a,b,c,d){var e=b.find("td");d.columns.forEach(function(a,b){a.isNumeric&&e.eq(b).addClass("numeric")}),e.length<d.columns.length&&b.find("tr").append('<td colspan="'+(d.columns.length-e.length)+'"></td>')}return{require:"^mdDataTable",link:a}}function mdTableHead(a,b){"use strict";function c(b){if(b.find("th").attr("md-column-header",""),b.parent().attr("md-row-select")){var c=b.parent().find("tbody").find("tr").attr("ng-repeat");c&&b.find("tr").prepend(angular.element('<th md-select-all="'+a.parse(c).items+'"></th>'))}return b.after("<thead md-table-progress></thead>"),e}function d(a,b){var c=a.find("tr");(!b.sigRow||parseInt(b.sigRow,10)===isNaN()||b.sigRow<0)&&(b.sigRow=c.length-1),this.isSignificant=function(a){return a.prop("rowIndex")===b.sigRow}}function e(a,c,d,e){var f=c.data("$mdTableHeadController");angular.isFunction(a.trigger)&&(f.pullTrigger=function(){var c=e.defer();b.when(a.trigger(f.order))["finally"](c.resolve)})}return d.$inject=["$element","$scope"],{bindToController:{order:"=mdOrder"},compile:c,controller:d,controllerAs:"$mdDataTableHeadCtrl",require:"^mdDataTable",scope:{trigger:"=?mdTrigger",sigRow:"=?"}}}function mdDataTablePagination(a){"use strict";function b(b,c,d){if(b.paginationLabel={text:"Rows per page:",of:"of"},angular.isObject(b.label)&&angular.extend(b.paginationLabel,b.label),angular.isFunction(b.trigger)){var e=function(a,b){for(;"md-data-table-container"!==a.localName&&a.previousElementSibling;)a=a.previousElementSibling;b(angular.element(a.firstElementChild))},f=function(c){var e=c.controller("mdDataTable");return e?void(b.pullTrigger=function(){var c=e.defer();a.when(b.trigger(b.page,b.limit))["finally"](c.resolve)}):console.warn("Table Pagination: Could not locate your table directive, your "+d.mdTrigger+" function will not work.")};e(c.prop("previousElementSibling"),f)}}function c(a,b){var c=1;a.hasNext=function(){return a.page*a.limit<a.total},a.hasPrevious=function(){return a.page>1},a.next=function(){a.page++,a.pullTrigger&&b(a.pullTrigger),c=a.min()},a.last=function(){a.page=Math.ceil(a.total/a.limit),a.pullTrigger&&b(a.pullTrigger),c=a.min()},a.min=function(){return(a.page-1)*a.limit+1},a.max=function(){return a.hasNext()?a.page*a.limit:a.total},a.onSelect=function(){for(a.page=Math.floor(c/a.limit)+1,a.pullTrigger&&b(a.pullTrigger),c=a.min();c>a.total&&a.hasPrevious();)a.previous()},a.previous=function(){a.page--,a.pullTrigger&&b(a.pullTrigger),c=a.min()},a.first=function(){a.page=1,a.pullTrigger&&b(a.pullTrigger),c=a.min()}}return c.$inject=["$scope","$timeout"],{controller:c,scope:{label:"=mdLabel",limit:"=mdLimit",page:"=mdPage",rowSelect:"=mdRowSelect",total:"@mdTotal",trigger:"=mdTrigger"},templateUrl:"templates.md-data-table-pagination.html",link:b}}function mdTableProgress(){"use strict";function a(a,b,c,d){a.getColumnCount=function(){return d.columns.length},d.hideProgress=function(){a.showProgress=!1},d.showProgress=function(){a.showProgress=!0}}return{link:a,require:"^mdDataTable",replace:!0,templateUrl:"templates.md-data-table-progress.html"}}function mdTableRow(a,b){"use strict";function c(c,d,e,f){angular.isDefined(e.mdSelectRow)&&(c.mdClasses=f.classes,c.isDisabled=function(){return c.$eval(e.mdDisableSelect)},c.isSelected=function(a){return-1!==f.selectedItems.indexOf(a)},c.toggleRow=function(a,b){b.stopPropagation(),c.isDisabled()||(c.isSelected(a)?f.selectedItems.splice(f.selectedItems.indexOf(a),1):f.selectedItems.push(a))}),e.ngRepeat?c.$last&&f.isReady.body.resolve(a.parse(e.ngRepeat)):f.isLastChild(d.parent().children(),d[0])&&f.isReady.body.resolve(),f.isReady.head.promise.then(function(){f.columns.forEach(function(a,c){if(a.isNumeric){var e=d.children().eq(c);e.addClass("numeric"),angular.isDefined(e.attr("show-unit"))&&b(function(){e.text(e.text()+f.columns[c].unit)})}})})}return{link:c,require:"^^mdDataTable"}}function mdTableService(){"use strict";function a(a){for(this._tokens=a.split(" "),this._iterator=0,this.item=this.current();this.hasNext()&&"in"!==this.getNext();)this.item+=this.current();for(this.items=this.getNext();this.hasNext()&&-1===["|","track"].indexOf(this.getNext());)this.items+=this.current()}function b(b){return c.hasOwnProperty(b)?c[b]:c[b]=new a(b)}var c={};return a.prototype.current=function(){return this._tokens[this._iterator]},a.prototype.getNext=function(){return this._tokens[++this._iterator]},a.prototype.getValue=function(){return this._tokens.join(" ")},a.prototype.hasNext=function(){return this._iterator<this._tokens.length-1},{parse:b}}function mdSelectAll(){"use strict";function a(a){var b=angular.element("<md-checkbox></md-checkbox>");b.attr("aria-label","Select All"),b.attr("ng-click","toggleAll()"),b.attr("ng-class","mdClasses"),b.attr("ng-checked","allSelected()"),b.attr("ng-disabled","!getCount()"),a.append(b)}function b(a,b,c,d){var e=0,f=function(){return a.items.filter(function(a){return!d.isDisabled(a)})};d.isReady.body.promise.then(function(){a.mdClasses=d.classes,a.getCount=function(){return e=a.items.reduce(function(a,b){return d.isDisabled(b)?a:++a},0)},a.allSelected=function(){return e&&e===d.selectedItems.length},a.toggleAll=function(){var b=f(a.items);b.length===d.selectedItems.length?d.selectedItems.splice(0):d.selectedItems=b}})}return{link:b,require:"^^mdDataTable",scope:{items:"=mdSelectAll"},template:a}}function mdSelectRow(a){"use strict";function b(b,c){var d=a.parse(c.ngRepeat),e=angular.element("<md-checkbox></md-checkbox>");e.attr("aria-label","Select Row"),e.attr("ng-click","toggleRow("+d.item+", $event)"),e.attr("ng-class","mdClasses"),e.attr("ng-checked","isSelected("+d.item+")"),c.mdDisableSelect&&e.attr("ng-disabled","isDisabled()"),b.prepend(angular.element("<td></td>").append(e)),angular.isDefined(c.mdAutoSelect)&&c.$set("ngClick","toggleRow("+d.item+", $event)"),c.$set("ngClass","{'md-selected': isSelected("+d.item+")}")}function c(b,c,d,e){var f={},g=a.parse(d.ngRepeat);angular.isFunction(b.isDisabled)||(b.isDisabled=function(){return!1}),e.isDisabled=function(a){return f[g.item]=a,b.isDisabled(f)}}return{link:c,priority:1001,require:"^^mdDataTable",scope:{isDisabled:"&?mdDisableSelect"},template:b}}angular.module("md.data.table",["md.table.templates"]),angular.module("md.data.table").directive("mdColumnHeader",mdColumnHeader),mdColumnHeader.$inject=["$compile","$interpolate","$timeout"],angular.module("md.data.table").directive("mdDataTable",mdDataTable),angular.module("md.data.table").directive("mdTableCell",mdTableCell),angular.module("md.data.table").directive("mdTableFoot",mdTableFoot),angular.module("md.data.table").directive("mdTableHead",mdTableHead),mdTableHead.$inject=["$mdTable","$q"],angular.module("md.data.table").directive("mdDataTablePagination",mdDataTablePagination),mdDataTablePagination.$inject=["$q"],angular.module("md.data.table").directive("mdTableProgress",mdTableProgress),angular.module("md.data.table").directive("mdTableRow",mdTableRow),mdTableRow.$inject=["$mdTable","$timeout"],angular.module("md.data.table").factory("$mdTable",mdTableService),angular.module("md.data.table").directive("mdSelectAll",mdSelectAll),angular.module("md.data.table").directive("mdSelectRow",mdSelectRow),mdSelectRow.$inject=["$mdTable"],angular.module("md.table.templates",["templates.arrow.html","templates.navigate-before.html","templates.navigate-first.html","templates.navigate-last.html","templates.navigate-next.html","templates.md-data-table-pagination.html","templates.md-data-table-progress.html"]),angular.module("templates.arrow.html",[]).run(["$templateCache",function(a){"use strict";a.put("templates.arrow.html",'<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18"><path d="M3,9 L4.06,10.06 L8.25,5.87 L8.25,15 L9.75,15 L9.75,5.87 L13.94,10.06 L15,9 L9,3 L3,9 L3,9 Z"/></svg>')}]),angular.module("templates.navigate-before.html",[]).run(["$templateCache",function(a){"use strict";a.put("templates.navigate-before.html",'<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>\n')}]),angular.module("templates.navigate-first.html",[]).run(["$templateCache",function(a){"use strict";a.put("templates.navigate-first.html",'<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M7 6 v12 h2 v-12 h-2z M17.41 7.41L16 6l-6 6 6 6 1.41-1.41L12.83 12z"/></svg>\n')}]),angular.module("templates.navigate-last.html",[]).run(["$templateCache",function(a){"use strict";a.put("templates.navigate-last.html",'<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M15 6 v12 h2 v-12 h-2z M8 6L6.59 7.41 11.17 12l-4.58 4.59L8 18l6-6z"/></svg>\n')}]),angular.module("templates.navigate-next.html",[]).run(["$templateCache",function(a){"use strict";a.put("templates.navigate-next.html",'<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>\n')}]),angular.module("templates.md-data-table-pagination.html",[]).run(["$templateCache",function(a){"use strict";a.put("templates.md-data-table-pagination.html",'<div>\n  <span class="label">{{paginationLabel.text}}</span>\n  <md-select ng-model="limit" md-container-class="md-pagination-select" ng-change="onSelect()" aria-label="Row Count" placeholder="{{rowSelect ? rowSelect[0] : 5}}">\n    <md-option ng-repeat="rows in rowSelect ? rowSelect : [5, 10, 15]" ng-value="rows">{{rows}}</md-option>\n  </md-select>\n  <span>{{min()}} - {{max()}} {{paginationLabel.of}} {{total}}</span>\n</div>\n<div>\n  <md-button type="button" ng-click="first()" ng-disabled="!hasPrevious()" aria-label="First">\n    <md-icon md-svg-icon="templates.navigate-first.html"></md-icon>\n  </md-button>\n  <md-button type="button" ng-click="previous()" ng-disabled="!hasPrevious()" aria-label="Previous">\n    <md-icon md-svg-icon="templates.navigate-before.html"></md-icon>\n  </md-button>\n  <md-button type="button" ng-click="next()" ng-disabled="!hasNext()" aria-label="Next">\n    <md-icon md-svg-icon="templates.navigate-next.html"></md-icon>\n  </md-button>\n  <md-button type="button" ng-click="last()" ng-disabled="!hasNext()" aria-label="Last">\n    <md-icon md-svg-icon="templates.navigate-last.html"></md-icon>\n  </md-button>\n</div>\n')}]),angular.module("templates.md-data-table-progress.html",[]).run(["$templateCache",function(a){"use strict";a.put("templates.md-data-table-progress.html",'<thead ng-if="showProgress">\n  <tr>\n    <th colspan="{{getColumnCount()}}">\n      <md-progress-linear md-mode="indeterminate"></md-progress-linear>\n    </th>\n  </tr>\n</thead>')}]);
 /**
  * An AngularJS module for use all Google Apis and your Google Cloud Endpoints
- * @version v0.1.3
+ * @version v0.1.2
  * @link https://github.com/maximepvrt/angular-google-gapi
  */
 
-angular.module("angular-google-gapi",[]),angular.module("angular-google-gapi").factory("GClient",["$document","$q","$timeout","$interval","$window",function(e,n,t,o,i){function r(o){var i=n.defer(),r=e[0].createElement("script");return r.onload=function(e){t(function(){i.resolve(e)})},r.onerror=function(e){t(function(){i.reject(e)})},r.src=o,e[0].body.appendChild(r),i.promise}function a(e){r(c).then(function(){var n=function(e){void 0!=i.gapi.client&&(e(),o.cancel(t))};n(e);var t=o(function(){n(e)},10);u=!0})}var u=!1,c="https://apis.google.com/js/client.js";return{get:function(e){u?e():a(e)}}}]),angular.module("angular-google-gapi").factory("GData",["$rootScope",function(e){e.gapi={};var n=!1,t=null;return{isLogin:function(t){return 0==arguments.length?n:(n=t,void(e.gapi.login=t))},getUser:function(n){return 0==arguments.length?t:(t=n,void(e.gapi.user=n))}}}]),angular.module("angular-google-gapi").factory("GAuth",["$rootScope","$q","GClient","GApi","GData","$interval","$window","$location",function(e,n,t,o,i,r,a){function u(e){if(0==s){var n=arguments.length;t.get(function(){a.gapi.client.load("oauth2","v2",function(){s=!0,1==n&&e()})})}else e()}function c(e,n){u(function(){a.gapi.auth.authorize({client_id:g,scope:p,immediate:e,response_type:d},n)})}function l(){function e(n){if("https://accounts.google.com"===n.origin){var i=JSON.parse(n.data);a.removeEventListener("message",e),i=t(i.a[0],"code"),void 0==i?o.reject():o.resolve(i)}}function t(e,n){n=n.replace(/[[]/,"[").replace(/[]]/,"]");var t=n+"=([^&#]*)",o=new RegExp(t),i=o.exec(e);return null==i?void 0:i[1]}var o=n.defer(),i=$location.protocol+"//"+$location.hostname;""!=$location.port&&(i=i+":"+$location.port);a.open("https://accounts.google.com/o/oauth2/auth?scope="+encodeURI(p)+"&redirect_uri=postmessage&response_type=code&client_id="+g+"&access_type=offline&approval_prompt=force&origin="+i,null,"width=800, height=600");return a.addEventListener("message",e),o.promise}function f(){var e=n.defer();return a.gapi.client.oauth2.userinfo.get().execute(function(n){if(n.code)e.reject();else{i.isLogin(!0),o.executeCallbacks();var t={};t.email=n.email,t.picture=n.picture,t.id=n.id,t.name=void 0==n.name?n.email:n.name,t.link=n.link,i.getUser(t),e.resolve()}}),e.promise}var g,s=!1,p="https://www.googleapis.com/auth/userinfo.email",d="token id_token";return{setClient:function(e){g=e},setScope:function(e){p=e},load:function(e){var n=arguments.length;t.get(function(){a.gapi.client.load("oauth2","v2",function(){1==n&&e()})})},checkAuth:function(){var e=n.defer();return c(!0,function(){f().then(function(){e.resolve()},function(){e.reject()})}),e.promise},login:function(){var e=n.defer();return c(!1,function(){f().then(function(){e.resolve()},function(){e.reject()})}),e.promise},setToken:function(e){var t=n.defer();return u(function(){a.gapi.auth.setToken(e),f().then(function(){t.resolve()},function(){t.reject()})}),t.promise},getToken:function(){var e=n.defer();return u(function(){e.resolve(a.gapi.auth.getToken())}),e.promise},logout:function(){var e=n.defer();return u(function(){a.gapi.auth.setToken(null),i.isLogin(!1),i.getUser(null),e.resolve()}),e.promise},offline:function(){var e=n.defer();return l().then(function(n){e.resolve(n)},function(){e.reject()}),e.promise}}}]),angular.module("angular-google-gapi").factory("GApi",["$q","GClient","GData","$window",function(e,n,t,o){function i(e,n,t,o,i){var r={};r.api=e,r.apiLoad=!1,r.method=n,r.params=t,r.auth=o,r.deferred=i,f.push(r)}function r(e,t,i){n.get(function(){o.gapi.client.load(e,t,function(){console.log(e+" "+t+" api loaded"),l.push(e),a(e)},i)})}function a(e){for(var n=e,o=0;o<f.length;o++){var i=f[o];i.api!=n&&!i.apiLoad||0!=i.auth&&1!=t.isLogin()?i.api==n&&(f[o].apiLoad=!0):(u(i.api,i.method,i.params,i.deferred),o>-1&&f.splice(o--,1))}}function u(e,n,t,i){for(var r=n.split("."),e=o.gapi.client[e],a=0;a<r.length;a++)e=e[r[a]];e(t).execute(function(e){e.error?i.reject(e):i.resolve(e)})}function c(n,t,o,r){var a=e.defer();return l.indexOf(n)>-1?u(n,t,o,a):i(n,t,o,r,a),a.promise}var l=[],f=[];return{executeCallbacks:function(){a()},load:function(e,n,t){r(e,n,t)},execute:function(e,n,t){return 3==arguments.length?c(e,n,t,!1):2==arguments.length?c(e,n,null,!1):void 0},executeAuth:function(e,n,t){return 3==arguments.length?c(e,n,t,!0):2==arguments.length?c(e,n,null,!0):void 0}}}]);
+angular.module('angular-google-gapi', [])
+
+angular.module('angular-google-gapi').factory('GClient', ['$document', '$q', '$timeout', '$interval', '$window',
+        function ($document, $q, $timeout, $interval, $window) {
+
+        var LOAD_GAE_API = false;
+        var URL = 'https://apis.google.com/js/client.js';
+
+        function loadScript(src) {
+                var deferred = $q.defer();
+                var script = $document[0].createElement('script');
+                script.onload = function (e) {
+                    $timeout(function () {
+                        deferred.resolve(e);
+                    });
+                };
+                script.onerror = function (e) {
+                    $timeout(function () {
+                        deferred.reject(e);
+                    });
+                };
+                script.src = src;
+                $document[0].body.appendChild(script);
+                return deferred.promise;
+        };
+
+        function load(callback) {
+                loadScript(URL).then(function() {
+                    var isok = function(callback) {
+                        if($window.gapi.client != undefined && $window.gapi.client.load != undefined) {
+                            callback();
+                            $interval.cancel(check);
+                        }
+                    }
+                    isok(callback);
+                    var check = $interval(function() {
+                        isok(callback);
+                    }, 1000);
+                    LOAD_GAE_API = true;
+                });
+        }
+
+        return {
+
+            get: function(callback){
+                if(LOAD_GAE_API)
+                    callback();
+                else
+                    load(callback);
+
+            }
+
+        }
+
+    }]);
+
+angular.module('angular-google-gapi').factory('GData', ['$rootScope',
+        function ($rootScope) {
+
+        $rootScope.gapi = {};
+
+        var isLogin = false;
+        var user = null;
+
+        return {
+
+            isLogin : function(value) {
+                if(arguments.length == 0)
+                    return isLogin;
+                isLogin = value;
+                $rootScope.gapi.login = value;
+            },
+
+            getUser : function(value) {
+                if(arguments.length == 0)
+                    return user;
+                user = value;
+                $rootScope.gapi.user = value;
+            }
+
+        }
+
+    }]);
+
+
+angular.module('angular-google-gapi').factory('GAuth', ['$rootScope', '$q', 'GClient', 'GApi', 'GData', '$interval', '$window', '$location',
+    function($rootScope, $q, GClient, GApi, GData, $interval, $window){
+        var isLoad = false;
+
+        var CLIENT_ID;
+        var SCOPE = 'https://www.googleapis.com/auth/userinfo.email';
+        var RESPONSE_TYPE = 'token id_token';
+
+        function load(callback){
+             if (isLoad == false) {
+                 var args = arguments.length;
+                 GClient.get(function (){
+                    $window.gapi.client.load('oauth2', 'v2', function() {
+                         isLoad = true;
+                         if (args == 1)
+                             callback();
+                     });
+                 });
+             } else {
+                 callback();
+             }
+
+         }
+
+        function signin(mode, authorizeCallback) {
+            load(function (){
+                $window.gapi.auth.authorize({client_id: CLIENT_ID, scope: SCOPE, immediate: mode, response_type : RESPONSE_TYPE}, authorizeCallback);
+            });
+        }
+
+        function offline() {
+            var deferred = $q.defer();
+            var origin = $location.protocol + "//" + $location.hostname;
+            if($location.port != "") {
+                origin = origin + ':' + $location.port;
+            }
+            var win =  $window.open('https://accounts.google.com/o/oauth2/auth?scope='+encodeURI(SCOPE)+'&redirect_uri=postmessage&response_type=code&client_id='+CLIENT_ID+'&access_type=offline&approval_prompt=force&origin='+origin, null, 'width=800, height=600');
+
+            $window.addEventListener("message", getCode);
+
+            function getCode(event) {
+                if (event.origin === "https://accounts.google.com") {
+                    var data = JSON.parse(event.data);
+                    $window.removeEventListener("message", getCode);
+                    data = gup(data.a[0], 'code');
+                    if (data == undefined)
+                        deferred.reject();
+                    else
+                        deferred.resolve(data);
+
+                }
+            }
+
+            function gup(url, name) {
+                name = name.replace(/[[]/,"\[").replace(/[]]/,"\]");
+                var regexS = name+"=([^&#]*)";
+                var regex = new RegExp( regexS );
+                var results = regex.exec( url );
+                if( results == null )
+                    return undefined;
+                else
+                    return results[1];
+            }
+
+            return deferred.promise;
+        }
+
+        function getUser() {
+
+            var deferred = $q.defer();
+            $window.gapi.client.oauth2.userinfo.get().execute(function(resp) {
+                if (!resp.code) {
+                    GData.isLogin(true);
+                    GApi.executeCallbacks();
+                    var user = {};
+                    user.email = resp.email;
+                    user.picture = resp.picture;
+                    user.id = resp.id;
+                    if (resp.name == undefined)
+                        user.name = resp.email;
+                    else
+                        user.name = resp.name;
+                    user.link = resp.link;
+                    GData.getUser(user);
+                    deferred.resolve();
+                } else {
+                    deferred.reject();
+                }
+            });
+            return deferred.promise;
+        }
+
+        return {
+
+            setClient: function(client) {
+                CLIENT_ID = client;
+            },
+
+            setScope: function(scope) {
+                SCOPE = scope;
+            },
+
+            load: function(callback){
+                var args = arguments.length;
+                GClient.get(function (){
+                    $window.gapi.client.load('oauth2', 'v2', function() {
+                        if (args == 1)
+                            callback();
+                    });
+                });
+
+            },
+
+            checkAuth: function(){
+                var deferred = $q.defer();
+                signin(true, function() {
+                    getUser().then(function () {
+                        deferred.resolve();
+                    }, function () {
+                        deferred.reject();
+                    });
+                });
+                return deferred.promise;
+            },
+
+            login: function(){
+                var deferred = $q.defer();
+                signin(false, function() {
+                    getUser().then(function () {
+                        deferred.resolve();
+                    }, function () {
+                        deferred.reject();
+                    });
+                });
+                return deferred.promise;
+            },
+
+            setToken: function(token){
+                var deferred = $q.defer();
+                load(function (){
+                    $window.gapi.auth.setToken(token);
+                    getUser().then(function () {
+                        deferred.resolve();
+                    }, function () {
+                        deferred.reject();
+                    });
+                });
+                return deferred.promise;
+            },
+
+            getToken: function(){
+                var deferred = $q.defer();
+                load(function (){
+                    deferred.resolve($window.gapi.auth.getToken());
+                });
+                return deferred.promise;
+            },
+
+            logout: function(){
+                var deferred = $q.defer();
+                load(function() {
+                    $window.gapi.auth.setToken(null);
+                    GData.isLogin(false);
+                    GData.getUser(null);
+                    deferred.resolve();
+                });
+                return deferred.promise;
+            },
+
+            offline: function(){
+                var deferred = $q.defer();
+                offline().then( function(code){
+                        deferred.resolve(code);
+                    }, function(){
+                        deferred.reject();
+                    });
+                return deferred.promise;
+            },
+
+
+        }
+
+    }]);
+
+angular.module('angular-google-gapi').factory('GApi', ['$q', 'GClient', 'GData', '$window',
+    function($q, GClient, GData, $window){
+
+        var apisLoad  = [];
+
+        var observerCallbacks = [];
+
+        function registerObserverCallback(api, method, params, auth, deferred){
+            var observerCallback = {};
+            observerCallback.api = api;
+            observerCallback.apiLoad = false;
+            observerCallback.method = method;
+            observerCallback.params = params;
+            observerCallback.auth = auth;
+            observerCallback.deferred = deferred;
+            observerCallbacks.push(observerCallback);
+        };
+
+        function load(api, version, url) {
+            GClient.get(function (){
+                $window.gapi.client.load(api, version, function() {
+                    console.log(api+" "+version+" api loaded");
+                    apisLoad.push(api);
+                    executeCallbacks(api);
+                }, url)
+            });
+        }
+
+        function executeCallbacks(api){
+            var apiName = api;
+
+            for(var i= 0; i < observerCallbacks.length; i++){
+              var observerCallback = observerCallbacks[i];
+              if ((observerCallback.api == apiName || observerCallback.apiLoad) && (observerCallback.auth == false || GData.isLogin() == true)) {
+                  runGapi(observerCallback.api, observerCallback.method, observerCallback.params, observerCallback.deferred);
+                  if (i > -1) {
+                      observerCallbacks.splice(i--, 1);
+                  }
+              } else {
+                  if (observerCallback.api == apiName)
+                      observerCallbacks[i]['apiLoad'] = true;
+              }
+            };
+
+        }
+
+        function runGapi(api, method, params, deferred) {
+
+            var pathMethod = method.split('.');
+            var api = $window.gapi.client[api];
+            for(var i= 0; i < pathMethod.length; i++) {
+                api = api[pathMethod[i]];
+            }
+            api(params).execute(function (response) {
+                if (response.error) {
+                    deferred.reject(response);
+                } else {
+                    deferred.resolve(response);
+                }
+            });
+        }
+
+        function execute(api, method, params, auth) {
+            var deferred = $q.defer();
+            if (apisLoad.indexOf(api) > -1) {
+                runGapi(api, method, params, deferred);
+            }
+            else
+                registerObserverCallback(api, method, params, auth, deferred);
+            return deferred.promise;
+        }
+
+        return {
+
+            executeCallbacks : function() {
+                executeCallbacks();
+            },
+
+            load: function(name, version, url){
+                load(name, version, url);
+            },
+
+            execute: function(api, method, params){
+                if(arguments.length == 3)
+                    return execute(api, method, params, false);
+                if(arguments.length == 2)
+                    return execute(api, method, null, false);
+            },
+
+            executeAuth: function(api, method, params){
+                if(arguments.length == 3)
+                    return execute(api, method, params, true);
+                if(arguments.length == 2)
+                    return execute(api, method, null, true);
+            },
+        }
+    }]);
 
 (function() {
   var Base64;
