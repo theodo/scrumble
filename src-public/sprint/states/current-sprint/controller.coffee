@@ -2,9 +2,11 @@ angular.module 'NotSoShitty.bdc'
 .controller 'BurnDownChartCtrl', (
   $scope
   $state
+  $mdDialog
   BDCDataProvider
   TrelloClient
   sprint
+  Sprint
 ) ->
   $state.go 'tab.new-sprint' unless sprint?
 
@@ -35,4 +37,14 @@ angular.module 'NotSoShitty.bdc'
       .catch (err) ->
         console.log err
         return null
-  return
+
+  $scope.showConfirmNewSprint = (ev) ->
+    confirm = $mdDialog.confirm()
+      .title 'Start a new sprint'
+      .textContent 'Starting a new sprint will end this one'
+      .targetEvent ev
+      .ok 'OK'
+      .cancel 'Cancel'
+    $mdDialog.show(confirm).then ->
+      Sprint.close(sprint).then ->
+        $state.go 'tab.new-sprint'
