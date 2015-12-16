@@ -5,6 +5,7 @@ angular.module 'NotSoShitty.bdc'
   $mdDialog
   BDCDataProvider
   TrelloClient
+  trelloUtils
   svgToPng
   sprint
   Sprint
@@ -33,13 +34,9 @@ angular.module 'NotSoShitty.bdc'
 
   $scope.fetchTrelloDonePoints = ->
     if sprint.doneColumn?
-      TrelloClient.get '/lists/' + sprint.doneColumn + '/cards?fields=name'
-      .then (response) ->
-        doneCards = response.data
-        $scope.tableData[$scope.currentDayIndex].done = BDCDataProvider.getDonePoints doneCards
-      .catch (err) ->
-        console.log err
-        return null
+      trelloUtils.getColumnPoints sprint.doneColumn
+      .then (points) ->
+        $scope.tableData[$scope.currentDayIndex].done = points
 
   $scope.showConfirmNewSprint = (ev) ->
     confirm = $mdDialog.confirm()

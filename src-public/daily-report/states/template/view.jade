@@ -4,6 +4,9 @@ div.sprint-body(layout="row" layout-align="center start")
       h2.md-title(layout-align="center end") DAILY REPORT
       div(layout="column" layout-sm="column")
         md-input-container(flex)
+          label To
+          input(ng-model="dailyReport.message.to")
+        md-input-container(flex)
           label Subject
           input(ng-model="dailyReport.message.subject")
         md-input-container.md-block
@@ -28,3 +31,20 @@ div.sprint-body(layout="row" layout-align="center start")
       md-list-item.md-2-line
         div.md-list-item-text
           h3 {bdc}
+          p The burndown chart image
+      md-list-item.md-2-line
+        div.md-list-item-text
+          h3 {total}
+          p Total number of points to do during the sprint
+      md-list-item.md-2-line
+        div.md-list-item-text
+          h3 {done}
+          p The number of points in the Trello done column
+      md-list-item.md-2-line
+        div.md-list-item-text
+          h3 {toValidate}
+          p The number of points in the Trello to validate column
+      md-list-item.md-2-line
+        div.md-list-item-text
+          h3 {blocked}
+          p The number of points in the Trello blocked column
