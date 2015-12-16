@@ -1,7 +1,7 @@
 'use strict';
 var app;
 
-app = angular.module('NotSoShitty', ['ng', 'ngResource', 'ngAnimate', 'ngMaterial', 'md.data.table', 'ui.router', 'app.templates', 'Parse', 'LocalStorageModule', 'satellizer', 'permission', 'trello-api-client', 'angular-google-gapi', 'NotSoShitty.login', 'NotSoShitty.settings', 'NotSoShitty.storage', 'NotSoShitty.bdc', 'NotSoShitty.common', 'NotSoShitty.daily-report', 'NotSoShitty.gmail-client', 'NotSoShitty.feedback']);
+app = angular.module('NotSoShitty', ['ng', 'ngResource', 'ngAnimate', 'ngSanitize', 'ngMaterial', 'md.data.table', 'ui.router', 'app.templates', 'Parse', 'LocalStorageModule', 'satellizer', 'permission', 'trello-api-client', 'angular-google-gapi', 'NotSoShitty.login', 'NotSoShitty.settings', 'NotSoShitty.storage', 'NotSoShitty.bdc', 'NotSoShitty.common', 'NotSoShitty.daily-report', 'NotSoShitty.gmail-client', 'NotSoShitty.feedback']);
 
 app.config(function($locationProvider, $urlRouterProvider, ParseProvider) {
   $locationProvider.hashPrefix('!');
@@ -60,7 +60,7 @@ angular.module('NotSoShitty.storage', []);
 angular.module('NotSoShitty.daily-report').config(function($stateProvider) {
   return $stateProvider.state('tab.daily-report', {
     url: '/daily-report',
-    templateUrl: 'daily-report/states/view.html',
+    templateUrl: 'daily-report/states/template/view.html',
     controller: 'DailyReportCtrl',
     resolve: {
       dailyReport: function(NotSoShittyUser, DailyReport, Project) {
@@ -75,12 +75,14 @@ angular.module('NotSoShitty.daily-report').config(function($stateProvider) {
             return report.save();
           });
         });
-      }
-    },
-    data: {
-      permissions: {
-        only: ['google-authenticated'],
-        redirectTo: 'tab.google-login'
+      },
+      sprint: function(NotSoShittyUser, Sprint) {
+        return NotSoShittyUser.getCurrentUser().then(function(user) {
+          return Sprint.getActiveSprint(user.project);
+        })["catch"](function(err) {
+          console.log(err);
+          return null;
+        });
       }
     }
   });
@@ -119,27 +121,68 @@ angular.module('NotSoShitty.daily-report').factory('DailyReport', function(Parse
   })(Parse.Model);
 });
 
-angular.module('NotSoShitty.daily-report').controller('DailyReportCtrl', function($scope, mailer, dailyReport, $mdToast) {
-  var saveFeedback;
-  saveFeedback = $mdToast.simple().hideDelay(1000).position('top right').content('Saved!');
-  $scope.dailyReport = dailyReport;
-  $scope.save = function() {
-    return $scope.dailyReport.save().then(function() {
-      return $mdToast.show(saveFeedback);
+angular.module('NotSoShitty.daily-report').service('reportBuilder', function($q, NotSoShittyUser, Sprint, Project) {
+  var project, promise, renderBDC, renderDate, renderSprintNumber, replace, sprint;
+  promise = void 0;
+  project = void 0;
+  sprint = void 0;
+  replace = function(message, toRemplace, replacement) {
+    message.subject = message.subject.replace(toRemplace, replacement);
+    message.body = message.body.replace(toRemplace, replacement);
+    return message;
+  };
+  renderSprintNumber = function(message) {
+    return promise.then(function() {
+      return replace(message, '{sprintNumber}', sprint.number);
     });
   };
-  return $scope.send = function() {
-    return mailer.send($scope.dailyReport.message, function(response) {
-      var errorFeedback, sentFeedback;
-      if ((response.code != null) && response.code > 300) {
-        errorFeedback = $mdToast.simple().hideDelay(3000).position('top right').content("Failed to send message: '" + response.message + "'");
-        $mdToast.show(errorFeedback);
-      } else {
-        sentFeedback = $mdToast.simple().hideDelay(1000).position('top right').content('Email sent');
-        $mdToast.show(sentFeedback);
-      }
-      return console.log(response);
+  renderDate = function(message) {
+    return promise.then(function() {
+      return replace(message, /\{today#(.+?)\}/g, function(match, dateFormat) {
+        return moment().format(dateFormat);
+      });
     });
+  };
+  renderBDC = function(message, bdcBase64, useCid) {
+    var src;
+    src = useCid ? 'cid:bdc' : bdcBase64;
+    return promise.then(function() {
+      message.body = message.body.replace('{bdc}', "<img src='" + src + "' />");
+      if (useCid) {
+        message.cids = [
+          {
+            type: 'image/png',
+            name: 'BDC',
+            base64: bdcBase64.split(',')[1],
+            id: 'bdc'
+          }
+        ];
+      }
+      return message;
+    });
+  };
+  return {
+    dateFormat: function(_dateFormat_) {
+      var dateFormat;
+      return dateFormat = _dateFormat_;
+    },
+    init: function() {
+      return promise = NotSoShittyUser.getCurrentUser().then(function(user) {
+        project = user.project;
+        return project;
+      }).then(function(project) {
+        return Sprint.getActiveSprint(new Project(project)).then(function(_sprint_) {
+          return sprint = _sprint_;
+        });
+      });
+    },
+    render: function(message, useCid) {
+      return renderSprintNumber(angular.copy(message)).then(function(message) {
+        return renderDate(message);
+      }).then(function(message) {
+        return renderBDC(message, sprint.bdcBase64, useCid);
+      });
+    }
   };
 });
 
@@ -226,7 +269,7 @@ angular.module('NotSoShitty.gmail-client').service('mailer', function($state, $r
   return {
     send: function(message, callback) {
       return GAuth.checkAuth().then(function() {
-        var base64EncodedEmail, email, email_lines, now, request, user;
+        var base64EncodedEmail, originalMail, request, user;
         if (message.to == null) {
           return callback({
             message: "No 'to' field",
@@ -246,22 +289,16 @@ angular.module('NotSoShitty.gmail-client').service('mailer', function($state, $r
           });
         }
         user = $rootScope.gapi.user;
-        now = new Date();
-        now = now.toString();
-        email_lines = [];
-        email_lines.push("From: " + user.name + " <" + user.email + ">");
-        email_lines.push("To: " + message.to);
-        if (message.cc != null) {
-          email_lines.push("Cc: " + message.cc);
-        }
-        email_lines.push('Content-type: text/html;charset=iso-8859-1');
-        email_lines.push('MIME-Version: 1.0');
-        email_lines.push("Subject: " + message.subject);
-        email_lines.push("Date: " + now);
-        email_lines.push('Message-ID: <1234@local.machine.example>');
-        email_lines.push("" + message.body);
-        email = email_lines.join('\r\n').trim();
-        base64EncodedEmail = btoa(email);
+        originalMail = {
+          to: message.to,
+          subject: message.subject,
+          fromName: user.name,
+          from: user.email,
+          body: message.body,
+          cids: message.cids,
+          attaches: []
+        };
+        base64EncodedEmail = btoa(Mime.toMimeTxt(originalMail));
         base64EncodedEmail = base64EncodedEmail.replace(/\+/g, '-').replace(/\//g, '_');
         request = gapi.client.gmail.users.messages.send({
           userId: 'me',
@@ -406,7 +443,7 @@ angular.module('NotSoShitty.storage').factory('Sprint', function(Parse) {
       return Sprint.__super__.constructor.apply(this, arguments);
     }
 
-    Sprint.configure("Sprint", "project", "number", "dates", "resources", "bdcData", "isActive", "doneColumn");
+    Sprint.configure("Sprint", "project", "number", "dates", "resources", "bdcData", "isActive", "doneColumn", "bdcBase64");
 
     Sprint.getActiveSprint = function(project) {
       return this.query({
@@ -425,11 +462,6 @@ angular.module('NotSoShitty.storage').factory('Sprint', function(Parse) {
       })["catch"](function(err) {
         return console.warn(err);
       });
-    };
-
-    Sprint.close = function(sprint) {
-      sprint.isActive = false;
-      return sprint.save();
     };
 
     return Sprint;
@@ -483,6 +515,29 @@ angular.module('NotSoShitty.bdc').factory('BDCDataProvider', function() {
     getCardPoints: getCardPoints,
     initializeBDC: initializeBDC,
     getDonePoints: getDonePoints
+  };
+});
+
+angular.module('NotSoShitty.bdc').service('svgToPng', function() {
+  return {
+    getPngBase64: function(svg) {
+      var canvas, ctx, height, img, serializer, svgStr, width;
+      img = new Image();
+      serializer = new XMLSerializer();
+      svgStr = serializer.serializeToString(svg);
+      img.src = 'data:image/svg+xml;base64,' + window.btoa(svgStr);
+      canvas = document.createElement('canvas');
+      document.body.appendChild(canvas);
+      width = svg.offsetWidth;
+      height = svg.offsetHeight;
+      canvas.width = svg.offsetWidth;
+      canvas.height = svg.offsetHeight;
+      ctx = canvas.getContext('2d');
+      ctx.fillStyle = 'white';
+      ctx.fillRect(0, 0, width, height);
+      ctx.drawImage(img, 0, 0, width, height);
+      return canvas.toDataURL('image/png');
+    }
   };
 });
 
@@ -736,6 +791,65 @@ angular.module('NotSoShitty.common').directive('trelloAvatar', function() {
   };
 });
 
+angular.module('NotSoShitty.daily-report').controller('PreviewCtrl', function($scope, $mdDialog, $mdToast, mailer, message, rawMessage, reportBuilder) {
+  $scope.message = message;
+  $scope.hide = function() {
+    return $mdDialog.hide();
+  };
+  $scope.cancel = function() {
+    return $mdDialog.cancel();
+  };
+  return $scope.send = function() {
+    return reportBuilder.render(rawMessage, true).then(function(message) {
+      return mailer.send(message, function(response) {
+        var errorFeedback, sentFeedback;
+        if ((response.code != null) && response.code > 300) {
+          errorFeedback = $mdToast.simple().hideDelay(3000).position('top right').content("Failed to send message: '" + response.message + "'");
+          $mdToast.show(errorFeedback);
+          return $mdDialog.cancel();
+        } else {
+          sentFeedback = $mdToast.simple().hideDelay(1000).position('top right').content('Email sent');
+          $mdToast.show(sentFeedback);
+          return $mdDialog.cancel();
+        }
+      });
+    });
+  };
+});
+
+angular.module('NotSoShitty.daily-report').controller('DailyReportCtrl', function($scope, $mdToast, $mdDialog, $mdMedia, mailer, reportBuilder, dailyReport, sprint) {
+  var saveFeedback;
+  reportBuilder.init();
+  saveFeedback = $mdToast.simple().hideDelay(1000).position('top right').content('Saved!');
+  $scope.dailyReport = dailyReport;
+  $scope.save = function() {
+    return $scope.dailyReport.save().then(function() {
+      return $mdToast.show(saveFeedback);
+    });
+  };
+  return $scope.preview = function(ev) {
+    return $mdDialog.show({
+      controller: 'PreviewCtrl',
+      templateUrl: 'daily-report/states/preview/view.html',
+      parent: angular.element(document.body),
+      targetEvent: ev,
+      clickOutsideToClose: true,
+      fullscreen: $mdMedia('sm'),
+      resolve: {
+        message: function() {
+          return reportBuilder.render($scope.dailyReport.message, false);
+        },
+        rawMessage: function() {
+          return $scope.dailyReport.message;
+        },
+        sprint: function() {
+          return sprint;
+        }
+      }
+    });
+  };
+});
+
 angular.module('NotSoShitty.login').controller('ProfilInfoCtrl', function($rootScope, $scope, $auth, User, $state) {
   var getTrelloInfo;
   $scope.logout = function() {
@@ -779,7 +893,7 @@ angular.module('NotSoShitty.login').controller('GoogleLoginCtrl', function($scop
 });
 
 angular.module('NotSoShitty.login').controller('TrelloLoginCtrl', function($scope, $rootScope, TrelloClient, $state, $auth, NotSoShittyUser, localStorageService) {
-  if (localStorageService.get('trello_token')) {
+  if ($auth.isAuthenticated()) {
     $state.go('tab.project');
   }
   return $scope.login = function() {
@@ -882,6 +996,87 @@ angular.module('NotSoShitty.settings').directive('selectPeople', function() {
   };
 });
 
+angular.module('NotSoShitty.settings').controller('ProjectCtrl', function($scope, $timeout, $q, boards, TrelloClient, localStorageService, $mdToast, Project, user) {
+  var fetchBoardData, project, promise, saveFeedback;
+  $scope.boards = boards;
+  if (user.project != null) {
+    project = user.project;
+  } else {
+    project = new Project();
+  }
+  $scope.project = project;
+  fetchBoardData = function(boardId) {
+    return $q.all([
+      TrelloClient.get("/boards/" + boardId + "/lists").then(function(response) {
+        return $scope.boardColumns = response.data;
+      })["catch"](function(err) {
+        $scope.project.boardId = null;
+        console.warn("Could not fetch Trello board with id " + boardId);
+        return console.log(err);
+      }), TrelloClient.get("/boards/" + boardId + "/members?fields=avatarHash,fullName,initials,username").then(function(response) {
+        return $scope.boardMembers = response.data;
+      })["catch"](function(err) {
+        $scope.project.boardId = null;
+        console.warn("Could not fetch Trello board members");
+        return console.log(err);
+      }), Project.get(boardId).then(function(response) {
+        if (response != null) {
+          return response;
+        }
+        console.log("No project with boardId " + boardId + " found. Creating a new one");
+        project = new Project();
+        project.boardId = boardId;
+        project.team = {
+          rest: [],
+          dev: []
+        };
+        return project.save();
+      }).then(function(project) {
+        return $scope.project = project;
+      })
+    ]);
+  };
+  if ($scope.project.boardId != null) {
+    fetchBoardData($scope.project.boardId);
+  }
+  $scope.$watch('project.boardId', function(next, prev) {
+    if (!((next != null) && next !== prev)) {
+      return;
+    }
+    fetchBoardData(next);
+    return $scope.save();
+  });
+  $scope.$watch('project.team', function(next, prev) {
+    if (!((next != null) && !angular.equals(next, prev))) {
+      return;
+    }
+    return $scope.save();
+  }, true);
+  $scope.clearTeam = function() {
+    $scope.project.team.rest = [];
+    $scope.project.team.dev = [];
+    return $scope.save();
+  };
+  saveFeedback = $mdToast.simple().hideDelay(1000).position('top right').content('Saved!');
+  promise = null;
+  $scope.save = function() {
+    if ($scope.project.boardId == null) {
+      return;
+    }
+    if (promise != null) {
+      $timeout.cancel(promise);
+    }
+    return promise = $timeout(function() {
+      return $scope.project.save().then(function(p) {
+        user.project = p;
+        return user.save().then(function() {
+          return $mdToast.show(saveFeedback);
+        });
+      });
+    }, 2000);
+  };
+});
+
 angular.module('NotSoShitty.bdc').directive('burndown', function() {
   return {
     restrict: 'AE',
@@ -949,7 +1144,7 @@ angular.module('NotSoShitty.bdc').directive('burndown', function() {
   };
 });
 
-angular.module('NotSoShitty.bdc').controller('BurnDownChartCtrl', function($scope, $state, $mdDialog, BDCDataProvider, TrelloClient, sprint, Sprint) {
+angular.module('NotSoShitty.bdc').controller('BurnDownChartCtrl', function($scope, $state, BDCDataProvider, TrelloClient, svgToPng, sprint) {
   var day, getCurrentDayIndex, _i, _len, _ref;
   if (sprint == null) {
     $state.go('tab.new-sprint');
@@ -975,6 +1170,9 @@ angular.module('NotSoShitty.bdc').controller('BurnDownChartCtrl', function($scop
   };
   $scope.currentDayIndex = getCurrentDayIndex($scope.tableData);
   $scope.save = function() {
+    var svg;
+    svg = d3.select('#bdcgraph')[0][0].firstChild;
+    sprint.bdcBase64 = svgToPng.getPngBase64(svg);
     return sprint.save().then(function() {
       return $scope.currentDayIndex = getCurrentDayIndex($scope.tableData);
     });
@@ -990,15 +1188,6 @@ angular.module('NotSoShitty.bdc').controller('BurnDownChartCtrl', function($scop
         return null;
       });
     }
-  };
-  return $scope.showConfirmNewSprint = function(ev) {
-    var confirm;
-    confirm = $mdDialog.confirm().title('Start a new sprint').textContent('Starting a new sprint will end this one').targetEvent(ev).ok('OK').cancel('Cancel');
-    return $mdDialog.show(confirm).then(function() {
-      return Sprint.close(sprint).then(function() {
-        return $state.go('tab.new-sprint');
-      });
-    });
   };
 });
 
@@ -1125,74 +1314,4 @@ angular.module('NotSoShitty.bdc').controller('NewSprintCtrl', function($scope, $
     $scope.sprint.resources.totalPoints = sprintService.calculateTotalPoints($scope.sprint.resources.totalManDays, newVal);
     return $scope.save();
   });
-});
-
-angular.module('NotSoShitty.settings').controller('ProjectCtrl', function($location, $mdToast, $scope, $state, $timeout, $q, boards, TrelloClient, localStorageService, Project, user) {
-  var fetchBoardData, project, promise, saveFeedback;
-  $scope.boards = boards;
-  if (user.project != null) {
-    project = user.project;
-  } else {
-    project = new Project();
-  }
-  $scope.project = project;
-  fetchBoardData = function(boardId) {
-    return $q.all([
-      TrelloClient.get("/boards/" + boardId + "/lists").then(function(response) {
-        return $scope.boardColumns = response.data;
-      })["catch"](function(err) {
-        $scope.project.boardId = null;
-        console.warn("Could not fetch Trello board with id " + boardId);
-        return console.log(err);
-      }), TrelloClient.get("/boards/" + boardId + "/members?fields=avatarHash,fullName,initials,username").then(function(response) {
-        return $scope.boardMembers = response.data;
-      })["catch"](function(err) {
-        $scope.project.boardId = null;
-        console.warn("Could not fetch Trello board members");
-        return console.log(err);
-      }), Project.get(boardId).then(function(response) {
-        if (response != null) {
-          return response;
-        }
-        console.log("No project with boardId " + boardId + " found. Creating a new one");
-        project = new Project();
-        project.boardId = boardId;
-        project.team = {
-          rest: [],
-          dev: []
-        };
-        return project.save();
-      }).then(function(project) {
-        return $scope.project = project;
-      })
-    ]);
-  };
-  if ($scope.project.boardId != null) {
-    fetchBoardData($scope.project.boardId);
-  }
-  $scope.$watch('project.boardId', function(next, prev) {
-    if (!((next != null) && next !== prev)) {
-      return;
-    }
-    return fetchBoardData(next);
-  });
-  $scope.clearTeam = function() {
-    $scope.project.team.rest = [];
-    $scope.project.team.dev = [];
-    return $scope.save();
-  };
-  saveFeedback = $mdToast.simple().hideDelay(1000).position('top right').content('Saved!');
-  promise = null;
-  $scope.save = function() {
-    if ($scope.project.boardId == null) {
-      return;
-    }
-    return $scope.project.save().then(function(p) {
-      user.project = p;
-      return user.save().then(function() {
-        $mdToast.show(saveFeedback);
-        return $state.go('tab.current-sprint');
-      });
-    });
-  };
 });

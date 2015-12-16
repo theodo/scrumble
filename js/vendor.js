@@ -371,6 +371,23 @@ this.$get=["$$animateJs","$$AnimateRunner",function(a,c){function d(c){return a(
  (c) 2010-2015 Google, Inc. http://angularjs.org
  License: MIT
 */
+(function(n,h,p){'use strict';function E(a){var f=[];r(f,h.noop).chars(a);return f.join("")}function g(a,f){var d={},c=a.split(","),b;for(b=0;b<c.length;b++)d[f?h.lowercase(c[b]):c[b]]=!0;return d}function F(a,f){function d(a,b,d,l){b=h.lowercase(b);if(s[b])for(;e.last()&&t[e.last()];)c("",e.last());u[b]&&e.last()==b&&c("",b);(l=v[b]||!!l)||e.push(b);var m={};d.replace(G,function(b,a,f,c,d){m[a]=q(f||c||d||"")});f.start&&f.start(b,m,l)}function c(b,a){var c=0,d;if(a=h.lowercase(a))for(c=e.length-
+1;0<=c&&e[c]!=a;c--);if(0<=c){for(d=e.length-1;d>=c;d--)f.end&&f.end(e[d]);e.length=c}}"string"!==typeof a&&(a=null===a||"undefined"===typeof a?"":""+a);var b,k,e=[],m=a,l;for(e.last=function(){return e[e.length-1]};a;){l="";k=!0;if(e.last()&&w[e.last()])a=a.replace(new RegExp("([\\W\\w]*)<\\s*\\/\\s*"+e.last()+"[^>]*>","i"),function(a,b){b=b.replace(H,"$1").replace(I,"$1");f.chars&&f.chars(q(b));return""}),c("",e.last());else{if(0===a.indexOf("\x3c!--"))b=a.indexOf("--",4),0<=b&&a.lastIndexOf("--\x3e",
+b)===b&&(f.comment&&f.comment(a.substring(4,b)),a=a.substring(b+3),k=!1);else if(x.test(a)){if(b=a.match(x))a=a.replace(b[0],""),k=!1}else if(J.test(a)){if(b=a.match(y))a=a.substring(b[0].length),b[0].replace(y,c),k=!1}else K.test(a)&&((b=a.match(z))?(b[4]&&(a=a.substring(b[0].length),b[0].replace(z,d)),k=!1):(l+="<",a=a.substring(1)));k&&(b=a.indexOf("<"),l+=0>b?a:a.substring(0,b),a=0>b?"":a.substring(b),f.chars&&f.chars(q(l)))}if(a==m)throw L("badparse",a);m=a}c()}function q(a){if(!a)return"";A.innerHTML=
+a.replace(/</g,"&lt;");return A.textContent}function B(a){return a.replace(/&/g,"&amp;").replace(M,function(a){var d=a.charCodeAt(0);a=a.charCodeAt(1);return"&#"+(1024*(d-55296)+(a-56320)+65536)+";"}).replace(N,function(a){return"&#"+a.charCodeAt(0)+";"}).replace(/</g,"&lt;").replace(/>/g,"&gt;")}function r(a,f){var d=!1,c=h.bind(a,a.push);return{start:function(a,k,e){a=h.lowercase(a);!d&&w[a]&&(d=a);d||!0!==C[a]||(c("<"),c(a),h.forEach(k,function(d,e){var k=h.lowercase(e),g="img"===a&&"src"===k||
+"background"===k;!0!==O[k]||!0===D[k]&&!f(d,g)||(c(" "),c(e),c('="'),c(B(d)),c('"'))}),c(e?"/>":">"))},end:function(a){a=h.lowercase(a);d||!0!==C[a]||(c("</"),c(a),c(">"));a==d&&(d=!1)},chars:function(a){d||c(B(a))}}}var L=h.$$minErr("$sanitize"),z=/^<((?:[a-zA-Z])[\w:-]*)((?:\s+[\w:-]+(?:\s*=\s*(?:(?:"[^"]*")|(?:'[^']*')|[^>\s]+))?)*)\s*(\/?)\s*(>?)/,y=/^<\/\s*([\w:-]+)[^>]*>/,G=/([\w:-]+)(?:\s*=\s*(?:(?:"((?:[^"])*)")|(?:'((?:[^'])*)')|([^>\s]+)))?/g,K=/^</,J=/^<\//,H=/\x3c!--(.*?)--\x3e/g,x=/<!DOCTYPE([^>]*?)>/i,
+I=/<!\[CDATA\[(.*?)]]\x3e/g,M=/[\uD800-\uDBFF][\uDC00-\uDFFF]/g,N=/([^\#-~| |!])/g,v=g("area,br,col,hr,img,wbr");n=g("colgroup,dd,dt,li,p,tbody,td,tfoot,th,thead,tr");p=g("rp,rt");var u=h.extend({},p,n),s=h.extend({},n,g("address,article,aside,blockquote,caption,center,del,dir,div,dl,figure,figcaption,footer,h1,h2,h3,h4,h5,h6,header,hgroup,hr,ins,map,menu,nav,ol,pre,script,section,table,ul")),t=h.extend({},p,g("a,abbr,acronym,b,bdi,bdo,big,br,cite,code,del,dfn,em,font,i,img,ins,kbd,label,map,mark,q,ruby,rp,rt,s,samp,small,span,strike,strong,sub,sup,time,tt,u,var"));
+n=g("circle,defs,desc,ellipse,font-face,font-face-name,font-face-src,g,glyph,hkern,image,linearGradient,line,marker,metadata,missing-glyph,mpath,path,polygon,polyline,radialGradient,rect,stop,svg,switch,text,title,tspan,use");var w=g("script,style"),C=h.extend({},v,s,t,u,n),D=g("background,cite,href,longdesc,src,usemap,xlink:href");n=g("abbr,align,alt,axis,bgcolor,border,cellpadding,cellspacing,class,clear,color,cols,colspan,compact,coords,dir,face,headers,height,hreflang,hspace,ismap,lang,language,nohref,nowrap,rel,rev,rows,rowspan,rules,scope,scrolling,shape,size,span,start,summary,tabindex,target,title,type,valign,value,vspace,width");
+p=g("accent-height,accumulate,additive,alphabetic,arabic-form,ascent,baseProfile,bbox,begin,by,calcMode,cap-height,class,color,color-rendering,content,cx,cy,d,dx,dy,descent,display,dur,end,fill,fill-rule,font-family,font-size,font-stretch,font-style,font-variant,font-weight,from,fx,fy,g1,g2,glyph-name,gradientUnits,hanging,height,horiz-adv-x,horiz-origin-x,ideographic,k,keyPoints,keySplines,keyTimes,lang,marker-end,marker-mid,marker-start,markerHeight,markerUnits,markerWidth,mathematical,max,min,offset,opacity,orient,origin,overline-position,overline-thickness,panose-1,path,pathLength,points,preserveAspectRatio,r,refX,refY,repeatCount,repeatDur,requiredExtensions,requiredFeatures,restart,rotate,rx,ry,slope,stemh,stemv,stop-color,stop-opacity,strikethrough-position,strikethrough-thickness,stroke,stroke-dasharray,stroke-dashoffset,stroke-linecap,stroke-linejoin,stroke-miterlimit,stroke-opacity,stroke-width,systemLanguage,target,text-anchor,to,transform,type,u1,u2,underline-position,underline-thickness,unicode,unicode-range,units-per-em,values,version,viewBox,visibility,width,widths,x,x-height,x1,x2,xlink:actuate,xlink:arcrole,xlink:role,xlink:show,xlink:title,xlink:type,xml:base,xml:lang,xml:space,xmlns,xmlns:xlink,y,y1,y2,zoomAndPan",
+!0);var O=h.extend({},D,p,n),A=document.createElement("pre");h.module("ngSanitize",[]).provider("$sanitize",function(){this.$get=["$$sanitizeUri",function(a){return function(f){var d=[];F(f,r(d,function(c,b){return!/^unsafe/.test(a(c,b))}));return d.join("")}}]});h.module("ngSanitize").filter("linky",["$sanitize",function(a){var f=/((ftp|https?):\/\/|(www\.)|(mailto:)?[A-Za-z0-9._%+-]+@)\S*[^\s.;,(){}<>"\u201d\u2019]/i,d=/^mailto:/i;return function(c,b){function k(a){a&&g.push(E(a))}function e(a,
+c){g.push("<a ");h.isDefined(b)&&g.push('target="',b,'" ');g.push('href="',a.replace(/"/g,"&quot;"),'">');k(c);g.push("</a>")}if(!c)return c;for(var m,l=c,g=[],n,p;m=l.match(f);)n=m[0],m[2]||m[4]||(n=(m[3]?"http://":"mailto:")+n),p=m.index,k(l.substr(0,p)),e(n,m[0].replace(d,"")),l=l.substring(p+m[0].length);k(l);return a(g.join(""))}}])})(window,window.angular);
+//# sourceMappingURL=angular-sanitize.min.js.map
+
+/*
+ AngularJS v1.4.8
+ (c) 2010-2015 Google, Inc. http://angularjs.org
+ License: MIT
+*/
 (function(u,n,v){'use strict';var r="BUTTON A INPUT TEXTAREA SELECT DETAILS SUMMARY".split(" "),p=function(a,c){if(-1!==c.indexOf(a[0].nodeName))return!0};n.module("ngAria",["ng"]).provider("$aria",function(){function a(a,f,l,m){return function(d,e,b){var g=b.$normalize(f);!c[g]||p(e,l)||b[g]||d.$watch(b[a],function(b){b=m?!b:!!b;e.attr(f,b)})}}var c={ariaHidden:!0,ariaChecked:!0,ariaDisabled:!0,ariaRequired:!0,ariaInvalid:!0,ariaMultiline:!0,ariaValue:!0,tabindex:!0,bindKeypress:!0,bindRoleForClick:!0};
 this.config=function(a){c=n.extend(c,a)};this.$get=function(){return{config:function(a){return c[a]},$$watchExpr:a}}}).directive("ngShow",["$aria",function(a){return a.$$watchExpr("ngShow","aria-hidden",[],!0)}]).directive("ngHide",["$aria",function(a){return a.$$watchExpr("ngHide","aria-hidden",[],!1)}]).directive("ngModel",["$aria",function(a){function c(c,m,d){return a.config(m)&&!d.attr(c)}function k(a,c){return!c.attr("role")&&c.attr("type")===a&&"INPUT"!==c[0].nodeName}function f(a,c){var d=
 a.type,e=a.role;return"checkbox"===(d||e)||"menuitemcheckbox"===e?"checkbox":"radio"===(d||e)||"menuitemradio"===e?"radio":"range"===d||"progressbar"===e||"slider"===e?"range":"textbox"===(d||e)||"TEXTAREA"===c[0].nodeName?"multiline":""}return{restrict:"A",require:"?ngModel",priority:200,compile:function(l,m){var d=f(m,l);return{pre:function(a,b,c,h){"checkbox"===d&&"checkbox"!==c.type&&(h.$isEmpty=function(b){return!1===b})},post:function(e,b,g,h){function f(){return h.$modelValue}function m(){return q?
@@ -16859,3 +16876,620 @@ function mdColumnHeader(a,b,c){"use strict";function d(d,e,f,g){var h=g[0],i=g[1
  */
 
 angular.module("angular-google-gapi",[]),angular.module("angular-google-gapi").factory("GClient",["$document","$q","$timeout","$interval","$window",function(e,n,t,o,i){function r(o){var i=n.defer(),r=e[0].createElement("script");return r.onload=function(e){t(function(){i.resolve(e)})},r.onerror=function(e){t(function(){i.reject(e)})},r.src=o,e[0].body.appendChild(r),i.promise}function a(e){r(c).then(function(){var n=function(e){void 0!=i.gapi.client&&(e(),o.cancel(t))};n(e);var t=o(function(){n(e)},10);u=!0})}var u=!1,c="https://apis.google.com/js/client.js";return{get:function(e){u?e():a(e)}}}]),angular.module("angular-google-gapi").factory("GData",["$rootScope",function(e){e.gapi={};var n=!1,t=null;return{isLogin:function(t){return 0==arguments.length?n:(n=t,void(e.gapi.login=t))},getUser:function(n){return 0==arguments.length?t:(t=n,void(e.gapi.user=n))}}}]),angular.module("angular-google-gapi").factory("GAuth",["$rootScope","$q","GClient","GApi","GData","$interval","$window","$location",function(e,n,t,o,i,r,a){function u(e){if(0==s){var n=arguments.length;t.get(function(){a.gapi.client.load("oauth2","v2",function(){s=!0,1==n&&e()})})}else e()}function c(e,n){u(function(){a.gapi.auth.authorize({client_id:g,scope:p,immediate:e,response_type:d},n)})}function l(){function e(n){if("https://accounts.google.com"===n.origin){var i=JSON.parse(n.data);a.removeEventListener("message",e),i=t(i.a[0],"code"),void 0==i?o.reject():o.resolve(i)}}function t(e,n){n=n.replace(/[[]/,"[").replace(/[]]/,"]");var t=n+"=([^&#]*)",o=new RegExp(t),i=o.exec(e);return null==i?void 0:i[1]}var o=n.defer(),i=$location.protocol+"//"+$location.hostname;""!=$location.port&&(i=i+":"+$location.port);a.open("https://accounts.google.com/o/oauth2/auth?scope="+encodeURI(p)+"&redirect_uri=postmessage&response_type=code&client_id="+g+"&access_type=offline&approval_prompt=force&origin="+i,null,"width=800, height=600");return a.addEventListener("message",e),o.promise}function f(){var e=n.defer();return a.gapi.client.oauth2.userinfo.get().execute(function(n){if(n.code)e.reject();else{i.isLogin(!0),o.executeCallbacks();var t={};t.email=n.email,t.picture=n.picture,t.id=n.id,t.name=void 0==n.name?n.email:n.name,t.link=n.link,i.getUser(t),e.resolve()}}),e.promise}var g,s=!1,p="https://www.googleapis.com/auth/userinfo.email",d="token id_token";return{setClient:function(e){g=e},setScope:function(e){p=e},load:function(e){var n=arguments.length;t.get(function(){a.gapi.client.load("oauth2","v2",function(){1==n&&e()})})},checkAuth:function(){var e=n.defer();return c(!0,function(){f().then(function(){e.resolve()},function(){e.reject()})}),e.promise},login:function(){var e=n.defer();return c(!1,function(){f().then(function(){e.resolve()},function(){e.reject()})}),e.promise},setToken:function(e){var t=n.defer();return u(function(){a.gapi.auth.setToken(e),f().then(function(){t.resolve()},function(){t.reject()})}),t.promise},getToken:function(){var e=n.defer();return u(function(){e.resolve(a.gapi.auth.getToken())}),e.promise},logout:function(){var e=n.defer();return u(function(){a.gapi.auth.setToken(null),i.isLogin(!1),i.getUser(null),e.resolve()}),e.promise},offline:function(){var e=n.defer();return l().then(function(n){e.resolve(n)},function(){e.reject()}),e.promise}}}]),angular.module("angular-google-gapi").factory("GApi",["$q","GClient","GData","$window",function(e,n,t,o){function i(e,n,t,o,i){var r={};r.api=e,r.apiLoad=!1,r.method=n,r.params=t,r.auth=o,r.deferred=i,f.push(r)}function r(e,t,i){n.get(function(){o.gapi.client.load(e,t,function(){console.log(e+" "+t+" api loaded"),l.push(e),a(e)},i)})}function a(e){for(var n=e,o=0;o<f.length;o++){var i=f[o];i.api!=n&&!i.apiLoad||0!=i.auth&&1!=t.isLogin()?i.api==n&&(f[o].apiLoad=!0):(u(i.api,i.method,i.params,i.deferred),o>-1&&f.splice(o--,1))}}function u(e,n,t,i){for(var r=n.split("."),e=o.gapi.client[e],a=0;a<r.length;a++)e=e[r[a]];e(t).execute(function(e){e.error?i.reject(e):i.resolve(e)})}function c(n,t,o,r){var a=e.defer();return l.indexOf(n)>-1?u(n,t,o,a):i(n,t,o,r,a),a.promise}var l=[],f=[];return{executeCallbacks:function(){a()},load:function(e,n,t){r(e,n,t)},execute:function(e,n,t){return 3==arguments.length?c(e,n,t,!1):2==arguments.length?c(e,n,null,!1):void 0},executeAuth:function(e,n,t){return 3==arguments.length?c(e,n,t,!0):2==arguments.length?c(e,n,null,!0):void 0}}}]);
+
+(function() {
+  var Base64;
+
+  Base64 = {
+    _keyStr: 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=',
+    encode: function(input, needEncoding) {
+      var chr1, chr2, chr3, enc1, enc2, enc3, enc4, i, output;
+      output = '';
+      chr1 = void 0;
+      chr2 = void 0;
+      chr3 = void 0;
+      enc1 = void 0;
+      enc2 = void 0;
+      enc3 = void 0;
+      enc4 = void 0;
+      i = 0;
+      if (needEncoding) {
+        input = Base64._utf8_encode(input);
+      }
+      while (i < input.length) {
+        chr1 = input.charCodeAt(i++);
+        chr2 = input.charCodeAt(i++);
+        chr3 = input.charCodeAt(i++);
+        enc1 = chr1 >> 2;
+        enc2 = (chr1 & 3) << 4 | chr2 >> 4;
+        enc3 = (chr2 & 15) << 2 | chr3 >> 6;
+        enc4 = chr3 & 63;
+        if (isNaN(chr2)) {
+          enc3 = enc4 = 64;
+        } else if (isNaN(chr3)) {
+          enc4 = 64;
+        }
+        output = output + this._keyStr.charAt(enc1) + this._keyStr.charAt(enc2) + this._keyStr.charAt(enc3) + this._keyStr.charAt(enc4);
+      }
+      return output;
+    },
+    decode: function(input, needDecoding) {
+      var chr1, chr2, chr3, enc1, enc2, enc3, enc4, i, output;
+      output = '';
+      chr1 = void 0;
+      chr2 = void 0;
+      chr3 = void 0;
+      enc1 = void 0;
+      enc2 = void 0;
+      enc3 = void 0;
+      enc4 = void 0;
+      i = 0;
+      input = input.replace(/[^A-Za-z0-9\+\/\=]/g, '');
+      while (i < input.length) {
+        enc1 = this._keyStr.indexOf(input.charAt(i++));
+        enc2 = this._keyStr.indexOf(input.charAt(i++));
+        enc3 = this._keyStr.indexOf(input.charAt(i++));
+        enc4 = this._keyStr.indexOf(input.charAt(i++));
+        chr1 = enc1 << 2 | enc2 >> 4;
+        chr2 = (enc2 & 15) << 4 | enc3 >> 2;
+        chr3 = (enc3 & 3) << 6 | enc4;
+        output = output + String.fromCharCode(chr1);
+        if (enc3 !== 64) {
+          output = output + String.fromCharCode(chr2);
+        }
+        if (enc4 !== 64) {
+          output = output + String.fromCharCode(chr3);
+        }
+      }
+      if (needDecoding) {
+        output = Base64._utf8_decode(output);
+      }
+      return output;
+    },
+    _utf8_encode: function(string) {
+      var c, n, utftext;
+      string = string.replace(/\r\n/g, '\n');
+      utftext = '';
+      n = 0;
+      while (n < string.length) {
+        c = string.charCodeAt(n);
+        if (c < 128) {
+          utftext += String.fromCharCode(c);
+        } else if (c > 127 && c < 2048) {
+          utftext += String.fromCharCode(c >> 6 | 192);
+          utftext += String.fromCharCode(c & 63 | 128);
+        } else {
+          utftext += String.fromCharCode(c >> 12 | 224);
+          utftext += String.fromCharCode(c >> 6 & 63 | 128);
+          utftext += String.fromCharCode(c & 63 | 128);
+        }
+        n++;
+      }
+      return utftext;
+    },
+    _utf8_decode: function(utftext) {
+      var c, c1, c2, c3, i, string;
+      string = '';
+      i = 0;
+      c = c1 = c2 = 0;
+      while (i < utftext.length) {
+        c = utftext.charCodeAt(i);
+        if (c < 128) {
+          string += String.fromCharCode(c);
+          i++;
+        } else if (c > 191 && c < 224) {
+          c2 = utftext.charCodeAt(i + 1);
+          string += String.fromCharCode((c & 31) << 6 | c2 & 63);
+          i += 2;
+        } else {
+          c2 = utftext.charCodeAt(i + 1);
+          c3 = utftext.charCodeAt(i + 2);
+          string += String.fromCharCode((c & 15) << 12 | (c2 & 63) << 6 | c3 & 63);
+          i += 3;
+        }
+      }
+      return string;
+    }
+  };
+
+
+  /*
+      mime-js.js 0.2.0
+      2014-10-18
+  
+      By Ikrom, https://github.com/ikr0m
+      License: X11/MIT
+   */
+
+  window.Mime = (function() {
+    var MailParser, _util, buildMimeObj, toMimeObj, toMimeTxt;
+    toMimeTxt = function(mail, txtOnly) {
+      var alternative, attaches, cids, createAlternative, createAttaches, createCids, createHtml, createMixed, createPlain, createRelated, getBoundary, htm, linkify, plain, related, result;
+      linkify = function(inputText) {
+        var replacePattern1, replacePattern2, replacePattern3, replacedText;
+        replacePattern1 = /(\b(https?|ftp):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gim;
+        replacedText = inputText.replace(replacePattern1, "<a href=\"$1\" target=\"_blank\">$1</a>");
+        replacePattern2 = /(^|[^\/])(www\.[\S]+(\b|$))/gim;
+        replacedText = replacedText.replace(replacePattern2, "$1<a href=\"http://$2\" target=\"_blank\">$2</a>");
+        replacePattern3 = /(([a-zA-Z0-9\-\_\.])+@[a-zA-Z\_]+?(\.[a-zA-Z]{2,6})+)/gim;
+        replacedText = replacedText.replace(replacePattern3, '<a href="mailto:$1">$1</a>');
+        return replacedText;
+      };
+      getBoundary = function() {
+        var _random;
+        _random = function() {
+          return Math.random().toString(36).slice(2);
+        };
+        return _random() + _random();
+      };
+      createPlain = function(textContent) {
+        if (textContent == null) {
+          textContent = '';
+        }
+        return '\nContent-Type: text/plain; charset=UTF-8' + '\nContent-Transfer-Encoding: base64' + '\n\n' + (Base64.encode(textContent, true)).replace(/.{76}/g, "$&\n");
+      };
+      createHtml = function(msg) {
+        var htmlContent;
+        htmlContent = msg.body || "";
+        htmlContent = '<div>' + htmlContent + '</div>';
+        return '\nContent-Type: text/html; charset=UTF-8' + '\nContent-Transfer-Encoding: base64' + '\n\n' + (Base64.encode(htmlContent, true)).replace(/.{76}/g, "$&\n");
+      };
+      createAlternative = function(text, html) {
+        var boundary;
+        boundary = getBoundary();
+        return '\nContent-Type: multipart/alternative; boundary=' + boundary + '\n\n--' + boundary + text + '\n\n--' + boundary + html + '\n\n--' + boundary + '--';
+      };
+      createCids = function(cids) {
+        var base64, cid, cidArr, id, j, len, name, type;
+        if (!cids) {
+          return;
+        }
+        cidArr = [];
+        for (j = 0, len = cids.length; j < len; j++) {
+          cid = cids[j];
+          type = cid.type;
+          name = cid.name;
+          base64 = cid.base64;
+          id = cid.id;
+          cidArr.push('\nContent-Type: ' + type + '; name=\"' + name + '\"' + '\nContent-Transfer-Encoding: base64' + '\nContent-ID: <' + id + '>' + '\nX-Attachment-Id: ' + id + '\n\n' + base64);
+        }
+        return cidArr;
+      };
+      createRelated = function(alternative, cids) {
+        var boundary, cid, j, len, relatedStr;
+        if (cids == null) {
+          cids = [];
+        }
+        boundary = getBoundary();
+        relatedStr = '\nContent-Type: multipart/related; boundary=' + boundary + '\n\n--' + boundary + alternative;
+        for (j = 0, len = cids.length; j < len; j++) {
+          cid = cids[j];
+          relatedStr += '\n--' + boundary + cid;
+        }
+        return relatedStr + '\n--' + boundary + '--';
+      };
+      createAttaches = function(attaches) {
+        var attach, base64, id, j, len, name, result, type;
+        if (!attaches) {
+          return;
+        }
+        result = [];
+        for (j = 0, len = attaches.length; j < len; j++) {
+          attach = attaches[j];
+          type = attach.type;
+          name = attach.name;
+          base64 = attach.base64;
+          id = getBoundary();
+          result.push('\nContent-Type: ' + type + '; name=\"' + name + '\"' + '\nContent-Disposition: attachment; filename=\"' + name + '\"' + '\nContent-Transfer-Encoding: base64' + '\nX-Attachment-Id: ' + id + '\n\n' + base64);
+        }
+        return result;
+      };
+      createMixed = function(related, attaches) {
+        var attach, boundary, date, j, len, mailFromName, mimeStr, subject;
+        boundary = getBoundary();
+        subject = '';
+        if (mail.subject) {
+          subject = '=?UTF-8?B?' + Base64.encode(mail.subject, true) + '?=';
+        }
+        mailFromName = '=?UTF-8?B?' + Base64.encode(mail.fromName || "", true) + '?=';
+        date = (new Date().toGMTString()).replace(/GMT|UTC/gi, '+0000');
+        mimeStr = 'MIME-Version: 1.0' + '\nDate: ' + date + '\nMessage-ID: <' + getBoundary() + '@mail.your-domain.com>' + '\nSubject: ' + subject + '\nFrom: ' + mailFromName + ' <' + mail.from + '>' + (mail.to ? '\nTo: ' + mail.to : '') + (mail.cc ? '\nCc: ' + mail.cc : '') + '\nContent-Type: multipart/mixed; boundary=' + boundary + '\n\n--' + boundary + related;
+        for (j = 0, len = attaches.length; j < len; j++) {
+          attach = attaches[j];
+          mimeStr += '\n--' + boundary + attach;
+        }
+        return (mimeStr + '\n--' + boundary + '--').replace(/\n/g, '\r\n');
+      };
+      plain = createPlain(mail.body);
+      if (txtOnly) {
+        related = plain;
+      } else {
+        htm = createHtml(mail);
+        alternative = createAlternative(plain, htm);
+        cids = createCids(mail.cids);
+        related = createRelated(alternative, cids);
+      }
+      attaches = createAttaches(mail.attaches);
+      result = createMixed(related, attaches);
+      return result;
+    };
+    MailParser = function(rawMessage) {
+      var cc, explodeMessage, from, getValidStr, messageParts, rawHeaders, subject, to;
+      explodeMessage = function(inMessage) {
+        var escBoundary, i, inBody, inBodyParts, inBoundary, inContentType, inContentTypeParts, inHeaderPos, inRawBody, inRawHeaders, match, mimeType, mimeTypeParts, regContentType, regString, specialChars;
+        inHeaderPos = inMessage.indexOf("\r\n\r\n");
+        if (inHeaderPos === -1) {
+          inMessage = inMessage.replace(/\n/g, "\r\n");
+          inHeaderPos = inMessage.indexOf("\r\n\r\n");
+          if (inHeaderPos === -1) {
+            inHeaderPos = inMessage.length;
+          }
+        }
+        inRawHeaders = inMessage.slice(0, inHeaderPos).replace(/\r\n\s+/g, " ") + "\r\n";
+        inRawBody = inMessage.slice(inHeaderPos).replace(/(\r\n)+$/, "").replace(/^(\r\n)+/, "");
+        inContentType = "";
+        regContentType = inRawHeaders.match(/Content-Type: (.*)/i);
+        if (regContentType && regContentType.length > 0) {
+          inContentType = regContentType[1];
+        } else {
+          console.log("Warning: MailParser: Content-type doesn't exist!");
+        }
+        inContentTypeParts = inContentType.split(";");
+        mimeType = inContentTypeParts[0].replace(/\s/g, "");
+        mimeTypeParts = mimeType.split("/");
+        if (mimeTypeParts[0].toLowerCase() === "multipart") {
+          inBodyParts = [];
+          match = inContentTypeParts[1].match(/boundary="?([^"]*)"?/i);
+          if (!match && inContentTypeParts[2]) {
+            match = inContentTypeParts[2].match(/boundary="?([^"]*)"?/i);
+          }
+          inBoundary = _util.trim(match[1]).replace(/"/g, "");
+          escBoundary = inBoundary.replace(/\+/g, "\\+");
+          regString = new RegExp("--" + escBoundary, "g");
+          inBodyParts = inRawBody.replace(regString, inBoundary).replace(regString, inBoundary).split(inBoundary);
+          inBodyParts.shift();
+          inBodyParts.pop();
+          i = 0;
+          while (i < inBodyParts.length) {
+            inBodyParts[i] = inBodyParts[i].replace(/(\r\n)+$/, "").replace(/^(\r\n)+/, "");
+            inBodyParts[i] = explodeMessage(inBodyParts[i]);
+            i++;
+          }
+        } else {
+          inBody = inRawBody;
+          if (mimeTypeParts[0] === "text") {
+            inBody = inBody.replace(RegExp("=\\r\\n", "g"), "");
+            specialChars = inBody.match(RegExp("=[A-F0-9][A-F0-9]", "g"));
+            if (specialChars) {
+              i = 0;
+              while (i < specialChars.length) {
+                inBody = inBody.replace(specialChars[i], String.fromCharCode(parseInt(specialChars[i].replace(RegExp("="), ""), 16)));
+                i++;
+              }
+            }
+          }
+        }
+        return {
+          rawHeaders: inRawHeaders,
+          rawBody: inRawBody,
+          body: inBody,
+          contentType: inContentType,
+          contentTypeParts: inContentTypeParts,
+          boundary: inBoundary,
+          bodyParts: inBodyParts,
+          mimeType: mimeType,
+          mimeTypeParts: mimeTypeParts
+        };
+      };
+      messageParts = "";
+      try {
+        messageParts = explodeMessage(rawMessage);
+      } catch (undefined) {}
+      rawHeaders = messageParts.rawHeaders;
+      getValidStr = function(arr) {
+        if (arr == null) {
+          arr = [];
+        }
+        return arr[1] || "";
+      };
+      subject = getValidStr(/\r\nSubject: (.*)\r\n/g.exec(rawHeaders));
+      to = getValidStr(/\r\nTo: (.*)\r\n/g.exec(rawHeaders));
+      cc = getValidStr(/\r\nCc: (.*)\r\n/g.exec(rawHeaders));
+      from = getValidStr(/\r\nFrom: (.*)\r\n/g.exec(rawHeaders));
+      return {
+        messageParts: messageParts,
+        subject: subject,
+        to: to,
+        cc: cc,
+        from: from
+      };
+    };
+    _util = (function() {
+      var KOIRDec, QPDec, _decodeMimeWord, decode, decodeMimeWords, toHtmlEntity, trim, win1251Dec;
+      trim = function(str) {
+        if (str == null) {
+          str = '';
+        }
+        return (typeof str.trim === "function" ? str.trim() : void 0) || str.replace(/^\s+|\s+$/g, '');
+      };
+      decode = function(txt, charset) {
+        var result;
+        if (txt == null) {
+          txt = '';
+        }
+        if (charset == null) {
+          charset = '';
+        }
+        charset = charset.toLowerCase();
+        result = (function() {
+          switch (false) {
+            case charset.indexOf('koi8-r') === -1:
+              return KOIRDec(txt);
+            case charset.indexOf('utf-8') === -1:
+              return Base64._utf8_decode(txt);
+            case charset.indexOf('windows-1251') === -1:
+              return win1251Dec(txt);
+            default:
+              return txt;
+          }
+        })();
+        return result;
+      };
+      QPDec = function(s) {
+        return s.replace(/\=[\r\n]+/g, "").replace(/\=[0-9A-F]{2}/gi, function(v) {
+          return String.fromCharCode(parseInt(v.substr(1), 16));
+        });
+      };
+      KOIRDec = function(str) {
+        var charmap, code2char, i, j, len, res, val;
+        charmap = unescape("%u2500%u2502%u250C%u2510%u2514%u2518%u251C%u2524%u252C%u2534%u253C%u2580%u2584%u2588%u258C%u2590" + "%u2591%u2592%u2593%u2320%u25A0%u2219%u221A%u2248%u2264%u2265%u00A0%u2321%u00B0%u00B2%u00B7%u00F7" + "%u2550%u2551%u2552%u0451%u2553%u2554%u2555%u2556%u2557%u2558%u2559%u255A%u255B%u255C%u255D%u255E" + "%u255F%u2560%u2561%u0401%u2562%u2563%u2564%u2565%u2566%u2567%u2568%u2569%u256A%u256B%u256C%u00A9" + "%u044E%u0430%u0431%u0446%u0434%u0435%u0444%u0433%u0445%u0438%u0439%u043A%u043B%u043C%u043D%u043E" + "%u043F%u044F%u0440%u0441%u0442%u0443%u0436%u0432%u044C%u044B%u0437%u0448%u044D%u0449%u0447%u044A" + "%u042E%u0410%u0411%u0426%u0414%u0415%u0424%u0413%u0425%u0418%u0419%u041A%u041B%u041C%u041D%u041E" + "%u041F%u042F%u0420%u0421%u0422%u0423%u0416%u0412%u042C%u042B%u0417%u0428%u042D%u0429%u0427%u042A");
+        code2char = function(code) {
+          if (code >= 0x80 && code <= 0xFF) {
+            return charmap.charAt(code - 0x80);
+          }
+          return String.fromCharCode(code);
+        };
+        res = "";
+        for (i = j = 0, len = str.length; j < len; i = ++j) {
+          val = str[i];
+          res = res + code2char(str.charCodeAt(i));
+        }
+        return res;
+      };
+      win1251Dec = function(str) {
+        var i, iCode, j, len, oCode, result, s;
+        if (str == null) {
+          str = '';
+        }
+        result = '';
+        for (i = j = 0, len = str.length; j < len; i = ++j) {
+          s = str[i];
+          iCode = str.charCodeAt(i);
+          oCode = (function() {
+            switch (false) {
+              case iCode !== 168:
+                return 1025;
+              case iCode !== 184:
+                return 1105;
+              case !((191 < iCode && iCode < 256)):
+                return iCode + 848;
+              default:
+                return iCode;
+            }
+          })();
+          result = result + String.fromCharCode(oCode);
+        }
+        return result;
+      };
+      _decodeMimeWord = function(str, toCharset) {
+        var encoding, fromCharset, match;
+        str = _util.trim(str);
+        fromCharset = void 0;
+        encoding = void 0;
+        match = void 0;
+        match = str.match(/^\=\?([\w_\-]+)\?([QqBb])\?([^\?]*)\?\=$/i);
+        if (!match) {
+          return decode(str, toCharset);
+        }
+        fromCharset = match[1];
+        encoding = (match[2] || "Q").toString().toUpperCase();
+        str = (match[3] || "").replace(/_/g, " ");
+        if (encoding === "B") {
+          return Base64.decode(str, toCharset);
+        } else if (encoding === "Q") {
+          return QPDec(str);
+        } else {
+          return str;
+        }
+      };
+      decodeMimeWords = function(str, toCharset) {
+        str = (str || "").toString().replace(/(=\?[^?]+\?[QqBb]\?[^?]+\?=)\s+(?==\?[^?]+\?[QqBb]\?[^?]*\?=)/g, "$1").replace(/\=\?([\w_\-]+)\?([QqBb])\?[^\?]*\?\=/g, (function(mimeWord, charset, encoding) {
+          return _decodeMimeWord(mimeWord);
+        }).bind(this));
+        return decode(str, toCharset);
+      };
+      toHtmlEntity = function(txt) {
+        if (txt == null) {
+          txt = "";
+        }
+        return (txt + "").replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      };
+      return {
+        decode: decode,
+        KOIRDec: KOIRDec,
+        win1251Dec: win1251Dec,
+        decodeMimeWords: decodeMimeWords,
+        toHtmlEntity: toHtmlEntity,
+        trim: trim
+      };
+    })();
+    buildMimeObj = function(rawMailObj) {
+      var body, decodeBody, err, error, isHtml, isText, mergeInnerMsgs, mimeType, parseBodyParts, parts, readyMail, result, wrapPreTag;
+      readyMail = {
+        html: "",
+        text: "",
+        attaches: [],
+        innerMsgs: [],
+        to: _util.decodeMimeWords(rawMailObj.to),
+        cc: _util.decodeMimeWords(rawMailObj.cc),
+        from: _util.decodeMimeWords(rawMailObj.from),
+        subject: _util.decodeMimeWords(rawMailObj.subject)
+      };
+      decodeBody = function(body, rawHeaders) {
+        var decBody, isBase64, isQP;
+        isQP = /Content-Transfer-Encoding: quoted-printable/i.test(rawHeaders);
+        isBase64 = /Content-Transfer-Encoding: base64/i.test(rawHeaders);
+        if (isBase64) {
+          body = body.replace(/\s/g, '');
+          decBody = typeof atob === "function" ? atob(body) : void 0;
+          if (decBody == null) {
+            decBody = Base64.decode(body);
+          }
+          body = decBody;
+        } else if (isQP) {
+          body = _util.QPDec(body);
+        }
+        return body;
+      };
+      parseBodyParts = function(bodyParts) {
+        var attach, body, innerMsg, isAttach, isAudio, isHtml, isImg, isPlain, isQP, j, k, len, len1, mimeType, name, newMimeMsg, part, rawHeaders, ref, ref1, ref2, regex, slashPos, type, typePart;
+        if (!bodyParts) {
+          return;
+        }
+        for (j = 0, len = bodyParts.length; j < len; j++) {
+          part = bodyParts[j];
+          mimeType = ((ref = part.mimeType) != null ? ref : "").toLowerCase();
+          if (mimeType.indexOf('multipart') !== -1) {
+            parseBodyParts(part.bodyParts);
+            continue;
+          }
+          if (mimeType.indexOf('message/rfc822') !== -1) {
+            newMimeMsg = MailParser(part.rawBody);
+            innerMsg = toMimeObj(newMimeMsg);
+            readyMail.innerMsgs.push(innerMsg);
+            continue;
+          }
+          rawHeaders = part.rawHeaders;
+          isAttach = rawHeaders.indexOf('Content-Disposition: attachment') !== -1;
+          body = part.rawBody;
+          isHtml = /text\/html/.test(mimeType);
+          isPlain = /text\/plain/.test(mimeType);
+          isImg = /image/.test(mimeType);
+          isAudio = /audio/.test(mimeType);
+          if (isAttach || isImg || isAudio) {
+            isQP = /Content-Transfer-Encoding: quoted-printable/i.test(rawHeaders);
+            if (isQP) {
+              body = _util.QPDec(body);
+              body = btoa ? btoa(body) : Base64.encode(body);
+            }
+            ref1 = part.contentTypeParts;
+            for (k = 0, len1 = ref1.length; k < len1; k++) {
+              typePart = ref1[k];
+              if (/name=/i.test(typePart)) {
+                name = typePart.replace(/(.*)=/, '').replace(/"|'/g, '');
+                break;
+              }
+            }
+            if (!name) {
+              name = isImg ? "image" : isAudio ? "audio" : "attachment";
+              name += "_" + Math.floor(Math.random() * 100);
+              slashPos = mimeType.indexOf('/');
+              type = mimeType.substring(slashPos + 1);
+              if (type.length < 4) {
+                name += "." + type;
+              }
+            }
+            regex = /(.*)content-id:(.*)<(.*)>/i;
+            attach = {
+              type: mimeType,
+              base64: body,
+              name: name,
+              cid: (ref2 = regex.exec(rawHeaders)) != null ? ref2[3] : void 0,
+              visible: /png|jpeg|jpg|gif/.test(mimeType)
+            };
+            readyMail.attaches.push(attach);
+          } else if (isHtml || isPlain) {
+            body = decodeBody(body, rawHeaders);
+            body = _util.decode(body, part.contentType);
+            if (isHtml) {
+              readyMail.html += body;
+            }
+            if (isPlain) {
+              readyMail.text += body;
+            }
+          } else {
+            console.log("Unknown mime type: " + mimeType);
+          }
+        }
+        return null;
+      };
+      try {
+        parts = rawMailObj.messageParts;
+        if (!parts) {
+          return readyMail;
+        }
+        mimeType = (parts.mimeType || "").toLowerCase();
+        isText = /text\/plain/.test(mimeType);
+        isHtml = /text\/html/.test(mimeType);
+        if (mimeType.indexOf('multipart') !== -1) {
+          parseBodyParts(parts.bodyParts);
+        } else if (isText || isHtml) {
+          body = decodeBody(parts.body, parts.rawHeaders);
+          body = _util.decode(body, parts.contentType);
+          if (isHtml) {
+            readyMail.html = body;
+          }
+          if (isText) {
+            readyMail.text = body;
+          }
+        } else {
+          console.log("Warning: mime type isn't supported! mime=" + mimeType);
+        }
+      } catch (error) {
+        err = error;
+        throw new Error(err);
+      }
+      wrapPreTag = function(txt) {
+        return "<pre>" + _util.toHtmlEntity(txt) + "</pre>";
+      };
+      mergeInnerMsgs = function(mail) {
+        var htm, innerMsg, innerMsgs, j, len, msg, ref, txt;
+        innerMsgs = mail.innerMsgs;
+        if (innerMsgs != null ? innerMsgs.length : void 0) {
+          if (!_util.trim(mail.html) && mail.text) {
+            mail.html += wrapPreTag(mail.text);
+          }
+          for (j = 0, len = innerMsgs.length; j < len; j++) {
+            innerMsg = innerMsgs[j];
+            msg = mergeInnerMsgs(innerMsg);
+            txt = msg.text;
+            htm = msg.html;
+            if (htm) {
+              mail.html += htm;
+            } else if (txt) {
+              mail.html += wrapPerTag(txt);
+              mail.text += txt;
+            }
+            if (((ref = msg.attaches) != null ? ref.length : void 0) > 0) {
+              mail.attaches = mail.attaches.concat(msg.attaches);
+            }
+          }
+        }
+        return mail;
+      };
+      result = mergeInnerMsgs(readyMail);
+      return result;
+    };
+    toMimeObj = function(mimeMsgText) {
+      var mailObj, rawMailObj;
+      rawMailObj = MailParser(mimeMsgText);
+      mailObj = buildMimeObj(rawMailObj);
+      return mailObj;
+    };
+    return {
+      toMimeTxt: toMimeTxt,
+      toMimeObj: toMimeObj
+    };
+  })();
+
+}).call(this);
