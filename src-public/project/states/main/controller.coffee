@@ -56,24 +56,14 @@ angular.module 'NotSoShitty.settings'
         $scope.project = project
     ]
 
-
   if $scope.project.boardId?
     fetchBoardData $scope.project.boardId
-
-  # Get board colums and members when board is set
-  $scope.$watch 'project.boardId', (next, prev) ->
-    return unless next? and next != prev
-    fetchBoardData next
-
-  $scope.$watch 'project.team', (next, prev) ->
-    return unless next? and  not angular.equals next, prev
-  , true
 
   $scope.clearTeam = ->
     $scope.project.team.rest = []
     $scope.project.team.dev = []
     $scope.save()
-  #
+
   saveFeedback = $mdToast.simple()
     .hideDelay(1000)
     .position('top right')
@@ -86,5 +76,5 @@ angular.module 'NotSoShitty.settings'
       user.project = p
       user.save().then ->
         $mdToast.show saveFeedback
-        $location.path '/sprint/current'
+        $state.go 'current-sprint'
   return
