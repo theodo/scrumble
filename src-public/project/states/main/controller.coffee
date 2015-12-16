@@ -60,6 +60,11 @@ angular.module 'NotSoShitty.settings'
   if $scope.project.boardId?
     fetchBoardData $scope.project.boardId
 
+  # Get board colums and members when board is set
+  $scope.$watch 'project.boardId', (next, prev) ->
+    return unless next? and next != prev
+    fetchBoardData next
+
   $scope.clearTeam = ->
     $scope.project.team.rest = []
     $scope.project.team.dev = []
