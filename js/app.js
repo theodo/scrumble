@@ -427,6 +427,11 @@ angular.module('NotSoShitty.storage').factory('Sprint', function(Parse) {
       });
     };
 
+    Sprint.close = function(sprint) {
+      sprint.isActive = false;
+      return sprint.save();
+    };
+
     return Sprint;
 
   })(Parse.Model);
@@ -877,87 +882,6 @@ angular.module('NotSoShitty.settings').directive('selectPeople', function() {
   };
 });
 
-angular.module('NotSoShitty.settings').controller('ProjectCtrl', function($scope, $timeout, $q, boards, TrelloClient, localStorageService, $mdToast, Project, user) {
-  var fetchBoardData, project, promise, saveFeedback;
-  $scope.boards = boards;
-  if (user.project != null) {
-    project = user.project;
-  } else {
-    project = new Project();
-  }
-  $scope.project = project;
-  fetchBoardData = function(boardId) {
-    return $q.all([
-      TrelloClient.get("/boards/" + boardId + "/lists").then(function(response) {
-        return $scope.boardColumns = response.data;
-      })["catch"](function(err) {
-        $scope.project.boardId = null;
-        console.warn("Could not fetch Trello board with id " + boardId);
-        return console.log(err);
-      }), TrelloClient.get("/boards/" + boardId + "/members?fields=avatarHash,fullName,initials,username").then(function(response) {
-        return $scope.boardMembers = response.data;
-      })["catch"](function(err) {
-        $scope.project.boardId = null;
-        console.warn("Could not fetch Trello board members");
-        return console.log(err);
-      }), Project.get(boardId).then(function(response) {
-        if (response != null) {
-          return response;
-        }
-        console.log("No project with boardId " + boardId + " found. Creating a new one");
-        project = new Project();
-        project.boardId = boardId;
-        project.team = {
-          rest: [],
-          dev: []
-        };
-        return project.save();
-      }).then(function(project) {
-        return $scope.project = project;
-      })
-    ]);
-  };
-  if ($scope.project.boardId != null) {
-    fetchBoardData($scope.project.boardId);
-  }
-  $scope.$watch('project.boardId', function(next, prev) {
-    if (!((next != null) && next !== prev)) {
-      return;
-    }
-    fetchBoardData(next);
-    return $scope.save();
-  });
-  $scope.$watch('project.team', function(next, prev) {
-    if (!((next != null) && !angular.equals(next, prev))) {
-      return;
-    }
-    return $scope.save();
-  }, true);
-  $scope.clearTeam = function() {
-    $scope.project.team.rest = [];
-    $scope.project.team.dev = [];
-    return $scope.save();
-  };
-  saveFeedback = $mdToast.simple().hideDelay(1000).position('top right').content('Saved!');
-  promise = null;
-  $scope.save = function() {
-    if ($scope.project.boardId == null) {
-      return;
-    }
-    if (promise != null) {
-      $timeout.cancel(promise);
-    }
-    return promise = $timeout(function() {
-      return $scope.project.save().then(function(p) {
-        user.project = p;
-        return user.save().then(function() {
-          return $mdToast.show(saveFeedback);
-        });
-      });
-    }, 2000);
-  };
-});
-
 angular.module('NotSoShitty.bdc').directive('burndown', function() {
   return {
     restrict: 'AE',
@@ -1025,7 +949,7 @@ angular.module('NotSoShitty.bdc').directive('burndown', function() {
   };
 });
 
-angular.module('NotSoShitty.bdc').controller('BurnDownChartCtrl', function($scope, $state, BDCDataProvider, TrelloClient, sprint) {
+angular.module('NotSoShitty.bdc').controller('BurnDownChartCtrl', function($scope, $state, $mdDialog, BDCDataProvider, TrelloClient, sprint, Sprint) {
   var day, getCurrentDayIndex, _i, _len, _ref;
   if (sprint == null) {
     $state.go('tab.new-sprint');
@@ -1066,6 +990,15 @@ angular.module('NotSoShitty.bdc').controller('BurnDownChartCtrl', function($scop
         return null;
       });
     }
+  };
+  return $scope.showConfirmNewSprint = function(ev) {
+    var confirm;
+    confirm = $mdDialog.confirm().title('Start a new sprint').textContent('Starting a new sprint will end this one').targetEvent(ev).ok('OK').cancel('Cancel');
+    return $mdDialog.show(confirm).then(function() {
+      return Sprint.close(sprint).then(function() {
+        return $state.go('tab.new-sprint');
+      });
+    });
   };
 });
 
@@ -1192,4 +1125,74 @@ angular.module('NotSoShitty.bdc').controller('NewSprintCtrl', function($scope, $
     $scope.sprint.resources.totalPoints = sprintService.calculateTotalPoints($scope.sprint.resources.totalManDays, newVal);
     return $scope.save();
   });
+});
+
+angular.module('NotSoShitty.settings').controller('ProjectCtrl', function($location, $mdToast, $scope, $state, $timeout, $q, boards, TrelloClient, localStorageService, Project, user) {
+  var fetchBoardData, project, promise, saveFeedback;
+  $scope.boards = boards;
+  if (user.project != null) {
+    project = user.project;
+  } else {
+    project = new Project();
+  }
+  $scope.project = project;
+  fetchBoardData = function(boardId) {
+    return $q.all([
+      TrelloClient.get("/boards/" + boardId + "/lists").then(function(response) {
+        return $scope.boardColumns = response.data;
+      })["catch"](function(err) {
+        $scope.project.boardId = null;
+        console.warn("Could not fetch Trello board with id " + boardId);
+        return console.log(err);
+      }), TrelloClient.get("/boards/" + boardId + "/members?fields=avatarHash,fullName,initials,username").then(function(response) {
+        return $scope.boardMembers = response.data;
+      })["catch"](function(err) {
+        $scope.project.boardId = null;
+        console.warn("Could not fetch Trello board members");
+        return console.log(err);
+      }), Project.get(boardId).then(function(response) {
+        if (response != null) {
+          return response;
+        }
+        console.log("No project with boardId " + boardId + " found. Creating a new one");
+        project = new Project();
+        project.boardId = boardId;
+        project.team = {
+          rest: [],
+          dev: []
+        };
+        return project.save();
+      }).then(function(project) {
+        return $scope.project = project;
+      })
+    ]);
+  };
+  if ($scope.project.boardId != null) {
+    fetchBoardData($scope.project.boardId);
+  }
+  $scope.$watch('project.boardId', function(next, prev) {
+    if (!((next != null) && next !== prev)) {
+      return;
+    }
+    return fetchBoardData(next);
+  });
+  $scope.clearTeam = function() {
+    $scope.project.team.rest = [];
+    $scope.project.team.dev = [];
+    return $scope.save();
+  };
+  saveFeedback = $mdToast.simple().hideDelay(1000).position('top right').content('Saved!');
+  promise = null;
+  $scope.save = function() {
+    if ($scope.project.boardId == null) {
+      return;
+    }
+    return $scope.project.save().then(function(p) {
+      user.project = p;
+      return user.save().then(function() {
+        $mdToast.show(saveFeedback);
+        return $state.go('tab.current-sprint');
+      });
+    });
+  };
 });
