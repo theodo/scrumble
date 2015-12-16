@@ -1,17 +1,5 @@
 angular.module 'NotSoShitty.bdc'
 .factory 'BDCDataProvider', ->
-  getCardPoints = (card) ->
-    return unless card.name
-    match = card.name.match /\(([-+]?[0-9]*\.?[0-9]+)\)/
-    value = 0
-    if match
-      for matchVal in match
-        value = parseFloat(matchVal, 10) unless isNaN(parseFloat(matchVal, 10))
-    value
-
-  getDonePoints = (doneCards) ->
-    _.sum doneCards, getCardPoints
-
   initializeBDC = (days, resources) ->
     standard = 0
     bdc = []
@@ -29,6 +17,4 @@ angular.module 'NotSoShitty.bdc'
     }
     bdc
 
-  getCardPoints: getCardPoints
   initializeBDC: initializeBDC
-  getDonePoints: getDonePoints

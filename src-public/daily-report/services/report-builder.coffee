@@ -1,5 +1,5 @@
 angular.module 'NotSoShitty.daily-report'
-.service 'reportBuilder', ($q, NotSoShittyUser, Sprint, Project)->
+.service 'reportBuilder', ($q, NotSoShittyUser, Sprint, Project, trelloUtils)->
   promise = undefined
   project = undefined
   sprint = undefined
@@ -17,6 +17,22 @@ angular.module 'NotSoShitty.daily-report'
     promise.then ->
       replace message, /\{today#(.+?)\}/g, (match, dateFormat) ->
         moment().format dateFormat
+
+  renderPoints = (message) ->
+    promise.then ->
+      trelloUtils.getColumnPoints project.columnMapping.toValidate
+    .then (points) ->
+      replace message, '{toValidate}', points
+    .then (message) ->
+      trelloUtils.getColumnPoints sprint.doneColumn
+      .then (points) ->
+        replace message, '{done}', points
+    .then (message) ->
+      trelloUtils.getColumnPoints project.columnMapping.blocked
+      .then (points) ->
+        replace message, '{blocked}', points
+    .then (message) ->
+      replace message, '{total}', sprint.resources.totalPoints
 
   renderBDC = (message, bdcBase64, useCid) ->
     src = if useCid then 'cid:bdc' else bdcBase64
@@ -47,5 +63,7 @@ angular.module 'NotSoShitty.daily-report'
     renderSprintNumber angular.copy message
     .then (message) ->
       renderDate message
+    .then (message) ->
+      renderPoints message
     .then (message) ->
       renderBDC message, sprint.bdcBase64, useCid

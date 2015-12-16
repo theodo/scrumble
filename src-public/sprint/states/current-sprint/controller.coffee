@@ -4,6 +4,7 @@ angular.module 'NotSoShitty.bdc'
   $state
   BDCDataProvider
   TrelloClient
+  trelloUtils
   svgToPng
   sprint
 ) ->
@@ -31,11 +32,6 @@ angular.module 'NotSoShitty.bdc'
 
   $scope.fetchTrelloDonePoints = ->
     if sprint.doneColumn?
-      TrelloClient.get '/lists/' + sprint.doneColumn + '/cards?fields=name'
-      .then (response) ->
-        doneCards = response.data
-        $scope.tableData[$scope.currentDayIndex].done = BDCDataProvider.getDonePoints doneCards
-      .catch (err) ->
-        console.log err
-        return null
-  return
+      trelloUtils.getColumnPoints sprint.doneColumn
+      .then (points) ->
+        $scope.tableData[$scope.currentDayIndex].done = points
