@@ -7,6 +7,7 @@ angular.module 'NotSoShitty.daily-report'
   mailer
   reportBuilder
   dailyReport
+  sprint
 ) ->
   reportBuilder.init()
 
@@ -31,4 +32,8 @@ angular.module 'NotSoShitty.daily-report'
       fullscreen: $mdMedia 'sm'
       resolve:
         message: ->
-          reportBuilder.render $scope.dailyReport.message
+          reportBuilder.render $scope.dailyReport.message, false
+        rawMessage: ->
+          $scope.dailyReport.message
+        sprint: ->
+          sprint

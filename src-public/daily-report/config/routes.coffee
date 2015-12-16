@@ -12,3 +12,10 @@ angular.module 'NotSoShitty.daily-report'
             return report if report?
             report = new DailyReport(project: new Project user.project)
             report.save()
+      sprint: (NotSoShittyUser, Sprint) ->
+        NotSoShittyUser.getCurrentUser()
+        .then (user) ->
+          Sprint.getActiveSprint user.project
+        .catch (err) ->
+          console.log err
+          return null

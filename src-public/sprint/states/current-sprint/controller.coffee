@@ -4,6 +4,7 @@ angular.module 'NotSoShitty.bdc'
   $state
   BDCDataProvider
   TrelloClient
+  svgToPng
   sprint
 ) ->
   $state.go 'tab.new-sprint' unless sprint?
@@ -23,6 +24,8 @@ angular.module 'NotSoShitty.bdc'
   $scope.currentDayIndex = getCurrentDayIndex $scope.tableData
 
   $scope.save = ->
+    svg = d3.select('#bdcgraph')[0][0].firstChild
+    sprint.bdcBase64 = svgToPng.getPngBase64 svg
     sprint.save().then ->
       $scope.currentDayIndex = getCurrentDayIndex $scope.tableData
 

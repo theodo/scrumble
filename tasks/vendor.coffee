@@ -7,6 +7,7 @@ gulp.task 'vendor', (done) ->
     'bower_components/angular/angular.min.js'
     'bower_components/angular-resource/angular-resource.min.js'
     'bower_components/angular-animate/angular-animate.min.js'
+    'bower_components/angular-sanitize/angular-sanitize.min.js'
     'bower_components/angular-aria/angular-aria.min.js'
     'bower_components/angular-permission/dist/angular-permission.js'
     'bower_components/angular-material/angular-material.min.js'

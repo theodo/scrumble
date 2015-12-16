@@ -7,9 +7,10 @@ md-dialog
         md-button.md-icon-button(ng-click='cancel()')
           md-icon(md-svg-src='close', aria-label='Close dialog')
     md-dialog-content
-      h3 To: {{ message.to }}
-      h4 Cc: {{ message.cc }}
-      h4 Subject: {{ message.subject }}
-      p Body: {{ message.body }}
+      .md-padding
+        h3 To: {{ message.to }}
+        h4 Cc: {{ message.cc }}
+        h4 Subject: {{ message.subject }}
+        div(ng-bind-html="message.body")
     md-dialog-actions(layout='row')
       md-button.md-flat.md-primary(ng-click="send()") Send
