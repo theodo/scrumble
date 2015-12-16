@@ -1,12 +1,14 @@
 angular.module 'NotSoShitty.settings'
 .controller 'ProjectCtrl', (
+  $location
+  $mdToast
   $scope
+  $state
   $timeout
   $q
   boards
   TrelloClient
   localStorageService
-  $mdToast
   Project
   user
 ) ->
@@ -55,7 +57,6 @@ angular.module 'NotSoShitty.settings'
         $scope.project = project
     ]
 
-
   if $scope.project.boardId?
     fetchBoardData $scope.project.boardId
 
@@ -63,18 +64,12 @@ angular.module 'NotSoShitty.settings'
   $scope.$watch 'project.boardId', (next, prev) ->
     return unless next? and next != prev
     fetchBoardData next
-    $scope.save()
-
-  $scope.$watch 'project.team', (next, prev) ->
-    return unless next? and  not angular.equals next, prev
-    $scope.save()
-  , true
 
   $scope.clearTeam = ->
     $scope.project.team.rest = []
     $scope.project.team.dev = []
     $scope.save()
-  #
+
   saveFeedback = $mdToast.simple()
     .hideDelay(1000)
     .position('top right')
@@ -83,14 +78,9 @@ angular.module 'NotSoShitty.settings'
   promise = null
   $scope.save = ->
     return unless $scope.project.boardId?
-
-    # wait 2s before saving
-    if promise?
-      $timeout.cancel promise
-    promise = $timeout ->
-      $scope.project.save().then (p) ->
-        user.project = p
-        user.save().then ->
-          $mdToast.show saveFeedback
-    , 2000
+    $scope.project.save().then (p) ->
+      user.project = p
+      user.save().then ->
+        $mdToast.show saveFeedback
+        $state.go 'tab.current-sprint'
   return

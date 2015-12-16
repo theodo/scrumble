@@ -8,7 +8,7 @@ angular.module 'NotSoShitty.login'
   NotSoShittyUser
   localStorageService
 ) ->
-  if $auth.isAuthenticated()
+  if localStorageService.get 'trello_token'
     $state.go 'tab.project'
   $scope.login = ->
     TrelloClient.authenticate()
