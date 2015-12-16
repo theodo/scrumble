@@ -1,13 +1,14 @@
 angular.module 'NotSoShitty.settings'
 .controller 'ProjectCtrl', (
   $location
+  $mdToast
   $scope
+  $state
   $timeout
   $q
   boards
   TrelloClient
   localStorageService
-  $mdToast
   Project
   user
 ) ->
@@ -76,5 +77,5 @@ angular.module 'NotSoShitty.settings'
       user.project = p
       user.save().then ->
         $mdToast.show saveFeedback
-        $state.go 'current-sprint'
+        $state.go 'tab.current-sprint'
   return
