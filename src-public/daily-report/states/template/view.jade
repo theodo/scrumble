@@ -1,0 +1,30 @@
+div.sprint-body(layout="row" layout-align="center start")
+  md-card.layout-padding(flex="80")
+    form(name="dailyReportCreate")
+      h2.md-title(layout-align="center end") DAILY REPORT
+      div(layout="column" layout-sm="column")
+        md-input-container(flex)
+          label Subject
+          input(ng-model="dailyReport.message.subject")
+        md-input-container.md-block
+          label Body (html is allowed)
+          textarea(ng-model="dailyReport.message.body" columns="1" rows="5")
+        section(layout="row" layout-sm="column" layout-align="center center" layout-wrap)
+          md-button.md-raised.md-primary(ng-click="preview($event)") Preview
+          md-button.md-raised.md-primary(ng-click="save()") Save template
+  
+  md-card.layout-padding(flex="20")
+    md-list
+      h2.md-title(layout-align="center end") DYNAMIC FIELDS
+      md-list-item.md-2-line
+        div.md-list-item-text
+          h3 {today#YYYY-MM-DD}
+          p format is supposed to follow
+            a(href="http://momentjs.com/docs/#/parsing/string-format/" target="_blank")  moment format
+      md-list-item.md-2-line
+        div.md-list-item-text
+          h3 {sprintNumber}
+          p available if filled in the sprint form
+      md-list-item.md-2-line
+        div.md-list-item-text
+          h3 {bdc}

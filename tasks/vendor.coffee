@@ -7,6 +7,7 @@ gulp.task 'vendor', (done) ->
     'bower_components/angular/angular.min.js'
     'bower_components/angular-resource/angular-resource.min.js'
     'bower_components/angular-animate/angular-animate.min.js'
+    'bower_components/angular-sanitize/angular-sanitize.min.js'
     'bower_components/angular-aria/angular-aria.min.js'
     'bower_components/angular-permission/dist/angular-permission.js'
     'bower_components/angular-material/angular-material.min.js'
@@ -21,6 +22,7 @@ gulp.task 'vendor', (done) ->
     'bower_components/d3-bdc/dist/d3-bdc.js'
     'bower_components/angular-material-data-table/dist/md-data-table.min.js' # should be included soon in angular-material
     'bower_components/angular-google-gapi/angular-google-gapi.min.js'
+    'bower_components/MimeJS/dist/mime.js'
   ]
   .pipe(concat('vendor.js'))
   .on 'error', gutil.log

@@ -1,0 +1,20 @@
+md-dialog
+  form
+    md-toolbar
+      .md-toolbar-tools
+        h2 Daily Report Preview
+        span(flex='')
+        md-button.md-icon-button(ng-click='cancel()')
+          md-icon(md-svg-src='close', aria-label='Close dialog')
+    md-dialog-content
+      .md-padding
+        div(layout="column")
+          md-input-container
+            label To:
+            input(ng-model="message.to" disabled)
+          md-input-container
+            label Subject:
+            input(ng-model="message.subject" disabled)
+          div(ng-bind-html="message.body")
+    md-dialog-actions(layout='row')
+      md-button.md-raised.md-primary(ng-click="send()") Send
