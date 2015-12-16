@@ -57,6 +57,39 @@ angular.module('NotSoShitty.bdc', []);
 
 angular.module('NotSoShitty.storage', []);
 
+angular.module('NotSoShitty.common').service('trelloUtils', function(TrelloClient) {
+  var getCardPoints;
+  getCardPoints = function(card) {
+    var match, matchVal, value, _i, _len;
+    if (!card.name) {
+      return;
+    }
+    match = card.name.match(/\(([-+]?[0-9]*\.?[0-9]+)\)/);
+    value = 0;
+    if (match) {
+      for (_i = 0, _len = match.length; _i < _len; _i++) {
+        matchVal = match[_i];
+        if (!isNaN(parseFloat(matchVal, 10))) {
+          value = parseFloat(matchVal, 10);
+        }
+      }
+    }
+    return value;
+  };
+  return {
+    getColumnPoints: function(columnId) {
+      return TrelloClient.get('/lists/' + columnId + '/cards?fields=name').then(function(response) {
+        var cards;
+        cards = response.data;
+        return _.sum(cards, getCardPoints);
+      })["catch"](function(err) {
+        console.warn(err);
+        return 0;
+      });
+    }
+  };
+});
+
 angular.module('NotSoShitty.daily-report').config(function($stateProvider) {
   return $stateProvider.state('tab.daily-report', {
     url: '/daily-report',
@@ -121,8 +154,8 @@ angular.module('NotSoShitty.daily-report').factory('DailyReport', function(Parse
   })(Parse.Model);
 });
 
-angular.module('NotSoShitty.daily-report').service('reportBuilder', function($q, NotSoShittyUser, Sprint, Project) {
-  var project, promise, renderBDC, renderDate, renderSprintNumber, replace, sprint;
+angular.module('NotSoShitty.daily-report').service('reportBuilder', function($q, NotSoShittyUser, Sprint, Project, trelloUtils) {
+  var project, promise, renderBDC, renderDate, renderPoints, renderSprintNumber, replace, sprint;
   promise = void 0;
   project = void 0;
   sprint = void 0;
@@ -141,6 +174,23 @@ angular.module('NotSoShitty.daily-report').service('reportBuilder', function($q,
       return replace(message, /\{today#(.+?)\}/g, function(match, dateFormat) {
         return moment().format(dateFormat);
       });
+    });
+  };
+  renderPoints = function(message) {
+    return promise.then(function() {
+      return trelloUtils.getColumnPoints(project.columnMapping.toValidate);
+    }).then(function(points) {
+      return replace(message, '{toValidate}', points);
+    }).then(function(message) {
+      return trelloUtils.getColumnPoints(sprint.doneColumn).then(function(points) {
+        return replace(message, '{done}', points);
+      });
+    }).then(function(message) {
+      return trelloUtils.getColumnPoints(project.columnMapping.blocked).then(function(points) {
+        return replace(message, '{blocked}', points);
+      });
+    }).then(function(message) {
+      return replace(message, '{total}', sprint.resources.totalPoints);
     });
   };
   renderBDC = function(message, bdcBase64, useCid) {
@@ -179,6 +229,8 @@ angular.module('NotSoShitty.daily-report').service('reportBuilder', function($q,
     render: function(message, useCid) {
       return renderSprintNumber(angular.copy(message)).then(function(message) {
         return renderDate(message);
+      }).then(function(message) {
+        return renderPoints(message);
       }).then(function(message) {
         return renderBDC(message, sprint.bdcBase64, useCid);
       });
@@ -464,33 +516,18 @@ angular.module('NotSoShitty.storage').factory('Sprint', function(Parse) {
       });
     };
 
+    Sprint.close = function(sprint) {
+      sprint.isActive = false;
+      return sprint.save();
+    };
+
     return Sprint;
 
   })(Parse.Model);
 });
 
 angular.module('NotSoShitty.bdc').factory('BDCDataProvider', function() {
-  var getCardPoints, getDonePoints, initializeBDC;
-  getCardPoints = function(card) {
-    var match, matchVal, value, _i, _len;
-    if (!card.name) {
-      return;
-    }
-    match = card.name.match(/\(([-+]?[0-9]*\.?[0-9]+)\)/);
-    value = 0;
-    if (match) {
-      for (_i = 0, _len = match.length; _i < _len; _i++) {
-        matchVal = match[_i];
-        if (!isNaN(parseFloat(matchVal, 10))) {
-          value = parseFloat(matchVal, 10);
-        }
-      }
-    }
-    return value;
-  };
-  getDonePoints = function(doneCards) {
-    return _.sum(doneCards, getCardPoints);
-  };
+  var initializeBDC;
   initializeBDC = function(days, resources) {
     var bdc, day, i, standard, _i, _len;
     standard = 0;
@@ -512,9 +549,7 @@ angular.module('NotSoShitty.bdc').factory('BDCDataProvider', function() {
     return bdc;
   };
   return {
-    getCardPoints: getCardPoints,
-    initializeBDC: initializeBDC,
-    getDonePoints: getDonePoints
+    initializeBDC: initializeBDC
   };
 });
 
@@ -893,7 +928,7 @@ angular.module('NotSoShitty.login').controller('GoogleLoginCtrl', function($scop
 });
 
 angular.module('NotSoShitty.login').controller('TrelloLoginCtrl', function($scope, $rootScope, TrelloClient, $state, $auth, NotSoShittyUser, localStorageService) {
-  if ($auth.isAuthenticated()) {
+  if (localStorageService.get('trello_token')) {
     $state.go('tab.project');
   }
   return $scope.login = function() {
@@ -996,7 +1031,7 @@ angular.module('NotSoShitty.settings').directive('selectPeople', function() {
   };
 });
 
-angular.module('NotSoShitty.settings').controller('ProjectCtrl', function($scope, $timeout, $q, boards, TrelloClient, localStorageService, $mdToast, Project, user) {
+angular.module('NotSoShitty.settings').controller('ProjectCtrl', function($location, $mdToast, $scope, $state, $timeout, $q, boards, TrelloClient, localStorageService, Project, user) {
   var fetchBoardData, project, promise, saveFeedback;
   $scope.boards = boards;
   if (user.project != null) {
@@ -1043,15 +1078,8 @@ angular.module('NotSoShitty.settings').controller('ProjectCtrl', function($scope
     if (!((next != null) && next !== prev)) {
       return;
     }
-    fetchBoardData(next);
-    return $scope.save();
+    return fetchBoardData(next);
   });
-  $scope.$watch('project.team', function(next, prev) {
-    if (!((next != null) && !angular.equals(next, prev))) {
-      return;
-    }
-    return $scope.save();
-  }, true);
   $scope.clearTeam = function() {
     $scope.project.team.rest = [];
     $scope.project.team.dev = [];
@@ -1063,17 +1091,13 @@ angular.module('NotSoShitty.settings').controller('ProjectCtrl', function($scope
     if ($scope.project.boardId == null) {
       return;
     }
-    if (promise != null) {
-      $timeout.cancel(promise);
-    }
-    return promise = $timeout(function() {
-      return $scope.project.save().then(function(p) {
-        user.project = p;
-        return user.save().then(function() {
-          return $mdToast.show(saveFeedback);
-        });
+    return $scope.project.save().then(function(p) {
+      user.project = p;
+      return user.save().then(function() {
+        $mdToast.show(saveFeedback);
+        return $state.go('tab.current-sprint');
       });
-    }, 2000);
+    });
   };
 });
 
@@ -1144,7 +1168,7 @@ angular.module('NotSoShitty.bdc').directive('burndown', function() {
   };
 });
 
-angular.module('NotSoShitty.bdc').controller('BurnDownChartCtrl', function($scope, $state, BDCDataProvider, TrelloClient, svgToPng, sprint) {
+angular.module('NotSoShitty.bdc').controller('BurnDownChartCtrl', function($scope, $state, $mdDialog, BDCDataProvider, TrelloClient, trelloUtils, svgToPng, sprint, Sprint) {
   var day, getCurrentDayIndex, _i, _len, _ref;
   if (sprint == null) {
     $state.go('tab.new-sprint');
@@ -1179,15 +1203,19 @@ angular.module('NotSoShitty.bdc').controller('BurnDownChartCtrl', function($scop
   };
   $scope.fetchTrelloDonePoints = function() {
     if (sprint.doneColumn != null) {
-      return TrelloClient.get('/lists/' + sprint.doneColumn + '/cards?fields=name').then(function(response) {
-        var doneCards;
-        doneCards = response.data;
-        return $scope.tableData[$scope.currentDayIndex].done = BDCDataProvider.getDonePoints(doneCards);
-      })["catch"](function(err) {
-        console.log(err);
-        return null;
+      return trelloUtils.getColumnPoints(sprint.doneColumn).then(function(points) {
+        return $scope.tableData[$scope.currentDayIndex].done = points;
       });
     }
+  };
+  return $scope.showConfirmNewSprint = function(ev) {
+    var confirm;
+    confirm = $mdDialog.confirm().title('Start a new sprint').textContent('Starting a new sprint will end this one').targetEvent(ev).ok('OK').cancel('Cancel');
+    return $mdDialog.show(confirm).then(function() {
+      return Sprint.close(sprint).then(function() {
+        return $state.go('tab.new-sprint');
+      });
+    });
   };
 });
 
