@@ -19,14 +19,21 @@ angular.module 'NotSoShitty.daily-report'
         moment().format dateFormat
 
   renderPoints = (message) ->
+    getCurrentDayIndex = (bdcData) ->
+      for day, i in bdcData
+        return Math.max i-1, 0 unless day.done?
     promise.then ->
       trelloUtils.getColumnPoints project.columnMapping.toValidate
     .then (points) ->
       replace message, '{toValidate}', points
     .then (message) ->
-      trelloUtils.getColumnPoints sprint.doneColumn
-      .then (points) ->
-        replace message, '{done}', points
+      index = getCurrentDayIndex sprint.bdcData
+      message = replace message, '{done}', sprint.bdcData[index].done
+      console.log sprint.bdcData[index]
+      diff = sprint.bdcData[index].done - sprint.bdcData[index].standard
+      message = replace message, '{gap}', Math.abs diff
+      label = if diff > 0 then message.aheadLabel else message.behindLabel
+      replace message, '{behind/ahead}', label
     .then (message) ->
       trelloUtils.getColumnPoints project.columnMapping.blocked
       .then (points) ->

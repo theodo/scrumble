@@ -12,6 +12,13 @@ div.sprint-body(layout="row" layout-align="center start")
         md-input-container.md-block
           label Body (html is allowed)
           textarea(ng-model="dailyReport.message.body" columns="1" rows="5")
+        div(layout="row")
+          md-input-container(flex="50")
+            label Behind Label
+            input(ng-model="dailyReport.message.behindLabel")
+          md-input-container(flex="50")
+            label Ahead Label
+            input(ng-model="dailyReport.message.aheadLabel")
         section(layout="row" layout-sm="column" layout-align="center center" layout-wrap)
           md-button.md-raised.md-primary(ng-click="preview($event)") Preview
           md-button.md-raised.md-primary(ng-click="save()") Save template
@@ -48,3 +55,18 @@ div.sprint-body(layout="row" layout-align="center start")
         div.md-list-item-text
           h3 {blocked}
           p The number of points in the Trello blocked column
+      md-list-item.md-2-line
+        div.md-list-item-text
+          h3 {gap}
+          p The difference between the standard points and the done points
+      md-list-item.md-3-line
+        div.md-list-item-text
+          h3 {behind/ahead}
+          p If your are behind or late according to the burn down chart
+          div(layout="row")
+            md-input-container(flex="50")
+              label Behind Label
+              input(ng-model="dailyReport.message.behindLabel")
+            md-input-container(flex="50")
+              label Ahead Label
+              input(ng-model="dailyReport.message.aheadLabel")
