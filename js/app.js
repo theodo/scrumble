@@ -137,8 +137,12 @@ angular.module('NotSoShitty.daily-report').factory('DailyReport', function(Parse
 
     DailyReport.getByProject = function(project) {
       return this.query({
-        equalTo: {
-          project: project
+        where: {
+          project: {
+            __type: "Pointer",
+            className: "Project",
+            objectId: project.objectId
+          }
         }
       }).then(function(response) {
         if (response.length > 0) {
@@ -923,6 +927,16 @@ angular.module('NotSoShitty.login').directive('profilInfo', function() {
   };
 });
 
+angular.module('NotSoShitty.login').controller('GoogleLoginCtrl', function($scope, GAuth) {
+  return $scope.authenticate = function() {
+    return GAuth.login().then(function() {
+      return console.log('authenticated!');
+    }, function() {
+      return console.log('login fail');
+    });
+  };
+});
+
 angular.module('NotSoShitty.login').controller('TrelloLoginCtrl', function($scope, $rootScope, TrelloClient, $state, $auth, NotSoShittyUser, localStorageService) {
   if (localStorageService.get('trello_token')) {
     $state.go('tab.project');
@@ -944,16 +958,6 @@ angular.module('NotSoShitty.login').controller('TrelloLoginCtrl', function($scop
       }
     }).then(function() {
       return $state.go('tab.project');
-    });
-  };
-});
-
-angular.module('NotSoShitty.login').controller('GoogleLoginCtrl', function($scope, GAuth) {
-  return $scope.authenticate = function() {
-    return GAuth.login().then(function() {
-      return console.log('authenticated!');
-    }, function() {
-      return console.log('login fail');
     });
   };
 });
