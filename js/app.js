@@ -181,14 +181,29 @@ angular.module('NotSoShitty.daily-report').service('reportBuilder', function($q,
     });
   };
   renderPoints = function(message) {
+    var getCurrentDayIndex;
+    getCurrentDayIndex = function(bdcData) {
+      var day, i, _i, _len;
+      for (i = _i = 0, _len = bdcData.length; _i < _len; i = ++_i) {
+        day = bdcData[i];
+        if (day.done == null) {
+          return Math.max(i - 1, 0);
+        }
+      }
+    };
     return promise.then(function() {
       return trelloUtils.getColumnPoints(project.columnMapping.toValidate);
     }).then(function(points) {
       return replace(message, '{toValidate}', points);
     }).then(function(message) {
-      return trelloUtils.getColumnPoints(sprint.doneColumn).then(function(points) {
-        return replace(message, '{done}', points);
-      });
+      var diff, index, label;
+      index = getCurrentDayIndex(sprint.bdcData);
+      message = replace(message, '{done}', sprint.bdcData[index].done);
+      console.log(sprint.bdcData[index]);
+      diff = sprint.bdcData[index].done - sprint.bdcData[index].standard;
+      message = replace(message, '{gap}', Math.abs(diff));
+      label = diff > 0 ? message.aheadLabel : message.behindLabel;
+      return replace(message, '{behind/ahead}', label);
     }).then(function(message) {
       return trelloUtils.getColumnPoints(project.columnMapping.blocked).then(function(points) {
         return replace(message, '{blocked}', points);
