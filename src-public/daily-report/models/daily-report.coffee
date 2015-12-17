@@ -5,8 +5,11 @@ angular.module 'NotSoShitty.daily-report'
 
     @getByProject = (project) ->
       @query(
-        equalTo:
-          project: project
+        where:
+          project:
+            __type: "Pointer"
+            className: "Project"
+            objectId: project.objectId
       ).then (response) ->
         if response.length > 0
           return response[0]
