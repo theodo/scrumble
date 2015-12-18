@@ -4,6 +4,7 @@ angular.module 'NotSoShitty.common'
   $mdSidenav
   $state
   Avatar
+  localStorageService
 ) ->
 
   $scope.toggleSidenav = (menuId) ->
@@ -14,7 +15,7 @@ angular.module 'NotSoShitty.common'
     $mdSidenav(menuId).close()
     console.log 'Fermer le menu'
 
-  $scope.member = Avatar.getMember('nicolasb@theodo.fr')
+  $scope.member = Avatar.getMember localStorageService('trello_email')
 
   $scope.project = ->
     $state.go 'tab.project'
