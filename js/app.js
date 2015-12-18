@@ -44,11 +44,11 @@ app.config(function($stateProvider) {
 
 angular.module('NotSoShitty.common', []);
 
+angular.module('NotSoShitty.daily-report', []);
+
 angular.module('NotSoShitty.feedback', []);
 
 angular.module('NotSoShitty.gmail-client', []);
-
-angular.module('NotSoShitty.daily-report', []);
 
 angular.module('NotSoShitty.login', []);
 
@@ -110,6 +110,218 @@ angular.module('NotSoShitty.common').controller('BaseCtrl', function($scope, $md
   return $scope.dailyReport = function() {
     $state.go('tab.daily-report');
     return $scope.close('left');
+  };
+});
+
+angular.module('NotSoShitty.daily-report').config(function($stateProvider) {
+  return $stateProvider.state('tab.daily-report', {
+    url: '/daily-report',
+    templateUrl: 'daily-report/states/template/view.html',
+    controller: 'DailyReportCtrl',
+    resolve: {
+      dailyReport: function(NotSoShittyUser, DailyReport, Project) {
+        return NotSoShittyUser.getCurrentUser().then(function(user) {
+          return DailyReport.getByProject(user.project).then(function(report) {
+            if (report != null) {
+              return report;
+            }
+            report = new DailyReport({
+              project: new Project(user.project),
+              message: {
+                subject: '[MyProject] Sprint #{sprintNumber} - Daily Mail {today#YYYY-MM-DD}',
+                body: 'Hello Batman,\n\n' + 'here is the daily mail:\n\n' + '- Done: {done} / {total} points\n' + '- To validate: {toValidate} points\n' + '- Blocked: {blocked} points\n' + '- {behind/ahead}: {gap} points\n\n' + '{bdc}\n\n' + 'Yesterday\'s goals:\n' + '- Eat carrots\n\n' + 'Today\'s goals\n' + '- Eat more carrots\n\n' + 'Regards!',
+                behindLabel: 'Behind',
+                aheadLabel: 'Ahead'
+              }
+            });
+            return report.save();
+          });
+        });
+      },
+      sprint: function(NotSoShittyUser, Sprint) {
+        return NotSoShittyUser.getCurrentUser().then(function(user) {
+          return Sprint.getActiveSprint(user.project);
+        })["catch"](function(err) {
+          console.log(err);
+          return null;
+        });
+      }
+    }
+  });
+});
+
+var __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+angular.module('NotSoShitty.daily-report').factory('DailyReport', function(Parse) {
+  var DailyReport;
+  return DailyReport = (function(_super) {
+    __extends(DailyReport, _super);
+
+    function DailyReport() {
+      return DailyReport.__super__.constructor.apply(this, arguments);
+    }
+
+    DailyReport.configure("DailyReport", "project", "message");
+
+    DailyReport.getByProject = function(project) {
+      return this.query({
+        where: {
+          project: {
+            __type: "Pointer",
+            className: "Project",
+            objectId: project.objectId
+          }
+        }
+      }).then(function(response) {
+        if (response.length > 0) {
+          return response[0];
+        } else {
+          return null;
+        }
+      });
+    };
+
+    return DailyReport;
+
+  })(Parse.Model);
+});
+
+angular.module('NotSoShitty.daily-report').service('reportBuilder', function($q, NotSoShittyUser, Sprint, Project, trelloUtils) {
+  var converter, project, promise, renderBDC, renderDate, renderPoints, renderSprintGoal, renderSprintNumber, renderTo, replace, sprint;
+  converter = new showdown.Converter();
+  promise = void 0;
+  project = void 0;
+  sprint = void 0;
+  replace = function(message, toRemplace, replacement) {
+    message.subject = message.subject.replace(toRemplace, replacement);
+    message.body = message.body.replace(toRemplace, replacement);
+    return message;
+  };
+  renderSprintNumber = function(message) {
+    return promise.then(function() {
+      return replace(message, '{sprintNumber}', sprint.number);
+    });
+  };
+  renderDate = function(message) {
+    return promise.then(function() {
+      return replace(message, /\{today#(.+?)\}/g, function(match, dateFormat) {
+        return moment().format(dateFormat);
+      });
+    });
+  };
+  renderPoints = function(message) {
+    var getCurrentDayIndex;
+    getCurrentDayIndex = function(bdcData) {
+      var day, i, _i, _len;
+      for (i = _i = 0, _len = bdcData.length; _i < _len; i = ++_i) {
+        day = bdcData[i];
+        if (day.done == null) {
+          return Math.max(i - 1, 0);
+        }
+      }
+    };
+    return promise.then(function() {
+      return trelloUtils.getColumnPoints(project.columnMapping.toValidate);
+    }).then(function(points) {
+      return replace(message, '{toValidate}', points);
+    }).then(function(message) {
+      var diff, index, label;
+      index = getCurrentDayIndex(sprint.bdcData);
+      message = replace(message, '{done}', sprint.bdcData[index].done);
+      console.log(sprint.bdcData[index]);
+      diff = sprint.bdcData[index].done - sprint.bdcData[index].standard;
+      message = replace(message, '{gap}', Math.abs(diff));
+      label = diff > 0 ? message.aheadLabel : message.behindLabel;
+      return replace(message, '{behind/ahead}', label);
+    }).then(function(message) {
+      return trelloUtils.getColumnPoints(project.columnMapping.blocked).then(function(points) {
+        return replace(message, '{blocked}', points);
+      });
+    }).then(function(message) {
+      return replace(message, '{total}', sprint.resources.totalPoints);
+    });
+  };
+  renderBDC = function(message, bdcBase64, useCid) {
+    var src;
+    src = useCid ? 'cid:bdc' : bdcBase64;
+    return promise.then(function() {
+      message.body = message.body.replace('{bdc}', "<img src='" + src + "' />");
+      if (useCid) {
+        message.cids = [
+          {
+            type: 'image/png',
+            name: 'BDC',
+            base64: bdcBase64.split(',')[1],
+            id: 'bdc'
+          }
+        ];
+      }
+      return message;
+    });
+  };
+  renderTo = function(message) {
+    return promise.then(function() {
+      var devsEmails, member, memberEmails;
+      devsEmails = (function() {
+        var _i, _len, _ref, _results;
+        _ref = project.team.dev;
+        _results = [];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          member = _ref[_i];
+          _results.push(member.email);
+        }
+        return _results;
+      })();
+      memberEmails = (function() {
+        var _i, _len, _ref, _results;
+        _ref = project.team.rest;
+        _results = [];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          member = _ref[_i];
+          _results.push(member.email);
+        }
+        return _results;
+      })();
+      message.to = _.filter(_.union(devsEmails, memberEmails));
+      return message;
+    });
+  };
+  renderSprintGoal = function(message) {
+    return promise.then(function() {
+      return replace(message, '{sprintGoal}', sprint.goal);
+    });
+  };
+  return {
+    dateFormat: function(_dateFormat_) {
+      var dateFormat;
+      return dateFormat = _dateFormat_;
+    },
+    init: function() {
+      return promise = NotSoShittyUser.getCurrentUser().then(function(user) {
+        project = user.project;
+        return project;
+      }).then(function(project) {
+        return Sprint.getActiveSprint(new Project(project)).then(function(_sprint_) {
+          return sprint = _sprint_;
+        });
+      });
+    },
+    render: function(message, useCid) {
+      message = angular.copy(message);
+      message.body = converter.makeHtml(message.body);
+      return renderSprintGoal(message).then(function(message) {
+        return renderSprintNumber(message);
+      }).then(function(message) {
+        return renderDate(message);
+      }).then(function(message) {
+        return renderPoints(message);
+      }).then(function(message) {
+        return renderBDC(message, sprint.bdcBase64, useCid);
+      }).then(function(message) {
+        return renderTo(message);
+      });
+    }
   };
 });
 
@@ -236,209 +448,6 @@ angular.module('NotSoShitty.gmail-client').service('mailer', function($state, $r
         return request.execute(callback);
       }, function() {
         return $state.go('tab.google-login');
-      });
-    }
-  };
-});
-
-angular.module('NotSoShitty.daily-report').config(function($stateProvider) {
-  return $stateProvider.state('tab.daily-report', {
-    url: '/daily-report',
-    templateUrl: 'daily-report/states/template/view.html',
-    controller: 'DailyReportCtrl',
-    resolve: {
-      dailyReport: function(NotSoShittyUser, DailyReport, Project) {
-        return NotSoShittyUser.getCurrentUser().then(function(user) {
-          return DailyReport.getByProject(user.project).then(function(report) {
-            if (report != null) {
-              return report;
-            }
-            report = new DailyReport({
-              project: new Project(user.project),
-              message: {
-                subject: '[MyProject] Sprint #{sprintNumber} - Daily Mail {today#YYYY-MM-DD}',
-                body: 'Hello Batman,\n\n' + 'here is the daily mail:\n\n' + '- Done: {done} / {total} points\n' + '- To validate: {toValidate} points\n' + '- Blocked: {blocked} points\n' + '- {behind/ahead}: {gap} points\n\n' + '{bdc}\n\n' + 'Yesterday\'s goals:\n' + '- Eat carrots\n\n' + 'Today\'s goals\n' + '- Eat more carrots\n\n' + 'Regards!',
-                behindLabel: 'Behind',
-                aheadLabel: 'Ahead'
-              }
-            });
-            return report.save();
-          });
-        });
-      },
-      sprint: function(NotSoShittyUser, Sprint) {
-        return NotSoShittyUser.getCurrentUser().then(function(user) {
-          return Sprint.getActiveSprint(user.project);
-        })["catch"](function(err) {
-          console.log(err);
-          return null;
-        });
-      }
-    }
-  });
-});
-
-var __hasProp = {}.hasOwnProperty,
-  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
-
-angular.module('NotSoShitty.daily-report').factory('DailyReport', function(Parse) {
-  var DailyReport;
-  return DailyReport = (function(_super) {
-    __extends(DailyReport, _super);
-
-    function DailyReport() {
-      return DailyReport.__super__.constructor.apply(this, arguments);
-    }
-
-    DailyReport.configure("DailyReport", "project", "message");
-
-    DailyReport.getByProject = function(project) {
-      return this.query({
-        where: {
-          project: {
-            __type: "Pointer",
-            className: "Project",
-            objectId: project.objectId
-          }
-        }
-      }).then(function(response) {
-        if (response.length > 0) {
-          return response[0];
-        } else {
-          return null;
-        }
-      });
-    };
-
-    return DailyReport;
-
-  })(Parse.Model);
-});
-
-angular.module('NotSoShitty.daily-report').service('reportBuilder', function($q, NotSoShittyUser, Sprint, Project, trelloUtils) {
-  var converter, project, promise, renderBDC, renderDate, renderPoints, renderSprintNumber, renderTo, replace, sprint;
-  converter = new showdown.Converter();
-  promise = void 0;
-  project = void 0;
-  sprint = void 0;
-  replace = function(message, toRemplace, replacement) {
-    message.subject = message.subject.replace(toRemplace, replacement);
-    message.body = message.body.replace(toRemplace, replacement);
-    return message;
-  };
-  renderSprintNumber = function(message) {
-    return promise.then(function() {
-      return replace(message, '{sprintNumber}', sprint.number);
-    });
-  };
-  renderDate = function(message) {
-    return promise.then(function() {
-      return replace(message, /\{today#(.+?)\}/g, function(match, dateFormat) {
-        return moment().format(dateFormat);
-      });
-    });
-  };
-  renderPoints = function(message) {
-    var getCurrentDayIndex;
-    getCurrentDayIndex = function(bdcData) {
-      var day, i, _i, _len;
-      for (i = _i = 0, _len = bdcData.length; _i < _len; i = ++_i) {
-        day = bdcData[i];
-        if (day.done == null) {
-          return Math.max(i - 1, 0);
-        }
-      }
-    };
-    return promise.then(function() {
-      return trelloUtils.getColumnPoints(project.columnMapping.toValidate);
-    }).then(function(points) {
-      return replace(message, '{toValidate}', points);
-    }).then(function(message) {
-      var diff, index, label;
-      index = getCurrentDayIndex(sprint.bdcData);
-      message = replace(message, '{done}', sprint.bdcData[index].done);
-      console.log(sprint.bdcData[index]);
-      diff = sprint.bdcData[index].done - sprint.bdcData[index].standard;
-      message = replace(message, '{gap}', Math.abs(diff));
-      label = diff > 0 ? message.aheadLabel : message.behindLabel;
-      return replace(message, '{behind/ahead}', label);
-    }).then(function(message) {
-      return trelloUtils.getColumnPoints(project.columnMapping.blocked).then(function(points) {
-        return replace(message, '{blocked}', points);
-      });
-    }).then(function(message) {
-      return replace(message, '{total}', sprint.resources.totalPoints);
-    });
-  };
-  renderBDC = function(message, bdcBase64, useCid) {
-    var src;
-    src = useCid ? 'cid:bdc' : bdcBase64;
-    return promise.then(function() {
-      message.body = message.body.replace('{bdc}', "<img src='" + src + "' />");
-      if (useCid) {
-        message.cids = [
-          {
-            type: 'image/png',
-            name: 'BDC',
-            base64: bdcBase64.split(',')[1],
-            id: 'bdc'
-          }
-        ];
-      }
-      return message;
-    });
-  };
-  renderTo = function(message) {
-    var devsEmails, member, memberEmails;
-    devsEmails = (function() {
-      var _i, _len, _ref, _results;
-      _ref = project.team.dev;
-      _results = [];
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        member = _ref[_i];
-        _results.push(member.email);
-      }
-      return _results;
-    })();
-    memberEmails = (function() {
-      var _i, _len, _ref, _results;
-      _ref = project.team.rest;
-      _results = [];
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        member = _ref[_i];
-        _results.push(member.email);
-      }
-      return _results;
-    })();
-    message.to = _.filter(_.union(devsEmails, memberEmails));
-    return message;
-  };
-  return {
-    dateFormat: function(_dateFormat_) {
-      var dateFormat;
-      return dateFormat = _dateFormat_;
-    },
-    init: function() {
-      return promise = NotSoShittyUser.getCurrentUser().then(function(user) {
-        project = user.project;
-        return project;
-      }).then(function(project) {
-        return Sprint.getActiveSprint(new Project(project)).then(function(_sprint_) {
-          return sprint = _sprint_;
-        });
-      });
-    },
-    render: function(message, useCid) {
-      message = angular.copy(message);
-      message.body = converter.makeHtml(message.body);
-      return renderSprintNumber(message).then(function(message) {
-        return renderDate(message);
-      }).then(function(message) {
-        return renderPoints(message);
-      }).then(function(message) {
-        return renderBDC(message, sprint.bdcBase64, useCid);
-      }).then(function(message) {
-        return renderTo(message);
       });
     }
   };
@@ -579,7 +588,7 @@ angular.module('NotSoShitty.storage').factory('Sprint', function(Parse) {
       return Sprint.__super__.constructor.apply(this, arguments);
     }
 
-    Sprint.configure("Sprint", "project", "number", "dates", "resources", "bdcData", "isActive", "doneColumn", "bdcBase64");
+    Sprint.configure("Sprint", "project", "number", "dates", "resources", "bdcData", "isActive", "doneColumn", "bdcBase64", "goal");
 
     Sprint.getActiveSprint = function(project) {
       return this.query({
@@ -1321,15 +1330,12 @@ angular.module('NotSoShitty.bdc').controller('BurnDownChartCtrl', function($scop
 });
 
 angular.module('NotSoShitty.bdc').controller('NewSprintCtrl', function($scope, $timeout, $state, TrelloClient, project, sprintService, Sprint, Project) {
-  var isActivable, promise, _base, _ref;
-  Project.find("u8o4xBMREA").then(function(o) {
-    return console.log(o);
-  });
+  var isActivable, promise, _ref;
   $scope.project = project;
-  console.log(project);
   $scope.sprint = new Sprint({
     project: project,
     number: null,
+    goal: null,
     doneColumn: null,
     dates: {
       start: null,
@@ -1343,26 +1349,15 @@ angular.module('NotSoShitty.bdc').controller('NewSprintCtrl', function($scope, $
     },
     isActive: false
   });
-  if ((_base = $scope.sprint).dates == null) {
-    _base.dates = {
-      start: null,
-      end: null,
-      days: []
-    };
-  }
   TrelloClient.get("/boards/" + project.boardId + "/lists").then(function(response) {
     return $scope.boardLists = response.data;
   });
   $scope.devTeam = (_ref = project.team) != null ? _ref.dev : void 0;
   promise = null;
   $scope.save = function() {
-    $scope.activable = isActivable();
-    if (promise != null) {
-      $timeout.cancel(promise);
-    }
-    return promise = $timeout(function() {
+    if (isActivable()) {
       return $scope.sprint.save();
-    }, 1000);
+    }
   };
   $scope.activable = false;
   isActivable = function() {
@@ -1383,64 +1378,64 @@ angular.module('NotSoShitty.bdc').controller('NewSprintCtrl', function($scope, $
     }
   };
   $scope.$watch('sprint.dates.end', function(newVal, oldVal) {
+    $scope.activable = isActivable();
     if (newVal === oldVal) {
       return;
     }
     if (newVal == null) {
       return;
     }
-    $scope.sprint.dates.days = sprintService.generateDayList($scope.sprint.dates.start, $scope.sprint.dates.end);
-    return $scope.save();
+    return $scope.sprint.dates.days = sprintService.generateDayList($scope.sprint.dates.start, $scope.sprint.dates.end);
   });
   $scope.$watch('sprint.dates.days', function(newVal, oldVal) {
-    var _base1, _ref1;
+    var _base, _ref1;
+    $scope.activable = isActivable();
     if (newVal === oldVal) {
       return;
     }
-    if ((_base1 = $scope.sprint).resources == null) {
-      _base1.resources = {};
+    if ((_base = $scope.sprint).resources == null) {
+      _base.resources = {};
     }
-    $scope.sprint.resources.matrix = sprintService.generateResources((_ref1 = $scope.sprint.dates) != null ? _ref1.days : void 0, $scope.devTeam);
-    return $scope.save();
+    return $scope.sprint.resources.matrix = sprintService.generateResources((_ref1 = $scope.sprint.dates) != null ? _ref1.days : void 0, $scope.devTeam);
   });
   $scope.$watch('sprint.resources.matrix', function(newVal, oldVal) {
+    $scope.activable = isActivable();
     if (newVal === oldVal) {
       return;
     }
     if (!newVal) {
       return;
     }
-    $scope.sprint.resources.totalManDays = sprintService.getTotalManDays(newVal);
-    return $scope.save();
+    return $scope.sprint.resources.totalManDays = sprintService.getTotalManDays(newVal);
   });
   $scope.$watch('sprint.resources.totalManDays', function(newVal, oldVal) {
+    $scope.activable = isActivable();
     if (newVal === oldVal) {
       return;
     }
     if (!(newVal && newVal > 0)) {
       return;
     }
-    $scope.sprint.resources.speed = sprintService.calculateSpeed($scope.sprint.resources.totalPoints, newVal);
-    return $scope.save();
+    return $scope.sprint.resources.speed = sprintService.calculateSpeed($scope.sprint.resources.totalPoints, newVal);
   });
   $scope.$watch('sprint.resources.totalPoints', function(newVal, oldVal) {
+    $scope.activable = isActivable();
     if (newVal === oldVal) {
       return;
     }
     if (!((newVal != null) && newVal > 0)) {
       return;
     }
-    $scope.sprint.resources.speed = sprintService.calculateSpeed(newVal, $scope.sprint.resources.totalManDays);
-    return $scope.save();
+    return $scope.sprint.resources.speed = sprintService.calculateSpeed(newVal, $scope.sprint.resources.totalManDays);
   });
   return $scope.$watch('sprint.resources.speed', function(newVal, oldVal) {
+    $scope.activable = isActivable();
     if (newVal === oldVal) {
       return;
     }
     if (!((newVal != null) && newVal > 0)) {
       return;
     }
-    $scope.sprint.resources.totalPoints = sprintService.calculateTotalPoints($scope.sprint.resources.totalManDays, newVal);
-    return $scope.save();
+    return $scope.sprint.resources.totalPoints = sprintService.calculateTotalPoints($scope.sprint.resources.totalManDays, newVal);
   });
 });
