@@ -82,10 +82,11 @@ h2.md-title {
 trello-avatar {
   display: inline-block;
   margin: 5px;
-}
-trello-avatar .trello-avatar {
+  width: 50px;
+  height: 50px;
+  line-height: 50px;
   vertical-align: top;
-  display: inline-block;
+  border: solid 2px transparent;
 }
 trello-avatar .trello-avatar .member-avatar {
   border-radius: 50%;
@@ -137,10 +138,8 @@ select-people .member-select {
 select-people .member-select input[type="checkbox"] {
   display: none;
 }
-select-people .member-select img {
-  border: transparent solid 4px;
-}
-select-people .member-select.selected img {
+select-people .member-select.selected img,
+select-people .member-select.selected .initials {
   border: solid 2px #e57373;
 }
 select-people .member-select label {

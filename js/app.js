@@ -266,6 +266,60 @@ angular.module('NotSoShitty.daily-report').service('reportBuilder', function($q,
   };
 });
 
+angular.module('NotSoShitty.feedback').controller('feedbackCallToActionCtrl', function($scope, $mdDialog, $mdMedia) {
+  var DialogController;
+  $scope.customFullscreen = $mdMedia('sm');
+  $scope.openFeedbackModal = function(ev) {
+    $mdDialog.show({
+      controller: DialogController,
+      templateUrl: 'feedback/directives/dialog.html',
+      parent: angular.element(document.body),
+      targetEvent: ev,
+      clickOutsideToClose: true,
+      fullscreen: $mdMedia('sm') && $scope.customFullscreen
+    }).then((function(answer) {
+      $scope.status = 'You said the information was "' + answer + '".';
+    }), function() {
+      $scope.status = 'You cancelled the dialog.';
+    });
+    $scope.$watch((function() {
+      return $mdMedia('sm');
+    }), function(sm) {
+      $scope.customFullscreen = sm === true;
+    });
+  };
+  return DialogController = function($scope, $mdDialog, Feedback, localStorageService) {
+    $scope.message = null;
+    $scope.hide = function() {
+      return $mdDialog.hide();
+    };
+    $scope.cancel = function() {
+      return $mdDialog.cancel();
+    };
+    return $scope.send = function() {
+      var feedback;
+      console.log('yolo');
+      if ($scope.message != null) {
+        feedback = new Feedback();
+        feedback.reporter = localStorageService.get('trello_email');
+        feedback.message = $scope.message;
+        return feedback.save().then(function() {
+          return $mdDialog.hide();
+        });
+      }
+    };
+  };
+});
+
+angular.module('NotSoShitty.feedback').directive('feedback', function() {
+  return {
+    restrict: 'E',
+    templateUrl: 'feedback/directives/call-to-action.html',
+    scope: {},
+    controller: 'feedbackCallToActionCtrl'
+  };
+});
+
 var __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
@@ -337,60 +391,6 @@ angular.module('NotSoShitty.gmail-client').service('mailer', function($state, $r
         return $state.go('tab.google-login');
       });
     }
-  };
-});
-
-angular.module('NotSoShitty.feedback').controller('feedbackCallToActionCtrl', function($scope, $mdDialog, $mdMedia) {
-  var DialogController;
-  $scope.customFullscreen = $mdMedia('sm');
-  $scope.openFeedbackModal = function(ev) {
-    $mdDialog.show({
-      controller: DialogController,
-      templateUrl: 'feedback/directives/dialog.html',
-      parent: angular.element(document.body),
-      targetEvent: ev,
-      clickOutsideToClose: true,
-      fullscreen: $mdMedia('sm') && $scope.customFullscreen
-    }).then((function(answer) {
-      $scope.status = 'You said the information was "' + answer + '".';
-    }), function() {
-      $scope.status = 'You cancelled the dialog.';
-    });
-    $scope.$watch((function() {
-      return $mdMedia('sm');
-    }), function(sm) {
-      $scope.customFullscreen = sm === true;
-    });
-  };
-  return DialogController = function($scope, $mdDialog, Feedback, localStorageService) {
-    $scope.message = null;
-    $scope.hide = function() {
-      return $mdDialog.hide();
-    };
-    $scope.cancel = function() {
-      return $mdDialog.cancel();
-    };
-    return $scope.send = function() {
-      var feedback;
-      console.log('yolo');
-      if ($scope.message != null) {
-        feedback = new Feedback();
-        feedback.reporter = localStorageService.get('trello_email');
-        feedback.message = $scope.message;
-        return feedback.save().then(function() {
-          return $mdDialog.hide();
-        });
-      }
-    };
-  };
-});
-
-angular.module('NotSoShitty.feedback').directive('feedback', function() {
-  return {
-    restrict: 'E',
-    templateUrl: 'feedback/directives/call-to-action.html',
-    scope: {},
-    controller: 'feedbackCallToActionCtrl'
   };
 });
 
@@ -831,10 +831,11 @@ angular.module('NotSoShitty.common').factory('Avatar', function(TrelloClient) {
 });
 
 angular.module('NotSoShitty.common').controller('TrelloAvatarCtrl', function(Avatar, $scope) {
+  var colors, getColor;
   if (!$scope.size) {
     $scope.size = '50';
   }
-  return $scope.$watch('member', function(member) {
+  $scope.$watch('member', function(member) {
     if (member == null) {
       return $scope.hash = null;
     }
@@ -846,6 +847,13 @@ angular.module('NotSoShitty.common').controller('TrelloAvatarCtrl', function(Ava
       return $scope.hash = null;
     }
   });
+  colors = ['#8dd3c7', '#ffffb3', '#bebada', '#fb8072', '#80b1d3', '#fdb462', '#b3de69', '#fccde5', '#d9d9d9', '#bc80bd', '#ccebc5', '#ffed6f'];
+  getColor = function(initials) {
+    var hash;
+    hash = initials.charCodeAt(0);
+    return colors[hash % 12];
+  };
+  return $scope.color = getColor($scope.member.initials);
 });
 
 angular.module('NotSoShitty.common').directive('trelloAvatar', function() {
