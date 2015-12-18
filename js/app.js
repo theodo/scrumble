@@ -1,7 +1,7 @@
 'use strict';
 var app;
 
-app = angular.module('NotSoShitty', ['ng', 'ngResource', 'ngAnimate', 'ngSanitize', 'ngMaterial', 'md.data.table', 'ui.router', 'app.templates', 'Parse', 'LocalStorageModule', 'satellizer', 'permission', 'trello-api-client', 'angular-google-gapi', 'NotSoShitty.login', 'NotSoShitty.settings', 'NotSoShitty.storage', 'NotSoShitty.bdc', 'NotSoShitty.common', 'NotSoShitty.daily-report', 'NotSoShitty.gmail-client', 'NotSoShitty.feedback']);
+app = angular.module('NotSoShitty', ['ng', 'ngResource', 'ngAnimate', 'ngSanitize', 'ngMaterial', 'md.data.table', 'ui.router', 'app.templates', 'Parse', 'LocalStorageModule', 'satellizer', 'permission', 'trello-api-client', 'angular-google-gapi', 'NotSoShitty.bdc', 'NotSoShitty.common', 'NotSoShitty.daily-report', 'NotSoShitty.gmail-client', 'NotSoShitty.feedback', 'NotSoShitty.login', 'NotSoShitty.settings', 'NotSoShitty.storage']);
 
 app.config(function($locationProvider, $urlRouterProvider, ParseProvider) {
   $locationProvider.hashPrefix('!');
@@ -37,7 +37,8 @@ app.run(function($rootScope, $state) {
 app.config(function($stateProvider) {
   return $stateProvider.state('tab', {
     abstract: true,
-    templateUrl: 'common/views/base.html'
+    controller: 'BaseCtrl',
+    templateUrl: 'common/states/base.html'
   });
 });
 
@@ -87,6 +88,30 @@ angular.module('NotSoShitty.common').service('trelloUtils', function(TrelloClien
         return 0;
       });
     }
+  };
+});
+
+angular.module('NotSoShitty.common').controller('BaseCtrl', function($scope, $mdSidenav, $state, Avatar, localStorageService) {
+  $scope.toggleSidenav = function(menuId) {
+    $mdSidenav(menuId).toggle();
+    return console.log('Ouvrir le menu');
+  };
+  $scope.close = function(menuId) {
+    $mdSidenav(menuId).close();
+    return console.log('Fermer le menu');
+  };
+  $scope.member = Avatar.getMember(localStorageService.get('trello_email'));
+  $scope.project = function() {
+    $state.go('tab.project');
+    return $scope.close('left');
+  };
+  $scope.sprint = function() {
+    $state.go('tab.current-sprint');
+    return $scope.close('left');
+  };
+  return $scope.dailyReport = function() {
+    $state.go('tab.daily-report');
+    return $scope.close('left');
   };
 });
 
