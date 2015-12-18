@@ -103,7 +103,13 @@ angular.module('NotSoShitty.daily-report').config(function($stateProvider) {
               return report;
             }
             report = new DailyReport({
-              project: new Project(user.project)
+              project: new Project(user.project),
+              message: {
+                subject: '[MyProject] Sprint #{sprintNumber} - Daily Mail {today#YYYY-MM-DD}',
+                body: 'Hello Batman,\n\n' + 'here is the daily mail:\n\n' + '- Done: {done} / {total} points\n' + '- To validate: {toValidate} points\n' + '- Blocked: {blocked} points\n' + '- {behind/ahead}: {gap} points\n\n' + '{bdc}\n\n' + 'Yesterday\'s goals:\n' + '- Eat carrots\n\n' + 'Today\'s goals\n' + '- Eat more carrots\n\n' + 'Regards!',
+                behindLabel: 'Behind',
+                aheadLabel: 'Ahead'
+              }
             });
             return report.save();
           });
@@ -159,7 +165,8 @@ angular.module('NotSoShitty.daily-report').factory('DailyReport', function(Parse
 });
 
 angular.module('NotSoShitty.daily-report').service('reportBuilder', function($q, NotSoShittyUser, Sprint, Project, trelloUtils) {
-  var project, promise, renderBDC, renderDate, renderPoints, renderSprintNumber, replace, sprint;
+  var converter, project, promise, renderBDC, renderDate, renderPoints, renderSprintNumber, replace, sprint;
+  converter = new showdown.Converter();
   promise = void 0;
   project = void 0;
   sprint = void 0;
@@ -246,7 +253,9 @@ angular.module('NotSoShitty.daily-report').service('reportBuilder', function($q,
       });
     },
     render: function(message, useCid) {
-      return renderSprintNumber(angular.copy(message)).then(function(message) {
+      message = angular.copy(message);
+      message.body = converter.makeHtml(message.body);
+      return renderSprintNumber(message).then(function(message) {
         return renderDate(message);
       }).then(function(message) {
         return renderPoints(message);
@@ -330,13 +339,10 @@ angular.module('NotSoShitty.feedback').factory('Feedback', function(Parse) {
   })(Parse.Model);
 });
 
-app.run(function(GApi, GAuth, $timeout) {
-  return $timeout(function() {
-    GApi.load('gmail', 'v1');
-    GAuth.setClient('605908567890-3bg3dmamghq5gd7i9sqsdhvoflef0qku.apps.googleusercontent.com');
-    GAuth.setScope('https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/gmail.send');
-    return GApi.load('oauth2', 'v2');
-  }, 5000);
+angular.module('NotSoShitty.gmail-client').run(function(GApi, GAuth) {
+  GApi.load('gmail', 'v1');
+  GAuth.setClient('605908567890-3bg3dmamghq5gd7i9sqsdhvoflef0qku.apps.googleusercontent.com');
+  return GAuth.setScope('https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/gmail.send');
 });
 
 angular.module('NotSoShitty.gmail-client').service('mailer', function($state, $rootScope, GAuth) {
@@ -388,9 +394,12 @@ angular.module('NotSoShitty.gmail-client').service('mailer', function($state, $r
   };
 });
 
-angular.module('NotSoShitty.login').run(function(Permission, localStorageService) {
-  return Permission.defineRole('trello-authenticated', function() {
+angular.module('NotSoShitty.login').run(function(Permission, localStorageService, GAuth) {
+  Permission.defineRole('trello-authenticated', function() {
     return localStorageService.get('trello_token') != null;
+  });
+  return Permission.defineRole('google-authenticated', function() {
+    return GAuth.checkAuth();
   });
 });
 
@@ -851,20 +860,7 @@ angular.module('NotSoShitty.common').directive('trelloAvatar', function() {
   };
 });
 
-angular.module('NotSoShitty.daily-report').controller('PreviewCtrl', function($scope, $mdDialog, $mdToast, mailer, message, rawMessage, reportBuilder, GAuth, GApi) {
-  $scope.isAuthenticated = false;
-  GAuth.checkAuth().then(function() {
-    return $scope.isAuthenticated = true;
-  });
-  $scope.login = function() {
-    console.log('login');
-    return GAuth.login().then(function() {
-      console.log('logged');
-      return $scope.isAuthenticated = true;
-    }, function() {
-      return console.log('login fail');
-    });
-  };
+angular.module('NotSoShitty.daily-report').controller('PreviewCtrl', function($scope, $mdDialog, $mdToast, mailer, message, rawMessage, reportBuilder) {
   $scope.message = message;
   $scope.hide = function() {
     return $mdDialog.hide();
@@ -890,20 +886,11 @@ angular.module('NotSoShitty.daily-report').controller('PreviewCtrl', function($s
   };
 });
 
-angular.module('NotSoShitty.daily-report').controller('DailyReportCtrl', function($scope, $mdToast, $mdDialog, $mdMedia, mailer, reportBuilder, dailyReport, sprint, GAuth) {
+angular.module('NotSoShitty.daily-report').controller('DailyReportCtrl', function($scope, $mdToast, $mdDialog, $mdMedia, mailer, reportBuilder, dailyReport, sprint) {
   var saveFeedback;
   reportBuilder.init();
   saveFeedback = $mdToast.simple().hideDelay(1000).position('top right').content('Saved!');
   $scope.dailyReport = dailyReport;
-  $scope.login = function() {
-    console.log('login');
-    return GAuth.login().then(function() {
-      console.log('logged');
-      return $scope.isAuthenticated = true;
-    }, function() {
-      return console.log('login fail');
-    });
-  };
   $scope.save = function() {
     return $scope.dailyReport.save().then(function() {
       return $mdToast.show(saveFeedback);
