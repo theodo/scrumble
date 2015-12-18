@@ -15,7 +15,7 @@ angular.module 'NotSoShitty.common'
     $mdSidenav(menuId).close()
     console.log 'Fermer le menu'
 
-  $scope.member = Avatar.getMember localStorageService('trello_email')
+  $scope.member = Avatar.getMember localStorageService.get('trello_email')
 
   $scope.project = ->
     $state.go 'tab.project'
