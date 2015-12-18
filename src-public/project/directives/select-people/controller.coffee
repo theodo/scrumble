@@ -4,7 +4,6 @@ angular.module 'NotSoShitty.settings'
   $scope.teamCheck ?= {}
 
   $scope.toggle = (member) ->
-
     if member.id in (m.id for m in $scope.selectedMembers)
       _.remove $scope.selectedMembers, (m) ->
         m.id == member.id

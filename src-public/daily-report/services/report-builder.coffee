@@ -58,10 +58,15 @@ angular.module 'NotSoShitty.daily-report'
       message
 
   renderTo = (message) ->
-    devsEmails = (member.email for member in project.team.dev)
-    memberEmails = (member.email for member in project.team.rest)
-    message.to = _.filter _.union devsEmails, memberEmails
-    message
+    promise.then ->
+      devsEmails = (member.email for member in project.team.dev)
+      memberEmails = (member.email for member in project.team.rest)
+      message.to = _.filter _.union devsEmails, memberEmails
+      message
+
+  renderSprintGoal = (message) ->
+    promise.then ->
+      replace message, '{sprintGoal}', sprint.goal
 
   dateFormat: (_dateFormat_) ->
     dateFormat = _dateFormat_
@@ -79,7 +84,9 @@ angular.module 'NotSoShitty.daily-report'
 
     message.body = converter.makeHtml message.body
 
-    renderSprintNumber message
+    renderSprintGoal message
+    .then (message) ->
+      renderSprintNumber message
     .then (message) ->
       renderDate message
     .then (message) ->
