@@ -13,21 +13,18 @@ angular.module 'NotSoShitty.common'
       $scope.hash = null
 
   colors = [
-    '#8dd3c7'
-    '#ffffb3'
-    '#bebada'
-    '#fb8072'
-    '#80b1d3'
-    '#fdb462'
-    '#b3de69'
-    '#fccde5'
-    '#d9d9d9'
-    '#bc80bd'
+    '#fbb4ae'
+    '#b3cde3'
     '#ccebc5'
-    '#ffed6f'
+    '#decbe4'
+    '#fed9a6'
+    '#ffffcc'
+    '#e5d8bd'
+    '#fddaec'
+    '#f2f2f2'
   ]
   getColor = (initials) ->
     hash = initials.charCodeAt(0)
-    colors[hash%12]
+    colors[hash%9]
 
   $scope.color = getColor $scope.member.initials

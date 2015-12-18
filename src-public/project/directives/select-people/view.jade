@@ -3,13 +3,8 @@
   ng-class="{'selected': teamCheck[member.id]}"
 )
   label(
-    ng-click="check()"
+    ng-click="toggle(member)"
   )
     trello-avatar.member-select-image(
       member="member"
     )
-    input(
-      type="checkbox"
-      ng-model="teamCheck[member.id]"
-    )
-    

@@ -9,11 +9,9 @@ angular.module 'NotSoShitty.common'
 
   $scope.toggleSidenav = (menuId) ->
     $mdSidenav(menuId).toggle()
-    console.log 'Ouvrir le menu'
 
   $scope.close = (menuId) ->
     $mdSidenav(menuId).close()
-    console.log 'Fermer le menu'
 
   $scope.member = Avatar.getMember localStorageService.get('trello_email')
 

@@ -57,6 +57,12 @@ angular.module 'NotSoShitty.daily-report'
         } ]
       message
 
+  renderTo = (message) ->
+    devsEmails = (member.email for member in project.team.dev)
+    memberEmails = (member.email for member in project.team.rest)
+    message.to = _.filter _.union devsEmails, memberEmails
+    message
+
   dateFormat: (_dateFormat_) ->
     dateFormat = _dateFormat_
 
@@ -80,3 +86,5 @@ angular.module 'NotSoShitty.daily-report'
       renderPoints message
     .then (message) ->
       renderBDC message, sprint.bdcBase64, useCid
+    .then (message) ->
+      renderTo message
