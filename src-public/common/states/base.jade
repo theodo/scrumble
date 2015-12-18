@@ -1,0 +1,63 @@
+md-content
+  md-toolbar.md-toolbar-tools
+    md-button.md-icon-button(
+      aria-label='Menu' 
+      ng-click="toggleSidenav('left')"
+    )
+      md-icon(md-svg-icon='menu')
+    h2
+      span Not So Shitty
+    span(flex='')
+    //- md-button.md-icon-button(aria-label='Favorite')
+    //-   md-icon(md-svg-icon='favorite', style='color: greenyellow;')
+    md-button.md-icon-button(aria-label='More')
+      md-icon(md-svg-icon='more')
+  md-sidenav.md-sidenav-left.md-whiteframe-z2(
+    layout='column'
+    md-component-id='left'
+  )
+    //- md-toolbar.md-tall.md-hue-2
+    //-   span(flex='')
+    //-   .md-toolbar-tools-bottom.inset(layout='column')
+    //-     //- trello-avatar(member='member')
+    //-     span
+    //-     div Nicolas Boutin
+    //-     div nicolasb@theodo.fr
+    md-list
+      md-item.md-button(ng-click='sprint()')
+        a
+          md-item-content(
+            md-ink-ripple=''
+            layout='row'
+            layout-align='start center'
+          )
+            .inset
+              md-icon(md-svg-src='dashboard')
+            .inset
+              | Scrum Board
+      md-divider
+      md-subheader Your project
+      md-item.md-button(ng-click='project()')
+        a
+          md-item-content(
+            md-ink-ripple=''
+            layout='row'
+            layout-align='start center'
+          )
+            .inset
+              md-icon(md-svg-src='settings')
+            .inset
+              | Project
+      md-item.md-button(ng-click='dailyReport()')
+        a
+          md-item-content(
+            md-ink-ripple=''
+            layout='row'
+            layout-align='start center'
+          )
+            .inset
+              md-icon(md-svg-src='gmail')
+            .inset
+              | Daily Report
+  .container(ui-view)
+  feedback

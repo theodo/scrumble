@@ -17,14 +17,14 @@ app = angular.module 'NotSoShitty', [
   'trello-api-client'
   'angular-google-gapi'
 
-  'NotSoShitty.login'
-  'NotSoShitty.settings'
-  'NotSoShitty.storage'
   'NotSoShitty.bdc'
   'NotSoShitty.common'
   'NotSoShitty.daily-report'
   'NotSoShitty.gmail-client'
   'NotSoShitty.feedback'
+  'NotSoShitty.login'
+  'NotSoShitty.settings'
+  'NotSoShitty.storage'
 ]
 
 app.config (
@@ -67,5 +67,5 @@ app.config ($stateProvider) ->
   $stateProvider
   .state 'tab',
     abstract: true
-    templateUrl: 'common/views/base.html'
-
+    controller: 'BaseCtrl'
+    templateUrl: 'common/states/base.html'
