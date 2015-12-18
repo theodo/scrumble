@@ -1079,6 +1079,7 @@ angular.module('NotSoShitty.settings').controller('SelectPeopleCtrl', function($
   }
   $scope.toggle = function(member) {
     var m, _ref;
+    console.log('');
     if (_ref = member.id, __indexOf.call((function() {
       var _i, _len, _ref1, _results;
       _ref1 = $scope.selectedMembers;
