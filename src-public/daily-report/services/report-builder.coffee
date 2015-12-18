@@ -1,5 +1,7 @@
 angular.module 'NotSoShitty.daily-report'
 .service 'reportBuilder', ($q, NotSoShittyUser, Sprint, Project, trelloUtils)->
+  converter = new showdown.Converter()
+
   promise = undefined
   project = undefined
   sprint = undefined
@@ -67,7 +69,11 @@ angular.module 'NotSoShitty.daily-report'
         sprint = _sprint_
 
   render: (message, useCid) ->
-    renderSprintNumber angular.copy message
+    message = angular.copy message
+
+    message.body = converter.makeHtml message.body
+
+    renderSprintNumber message
     .then (message) ->
       renderDate message
     .then (message) ->

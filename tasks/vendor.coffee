@@ -23,6 +23,7 @@ gulp.task 'vendor', (done) ->
     'bower_components/angular-material-data-table/dist/md-data-table.min.js' # should be included soon in angular-material
     'bower_components/angular-google-gapi/angular-google-gapi.min.js'
     'bower_components/MimeJS/dist/mime.js'
+    'bower_components/showdown/dist/showdown.min.js'
   ]
   .pipe(concat('vendor.js'))
   .on 'error', gutil.log
