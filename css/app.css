@@ -42,6 +42,7 @@ md-content {
 body,
 .container {
   background-color: #efefef;
+  min-height: 100%;
 }
 .column-width-80 {
   width: 80%;

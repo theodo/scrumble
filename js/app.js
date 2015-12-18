@@ -93,12 +93,10 @@ angular.module('NotSoShitty.common').service('trelloUtils', function(TrelloClien
 
 angular.module('NotSoShitty.common').controller('BaseCtrl', function($scope, $mdSidenav, $state, Avatar, localStorageService) {
   $scope.toggleSidenav = function(menuId) {
-    $mdSidenav(menuId).toggle();
-    return console.log('Ouvrir le menu');
+    return $mdSidenav(menuId).toggle();
   };
   $scope.close = function(menuId) {
-    $mdSidenav(menuId).close();
-    return console.log('Fermer le menu');
+    return $mdSidenav(menuId).close();
   };
   $scope.member = Avatar.getMember(localStorageService.get('trello_email'));
   $scope.project = function() {
@@ -190,7 +188,7 @@ angular.module('NotSoShitty.daily-report').factory('DailyReport', function(Parse
 });
 
 angular.module('NotSoShitty.daily-report').service('reportBuilder', function($q, NotSoShittyUser, Sprint, Project, trelloUtils) {
-  var converter, project, promise, renderBDC, renderDate, renderPoints, renderSprintNumber, replace, sprint;
+  var converter, project, promise, renderBDC, renderDate, renderPoints, renderSprintNumber, renderTo, replace, sprint;
   converter = new showdown.Converter();
   promise = void 0;
   project = void 0;
@@ -262,6 +260,31 @@ angular.module('NotSoShitty.daily-report').service('reportBuilder', function($q,
       return message;
     });
   };
+  renderTo = function(message) {
+    var devsEmails, member, memberEmails;
+    devsEmails = (function() {
+      var _i, _len, _ref, _results;
+      _ref = project.team.dev;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        member = _ref[_i];
+        _results.push(member.email);
+      }
+      return _results;
+    })();
+    memberEmails = (function() {
+      var _i, _len, _ref, _results;
+      _ref = project.team.rest;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        member = _ref[_i];
+        _results.push(member.email);
+      }
+      return _results;
+    })();
+    message.to = _.filter(_.union(devsEmails, memberEmails));
+    return message;
+  };
   return {
     dateFormat: function(_dateFormat_) {
       var dateFormat;
@@ -286,6 +309,8 @@ angular.module('NotSoShitty.daily-report').service('reportBuilder', function($q,
         return renderPoints(message);
       }).then(function(message) {
         return renderBDC(message, sprint.bdcBase64, useCid);
+      }).then(function(message) {
+        return renderTo(message);
       });
     }
   };
@@ -872,11 +897,11 @@ angular.module('NotSoShitty.common').controller('TrelloAvatarCtrl', function(Ava
       return $scope.hash = null;
     }
   });
-  colors = ['#8dd3c7', '#ffffb3', '#bebada', '#fb8072', '#80b1d3', '#fdb462', '#b3de69', '#fccde5', '#d9d9d9', '#bc80bd', '#ccebc5', '#ffed6f'];
+  colors = ['#fbb4ae', '#b3cde3', '#ccebc5', '#decbe4', '#fed9a6', '#ffffcc', '#e5d8bd', '#fddaec', '#f2f2f2'];
   getColor = function(initials) {
     var hash;
     hash = initials.charCodeAt(0);
-    return colors[hash % 12];
+    return colors[hash % 9];
   };
   return $scope.color = getColor($scope.member.initials);
 });
@@ -1046,23 +1071,32 @@ angular.module('NotSoShitty.settings').directive('resourcesByDay', function() {
   };
 });
 
+var __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
+
 angular.module('NotSoShitty.settings').controller('SelectPeopleCtrl', function($scope) {
   if ($scope.teamCheck == null) {
     $scope.teamCheck = {};
   }
-  $scope.check = function() {
-    var checked, key, team, _ref;
-    team = [];
-    _ref = $scope.teamCheck;
-    for (key in _ref) {
-      checked = _ref[key];
-      if (checked) {
-        team.push(_.find($scope.members, function(member) {
-          return member.id === key;
-        }));
+  $scope.toggle = function(member) {
+    var m, _ref;
+    if (_ref = member.id, __indexOf.call((function() {
+      var _i, _len, _ref1, _results;
+      _ref1 = $scope.selectedMembers;
+      _results = [];
+      for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
+        m = _ref1[_i];
+        _results.push(m.id);
       }
+      return _results;
+    })(), _ref) >= 0) {
+      _.remove($scope.selectedMembers, function(m) {
+        return m.id === member.id;
+      });
+      return $scope.teamCheck[member.id] = false;
+    } else {
+      $scope.selectedMembers.push(member);
+      return $scope.teamCheck[member.id] = true;
     }
-    return $scope.selectedMembers = team;
   };
   return $scope.$watch('selectedMembers', function(newVal) {
     var member, _i, _len, _ref, _results;
