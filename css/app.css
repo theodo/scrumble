@@ -96,6 +96,11 @@ trello-avatar .trello-avatar .member-avatar.initials {
   font-weight: bold;
 }
 
+.markdown-cheatsheet {
+  position: absolute;
+  right: 0;
+}
+
 .profil-button {
   position: absolute;
   right: 5px;
