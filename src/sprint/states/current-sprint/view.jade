@@ -1,5 +1,5 @@
 div(layout="row" layout-align="center start")
-  md-card(flex="60")
+  md-card(flex="90")
     md-toolbar.md-hue-2
       .md-toolbar-tools
         h2.md-title {{ bdcTitle }}
@@ -9,7 +9,7 @@ div(layout="row" layout-align="center start")
             md-icon(md-menu-origin='', md-svg-icon='more')
           md-menu-content(width='4')
             md-menu-item
-              md-button(ng-click='editBDCTitle($event)' disabled="disabled")
+              md-button(ng-click='openEditBDC($event)')
                 md-icon(md-svg-icon='table-edit', md-menu-align-target='')
                 | Edit BDC
             md-menu-item
@@ -21,28 +21,7 @@ div(layout="row" layout-align="center start")
                 md-icon(md-svg-icon='printer', md-menu-align-target='')
                 | Print
 
-    burndown(data="tableData")
-  md-card.layout-padding(flex="30")
-    md-data-table-container
-      table.bdc-data(md-data-table)
-        thead
-          tr
-            th(name="Day")
-            th(name="Standard")
-            th(name="Done")
-        tbody
-          tr(ng-repeat="day in tableData" ng-class="{'md-selected': currentDayIndex == $index}")
-            td {{ day.date | date : 'EEEE' }}
-            td {{ day.standard.toFixed(1) }}
-            td
-              section(layout="row" layout-sm="column" layout-wrap)
-                md-input-container(flex="50" md-no-float="true")
-                  label Done
-                  input(ng-model="day.done" type="number")
-                div(layout-align="center center" ng-if="currentDayIndex == $index")
-                  md-button.md-primary(ng-click="fetchTrelloDonePoints()") Fetch from Trello
-    section(layout="row" layout-sm="column" layout-align="center center" layout-wrap)
-      md-button.md-raised.md-primary(ng-click="save()") Save
+    burndown(data="bdcData")
 md-button.md-fab.md-primary.new-sprint-fab(ng-click="showConfirmNewSprint($event)")
   md-icon(md-svg-icon="plus")
   md-tooltip(md-direction="top") Create a new sprint

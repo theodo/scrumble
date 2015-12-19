@@ -1,0 +1,34 @@
+md-dialog(aria-label='Edit BDC Title', ng-cloak)
+    md-toolbar
+      .md-toolbar-tools
+        h2 Edit Burndown Chart
+        span(flex)
+        md-button.md-icon-button(ng-click='cancel()')
+          md-icon(md-svg-src='close', aria-label='Close dialog')
+    md-dialog-content
+      .md-dialog-content
+        md-data-table-container
+          table.bdc-data(md-data-table)
+            thead
+              tr
+                th(name="Day")
+                th(name="Standard")
+                th(name="Done")
+                th(name="")
+            tbody
+              tr(ng-repeat="day in data" ng-class="{'md-selected': currentDayIndex == $index}")
+                td {{ day.date | date : 'EEEE' }}
+                td {{ day.standard.toFixed(1) }}
+                td
+                  section(layout="row" layout-sm="column" layout-wrap)
+                    md-input-container(flex="50" md-no-float="true")
+                      label Done
+                      input(ng-model="day.done" type="number")
+                td
+                  div(layout-align="center center" ng-if="currentDayIndex == $index")
+                    md-button.md-raised.md-primary(ng-click="fetchTrelloDonePoints()")
+                      md-icon(md-svg-icon='trello')
+                      | Fetch done
+    md-dialog-actions(layout='row')
+      md-button(ng-click="save()")
+        | Save

@@ -9,13 +9,13 @@ angular.module 'NotSoShitty.bdc'
     whRatio = 0.54
 
     computeDimensions = ->
-      if window.innerWidth/2 > maxWidth
+      if window.innerWidth > maxWidth
         width = 800
       else
-        width = (window.innerWidth/2 - 80)
+        width = window.innerWidth * 0.8
       height = whRatio * width
       if height + 128 > window.innerHeight
-        height = window.innerHeight/2 - 128
+        height = window.innerHeight * 0.8
         width = height / whRatio
       config =
         containerId: '#bdcgraph'
@@ -24,7 +24,7 @@ angular.module 'NotSoShitty.bdc'
         margins:
           top: 30
           right: 70
-          bottom: 30
+          bottom: 60
           left: 50
         colors:
           standard: '#D93F8E'
