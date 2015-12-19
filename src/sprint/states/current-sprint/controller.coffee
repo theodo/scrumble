@@ -25,24 +25,14 @@ angular.module 'NotSoShitty.bdc'
   else
     sprint.bdcData = BDCDataProvider.initializeBDC sprint.dates.days, sprint.resources
   $scope.bdcTitle = dynamicFields.render project.settings?.bdcTitle
-  $scope.tableData = sprint.bdcData
+  $scope.bdcData = sprint.bdcData
 
-  getCurrentDayIndex = (bdcData) ->
-    for day, i in bdcData
-      return i unless day.done?
-  $scope.currentDayIndex = getCurrentDayIndex $scope.tableData
+
 
   $scope.save = ->
     svg = d3.select('#bdcgraph')[0][0].firstChild
     sprint.bdcBase64 = svgToPng.getPngBase64 svg
-    sprint.save().then ->
-      $scope.currentDayIndex = getCurrentDayIndex $scope.tableData
-
-  $scope.fetchTrelloDonePoints = ->
-    if sprint.doneColumn?
-      trelloUtils.getColumnPoints sprint.doneColumn
-      .then (points) ->
-        $scope.tableData[$scope.currentDayIndex].done = points
+    sprint.save()
 
   $scope.showConfirmNewSprint = (ev) ->
     confirm = $mdDialog.confirm()
@@ -76,6 +66,23 @@ angular.module 'NotSoShitty.bdc'
       project.settings.bdcTitle = title
       project.save().then (project) ->
         $scope.bdcTitle = dynamicFields.render project.settings?.bdcTitle
+
+  $scope.openEditBDC = (ev) ->
+    useFullScreen = ($mdMedia 'sm' or $mdMedia 'xs')
+    $mdDialog.show(
+      controller: 'EditBDCCtrl'
+      templateUrl: 'sprint/states/current-sprint/editBDC.html'
+      parent: angular.element(document.body)
+      targetEvent: ev
+      clickOutsideToClose: true
+      fullscreen: useFullScreen
+      resolve:
+        data: -> angular.copy sprint.bdcData
+        doneColumn: -> sprint.doneColumn
+    ).then (data) ->
+      sprint.bdcData = data
+      sprint.save().then ->
+        $scope.bdcData = data
 
   DialogController = ($scope, $mdDialog, title, availableFields) ->
     $scope.title = title
