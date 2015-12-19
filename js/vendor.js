@@ -16739,6 +16739,7 @@ config = {
     labels: '#113F59'
   },
   startLabel: 'Start',
+  endLabel: 'Ceremony',
   dateFormat: '%A',
   xTitle: 'Daily meetings',
   dotRadius: 4,
@@ -16771,8 +16772,11 @@ renderBDC = function(data, cfg) {
     if (data[i] == null) {
       return;
     }
-    if (i === 0) {
+    if ((cfg.startLabel != null) && i === 0) {
       return cfg.startLabel;
+    }
+    if ((cfg.endLabel != null) && i === data.length - 1) {
+      return cfg.endLabel;
     }
     dateFormat = d3.time.format(cfg.dateFormat);
     return dateFormat(data[i].date);

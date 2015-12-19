@@ -58,6 +58,65 @@ angular.module('NotSoShitty.bdc', []);
 
 angular.module('NotSoShitty.storage', []);
 
+angular.module('NotSoShitty.common').controller('BaseCtrl', function($scope, $mdSidenav, $state, Avatar, localStorageService) {
+  $scope.toggleSidenav = function(menuId) {
+    return $mdSidenav(menuId).toggle();
+  };
+  $scope.close = function(menuId) {
+    return $mdSidenav(menuId).close();
+  };
+  $scope.member = Avatar.getMember(localStorageService.get('trello_email'));
+  $scope.project = function() {
+    $state.go('tab.project');
+    return $scope.close('left');
+  };
+  $scope.sprint = function() {
+    $state.go('tab.current-sprint');
+    return $scope.close('left');
+  };
+  return $scope.dailyReport = function() {
+    $state.go('tab.daily-report');
+    return $scope.close('left');
+  };
+});
+
+angular.module('NotSoShitty.daily-report').config(function($stateProvider) {
+  return $stateProvider.state('tab.daily-report', {
+    url: '/daily-report',
+    templateUrl: 'daily-report/states/template/view.html',
+    controller: 'DailyReportCtrl',
+    resolve: {
+      dailyReport: function(NotSoShittyUser, DailyReport, Project) {
+        return NotSoShittyUser.getCurrentUser().then(function(user) {
+          return DailyReport.getByProject(user.project).then(function(report) {
+            if (report != null) {
+              return report;
+            }
+            report = new DailyReport({
+              project: new Project(user.project),
+              message: {
+                subject: '[MyProject] Sprint #{sprintNumber} - Daily Mail {today#YYYY-MM-DD}',
+                body: 'Hello Batman,\n\n' + 'here is the daily mail:\n\n' + '- Done: {done} / {total} points\n' + '- To validate: {toValidate} points\n' + '- Blocked: {blocked} points\n' + '- {behind/ahead}: {gap} points\n\n' + '{bdc}\n\n' + 'Yesterday\'s goals:\n' + '- Eat carrots\n\n' + 'Today\'s goals\n' + '- Eat more carrots\n\n' + 'Regards!',
+                behindLabel: 'Behind',
+                aheadLabel: 'Ahead'
+              }
+            });
+            return report.save();
+          });
+        });
+      },
+      sprint: function(NotSoShittyUser, Sprint) {
+        return NotSoShittyUser.getCurrentUser().then(function(user) {
+          return Sprint.getActiveSprint(user.project);
+        })["catch"](function(err) {
+          console.log(err);
+          return null;
+        });
+      }
+    }
+  });
+});
+
 angular.module('NotSoShitty.common').service('dynamicFields', function() {
   var dict, project, replaceToday, replaceYesterday, sprint;
   sprint = null;
@@ -173,65 +232,6 @@ angular.module('NotSoShitty.common').service('trelloUtils', function(TrelloClien
       });
     }
   };
-});
-
-angular.module('NotSoShitty.common').controller('BaseCtrl', function($scope, $mdSidenav, $state, Avatar, localStorageService) {
-  $scope.toggleSidenav = function(menuId) {
-    return $mdSidenav(menuId).toggle();
-  };
-  $scope.close = function(menuId) {
-    return $mdSidenav(menuId).close();
-  };
-  $scope.member = Avatar.getMember(localStorageService.get('trello_email'));
-  $scope.project = function() {
-    $state.go('tab.project');
-    return $scope.close('left');
-  };
-  $scope.sprint = function() {
-    $state.go('tab.current-sprint');
-    return $scope.close('left');
-  };
-  return $scope.dailyReport = function() {
-    $state.go('tab.daily-report');
-    return $scope.close('left');
-  };
-});
-
-angular.module('NotSoShitty.daily-report').config(function($stateProvider) {
-  return $stateProvider.state('tab.daily-report', {
-    url: '/daily-report',
-    templateUrl: 'daily-report/states/template/view.html',
-    controller: 'DailyReportCtrl',
-    resolve: {
-      dailyReport: function(NotSoShittyUser, DailyReport, Project) {
-        return NotSoShittyUser.getCurrentUser().then(function(user) {
-          return DailyReport.getByProject(user.project).then(function(report) {
-            if (report != null) {
-              return report;
-            }
-            report = new DailyReport({
-              project: new Project(user.project),
-              message: {
-                subject: '[MyProject] Sprint #{sprintNumber} - Daily Mail {today#YYYY-MM-DD}',
-                body: 'Hello Batman,\n\n' + 'here is the daily mail:\n\n' + '- Done: {done} / {total} points\n' + '- To validate: {toValidate} points\n' + '- Blocked: {blocked} points\n' + '- {behind/ahead}: {gap} points\n\n' + '{bdc}\n\n' + 'Yesterday\'s goals:\n' + '- Eat carrots\n\n' + 'Today\'s goals\n' + '- Eat more carrots\n\n' + 'Regards!',
-                behindLabel: 'Behind',
-                aheadLabel: 'Ahead'
-              }
-            });
-            return report.save();
-          });
-        });
-      },
-      sprint: function(NotSoShittyUser, Sprint) {
-        return NotSoShittyUser.getCurrentUser().then(function(user) {
-          return Sprint.getActiveSprint(user.project);
-        })["catch"](function(err) {
-          console.log(err);
-          return null;
-        });
-      }
-    }
-  });
 });
 
 var __hasProp = {}.hasOwnProperty,
@@ -1325,7 +1325,7 @@ angular.module('NotSoShitty.bdc').directive('burndown', function() {
             labels: '#113F59'
           },
           startLabel: 'Start',
-          endLabel: 'End',
+          endLabel: 'Ceremony',
           dateFormat: '%A',
           xTitle: '',
           dotRadius: 4,
