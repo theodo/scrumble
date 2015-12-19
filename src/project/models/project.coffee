@@ -1,7 +1,7 @@
 angular.module 'NotSoShitty.storage'
 .factory 'Project', (Parse, $q) ->
   class Project extends Parse.Model
-    @configure "Project", "boardId", "name", "columnMapping", "team", "currentSprint"
+    @configure "Project", "boardId", "name", "columnMapping", "team", "currentSprint", "settings"
 
     @get = (boardId) ->
       deferred = $q.defer()
@@ -10,9 +10,9 @@ angular.module 'NotSoShitty.storage'
         @query(
           where:
             boardId: boardId
-        ).then (settingsArray) ->
-          settings = if settingsArray.length > 0 then settingsArray[0] else null
-          deferred.resolve settings
+        ).then (projectsArray) ->
+          project = if projectsArray.length > 0 then projectsArray[0] else null
+          deferred.resolve project
         .catch deferred.reject
       else
         deferred.reject 'No boardId'

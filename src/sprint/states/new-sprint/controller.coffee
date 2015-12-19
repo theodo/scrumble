@@ -13,6 +13,8 @@ angular.module 'NotSoShitty.bdc'
 
   $scope.sprint = new Sprint
     project: project
+    info =
+      bdcTitle: 'Burndown Chart'
     number: null
     goal: null
     doneColumn: null

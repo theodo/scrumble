@@ -1,24 +1,10 @@
 angular.module 'NotSoShitty.daily-report'
-.service 'reportBuilder', ($q, NotSoShittyUser, Sprint, Project, trelloUtils)->
+.service 'reportBuilder', ($q, NotSoShittyUser, Sprint, Project, trelloUtils, dynamicFields)->
   converter = new showdown.Converter()
 
   promise = undefined
   project = undefined
   sprint = undefined
-
-  replace = (message, toRemplace, replacement) ->
-    message.subject = message.subject.replace toRemplace, replacement
-    message.body = message.body.replace toRemplace, replacement
-    message
-
-  renderSprintNumber = (message) ->
-    promise.then ->
-      replace message, '{sprintNumber}', sprint.number
-
-  renderDate = (message) ->
-    promise.then ->
-      replace message, /\{today#(.+?)\}/g, (match, dateFormat) ->
-        moment().format dateFormat
 
   renderPoints = (message) ->
     getCurrentDayIndex = (bdcData) ->
@@ -31,7 +17,6 @@ angular.module 'NotSoShitty.daily-report'
     .then (message) ->
       index = getCurrentDayIndex sprint.bdcData
       message = replace message, '{done}', sprint.bdcData[index].done
-      console.log sprint.bdcData[index]
       diff = sprint.bdcData[index].done - sprint.bdcData[index].standard
       message = replace message, '{gap}', Math.abs diff
       label = if diff > 0 then message.aheadLabel else message.behindLabel
@@ -64,13 +49,6 @@ angular.module 'NotSoShitty.daily-report'
       message.to = _.filter _.union devsEmails, memberEmails
       message
 
-  renderSprintGoal = (message) ->
-    promise.then ->
-      replace message, '{sprintGoal}', sprint.goal
-
-  dateFormat: (_dateFormat_) ->
-    dateFormat = _dateFormat_
-
   init: ->
     promise = NotSoShittyUser.getCurrentUser().then (user) ->
       project = user.project
@@ -84,13 +62,10 @@ angular.module 'NotSoShitty.daily-report'
 
     message.body = converter.makeHtml message.body
 
-    renderSprintGoal message
-    .then (message) ->
-      renderSprintNumber message
-    .then (message) ->
-      renderDate message
-    .then (message) ->
-      renderPoints message
+    message.subject = dynamicFields.render message.subject
+    message.body = dynamicFields.render message.body
+
+    renderPoints message
     .then (message) ->
       renderBDC message, sprint.bdcBase64, useCid
     .then (message) ->
