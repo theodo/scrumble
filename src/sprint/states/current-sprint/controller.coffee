@@ -7,15 +7,16 @@ angular.module 'NotSoShitty.bdc'
   BDCDataProvider
   TrelloClient
   trelloUtils
+  dynamicFields
   svgToPng
   sprint
+  project
   Sprint
 ) ->
-  # tmp for migration
-  unless sprint.info?
-    sprint.info =
-      bdcTitle: 'Burndown Chart'
   $state.go 'tab.new-sprint' unless sprint?
+
+  dynamicFields.project project
+  dynamicFields.sprint sprint
 
   if sprint.bdcData?
     # the date is saved as a string so we've to convert it
@@ -23,7 +24,7 @@ angular.module 'NotSoShitty.bdc'
       day.date = moment(day.date).toDate()
   else
     sprint.bdcData = BDCDataProvider.initializeBDC sprint.dates.days, sprint.resources
-  $scope.info = sprint.info
+  $scope.bdcTitle = dynamicFields.render project.settings?.bdcTitle
   $scope.tableData = sprint.bdcData
 
   getCurrentDayIndex = (bdcData) ->
@@ -68,13 +69,17 @@ angular.module 'NotSoShitty.bdc'
       clickOutsideToClose: true
       fullscreen: useFullScreen
       resolve:
-        title: -> sprint.info?.bdcTitle
+        title: -> project.settings?.bdcTitle
+        availableFields: -> dynamicFields.getAvailableFields()
     ).then (title) ->
-      sprint.info.bdcTitle = title
-      sprint.save()
+      project.settings ?= {}
+      project.settings.bdcTitle = title
+      project.save().then (project) ->
+        $scope.bdcTitle = dynamicFields.render project.settings?.bdcTitle
 
-  DialogController = ($scope, $mdDialog, title) ->
+  DialogController = ($scope, $mdDialog, title, availableFields) ->
     $scope.title = title
+    $scope.availableFields = availableFields
     $scope.hide = ->
       $mdDialog.hide()
     $scope.cancel = ->

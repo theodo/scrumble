@@ -13,6 +13,15 @@ angular.module 'NotSoShitty.bdc'
         .catch (err) ->
           console.log err
           return null
+      project: (NotSoShittyUser, Project) ->
+        NotSoShittyUser.getCurrentUser()
+        .then (user) ->
+          Project.find user.project.objectId
+        .then (project) ->
+          project
+        .catch (err) ->
+          console.log err
+          return null
   .state 'tab.new-sprint',
     url: '/sprint/new'
     controller: 'NewSprintCtrl'

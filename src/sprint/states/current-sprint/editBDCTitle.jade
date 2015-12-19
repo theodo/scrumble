@@ -2,7 +2,7 @@ md-dialog(aria-label='Edit BDC Title', ng-cloak)
   form
     md-toolbar
       .md-toolbar-tools
-        h2 Edit BDC Title
+        h2 Edit Burndown Chart Title
         span(flex)
         md-button.md-icon-button(ng-click='cancel()')
           md-icon(md-svg-src='close', aria-label='Close dialog')
@@ -11,6 +11,8 @@ md-dialog(aria-label='Edit BDC Title', ng-cloak)
         md-input-container.md-block
           label Burndown chart title
           input(ng-model="title")
+        h3 Available Dynamic Fields
+        dynamic-fields-list(available-fields='availableFields')
     md-dialog-actions(layout='row')
       md-button(ng-click="save()")
         | Save

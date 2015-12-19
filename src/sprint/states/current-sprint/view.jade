@@ -2,14 +2,14 @@ div(layout="row" layout-align="center start")
   md-card(flex="60")
     md-toolbar.md-hue-2
       .md-toolbar-tools
-        h2.md-title {{ info.bdcTitle }}
+        h2.md-title {{ bdcTitle }}
         span(flex)
         md-menu
           md-button.md-icon-button(aria-label='Open BDC menu', ng-click='openBDCMenu($mdOpenMenu, $event)')
             md-icon(md-menu-origin='', md-svg-icon='more')
           md-menu-content(width='4')
             md-menu-item
-              md-button(ng-click='editBDCTitle($event)')
+              md-button(ng-click='editBDCTitle($event)' disabled="disabled")
                 md-icon(md-svg-icon='table-edit', md-menu-align-target='')
                 | Edit BDC
             md-menu-item
