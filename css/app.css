@@ -36,12 +36,9 @@ footer footer a:focus {
   outline: none;
 }
 
-md-content {
-  min-height: 100%;
-}
-body,
-.container {
+md-content.grey-background {
   background-color: #efefef;
+  min-height: 100%;
 }
 .column-width-80 {
   width: 80%;

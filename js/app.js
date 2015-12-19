@@ -1297,14 +1297,14 @@ angular.module('NotSoShitty.bdc').directive('burndown', function() {
       whRatio = 0.54;
       computeDimensions = function() {
         var config, height, width;
-        if (window.innerWidth / 2 > maxWidth) {
+        if (window.innerWidth > maxWidth) {
           width = 800;
         } else {
-          width = window.innerWidth / 2 - 80;
+          width = window.innerWidth * 0.8;
         }
         height = whRatio * width;
         if (height + 128 > window.innerHeight) {
-          height = window.innerHeight / 2 - 128;
+          height = window.innerHeight * 0.8;
           width = height / whRatio;
         }
         config = {
@@ -1314,7 +1314,7 @@ angular.module('NotSoShitty.bdc').directive('burndown', function() {
           margins: {
             top: 30,
             right: 70,
-            bottom: 30,
+            bottom: 60,
             left: 50
           },
           colors: {
@@ -1352,7 +1352,7 @@ angular.module('NotSoShitty.bdc').directive('burndown', function() {
 });
 
 angular.module('NotSoShitty.bdc').controller('BurnDownChartCtrl', function($scope, $state, $mdDialog, $mdMedia, BDCDataProvider, TrelloClient, trelloUtils, dynamicFields, svgToPng, sprint, project, Sprint) {
-  var DialogController, day, getCurrentDayIndex, _i, _len, _ref, _ref1;
+  var DialogController, day, _i, _len, _ref, _ref1;
   if (sprint == null) {
     $state.go('tab.new-sprint');
   }
@@ -1368,31 +1368,12 @@ angular.module('NotSoShitty.bdc').controller('BurnDownChartCtrl', function($scop
     sprint.bdcData = BDCDataProvider.initializeBDC(sprint.dates.days, sprint.resources);
   }
   $scope.bdcTitle = dynamicFields.render((_ref1 = project.settings) != null ? _ref1.bdcTitle : void 0);
-  $scope.tableData = sprint.bdcData;
-  getCurrentDayIndex = function(bdcData) {
-    var i, _j, _len1;
-    for (i = _j = 0, _len1 = bdcData.length; _j < _len1; i = ++_j) {
-      day = bdcData[i];
-      if (day.done == null) {
-        return i;
-      }
-    }
-  };
-  $scope.currentDayIndex = getCurrentDayIndex($scope.tableData);
+  $scope.bdcData = sprint.bdcData;
   $scope.save = function() {
     var svg;
     svg = d3.select('#bdcgraph')[0][0].firstChild;
     sprint.bdcBase64 = svgToPng.getPngBase64(svg);
-    return sprint.save().then(function() {
-      return $scope.currentDayIndex = getCurrentDayIndex($scope.tableData);
-    });
-  };
-  $scope.fetchTrelloDonePoints = function() {
-    if (sprint.doneColumn != null) {
-      return trelloUtils.getColumnPoints(sprint.doneColumn).then(function(points) {
-        return $scope.tableData[$scope.currentDayIndex].done = points;
-      });
-    }
+    return sprint.save();
   };
   $scope.showConfirmNewSprint = function(ev) {
     var confirm;
@@ -1438,6 +1419,31 @@ angular.module('NotSoShitty.bdc').controller('BurnDownChartCtrl', function($scop
       });
     });
   };
+  $scope.openEditBDC = function(ev) {
+    var useFullScreen;
+    useFullScreen = $mdMedia('sm' || $mdMedia('xs'));
+    return $mdDialog.show({
+      controller: 'EditBDCCtrl',
+      templateUrl: 'sprint/states/current-sprint/editBDC.html',
+      parent: angular.element(document.body),
+      targetEvent: ev,
+      clickOutsideToClose: true,
+      fullscreen: useFullScreen,
+      resolve: {
+        data: function() {
+          return angular.copy(sprint.bdcData);
+        },
+        doneColumn: function() {
+          return sprint.doneColumn;
+        }
+      }
+    }).then(function(data) {
+      sprint.bdcData = data;
+      return sprint.save().then(function() {
+        return $scope.bdcData = data;
+      });
+    });
+  };
   return DialogController = function($scope, $mdDialog, title, availableFields) {
     $scope.title = title;
     $scope.availableFields = availableFields;
@@ -1450,6 +1456,37 @@ angular.module('NotSoShitty.bdc').controller('BurnDownChartCtrl', function($scop
     return $scope.save = function() {
       return $mdDialog.hide($scope.title);
     };
+  };
+});
+
+angular.module('NotSoShitty.bdc').controller('EditBDCCtrl', function($scope, $mdDialog, data, trelloUtils, doneColumn) {
+  var getCurrentDayIndex;
+  $scope.data = data;
+  getCurrentDayIndex = function(data) {
+    var day, i, _i, _len;
+    for (i = _i = 0, _len = data.length; _i < _len; i = ++_i) {
+      day = data[i];
+      if (day.done == null) {
+        return i;
+      }
+    }
+  };
+  $scope.currentDayIndex = getCurrentDayIndex($scope.data);
+  $scope.hide = function() {
+    return $mdDialog.hide();
+  };
+  $scope.cancel = function() {
+    return $mdDialog.cancel();
+  };
+  $scope.save = function() {
+    return $mdDialog.hide($scope.data);
+  };
+  return $scope.fetchTrelloDonePoints = function() {
+    if (doneColumn != null) {
+      return trelloUtils.getColumnPoints(doneColumn).then(function(points) {
+        return $scope.data[$scope.currentDayIndex].done = points;
+      });
+    }
   };
 });
 
