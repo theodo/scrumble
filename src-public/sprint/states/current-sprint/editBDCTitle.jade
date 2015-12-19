@@ -1,0 +1,16 @@
+md-dialog(aria-label='Edit BDC Title', ng-cloak)
+  form
+    md-toolbar
+      .md-toolbar-tools
+        h2 Edit BDC Title
+        span(flex)
+        md-button.md-icon-button(ng-click='cancel()')
+          md-icon(md-svg-src='close', aria-label='Close dialog')
+    md-dialog-content
+      .md-dialog-content
+        md-input-container.md-block
+          label Burndown chart title
+          input(ng-model="title")
+    md-dialog-actions(layout='row')
+      md-button(ng-click="save()")
+        | Save

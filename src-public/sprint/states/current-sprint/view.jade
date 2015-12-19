@@ -1,7 +1,27 @@
 div(layout="row" layout-align="center start")
-  md-card.layout-padding(flex="60")
-    h2.md-title(layout-align="center end") BURN DOWN CHART
-      burndown(data="tableData")
+  md-card(flex="60")
+    md-toolbar.md-hue-2
+      .md-toolbar-tools
+        h2.md-title {{ info.bdcTitle }}
+        span(flex)
+        md-menu
+          md-button.md-icon-button(aria-label='Open BDC menu', ng-click='openBDCMenu($mdOpenMenu, $event)')
+            md-icon(md-menu-origin='', md-svg-icon='more')
+          md-menu-content(width='4')
+            md-menu-item
+              md-button(ng-click='editBDCTitle($event)')
+                md-icon(md-svg-icon='table-edit', md-menu-align-target='')
+                | Edit BDC
+            md-menu-item
+              md-button(ng-click='openEditTitle($event)')
+                md-icon(md-svg-icon='border-color', md-menu-align-target='')
+                | Edit Title
+            md-menu-item
+              md-button(ng-click='print()' disabled="disabled")
+                md-icon(md-svg-icon='printer', md-menu-align-target='')
+                | Print
+
+    burndown(data="tableData")
   md-card.layout-padding(flex="30")
     md-data-table-container
       table.bdc-data(md-data-table)

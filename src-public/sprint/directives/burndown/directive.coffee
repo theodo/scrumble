@@ -35,7 +35,7 @@ angular.module 'NotSoShitty.bdc'
         startLabel: 'Start'
         endLabel: 'End'
         dateFormat: '%A'
-        xTitle: 'Daily meetings'
+        xTitle: ''
         dotRadius: 4
         standardStrokeWidth: 2
         doneStrokeWidth: 2
