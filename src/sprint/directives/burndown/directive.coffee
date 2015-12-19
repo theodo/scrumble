@@ -33,7 +33,7 @@ angular.module 'NotSoShitty.bdc'
           bad: '#FA6E69'
           labels: '#113F59'
         startLabel: 'Start'
-        endLabel: 'End'
+        endLabel: 'Ceremony'
         dateFormat: '%A'
         xTitle: ''
         dotRadius: 4
