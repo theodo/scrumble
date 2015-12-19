@@ -5,14 +5,14 @@
   margin-top: -10%;
   text-align: center;
 }
-h1,
-h3 {
+.landing-page h1,
+.landing-page h3 {
   font-weight: 300;
 }
-h1 {
+.landing-page h1 {
   color: #636363;
 }
-h3 {
+.landing-page h3 {
   color: #9E9E9E;
   font-style: italic;
 }
@@ -42,7 +42,6 @@ md-content {
 body,
 .container {
   background-color: #efefef;
-  min-height: 100%;
 }
 .column-width-80 {
   width: 80%;

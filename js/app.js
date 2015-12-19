@@ -58,6 +58,90 @@ angular.module('NotSoShitty.bdc', []);
 
 angular.module('NotSoShitty.storage', []);
 
+angular.module('NotSoShitty.common').service('dynamicFields', function() {
+  var dict, project, replaceToday, replaceYesterday, sprint;
+  sprint = null;
+  project = null;
+  dict = {
+    '{sprintNumber}': {
+      value: function() {
+        return sprint != null ? sprint.number : void 0;
+      },
+      description: 'Current sprint number',
+      icon: 'cow'
+    },
+    '{sprintGoal}': {
+      value: function() {
+        return sprint != null ? sprint.goal : void 0;
+      },
+      description: 'The sprint goal (never forget it)',
+      icon: 'target'
+    },
+    '{speed}': {
+      value: function() {
+        var _ref, _ref1, _ref2;
+        if (_.isNumber(sprint != null ? (_ref = sprint.resources) != null ? _ref.speed : void 0 : void 0)) {
+          return sprint != null ? (_ref1 = sprint.resources) != null ? _ref1.speed.toFixed(1) : void 0 : void 0;
+        } else {
+          return sprint != null ? (_ref2 = sprint.resources) != null ? _ref2.speed : void 0 : void 0;
+        }
+      },
+      description: 'Estimated number of points per day per person',
+      icon: 'run'
+    }
+  };
+  replaceToday = function(text) {
+    return text.replace(/\{today#(.+?)\}/g, function(match, dateFormat) {
+      return moment().format(dateFormat);
+    });
+  };
+  replaceYesterday = function(text) {
+    return text.replace(/\{yesterday#(.+?)\}/g, function(match, dateFormat) {
+      return moment().subtract(1, 'days').format(dateFormat);
+    });
+  };
+  return {
+    sprint: function(_sprint_) {
+      return sprint = _sprint_;
+    },
+    project: function(_project_) {
+      return project = _project_;
+    },
+    getAvailableFields: function() {
+      var result;
+      result = _.map(dict, function(value, key) {
+        return {
+          key: key,
+          description: value.description,
+          icon: value.icon
+        };
+      });
+      result.push({
+        key: '{today#format}',
+        description: 'Today\'s date where format is a <a href="http://momentjs.com/docs/#/parsing/string-format/" target="_blank">moment format</a>',
+        icon: 'clock'
+      });
+      result.push({
+        key: '{yesterday#format}',
+        description: 'Yesterday\'s date where format is a <a href="http://momentjs.com/docs/#/parsing/string-format/" target="_blank">moment format</a>. examples: EEEE for weekday, YYYY-MM-DD',
+        icon: 'calendar-today'
+      });
+      return result;
+    },
+    render: function(text) {
+      var elt, key, result;
+      result = text || '';
+      for (key in dict) {
+        elt = dict[key];
+        result = result.split(key).join(elt.value());
+      }
+      result = replaceToday(result);
+      result = replaceYesterday(result);
+      return result;
+    }
+  };
+});
+
 angular.module('NotSoShitty.common').service('trelloUtils', function(TrelloClient) {
   var getCardPoints;
   getCardPoints = function(card) {
@@ -187,29 +271,12 @@ angular.module('NotSoShitty.daily-report').factory('DailyReport', function(Parse
   })(Parse.Model);
 });
 
-angular.module('NotSoShitty.daily-report').service('reportBuilder', function($q, NotSoShittyUser, Sprint, Project, trelloUtils) {
-  var converter, project, promise, renderBDC, renderDate, renderPoints, renderSprintGoal, renderSprintNumber, renderTo, replace, sprint;
+angular.module('NotSoShitty.daily-report').service('reportBuilder', function($q, NotSoShittyUser, Sprint, Project, trelloUtils, dynamicFields) {
+  var converter, project, promise, renderBDC, renderPoints, renderTo, sprint;
   converter = new showdown.Converter();
   promise = void 0;
   project = void 0;
   sprint = void 0;
-  replace = function(message, toRemplace, replacement) {
-    message.subject = message.subject.replace(toRemplace, replacement);
-    message.body = message.body.replace(toRemplace, replacement);
-    return message;
-  };
-  renderSprintNumber = function(message) {
-    return promise.then(function() {
-      return replace(message, '{sprintNumber}', sprint.number);
-    });
-  };
-  renderDate = function(message) {
-    return promise.then(function() {
-      return replace(message, /\{today#(.+?)\}/g, function(match, dateFormat) {
-        return moment().format(dateFormat);
-      });
-    });
-  };
   renderPoints = function(message) {
     var getCurrentDayIndex;
     getCurrentDayIndex = function(bdcData) {
@@ -229,7 +296,6 @@ angular.module('NotSoShitty.daily-report').service('reportBuilder', function($q,
       var diff, index, label;
       index = getCurrentDayIndex(sprint.bdcData);
       message = replace(message, '{done}', sprint.bdcData[index].done);
-      console.log(sprint.bdcData[index]);
       diff = sprint.bdcData[index].done - sprint.bdcData[index].standard;
       message = replace(message, '{gap}', Math.abs(diff));
       label = diff > 0 ? message.aheadLabel : message.behindLabel;
@@ -287,16 +353,7 @@ angular.module('NotSoShitty.daily-report').service('reportBuilder', function($q,
       return message;
     });
   };
-  renderSprintGoal = function(message) {
-    return promise.then(function() {
-      return replace(message, '{sprintGoal}', sprint.goal);
-    });
-  };
   return {
-    dateFormat: function(_dateFormat_) {
-      var dateFormat;
-      return dateFormat = _dateFormat_;
-    },
     init: function() {
       return promise = NotSoShittyUser.getCurrentUser().then(function(user) {
         project = user.project;
@@ -310,13 +367,9 @@ angular.module('NotSoShitty.daily-report').service('reportBuilder', function($q,
     render: function(message, useCid) {
       message = angular.copy(message);
       message.body = converter.makeHtml(message.body);
-      return renderSprintGoal(message).then(function(message) {
-        return renderSprintNumber(message);
-      }).then(function(message) {
-        return renderDate(message);
-      }).then(function(message) {
-        return renderPoints(message);
-      }).then(function(message) {
+      message.subject = dynamicFields.render(message.subject);
+      message.body = dynamicFields.render(message.body);
+      return renderPoints(message).then(function(message) {
         return renderBDC(message, sprint.bdcBase64, useCid);
       }).then(function(message) {
         return renderTo(message);
@@ -518,7 +571,7 @@ angular.module('NotSoShitty.storage').factory('Project', function(Parse, $q) {
       return Project.__super__.constructor.apply(this, arguments);
     }
 
-    Project.configure("Project", "boardId", "name", "columnMapping", "team", "currentSprint");
+    Project.configure("Project", "boardId", "name", "columnMapping", "team", "currentSprint", "settings");
 
     Project.get = function(boardId) {
       var deferred;
@@ -528,10 +581,10 @@ angular.module('NotSoShitty.storage').factory('Project', function(Parse, $q) {
           where: {
             boardId: boardId
           }
-        }).then(function(settingsArray) {
-          var settings;
-          settings = settingsArray.length > 0 ? settingsArray[0] : null;
-          return deferred.resolve(settings);
+        }).then(function(projectsArray) {
+          var project;
+          project = projectsArray.length > 0 ? projectsArray[0] : null;
+          return deferred.resolve(project);
         })["catch"](deferred.reject);
       } else {
         deferred.reject('No boardId');
@@ -553,6 +606,16 @@ angular.module('NotSoShitty.bdc').config(function($stateProvider) {
       sprint: function(NotSoShittyUser, Sprint) {
         return NotSoShittyUser.getCurrentUser().then(function(user) {
           return Sprint.getActiveSprint(user.project);
+        })["catch"](function(err) {
+          console.log(err);
+          return null;
+        });
+      },
+      project: function(NotSoShittyUser, Project) {
+        return NotSoShittyUser.getCurrentUser().then(function(user) {
+          return Project.find(user.project.objectId);
+        }).then(function(project) {
+          return project;
         })["catch"](function(err) {
           console.log(err);
           return null;
@@ -842,6 +905,16 @@ angular.module('NotSoShitty.storage').service('userService', function(NotSoShitt
           });
         }
       });
+    }
+  };
+});
+
+angular.module('NotSoShitty.common').directive('dynamicFieldsList', function() {
+  return {
+    restrict: 'E',
+    templateUrl: 'common/directives/dynamic-fields/view.html',
+    scope: {
+      availableFields: '='
     }
   };
 });
@@ -1254,7 +1327,7 @@ angular.module('NotSoShitty.bdc').directive('burndown', function() {
           startLabel: 'Start',
           endLabel: 'End',
           dateFormat: '%A',
-          xTitle: 'Daily meetings',
+          xTitle: '',
           dotRadius: 4,
           standardStrokeWidth: 2,
           doneStrokeWidth: 2,
@@ -1278,11 +1351,13 @@ angular.module('NotSoShitty.bdc').directive('burndown', function() {
   };
 });
 
-angular.module('NotSoShitty.bdc').controller('BurnDownChartCtrl', function($scope, $state, $mdDialog, BDCDataProvider, TrelloClient, trelloUtils, svgToPng, sprint, Sprint) {
-  var day, getCurrentDayIndex, _i, _len, _ref;
+angular.module('NotSoShitty.bdc').controller('BurnDownChartCtrl', function($scope, $state, $mdDialog, $mdMedia, BDCDataProvider, TrelloClient, trelloUtils, dynamicFields, svgToPng, sprint, project, Sprint) {
+  var DialogController, day, getCurrentDayIndex, _i, _len, _ref, _ref1;
   if (sprint == null) {
     $state.go('tab.new-sprint');
   }
+  dynamicFields.project(project);
+  dynamicFields.sprint(sprint);
   if (sprint.bdcData != null) {
     _ref = sprint.bdcData;
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -1292,6 +1367,7 @@ angular.module('NotSoShitty.bdc').controller('BurnDownChartCtrl', function($scop
   } else {
     sprint.bdcData = BDCDataProvider.initializeBDC(sprint.dates.days, sprint.resources);
   }
+  $scope.bdcTitle = dynamicFields.render((_ref1 = project.settings) != null ? _ref1.bdcTitle : void 0);
   $scope.tableData = sprint.bdcData;
   getCurrentDayIndex = function(bdcData) {
     var i, _j, _len1;
@@ -1318,7 +1394,7 @@ angular.module('NotSoShitty.bdc').controller('BurnDownChartCtrl', function($scop
       });
     }
   };
-  return $scope.showConfirmNewSprint = function(ev) {
+  $scope.showConfirmNewSprint = function(ev) {
     var confirm;
     confirm = $mdDialog.confirm().title('Start a new sprint').textContent('Starting a new sprint will end this one').targetEvent(ev).ok('OK').cancel('Cancel');
     return $mdDialog.show(confirm).then(function() {
@@ -1327,13 +1403,64 @@ angular.module('NotSoShitty.bdc').controller('BurnDownChartCtrl', function($scop
       });
     });
   };
+  $scope.openBDCMenu = function($mdOpenMenu, ev) {
+    var originatorEv;
+    originatorEv = ev;
+    return $mdOpenMenu(ev);
+  };
+  $scope.openEditTitle = function(ev) {
+    var useFullScreen;
+    useFullScreen = $mdMedia('sm' || $mdMedia('xs'));
+    return $mdDialog.show({
+      controller: DialogController,
+      templateUrl: 'sprint/states/current-sprint/editBDCTitle.html',
+      parent: angular.element(document.body),
+      targetEvent: ev,
+      clickOutsideToClose: true,
+      fullscreen: useFullScreen,
+      resolve: {
+        title: function() {
+          var _ref2;
+          return (_ref2 = project.settings) != null ? _ref2.bdcTitle : void 0;
+        },
+        availableFields: function() {
+          return dynamicFields.getAvailableFields();
+        }
+      }
+    }).then(function(title) {
+      if (project.settings == null) {
+        project.settings = {};
+      }
+      project.settings.bdcTitle = title;
+      return project.save().then(function(project) {
+        var _ref2;
+        return $scope.bdcTitle = dynamicFields.render((_ref2 = project.settings) != null ? _ref2.bdcTitle : void 0);
+      });
+    });
+  };
+  return DialogController = function($scope, $mdDialog, title, availableFields) {
+    $scope.title = title;
+    $scope.availableFields = availableFields;
+    $scope.hide = function() {
+      return $mdDialog.hide();
+    };
+    $scope.cancel = function() {
+      return $mdDialog.cancel();
+    };
+    return $scope.save = function() {
+      return $mdDialog.hide($scope.title);
+    };
+  };
 });
 
 angular.module('NotSoShitty.bdc').controller('NewSprintCtrl', function($scope, $timeout, $state, TrelloClient, project, sprintService, Sprint, Project) {
-  var isActivable, promise, _ref;
+  var info, isActivable, promise, _ref;
   $scope.project = project;
   $scope.sprint = new Sprint({
-    project: project,
+    project: project
+  }, info = {
+    bdcTitle: 'Burndown Chart'
+  }, {
     number: null,
     goal: null,
     doneColumn: null,
