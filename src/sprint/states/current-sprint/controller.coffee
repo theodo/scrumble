@@ -65,7 +65,9 @@ angular.module 'NotSoShitty.bdc'
       project.settings ?= {}
       project.settings.bdcTitle = title
       project.save().then (project) ->
-        $scope.bdcTitle = dynamicFields.render project.settings?.bdcTitle
+        dynamicFields.render project.settings?.bdcTitle
+      .then (title) ->
+        $scope.bdcTitle = title
 
   $scope.openEditBDC = (ev) ->
     useFullScreen = ($mdMedia 'sm' or $mdMedia 'xs')

@@ -6,27 +6,18 @@ angular.module 'NotSoShitty.daily-report'
   project = undefined
   sprint = undefined
 
-  renderPoints = (message) ->
+  renderBehindAhead = (message) ->
     getCurrentDayIndex = (bdcData) ->
       for day, i in bdcData
         return Math.max i-1, 0 unless day.done?
     promise.then ->
-      trelloUtils.getColumnPoints project.columnMapping.toValidate
-    .then (points) ->
-      replace message, '{toValidate}', points
-    .then (message) ->
       index = getCurrentDayIndex sprint.bdcData
-      message = replace message, '{done}', sprint.bdcData[index].done
       diff = sprint.bdcData[index].done - sprint.bdcData[index].standard
-      message = replace message, '{gap}', Math.abs diff
       label = if diff > 0 then message.aheadLabel else message.behindLabel
-      replace message, '{behind/ahead}', label
-    .then (message) ->
-      trelloUtils.getColumnPoints project.columnMapping.blocked
-      .then (points) ->
-        replace message, '{blocked}', points
-    .then (message) ->
-      replace message, '{total}', sprint.resources.totalPoints
+      message.body = message.body.replace '{behind/ahead}', label
+      message.subject = message.subject.replace '{behind/ahead}', label
+
+      message
 
   renderBDC = (message, bdcBase64, useCid) ->
     src = if useCid then 'cid:bdc' else bdcBase64
@@ -62,10 +53,17 @@ angular.module 'NotSoShitty.daily-report'
 
     message.body = converter.makeHtml message.body
 
-    message.subject = dynamicFields.render message.subject
-    message.body = dynamicFields.render message.body
+    dynamicFields.sprint sprint
+    dynamicFields.project project
 
-    renderPoints message
+    dynamicFields.render message.subject
+    .then (subject) ->
+      message.subject = subject
+      dynamicFields.render message.body
+    .then (body) ->
+      message.body = body
+    .then ->
+      renderBehindAhead message
     .then (message) ->
       renderBDC message, sprint.bdcBase64, useCid
     .then (message) ->
