@@ -17,6 +17,10 @@ div(layout="row" layout-align="center start")
                 md-icon(md-svg-icon='border-color', md-menu-align-target='')
                 | Edit Title
             md-menu-item
+              md-button(ui-sref='tab.edit-sprint({sprintId: sprint.objectId})')
+                md-icon(md-svg-icon='settings', md-menu-align-target='')
+                | Settings
+            md-menu-item
               md-button(ng-click='print()' disabled="disabled")
                 md-icon(md-svg-icon='printer', md-menu-align-target='')
                 | Print

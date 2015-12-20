@@ -36,4 +36,4 @@ div.sprint-body(layout="row" layout-align="center end")
           ng-model="sprint.resources.speed"
         )
     section(layout="row" layout-sm="column" layout-align="center center" layout-wrap)
-      md-button.md-raised.md-primary(ng-disabled="!activable" ng-click="activate()") START THE SPRINT
+      md-button.md-raised.md-primary(ng-disabled="!activable" ng-click="activate()") {{ saveLabel }}

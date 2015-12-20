@@ -1,10 +1,10 @@
 angular.module 'NotSoShitty.bdc'
-.controller 'BurnDownChartCtrl', (
+.controller 'CurrentSprintCtrl', (
   $scope
   $state
   $mdDialog
   $mdMedia
-  BDCDataProvider
+  sprintUtils
   TrelloClient
   trelloUtils
   dynamicFields
@@ -15,6 +15,7 @@ angular.module 'NotSoShitty.bdc'
 ) ->
   $state.go 'tab.new-sprint' unless sprint?
 
+  $scope.sprint = sprint
   dynamicFields.project project
   dynamicFields.sprint sprint
 
@@ -22,17 +23,11 @@ angular.module 'NotSoShitty.bdc'
     # the date is saved as a string so we've to convert it
     for day in sprint.bdcData
       day.date = moment(day.date).toDate()
-  else
-    sprint.bdcData = BDCDataProvider.initializeBDC sprint.dates.days, sprint.resources
-  $scope.bdcTitle = dynamicFields.render project.settings?.bdcTitle
+  sprint.bdcData = sprintUtils.generateBDC sprint.dates.days, sprint.resources, sprint.bdcData
+  dynamicFields.render project.settings?.bdcTitle
+  .then (title) ->
+    $scope.bdcTitle = title
   $scope.bdcData = sprint.bdcData
-
-
-
-  $scope.save = ->
-    svg = d3.select('#bdcgraph')[0][0].firstChild
-    sprint.bdcBase64 = svgToPng.getPngBase64 svg
-    sprint.save()
 
   $scope.showConfirmNewSprint = (ev) ->
     confirm = $mdDialog.confirm()
@@ -83,8 +78,9 @@ angular.module 'NotSoShitty.bdc'
         doneColumn: -> sprint.doneColumn
     ).then (data) ->
       sprint.bdcData = data
-      sprint.save().then ->
-        $scope.bdcData = data
+      svg = d3.select('#bdcgraph')[0][0].firstChild
+      sprint.bdcBase64 = svgToPng.getPngBase64 svg
+      sprint.save()
 
   DialogController = ($scope, $mdDialog, title, availableFields) ->
     $scope.title = title

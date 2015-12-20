@@ -1,32 +1,25 @@
 angular.module 'NotSoShitty.bdc'
-.controller 'NewSprintCtrl', (
+.controller 'EditSprintCtrl', (
   $scope
   $timeout
   $state
   TrelloClient
   project
-  sprintService
-  Sprint
+  sprintUtils
+  sprint
   Project
 ) ->
   $scope.project = project
 
-  $scope.sprint = new Sprint
-    project: project
-    info =
-      bdcTitle: 'Burndown Chart'
-    number: null
-    goal: null
-    doneColumn: null
-    dates:
-      start: null
-      end: null
-      days: []
-    resources:
-      matrix: []
-      speed: null
-      totalPoints: null
-    isActive: false
+  if sprint.bdcData?
+    # the date is saved as a string so we've to convert it
+    for day in sprint.bdcData
+      day.date = moment(day.date).toDate()
+    sprint.dates.start = moment(sprint.dates.start).toDate()
+    sprint.dates.end = moment(sprint.dates.end).toDate()
+
+  $scope.sprint = sprint
+
 
   TrelloClient.get("/boards/#{project.boardId}/lists")
   .then (response) ->
@@ -35,6 +28,7 @@ angular.module 'NotSoShitty.bdc'
   $scope.devTeam = project.team?.dev
 
   promise = null
+  $scope.saveLabel = if $state.is 'tab.new-sprint' then 'Start the sprint' else 'Save'
   $scope.save = ->
     if isActivable()
       $scope.sprint.save()
@@ -57,34 +51,34 @@ angular.module 'NotSoShitty.bdc'
     $scope.activable = isActivable()
     return if newVal is oldVal
     return unless newVal?
-    $scope.sprint.dates.days = sprintService.generateDayList $scope.sprint.dates.start, $scope.sprint.dates.end
+    $scope.sprint.dates.days = sprintUtils.generateDayList $scope.sprint.dates.start, $scope.sprint.dates.end
 
   $scope.$watch 'sprint.dates.days', (newVal, oldVal) ->
     $scope.activable = isActivable()
     return if newVal is oldVal
     $scope.sprint.resources ?= {}
-    $scope.sprint.resources.matrix = sprintService.generateResources $scope.sprint.dates?.days, $scope.devTeam
+    $scope.sprint.resources.matrix = sprintUtils.generateResources $scope.sprint.dates?.days, $scope.devTeam
 
   $scope.$watch 'sprint.resources.matrix', (newVal, oldVal) ->
     $scope.activable = isActivable()
     return if newVal is oldVal
     return unless newVal
-    $scope.sprint.resources.totalManDays = sprintService.getTotalManDays newVal
+    $scope.sprint.resources.totalManDays = sprintUtils.getTotalManDays newVal
 
   $scope.$watch 'sprint.resources.totalManDays', (newVal, oldVal) ->
     $scope.activable = isActivable()
     return if newVal is oldVal
     return unless newVal and newVal > 0
-    $scope.sprint.resources.speed = sprintService.calculateSpeed $scope.sprint.resources.totalPoints, newVal
+    $scope.sprint.resources.speed = sprintUtils.calculateSpeed $scope.sprint.resources.totalPoints, newVal
 
   $scope.$watch 'sprint.resources.totalPoints', (newVal, oldVal) ->
     $scope.activable = isActivable()
     return if newVal is oldVal
     return unless newVal? and newVal > 0
-    $scope.sprint.resources.speed = sprintService.calculateSpeed newVal, $scope.sprint.resources.totalManDays
+    $scope.sprint.resources.speed = sprintUtils.calculateSpeed newVal, $scope.sprint.resources.totalManDays
 
   $scope.$watch 'sprint.resources.speed', (newVal, oldVal) ->
     $scope.activable = isActivable()
     return if newVal is oldVal
     return unless newVal? and newVal > 0
-    $scope.sprint.resources.totalPoints = sprintService.calculateTotalPoints $scope.sprint.resources.totalManDays, newVal
+    $scope.sprint.resources.totalPoints = sprintUtils.calculateTotalPoints $scope.sprint.resources.totalManDays, newVal

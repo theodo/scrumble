@@ -1,1 +1,5 @@
-angular.module 'NotSoShitty.bdc', []
+angular.module 'NotSoShitty.bdc', [
+  'ui.router'
+  'Parse'
+  'ngMaterial'
+]
