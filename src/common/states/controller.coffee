@@ -13,7 +13,7 @@ angular.module 'NotSoShitty.common'
   $scope.close = (menuId) ->
     $mdSidenav(menuId).close()
 
-  $scope.member = Avatar.getMember localStorageService.get('trello_email')
+  $scope.email = localStorageService.get('trello_email')
 
   $scope.project = ->
     $state.go 'tab.project'

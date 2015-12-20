@@ -11,13 +11,14 @@ md-content.grey-background
     layout='column'
     md-component-id='left'
   )
-    //- md-toolbar.md-tall.md-hue-2
-    //-   span(flex='')
-    //-   .md-toolbar-tools-bottom.inset(layout='column')
-    //-     //- trello-avatar(member='member')
-    //-     span
-    //-     div Nicolas Boutin
-    //-     div nicolasb@theodo.fr
+    md-toolbar.md-tall.md-hue-2
+      span(flex='')
+      .md-toolbar-tools-bottom.inset(layout='column')
+        //- trello-avatar(member='member')
+        div(profil-info)
+        span
+        div Nicolas Boutin
+        div {{ email }}
     md-list
       md-item.md-button(ng-click='sprint()')
         a
