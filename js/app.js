@@ -1656,6 +1656,7 @@ angular.module('NotSoShitty.bdc').controller('EditSprintCtrl', function($scope, 
   $scope.devTeam = (_ref1 = project.team) != null ? _ref1.dev : void 0;
   promise = null;
   $scope.saveLabel = $state.is('tab.new-sprint') ? 'Start the sprint' : 'Save';
+  $scope.title = $state.is('tab.new-sprint') ? 'NEW SPRINT' : 'EDIT SPRINT';
   $scope.save = function() {
     if (isActivable()) {
       return $scope.sprint.save();
