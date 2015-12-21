@@ -80,11 +80,6 @@ h2.md-title {
   left: 10px;
 }
 
-.markdown-cheatsheet {
-  position: absolute;
-  right: 0;
-}
-
 trello-avatar {
   display: inline-block;
   margin: 5px;
@@ -101,6 +96,11 @@ trello-avatar .trello-avatar .member-avatar.initials {
   text-align: center;
   background: #d3d3d3;
   font-weight: bold;
+}
+
+.markdown-cheatsheet {
+  position: absolute;
+  right: 0;
 }
 
 .profil-button {
