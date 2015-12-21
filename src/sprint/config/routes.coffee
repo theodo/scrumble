@@ -15,9 +15,9 @@ angular.module 'NotSoShitty.bdc'
           $state.go 'tab.new-sprint' unless sprint?
           sprint
       project: (NotSoShittyUser, Project, $state) ->
-        return $state.go 'trello-login' unless user?
         NotSoShittyUser.getCurrentUser()
         .then (user) ->
+          return $state.go 'trello-login' unless user?
           Project.find user.project.objectId
         .catch (err) ->
           if err.status is 404

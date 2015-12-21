@@ -24,5 +24,4 @@ angular.module 'NotSoShitty.login'
         user.email = localStorageService.get 'trello_email'
         user.save()
     .then ->
-      # $rootScope.$broadcast 'refresh-profil'
-      $state.go 'tab.project'
+      $state.go 'tab.current-sprint'
