@@ -10,6 +10,7 @@ angular.module 'NotSoShitty.daily-report'
     getCurrentDayIndex = (bdcData) ->
       for day, i in bdcData
         return Math.max i-1, 0 unless day.done?
+      return i
     promise.then ->
       index = getCurrentDayIndex sprint.bdcData
       diff = sprint.bdcData[index].done - sprint.bdcData[index].standard

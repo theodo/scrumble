@@ -6,6 +6,7 @@ angular.module 'NotSoShitty.common'
   getCurrentDayIndex = (bdcData) ->
     for day, i in bdcData
       return Math.max i-1, 0 unless day.done?
+    return i
 
   dict =
     '{sprintNumber}':
