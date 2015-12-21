@@ -70,3 +70,12 @@ angular.module 'NotSoShitty.bdc'
         Sprint.find($stateParams.sprintId).catch (err) ->
           console.warn err
           $state.go 'tab.new-sprint'
+  .state 'tab.sprint-list',
+    url: '/project/:projectId/sprints'
+    controller: 'SprintListCtrl'
+    templateUrl: 'sprint/states/list/view.html'
+    resolve:
+      project: (Project, $stateParams) ->
+        Project.find $stateParams.projectId
+      sprints: (Sprint, $stateParams) ->
+        Sprint.getByProjectId $stateParams.projectId

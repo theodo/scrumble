@@ -9,10 +9,10 @@ div
         md-menu-content(width='4')
           md-menu-item(ui-sref='tab.project')
             md-button
-              md-icon(md-svg-icon='border-color', md-menu-align-target='')
-              | Edit
-          md-menu-item(ng-click='openEditTitle($event)')
-            md-button(disabled="disabled")
+              md-icon(md-svg-icon='settings', md-menu-align-target='')
+              | Settings
+          md-menu-item(ui-sref='tab.sprint-list({projectId: project.objectId})')
+            md-button
               md-icon(md-svg-icon='view-list', md-menu-align-target='')
               | Sprints
           //- md-menu-item(ng-click='openEditTitle($event)')

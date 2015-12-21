@@ -1,0 +1,10 @@
+md-dialog(aria-label='Mango (Fruit)', ng-cloak='')
+  md-toolbar
+    .md-toolbar-tools
+      h2 Burndown Chart
+      span(flex='')
+      md-button.md-icon-button(ng-click='cancel()')
+        md-icon(md-svg-src='close', aria-label='Close dialog')
+  md-dialog-content
+    .md-dialog-content
+      img(ng-src="{{sprint.bdcBase64}}")

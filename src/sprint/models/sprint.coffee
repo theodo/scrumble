@@ -17,6 +17,14 @@ angular.module 'NotSoShitty.storage'
       .catch (err) ->
         console.warn err
 
+    @getByProjectId = (projectId) ->
+      @query
+        where:
+          project:
+            __type: "Pointer"
+            className: "Project"
+            objectId: projectId
+
     @close = (sprint) ->
       sprint.isActive = false
       sprint.save()
