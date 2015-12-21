@@ -8,20 +8,20 @@ div(layout="row" layout-align="center start")
           md-button.md-icon-button(aria-label='Open BDC menu', ng-click='openBDCMenu($mdOpenMenu, $event)')
             md-icon(md-menu-origin='', md-svg-icon='more')
           md-menu-content(width='4')
-            md-menu-item
-              md-button(ng-click='openEditBDC($event)')
+            md-menu-item(ng-click='openEditBDC($event)')
+              md-button
                 md-icon(md-svg-icon='table-edit', md-menu-align-target='')
                 | Edit BDC
-            md-menu-item
-              md-button(ng-click='openEditTitle($event)')
+            md-menu-item(ng-click='openEditTitle($event)')
+              md-button
                 md-icon(md-svg-icon='border-color', md-menu-align-target='')
                 | Edit Title
-            md-menu-item
-              md-button(ui-sref='tab.edit-sprint({sprintId: sprint.objectId})')
+            md-menu-item(ui-sref='tab.edit-sprint({sprintId: sprint.objectId})')
+              md-button
                 md-icon(md-svg-icon='settings', md-menu-align-target='')
                 | Settings
-            md-menu-item
-              md-button(ng-click='print()' disabled="disabled")
+            md-menu-item(ng-click='print()')
+              md-button(disabled="disabled")
                 md-icon(md-svg-icon='printer', md-menu-align-target='')
                 | Print
 

@@ -6,7 +6,7 @@ angular.module 'NotSoShitty.common'
   getCurrentDayIndex = (bdcData) ->
     for day, i in bdcData
       return Math.max i-1, 0 unless day.done?
-    return i
+    return i - 1
 
   dict =
     '{sprintNumber}':
@@ -41,14 +41,14 @@ angular.module 'NotSoShitty.common'
       value: ->
         if sprint?.bdcData?
           index = getCurrentDayIndex sprint.bdcData
-          sprint.bdcData[index].done
+          sprint.bdcData[index]?.done
       description: 'The number of points in the Trello done column'
       icon: 'check'
     '{gap}':
       value: ->
         if sprint?.bdcData?
           index = getCurrentDayIndex sprint.bdcData
-          diff = sprint.bdcData[index].done - sprint.bdcData[index].standard
+          diff = sprint.bdcData[index]?.done - sprint.bdcData[index]?.standard
           Math.abs(diff).toFixed 1
       description: 'The difference between the standard points and the done points'
       icon: 'tshirt-crew'
