@@ -28,35 +28,35 @@ angular.module 'NotSoShitty.common'
       value: ->
         if project?.columnMapping?.toValidate?
           trelloUtils.getColumnPoints project.columnMapping.toValidate
-      description: ''
-      icon: ''
+      description: 'The number of points in the Trello to validate column'
+      icon: 'phone'
     '{blocked}':
       value: ->
         if project?.columnMapping?.blocked?
           trelloUtils.getColumnPoints project.columnMapping.blocked
-      description: ''
-      icon: ''
+      description: 'The number of points in the Trello blocked column'
+      icon: 'radioactive'
     '{done}':
       value: ->
         if sprint?.bdcData?
           index = getCurrentDayIndex sprint.bdcData
           sprint.bdcData[index].done
-      description: ''
-      icon: ''
+      description: 'The number of points in the Trello done column'
+      icon: 'check'
     '{gap}':
       value: ->
         if sprint?.bdcData?
           index = getCurrentDayIndex sprint.bdcData
           diff = sprint.bdcData[index].done - sprint.bdcData[index].standard
           Math.abs(diff).toFixed 1
-      description: ''
-      icon: ''
+      description: 'The difference between the standard points and the done points'
+      icon: 'tshirt-crew'
     '{total}':
       value: ->
         if _.isNumber sprint?.resources?.totalPoints
           sprint.resources.totalPoints
-      description: ''
-      icon: ''
+      description: 'The number of points to finish the sprint'
+      icon: 'cart'
 
   replaceToday = (text) ->
     text.replace /\{today#(.+?)\}/g, (match, dateFormat) ->
