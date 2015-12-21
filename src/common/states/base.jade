@@ -7,55 +7,39 @@ md-content.grey-background
       md-icon(md-svg-icon='menu')
     h2
       span Not So Shitty
-  md-sidenav.md-sidenav-left.md-whiteframe-z2(
+  md-sidenav.site-sidenav.md-sidenav-left.md-whiteframe-z2(
     layout='column'
     md-component-id='left'
   )
-    //- md-toolbar.md-tall.md-hue-2
-    //-   span(flex='')
-    //-   .md-toolbar-tools-bottom.inset(layout='column')
-    //-     //- trello-avatar(member='member')
-    //-     span
-    //-     div Nicolas Boutin
-    //-     div nicolasb@theodo.fr
-    md-list
-      md-item.md-button(ng-click='sprint()')
-        a
-          md-item-content(
-            md-ink-ripple=''
-            layout='row'
-            layout-align='start center'
-          )
-            .inset
+    md-toolbar.md-tall.md-hue-2
+      span(flex)
+      .md-toolbar-tools-bottom.inset(layout='column')
+        span
+        div {{ email }}
+    md-content(flex)
+      ul.docs-menu
+        li
+          menu-link
+            a.md-button.md-ink-ripple(ng-click='sprint()')
               md-icon(md-svg-src='dashboard')
-            .inset
-              | Scrum Board
-      md-item.md-button(ng-click='project()')
-        a
-          md-item-content(
-            md-ink-ripple=''
-            layout='row'
-            layout-align='start center'
-          )
-            .inset
-              md-icon(md-svg-src='settings')
-            .inset
-              | Project
-      md-item.md-button(ng-click='dailyReport()')
-        a
-          md-item-content(
-            md-ink-ripple=''
-            layout='row'
-            layout-align='start center'
-          )
-            .inset
+              |    Scrum Board
+          menu-link
+            a.md-button.md-ink-ripple(ng-click='dailyReport()')
               md-icon(md-svg-src='gmail')
-            .inset
-              | Daily Report
+              |    Daily Report
+          menu-link
+            a.md-button.md-ink-ripple(ng-click='project()')
+              md-icon(md-svg-src='settings')
+              |    Settings
       md-divider
-      a.bonus(
-        href="http://attackwithnumbers.com/the-laws-of-shitty-dashboard"
-        target="_blank"
-      ) The law of shitty dashboards
+      ul.docs-menu
+        li
+          menu-link
+            a.md-button.md-ink-ripple(
+              href="http://attackwithnumbers.com/the-laws-of-shitty-dashboard"
+              target="_blank"
+            )
+              md-icon(md-svg-src='help')
+              |    Why Not So Shitty?
   .container(ui-view)
   feedback
