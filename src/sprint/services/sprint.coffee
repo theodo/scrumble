@@ -1,7 +1,7 @@
 angular.module 'NotSoShitty.bdc'
-.service 'sprintService', ->
+.service 'sprintUtils', ->
   generateDayList: (start, end) ->
-    return unless start and end
+    return unless start? and end?
     # check if start < end
     current = moment start
     endM = moment(end).add(1, 'days')
@@ -16,7 +16,7 @@ angular.module 'NotSoShitty.bdc'
       current.add 1, 'days'
     days
   generateResources: (days, devTeam) ->
-    return unless days and devTeam
+    return unless days? and devTeam?
     matrix = []
     for day in days
       line = []
@@ -24,7 +24,7 @@ angular.module 'NotSoShitty.bdc'
         line.push 1
       matrix.push line
     matrix
-  getTotalManDays: (matrix) ->
+  getTotalManDays: (matrix = []) ->
     total = 0
     for line in matrix
       for cell in line
@@ -35,3 +35,30 @@ angular.module 'NotSoShitty.bdc'
   calculateSpeed: (totalPoints, totalManDays) ->
     return unless totalManDays > 0
     totalPoints / totalManDays
+  generateBDC: (days, resources, previous = []) ->
+    standard = 0
+    bdc = []
+    fetchDone = (date) ->
+      dayFromPrevious = _.find previous, (elt) ->
+        moment(elt.date).format() is moment(date).format()
+      done = if dayFromPrevious? then dayFromPrevious.done else null
+
+    for day, i in days
+      date = moment(day.date).toDate()
+
+      bdc.push {
+        date: date
+        standard: standard
+        done: fetchDone(date)
+      }
+      standard += _.sum(resources.matrix[i]) * resources.speed
+
+    # add last point for ceremony
+    date = moment(day.date).add(1, 'days').toDate()
+    bdc.push {
+      date: date
+      standard: standard
+      done: fetchDone(date)
+    }
+
+    bdc

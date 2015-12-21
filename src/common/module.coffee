@@ -1,1 +1,3 @@
-angular.module 'NotSoShitty.common', []
+angular.module 'NotSoShitty.common', [
+  'trello-api-client'
+]

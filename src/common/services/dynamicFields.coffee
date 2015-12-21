@@ -1,7 +1,12 @@
 angular.module 'NotSoShitty.common'
-.service 'dynamicFields', ->
+.service 'dynamicFields', ($q, trelloUtils) ->
   sprint = null
   project = null
+
+  getCurrentDayIndex = (bdcData) ->
+    for day, i in bdcData
+      return Math.max i-1, 0 unless day.done?
+    return i - 1
 
   dict =
     '{sprintNumber}':
@@ -20,6 +25,39 @@ angular.module 'NotSoShitty.common'
           sprint?.resources?.speed
       description: 'Estimated number of points per day per person'
       icon: 'run'
+    '{toValidate}':
+      value: ->
+        if project?.columnMapping?.toValidate?
+          trelloUtils.getColumnPoints project.columnMapping.toValidate
+      description: 'The number of points in the Trello to validate column'
+      icon: 'phone'
+    '{blocked}':
+      value: ->
+        if project?.columnMapping?.blocked?
+          trelloUtils.getColumnPoints project.columnMapping.blocked
+      description: 'The number of points in the Trello blocked column'
+      icon: 'radioactive'
+    '{done}':
+      value: ->
+        if sprint?.bdcData?
+          index = getCurrentDayIndex sprint.bdcData
+          sprint.bdcData[index]?.done
+      description: 'The number of points in the Trello done column'
+      icon: 'check'
+    '{gap}':
+      value: ->
+        if sprint?.bdcData?
+          index = getCurrentDayIndex sprint.bdcData
+          diff = sprint.bdcData[index]?.done - sprint.bdcData[index]?.standard
+          Math.abs(diff).toFixed 1
+      description: 'The difference between the standard points and the done points'
+      icon: 'tshirt-crew'
+    '{total}':
+      value: ->
+        if _.isNumber sprint?.resources?.totalPoints
+          sprint.resources.totalPoints
+      description: 'The number of points to finish the sprint'
+      icon: 'cart'
 
   replaceToday = (text) ->
     text.replace /\{today#(.+?)\}/g, (match, dateFormat) ->
@@ -53,13 +91,22 @@ angular.module 'NotSoShitty.common'
 
   render: (text) ->
     result = text or ''
+
+    deferred = $q.defer()
+    promises = {}
     for key, elt of dict
-      result = result.split(key).join(elt.value())
+      promises[key] = elt.value()
 
-    # replace {today#YYYY-MM-DD}
-    result = replaceToday result
+    $q.all(promises).then (builtDict) ->
+      for key, elt of builtDict
+        result = result.split(key).join(elt)
 
-    # replace {yesterday#YYYY-MM-DD}
-    result = replaceYesterday result
+      # replace {today#YYYY-MM-DD}
+      result = replaceToday result
 
-    result
+      # replace {yesterday#YYYY-MM-DD}
+      result = replaceYesterday result
+
+      deferred.resolve result
+    .catch deferred.reject
+    deferred.promise
