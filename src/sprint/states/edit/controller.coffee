@@ -29,6 +29,7 @@ angular.module 'NotSoShitty.bdc'
 
   promise = null
   $scope.saveLabel = if $state.is 'tab.new-sprint' then 'Start the sprint' else 'Save'
+  $scope.title = if $state.is 'tab.new-sprint' then 'NEW SPRINT' else 'EDIT SPRINT'
   $scope.save = ->
     if isActivable()
       $scope.sprint.save()
