@@ -24,13 +24,13 @@ md-content.grey-background
               md-icon(md-svg-src='dashboard')
               |    Scrum Board
           menu-link
-            a.md-button.md-ink-ripple(ng-click='project()')
-              md-icon(md-svg-src='settings')
-              |    Project
-          menu-link
             a.md-button.md-ink-ripple(ng-click='dailyReport()')
               md-icon(md-svg-src='gmail')
               |    Daily Report
+          menu-link
+            a.md-button.md-ink-ripple(ng-click='project()')
+              md-icon(md-svg-src='settings')
+              |    Settings
       md-divider
       ul.docs-menu
         li
@@ -40,6 +40,6 @@ md-content.grey-background
               target="_blank"
             )
               md-icon(md-svg-src='help')
-              |    Why NotSoShitty?
+              |    Why Not So Shitty?
   .container(ui-view)
   feedback
