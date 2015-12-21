@@ -13,8 +13,6 @@ angular.module 'NotSoShitty.bdc'
   project
   Sprint
 ) ->
-  $state.go 'tab.new-sprint' unless sprint?
-
   $scope.sprint = sprint
   $scope.project = project
 

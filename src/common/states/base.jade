@@ -6,7 +6,7 @@ md-content.grey-background
     )
       md-icon(md-svg-icon='menu')
     h2
-      span Not So Shitty
+      span.clickable(ui-sref="tab.current-sprint") Not So Shitty
   md-sidenav.site-sidenav.md-sidenav-left.md-whiteframe-z2(
     layout='column'
     md-component-id='left'
@@ -27,19 +27,5 @@ md-content.grey-background
             a.md-button.md-ink-ripple(ng-click='dailyReport()')
               md-icon(md-svg-src='gmail')
               |    Daily Report
-          menu-link
-            a.md-button.md-ink-ripple(ng-click='project()')
-              md-icon(md-svg-src='settings')
-              |    Settings
-      md-divider
-      ul.docs-menu
-        li
-          menu-link
-            a.md-button.md-ink-ripple(
-              href="http://attackwithnumbers.com/the-laws-of-shitty-dashboard"
-              target="_blank"
-            )
-              md-icon(md-svg-src='help')
-              |    Why Not So Shitty?
   .container(ui-view)
   feedback

@@ -6,22 +6,22 @@ angular.module 'NotSoShitty.bdc'
     controller: 'CurrentSprintCtrl'
     templateUrl: 'sprint/states/current-sprint/view.html'
     resolve:
-      sprint: (NotSoShittyUser, Sprint) ->
+      sprint: (NotSoShittyUser, Sprint, $state) ->
         NotSoShittyUser.getCurrentUser()
         .then (user) ->
+          return $state.go 'trello-login' unless user?
           Sprint.getActiveSprint user.project
-        .catch (err) ->
-          console.log err
-          return null
-      project: (NotSoShittyUser, Project) ->
+        .then (sprint) ->
+          $state.go 'tab.new-sprint' unless sprint?
+          sprint
+      project: (NotSoShittyUser, Project, $state) ->
+        return $state.go 'trello-login' unless user?
         NotSoShittyUser.getCurrentUser()
         .then (user) ->
           Project.find user.project.objectId
-        .then (project) ->
-          project
         .catch (err) ->
-          console.log err
-          return null
+          if err.status is 404
+            $state.go 'tab.project'
   .state 'tab.new-sprint',
     url: '/sprint/edit'
     controller: 'EditSprintCtrl'
@@ -39,7 +39,7 @@ angular.module 'NotSoShitty.bdc'
         .then (user) ->
           new Sprint
             project: new Project user.project
-            info =
+            info:
               bdcTitle: 'Burndown Chart'
             number: null
             goal: null
