@@ -749,6 +749,7 @@ t.forEach(o[0].children,function(n){if("MD-MENU"==n.nodeName){n.hasAttribute("md
         if ($window.localStorage.key('PARSE_SESSION_TOKEN')) {
           headers["X-Parse-Session-Token"] = $window.localStorage.getItem('PARSE_SESSION_TOKEN');
         }
+        console.log(this.BaseUrl + path);
         return $http({
           method: method,
           url: this.BaseUrl + path,
