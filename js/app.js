@@ -70,7 +70,7 @@ angular.module('NotSoShitty.common').service('dynamicFields', function($q, trell
         return Math.max(i - 1, 0);
       }
     }
-    return i;
+    return i - 1;
   };
   dict = {
     '{sprintNumber}': {
@@ -121,10 +121,10 @@ angular.module('NotSoShitty.common').service('dynamicFields', function($q, trell
     },
     '{done}': {
       value: function() {
-        var index;
+        var index, _ref;
         if ((sprint != null ? sprint.bdcData : void 0) != null) {
           index = getCurrentDayIndex(sprint.bdcData);
-          return sprint.bdcData[index].done;
+          return (_ref = sprint.bdcData[index]) != null ? _ref.done : void 0;
         }
       },
       description: 'The number of points in the Trello done column',
@@ -132,10 +132,10 @@ angular.module('NotSoShitty.common').service('dynamicFields', function($q, trell
     },
     '{gap}': {
       value: function() {
-        var diff, index;
+        var diff, index, _ref, _ref1;
         if ((sprint != null ? sprint.bdcData : void 0) != null) {
           index = getCurrentDayIndex(sprint.bdcData);
-          diff = sprint.bdcData[index].done - sprint.bdcData[index].standard;
+          diff = ((_ref = sprint.bdcData[index]) != null ? _ref.done : void 0) - ((_ref1 = sprint.bdcData[index]) != null ? _ref1.standard : void 0);
           return Math.abs(diff).toFixed(1);
         }
       },
@@ -359,7 +359,7 @@ angular.module('NotSoShitty.daily-report').service('reportBuilder', function($q,
           return Math.max(i - 1, 0);
         }
       }
-      return i;
+      return i - 1;
     };
     return promise.then(function() {
       var diff, index, label;
