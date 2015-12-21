@@ -16,6 +16,8 @@ angular.module 'NotSoShitty.bdc'
   $state.go 'tab.new-sprint' unless sprint?
 
   $scope.sprint = sprint
+  $scope.project = project
+
   dynamicFields.project project
   dynamicFields.sprint sprint
 
@@ -40,7 +42,7 @@ angular.module 'NotSoShitty.bdc'
       Sprint.close(sprint).then ->
         $state.go 'tab.new-sprint'
 
-  $scope.openBDCMenu = ($mdOpenMenu, ev) ->
+  $scope.openMenu = ($mdOpenMenu, ev) ->
     originatorEv = ev
     $mdOpenMenu ev
 

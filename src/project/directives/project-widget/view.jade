@@ -1,0 +1,44 @@
+div
+  md-toolbar.md-hue-2
+    .md-toolbar-tools
+      h2.md-title {{ project.name }}
+      span(flex)
+      md-menu
+        md-button.md-icon-button(aria-label='Open Project menu', ng-click='openMenu($mdOpenMenu, $event)')
+          md-icon(md-menu-origin='', md-svg-icon='more')
+        md-menu-content(width='4')
+          md-menu-item(ui-sref='tab.project')
+            md-button
+              md-icon(md-svg-icon='border-color', md-menu-align-target='')
+              | Edit
+          md-menu-item(ng-click='openEditTitle($event)')
+            md-button(disabled="disabled")
+              md-icon(md-svg-icon='view-list', md-menu-align-target='')
+              | Sprints
+          //- md-menu-item(ng-click='openEditTitle($event)')
+          //-   md-button(disabled="disabled")
+          //-     md-icon(md-svg-icon='printer', md-menu-align-target='')
+          //-     | Print
+  h2.md-title The Team
+  md-card-content
+    md-list
+      md-list-item.md-3-line(ng-repeat="member in project.team.dev")
+        trello-avatar(
+          member="member"
+        )
+        .md-list-item-text(layout='column')
+          h3 {{ member.fullName }} - {{ member.role }}
+          p {{ member.email }}
+          p {{ member.phone }}
+      md-list-item.md-3-line(ng-repeat="member in project.team.rest")
+        trello-avatar(
+          member="member"
+        )
+        .md-list-item-text(layout='column')
+          h3 {{ member.fullName }} - {{ member.role }}
+          p {{ member.email }}
+          p {{ member.phone }}
+  md-card-actions(layout='row', layout-align='end center')
+    md-button.md-icon-button(aria-label='Trello Link')
+      a(ng-href="https://trello.com/b/{{project.boardId}}" target="_blank")
+        md-icon(md-svg-icon='trello')
