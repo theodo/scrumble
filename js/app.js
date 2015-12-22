@@ -667,6 +667,61 @@ angular.module('NotSoShitty.storage').factory('Project', function(Parse, $q) {
   })(Parse.Model);
 });
 
+var __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+angular.module('NotSoShitty.storage').factory('Sprint', function(Parse) {
+  var Sprint;
+  return Sprint = (function(_super) {
+    __extends(Sprint, _super);
+
+    function Sprint() {
+      return Sprint.__super__.constructor.apply(this, arguments);
+    }
+
+    Sprint.configure("Sprint", "project", "number", "dates", "resources", "bdcData", "isActive", "doneColumn", "bdcBase64", "goal");
+
+    Sprint.getActiveSprint = function(project) {
+      return this.query({
+        where: {
+          project: {
+            __type: "Pointer",
+            className: "Project",
+            objectId: project.objectId
+          },
+          isActive: true
+        }
+      }).then(function(sprints) {
+        var sprint;
+        sprint = sprints.length > 0 ? sprints[0] : null;
+        return sprint;
+      })["catch"](function(err) {
+        return console.warn(err);
+      });
+    };
+
+    Sprint.getByProjectId = function(projectId) {
+      return this.query({
+        where: {
+          project: {
+            __type: "Pointer",
+            className: "Project",
+            objectId: projectId
+          }
+        }
+      });
+    };
+
+    Sprint.close = function(sprint) {
+      sprint.isActive = false;
+      return sprint.save();
+    };
+
+    return Sprint;
+
+  })(Parse.Model);
+});
+
 angular.module('NotSoShitty.bdc').config(function($stateProvider) {
   return $stateProvider.state('tab.current-sprint', {
     url: '/sprint/current',
@@ -770,61 +825,6 @@ angular.module('NotSoShitty.bdc').config(function($stateProvider) {
       }
     }
   });
-});
-
-var __hasProp = {}.hasOwnProperty,
-  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
-
-angular.module('NotSoShitty.storage').factory('Sprint', function(Parse) {
-  var Sprint;
-  return Sprint = (function(_super) {
-    __extends(Sprint, _super);
-
-    function Sprint() {
-      return Sprint.__super__.constructor.apply(this, arguments);
-    }
-
-    Sprint.configure("Sprint", "project", "number", "dates", "resources", "bdcData", "isActive", "doneColumn", "bdcBase64", "goal");
-
-    Sprint.getActiveSprint = function(project) {
-      return this.query({
-        where: {
-          project: {
-            __type: "Pointer",
-            className: "Project",
-            objectId: project.objectId
-          },
-          isActive: true
-        }
-      }).then(function(sprints) {
-        var sprint;
-        sprint = sprints.length > 0 ? sprints[0] : null;
-        return sprint;
-      })["catch"](function(err) {
-        return console.warn(err);
-      });
-    };
-
-    Sprint.getByProjectId = function(projectId) {
-      return this.query({
-        where: {
-          project: {
-            __type: "Pointer",
-            className: "Project",
-            objectId: projectId
-          }
-        }
-      });
-    };
-
-    Sprint.close = function(sprint) {
-      sprint.isActive = false;
-      return sprint.save();
-    };
-
-    return Sprint;
-
-  })(Parse.Model);
 });
 
 angular.module('NotSoShitty.bdc').factory('BDCDataProvider', function() {
@@ -1091,6 +1091,16 @@ angular.module('NotSoShitty.storage').service('userService', function(NotSoShitt
   };
 });
 
+angular.module('NotSoShitty.common').directive('dynamicFieldsList', function() {
+  return {
+    restrict: 'E',
+    templateUrl: 'common/directives/dynamic-fields/view.html',
+    scope: {
+      availableFields: '='
+    }
+  };
+});
+
 angular.module('NotSoShitty.common').directive('nssRound', function() {
   return {
     require: 'ngModel',
@@ -1104,16 +1114,6 @@ angular.module('NotSoShitty.common').directive('nssRound', function() {
         }
         return data;
       });
-    }
-  };
-});
-
-angular.module('NotSoShitty.common').directive('dynamicFieldsList', function() {
-  return {
-    restrict: 'E',
-    templateUrl: 'common/directives/dynamic-fields/view.html',
-    scope: {
-      availableFields: '='
     }
   };
 });
