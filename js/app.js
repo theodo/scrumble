@@ -1091,16 +1091,6 @@ angular.module('NotSoShitty.storage').service('userService', function(NotSoShitt
   };
 });
 
-angular.module('NotSoShitty.common').directive('dynamicFieldsList', function() {
-  return {
-    restrict: 'E',
-    templateUrl: 'common/directives/dynamic-fields/view.html',
-    scope: {
-      availableFields: '='
-    }
-  };
-});
-
 angular.module('NotSoShitty.common').directive('nssRound', function() {
   return {
     require: 'ngModel',
@@ -1114,6 +1104,16 @@ angular.module('NotSoShitty.common').directive('nssRound', function() {
         }
         return data;
       });
+    }
+  };
+});
+
+angular.module('NotSoShitty.common').directive('dynamicFieldsList', function() {
+  return {
+    restrict: 'E',
+    templateUrl: 'common/directives/dynamic-fields/view.html',
+    scope: {
+      availableFields: '='
     }
   };
 });
@@ -1308,6 +1308,25 @@ angular.module('NotSoShitty.login').controller('TrelloLoginCtrl', function($scop
   };
 });
 
+angular.module('NotSoShitty.settings').controller('ProjectWidgetCtrl', function($scope) {
+  return $scope.openMenu = function($mdOpenMenu, ev) {
+    var originatorEv;
+    originatorEv = ev;
+    return $mdOpenMenu(ev);
+  };
+});
+
+angular.module('NotSoShitty.settings').directive('projectWidget', function() {
+  return {
+    restrict: 'E',
+    templateUrl: 'project/directives/project-widget/view.html',
+    scope: {
+      project: '='
+    },
+    controller: 'ProjectWidgetCtrl'
+  };
+});
+
 angular.module('NotSoShitty.settings').controller('ResourcesByDayCtrl', function($scope) {
   var changeResource;
   changeResource = function(dayIndex, memberIndex, matrix) {
@@ -1332,25 +1351,6 @@ angular.module('NotSoShitty.settings').directive('resourcesByDay', function() {
       days: '='
     },
     controller: 'ResourcesByDayCtrl'
-  };
-});
-
-angular.module('NotSoShitty.settings').controller('ProjectWidgetCtrl', function($scope) {
-  return $scope.openMenu = function($mdOpenMenu, ev) {
-    var originatorEv;
-    originatorEv = ev;
-    return $mdOpenMenu(ev);
-  };
-});
-
-angular.module('NotSoShitty.settings').directive('projectWidget', function() {
-  return {
-    restrict: 'E',
-    templateUrl: 'project/directives/project-widget/view.html',
-    scope: {
-      project: '='
-    },
-    controller: 'ProjectWidgetCtrl'
   };
 });
 
