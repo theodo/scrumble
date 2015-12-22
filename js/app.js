@@ -597,6 +597,21 @@ angular.module('NotSoShitty.login').config(function($stateProvider) {
   });
 });
 
+angular.module('NotSoShitty.login').service('trelloAuth', function(localStorageService, TrelloClient, $state) {
+  return {
+    getTrelloInfo: function() {
+      return TrelloClient.get('/member/me').then(function(response) {
+        return response.data;
+      });
+    },
+    logout: function() {
+      localStorageService.remove('trello_email');
+      localStorageService.remove('trello_token');
+      return $state.go('trello-login');
+    }
+  };
+});
+
 
 
 angular.module('NotSoShitty.settings').config(function($stateProvider) {
@@ -1562,7 +1577,7 @@ angular.module('NotSoShitty.bdc').directive('burndown', function() {
 });
 
 angular.module('NotSoShitty.bdc').controller('CurrentSprintCtrl', function($scope, $state, $timeout, $mdDialog, $mdMedia, sprintUtils, TrelloClient, trelloUtils, dynamicFields, svgToPng, sprint, project, Sprint) {
-  var DialogController, day, _i, _len, _ref, _ref1;
+  var DialogController, day, self, _i, _len, _ref, _ref1;
   $scope.sprint = sprint;
   $scope.project = project;
   dynamicFields.project(project);
@@ -1654,7 +1669,7 @@ angular.module('NotSoShitty.bdc').controller('CurrentSprintCtrl', function($scop
       });
     });
   };
-  return DialogController = function($scope, $mdDialog, title, availableFields) {
+  DialogController = function($scope, $mdDialog, title, availableFields) {
     $scope.title = title;
     $scope.availableFields = availableFields;
     $scope.hide = function() {
@@ -1667,6 +1682,23 @@ angular.module('NotSoShitty.bdc').controller('CurrentSprintCtrl', function($scop
       return $mdDialog.hide($scope.title);
     };
   };
+  $scope.dailyReport = function() {
+    return $state.go('tab.daily-report');
+  };
+  self = this;
+  self.hidden = false;
+  self.isOpen = false;
+  self.hover = false;
+  self.icon = 'menu';
+  return $scope.$watch('menu.isOpen', function(isOpen) {
+    if (isOpen) {
+      return $timeout((function() {
+        return $scope.tooltipVisible = self.isOpen;
+      }), 600);
+    } else {
+      return $scope.tooltipVisible = self.isOpen;
+    }
+  });
 });
 
 angular.module('NotSoShitty.bdc').controller('EditBDCCtrl', function($scope, $mdDialog, data, trelloUtils, doneColumn) {

@@ -18,7 +18,7 @@
 }
 footer {
   position: absolute;
-  bottom: 1em;
+  bottom: 0.5em;
   width: 100%;
   text-align: center;
 }
@@ -62,11 +62,6 @@ burndown {
   margin-top: 20px;
   margin-bottom: 50px;
 }
-.md-button.md-fab.new-sprint-fab {
-  position: fixed;
-  bottom: 10px;
-  right: 10px;
-}
 h2.md-title {
   text-align: center;
 }
@@ -81,6 +76,13 @@ h2.md-title {
 .bonus {
   position: absolute;
   left: 15px;
+}
+.md-button.md-fab {
+  bottom: 10px;
+  right: 10px;
+}
+md-fab-trigger {
+  max-height: 56px;
 }
 
 .md-toolbar-tools-bottom {
