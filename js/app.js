@@ -678,6 +678,9 @@ angular.module('NotSoShitty.bdc').config(function($stateProvider) {
           if (user == null) {
             return $state.go('trello-login');
           }
+          if (user.project == null) {
+            return $state.go('tab.project');
+          }
           return Sprint.getActiveSprint(user.project);
         }).then(function(sprint) {
           if (sprint == null) {
@@ -690,6 +693,9 @@ angular.module('NotSoShitty.bdc').config(function($stateProvider) {
         return NotSoShittyUser.getCurrentUser().then(function(user) {
           if (user == null) {
             return $state.go('trello-login');
+          }
+          if (user.project == null) {
+            return $state.go('tab.project');
           }
           return Project.find(user.project.objectId);
         })["catch"](function(err) {

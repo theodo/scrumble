@@ -83,6 +83,12 @@ h2.md-title {
   left: 15px;
 }
 
+.feedback-call-to-action {
+  position: fixed;
+  bottom: 10px;
+  left: 10px;
+}
+
 .md-toolbar-tools-bottom {
   font-size: small;
   font-weight: bold;
@@ -136,10 +142,9 @@ md-sidenav md-toolbar {
   padding: 0;
 }
 
-.feedback-call-to-action {
-  position: fixed;
-  bottom: 10px;
-  left: 10px;
+.markdown-cheatsheet {
+  position: absolute;
+  right: 0;
 }
 
 trello-avatar {
@@ -158,11 +163,6 @@ trello-avatar .trello-avatar .member-avatar.initials {
   text-align: center;
   background: #d3d3d3;
   font-weight: bold;
-}
-
-.markdown-cheatsheet {
-  position: absolute;
-  right: 0;
 }
 
 .profil-button {
