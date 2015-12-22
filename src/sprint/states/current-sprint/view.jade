@@ -2,30 +2,29 @@ div(layout="row" layout-align="center start")
   md-card(flex="30")
     project-widget(project="project")
   md-card(flex="70")
-    md-toolbar.md-primary
-      .md-toolbar-tools
-        h2.md-title {{ bdcTitle }}
-        span(flex)
-        md-menu
-          md-button.md-icon-button(aria-label='Open BDC menu', ng-click='openMenu($mdOpenMenu, $event)')
-            md-icon(md-menu-origin='', md-svg-icon='more')
-          md-menu-content(width='4')
-            md-menu-item(ng-click='openEditBDC($event)')
-              md-button
-                md-icon(md-svg-icon='table-edit', md-menu-align-target='')
-                | Edit BDC
-            md-menu-item(ng-click='openEditTitle($event)')
-              md-button
-                md-icon(md-svg-icon='border-color', md-menu-align-target='')
-                | Edit Title
-            md-menu-item(ui-sref='tab.edit-sprint({sprintId: sprint.objectId})')
-              md-button
-                md-icon(md-svg-icon='settings', md-menu-align-target='')
-                | Settings
-            md-menu-item(ng-click='print()')
-              md-button(disabled="disabled")
-                md-icon(md-svg-icon='printer', md-menu-align-target='')
-                | Print
+    .md-toolbar-tools
+      h2.md-title {{ bdcTitle }}
+      span(flex)
+      md-menu
+        md-button.md-icon-button(aria-label='Open BDC menu', ng-click='openMenu($mdOpenMenu, $event)')
+          md-icon(md-menu-origin='', md-svg-icon='more')
+        md-menu-content(width='4')
+          md-menu-item(ng-click='openEditBDC($event)')
+            md-button
+              md-icon(md-svg-icon='table-edit', md-menu-align-target='')
+              | Edit BDC
+          md-menu-item(ng-click='openEditTitle($event)')
+            md-button
+              md-icon(md-svg-icon='border-color', md-menu-align-target='')
+              | Edit Title
+          md-menu-item(ui-sref='tab.edit-sprint({sprintId: sprint.objectId})')
+            md-button
+              md-icon(md-svg-icon='settings', md-menu-align-target='')
+              | Settings
+          md-menu-item(ng-click='print()')
+            md-button(disabled="disabled")
+              md-icon(md-svg-icon='printer', md-menu-align-target='')
+              | Print
 
     burndown(data="bdcData")
 md-fab-speed-dial.md-scale.md-fab-bottom-right.md-hover-full(

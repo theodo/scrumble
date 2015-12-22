@@ -1,25 +1,23 @@
 div
-  md-toolbar.md-primary
-    .md-toolbar-tools
-      h2.md-title {{ project.name }}
-      span(flex)
-      md-menu
-        md-button.md-icon-button(aria-label='Open Project menu', ng-click='openMenu($mdOpenMenu, $event)')
-          md-icon(md-menu-origin='', md-svg-icon='more')
-        md-menu-content(width='4')
-          md-menu-item(ui-sref='tab.project')
-            md-button
-              md-icon(md-svg-icon='settings', md-menu-align-target='')
-              | Settings
-          md-menu-item(ui-sref='tab.sprint-list({projectId: project.objectId})')
-            md-button
-              md-icon(md-svg-icon='view-list', md-menu-align-target='')
-              | Sprints
-          //- md-menu-item(ng-click='openEditTitle($event)')
-          //-   md-button(disabled="disabled")
-          //-     md-icon(md-svg-icon='printer', md-menu-align-target='')
-          //-     | Print
-  h2.md-title The Team
+  .md-toolbar-tools
+    h2.md-title The team
+    span(flex)
+    md-menu
+      md-button.md-icon-button(aria-label='Open Project menu', ng-click='openMenu($mdOpenMenu, $event)')
+        md-icon(md-menu-origin='', md-svg-icon='more')
+      md-menu-content(width='4')
+        md-menu-item(ui-sref='tab.project')
+          md-button
+            md-icon(md-svg-icon='settings', md-menu-align-target='')
+            | Settings
+        md-menu-item(ui-sref='tab.sprint-list({projectId: project.objectId})')
+          md-button
+            md-icon(md-svg-icon='view-list', md-menu-align-target='')
+            | Sprints
+        md-menu-item(ng-click='openEditTitle($event)')
+          md-button(disabled="disabled")
+            md-icon(md-svg-icon='printer', md-menu-align-target='')
+            | Print
   md-card-content
     md-list
       md-list-item.md-3-line(ng-repeat="member in project.team.dev")

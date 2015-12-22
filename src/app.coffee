@@ -63,5 +63,4 @@ app.config ($stateProvider) ->
   $stateProvider
   .state 'tab',
     abstract: true
-    controller: 'BaseCtrl'
     templateUrl: 'common/states/base.html'

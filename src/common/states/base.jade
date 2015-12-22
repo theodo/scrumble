@@ -1,32 +1,7 @@
 md-content.grey-background
   md-toolbar.md-toolbar-tools
-    md-button.md-icon-button(
-      aria-label='Menu' 
-      ng-click="toggleSidenav('left')"
-    )
-      md-icon(md-svg-icon='menu')
     h2
       span.clickable(ui-sref="tab.current-sprint") Not So Shitty
-  md-sidenav.site-sidenav.md-sidenav-left.md-whiteframe-z2(
-    layout='column'
-    md-component-id='left'
-  )
-    md-toolbar.md-tall.md-hue-2
-      span(flex)
-      .md-toolbar-tools-bottom.inset(layout='column')
-        span
-        div {{ email }}
-    md-content(flex)
-      ul.docs-menu
-        li
-          menu-link
-            a.md-button.md-ink-ripple(ng-click='sprint()')
-              md-icon(md-svg-src='dashboard')
-              |    Scrum Board
-          menu-link
-            a.md-button.md-ink-ripple(ng-click='dailyReport()')
-              md-icon(md-svg-src='gmail')
-              |    Daily Report
   .container(ui-view)
   footer(flex)
     p
