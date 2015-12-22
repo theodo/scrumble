@@ -52,10 +52,6 @@ app.config (TrelloClientProvider) ->
     scope: ['read', 'account'] #, 'write']
   }
 
-app.config ($mdThemingProvider) ->
-  $mdThemingProvider.theme('default').primaryPalette('blue').accentPalette 'grey'
-  return
-
 app.config ($mdIconProvider) ->
   $mdIconProvider
     .defaultIconSet 'icons/mdi.light.svg'

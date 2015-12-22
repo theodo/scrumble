@@ -2,7 +2,7 @@ div(layout="row" layout-align="center start")
   md-card(flex="30")
     project-widget(project="project")
   md-card(flex="70")
-    md-toolbar.md-hue-2
+    md-toolbar.md-primary
       .md-toolbar-tools
         h2.md-title {{ bdcTitle }}
         span(flex)
@@ -39,9 +39,9 @@ md-fab-speed-dial.md-scale.md-fab-bottom-right.md-hover-full(
       md-icon(md-svg-icon='menu')
       md-tooltip(md-direction='left') What to do ?
   md-fab-actions
-    md-button.md-fab.md-raised.md-mini(ng-click='dailyReport()')
+    md-button.md-fab.md-accent.md-mini(ng-click='dailyReport()')
       md-icon(md-svg-icon='gmail')
       md-tooltip(md-direction='left') Compose your Daily Report
-    md-button.md-fab.md-raised.md-mini(ng-click='showConfirmNewSprint($event)')
+    md-button.md-fab.md-accent.md-mini(ng-click='showConfirmNewSprint($event)')
       md-icon(md-svg-src='plus' aria-label='Create')
       md-tooltip(md-direction='left') Create a new sprint
