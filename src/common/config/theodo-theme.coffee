@@ -68,10 +68,11 @@ angular.module 'NotSoShitty.common', [ 'ngMaterial' ]
     'A700': '#afafaf'
   $mdThemingProvider.definePalette 'customBackground', customBackground
   $mdThemingProvider.theme 'default'
-    .primaryPalette 'teal'
-    # .primaryPalette 'customPrimary', {
-    #     'default':'300'
-    # }
+    # .primaryPalette 'teal'
+    .primaryPalette 'customPrimary', {
+        'default':'300'
+        'hue-2':'100'
+    }
     .accentPalette 'customAccent',{
         'default': '700'
         'hue-2': '900'
