@@ -28,6 +28,20 @@ div(layout="row" layout-align="center start")
                 | Print
 
     burndown(data="bdcData")
-md-button.md-fab.md-primary.new-sprint-fab(ng-click="showConfirmNewSprint($event)")
-  md-icon(md-svg-icon="plus")
-  md-tooltip(md-direction="top") Create a new sprint
+md-fab-speed-dial.md-scale.md-fab-bottom-right.md-hover-full(
+  md-direction='up'
+  md-open='menu.isOpen'
+  ng-mouseenter='menu.isOpen=true'
+  ng-mouseleave='menu.isOpen=false'
+)
+  md-fab-trigger
+    md-button.md-fab.md-warn
+      md-icon(md-svg-icon='menu')
+      md-tooltip(md-direction='left') What to do ?
+  md-fab-actions
+    md-button.md-fab.md-raised.md-mini(ng-click='dailyReport()')
+      md-icon(md-svg-icon='gmail')
+      md-tooltip(md-direction='left') Compose your Daily Report
+    md-button.md-fab.md-raised.md-mini(ng-click='showConfirmNewSprint($event)')
+      md-icon(md-svg-src='plus' aria-label='Create')
+      md-tooltip(md-direction='left') Create a new sprint

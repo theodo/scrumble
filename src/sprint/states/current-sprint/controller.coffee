@@ -94,3 +94,23 @@ angular.module 'NotSoShitty.bdc'
       $mdDialog.cancel()
     $scope.save = ->
       $mdDialog.hide $scope.title
+
+  #To manage Speed dial button
+
+  $scope.dailyReport = ->
+    $state.go 'tab.daily-report'
+
+  self = this
+  self.hidden = false
+  self.isOpen = false
+  self.hover = false
+  self.icon = 'menu'
+  # On opening, add a delayed property which shows tooltips after the speed dial has opened
+  # so that they have the proper position; if closing, immediately hide the tooltips
+  $scope.$watch 'menu.isOpen', (isOpen) ->
+    if isOpen
+      $timeout (->
+        $scope.tooltipVisible = self.isOpen
+      ), 600
+    else
+      $scope.tooltipVisible = self.isOpen
