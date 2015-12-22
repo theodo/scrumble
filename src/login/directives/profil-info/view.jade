@@ -1,21 +1,28 @@
-div
-  md-button.md-icon-button.profil-button(ng-click='toggleProfilCard()' aria-label='Profil')
-    trello-avatar(member="userInfo")
-    
-  md-card.profil-details(ng-if="showProfilCard")
-    md-list
-      md-list-item.md-3-line
-        a.picture-link(href="{{userInfo.url}}" target="_blank")
-          trello-avatar(member="userInfo" size="170")
-        .md-list-item-text
+md-menu
+  md-button.picture-link(ng-click='openMenu($mdOpenMenu, $event)')
+    trello-avatar(
+      member="userInfo"
+    )
+  //- md-button.md-icon-button(aria-label='Open BDC menu', ng-click='openMenu($mdOpenMenu, $event)')
+  //-   md-icon(md-menu-origin='', md-svg-icon='more')
+  md-menu-content(width='5')
+    md-list-item.md-3-line
+      a.picture-link(href="{{userInfo.url}}" target="_blank")
+        trello-avatar(
+          member="userInfo"
+        )
+      .md-list-item-text(layout="row")
+        div(layout='column')
           h3 Trello Account
           p {{ userInfo.fullName }}
           p {{ userInfo.email }}
-        md-button.md-warn(ng-click="logout()") Logout
-      md-divider
-      md-list-item.md-3-line
-        trello-avatar.md-avatar(member="userInfo")
-        .md-list-item-text
+        md-button.md-warn Logout
+    md-list-item.md-3-line
+      a.picture-link(href="{{userInfo.url}}" target="_blank")
+        trello-avatar(
+          member="userInfo"
+        )
+      .md-list-item-text(layout="row")
+        div(layout='column')
           h3 Gmail Account
-          md-button Login
-    
+        md-button Login

@@ -1,6 +1,7 @@
 angular.module 'NotSoShitty.common'
 .controller 'TrelloAvatarCtrl',
 (Avatar, $scope) ->
+  console.log $scope
   $scope.size = '50' unless $scope.size
   $scope.$watch 'member', (member) ->
     unless member?
@@ -24,7 +25,8 @@ angular.module 'NotSoShitty.common'
     '#f2f2f2'
   ]
   getColor = (initials) ->
+    return colors[0] unless initials?
     hash = initials.charCodeAt(0)
     colors[hash%9]
 
-  $scope.color = getColor $scope.member.initials
+  $scope.color = getColor $scope.member?.initials

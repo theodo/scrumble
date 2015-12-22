@@ -1,5 +1,12 @@
 angular.module 'NotSoShitty.login'
-.controller 'ProfilInfoCtrl', ($rootScope, $scope, $auth, User, $state) ->
+.controller 'ProfilInfoCtrl', (
+  $scope
+  TrelloClient
+) ->
+  $scope.openMenu = ($mdOpenMenu, ev) ->
+    originatorEv = ev
+    $mdOpenMenu ev
+
   $scope.logout = ->
     $auth.logout()
     $scope.userInfo = null
@@ -7,11 +14,10 @@ angular.module 'NotSoShitty.login'
     $scope.showProfilCard = false
 
   getTrelloInfo = ->
-    if $auth.isAuthenticated()
-      User.getTrelloInfo().then (info) ->
-        $scope.userInfo = info
+    TrelloClient.get('/member/me').then (response) ->
+      console.log response.data
+      $scope.userInfo = response.data
   getTrelloInfo()
-  $rootScope.$on 'refresh-profil', getTrelloInfo
   $scope.showProfilCard = false
   $scope.toggleProfilCard = ->
     $scope.showProfilCard = !$scope.showProfilCard

@@ -1,12 +1,14 @@
 md-content.grey-background
-  md-toolbar.md-toolbar-tools
-    md-button.md-icon-button(
-      aria-label='Menu' 
-      ng-click="toggleSidenav('left')"
-    )
-      md-icon(md-svg-icon='menu')
-    h2
-      span Not So Shitty
+  md-toolbar
+    .md-toolbar-tools
+      md-button.md-icon-button(
+        aria-label='Menu' 
+        ng-click="toggleSidenav('left')"
+      )
+      h2
+        span.clickable(ui-sref="tab.current-sprint") Not So Shitty
+      span(flex='')
+      profil-info
   md-sidenav.site-sidenav.md-sidenav-left.md-whiteframe-z2(
     layout='column'
     md-component-id='left'
