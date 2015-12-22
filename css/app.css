@@ -16,6 +16,16 @@
   color: #9E9E9E;
   font-style: italic;
 }
+.landing-page a {
+  color: #9E9E9E;
+  text-decoration: none;
+  border-bottom: 2px solid #ddd;
+  -webkit-transition: color 0.1s, opacity 0.2s, background-color 0.2s, border-color 0.2s;
+  transition: color 0.1s, opacity 0.2s, background-color 0.2s, border-color 0.2s;
+}
+.landing-page a:hover {
+  border-bottom: 2px solid #2196F3;
+}
 footer {
   position: absolute;
   bottom: 0;
@@ -206,4 +216,8 @@ select-people .member-select label {
 }
 .bdc-data md-input-container .md-errors-spacer {
   display: none;
+}
+
+.clickable {
+  cursor: pointer;
 }
