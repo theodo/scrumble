@@ -25,6 +25,8 @@ div.sprint-body(layout="row" layout-align="center end")
             tr
               th(name="People")
               th(name="Email")
+              th(name="Phone")
+              th(name="Role")
           tbody
             tr(ng-repeat="dev in project.team.dev")
               td
@@ -35,6 +37,14 @@ div.sprint-body(layout="row" layout-align="center end")
                 md-input-container
                   label Email
                   input(ng-model="dev.email")
+              td
+                md-input-container
+                  label Phone
+                  input(ng-model="dev.phone")
+              td
+                md-input-container
+                  label Role
+                  input(ng-model="dev.role")
             tr(ng-repeat="rest in project.team.rest")
               td
                 trello-avatar(
@@ -44,6 +54,14 @@ div.sprint-body(layout="row" layout-align="center end")
                 md-input-container
                   label Email
                   input(ng-model="rest.email")
+              td
+                md-input-container
+                  label Phone
+                  input(ng-model="rest.phone")
+              td
+                md-input-container
+                  label Role
+                  input(ng-model="rest.role")
       .select-teams
         .select-dev-team
           div Select the dev team
@@ -59,4 +77,4 @@ div.sprint-body(layout="row" layout-align="center end")
           )
     section(layout="row" layout-sm="column" layout-align="center center" layout-wrap)
       md-button.md-warn(ng-click="clearTeam()") CLEAR THE TEAM
-      md-button.md-raised.md-primary(ng-click="save()") SAVE AND GO TO SCRUM BOARD
+      md-button.md-raised.md-primary(ng-click="save()") Save

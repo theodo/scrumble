@@ -78,6 +78,9 @@ angular.module 'NotSoShitty.settings'
   promise = null
   $scope.save = ->
     return unless $scope.project.boardId?
+    $scope.project.name = _.find(boards, (board) ->
+      board.id == $scope.project.boardId
+    ).name
     $scope.project.save().then (p) ->
       user.project = p
       user.save().then ->

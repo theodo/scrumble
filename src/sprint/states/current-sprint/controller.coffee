@@ -2,6 +2,7 @@ angular.module 'NotSoShitty.bdc'
 .controller 'CurrentSprintCtrl', (
   $scope
   $state
+  $timeout
   $mdDialog
   $mdMedia
   sprintUtils
@@ -13,9 +14,9 @@ angular.module 'NotSoShitty.bdc'
   project
   Sprint
 ) ->
-  $state.go 'tab.new-sprint' unless sprint?
-
   $scope.sprint = sprint
+  $scope.project = project
+
   dynamicFields.project project
   dynamicFields.sprint sprint
 
@@ -40,7 +41,7 @@ angular.module 'NotSoShitty.bdc'
       Sprint.close(sprint).then ->
         $state.go 'tab.new-sprint'
 
-  $scope.openBDCMenu = ($mdOpenMenu, ev) ->
+  $scope.openMenu = ($mdOpenMenu, ev) ->
     originatorEv = ev
     $mdOpenMenu ev
 
@@ -77,10 +78,12 @@ angular.module 'NotSoShitty.bdc'
         data: -> angular.copy sprint.bdcData
         doneColumn: -> sprint.doneColumn
     ).then (data) ->
+      $scope.bdcData = data
       sprint.bdcData = data
-      svg = d3.select('#bdcgraph')[0][0].firstChild
-      sprint.bdcBase64 = svgToPng.getPngBase64 svg
-      sprint.save()
+      $timeout -> # bdc needs to be rendered before getting the png
+        svg = d3.select('#bdcgraph')[0][0].firstChild
+        sprint.bdcBase64 = svgToPng.getPngBase64 svg
+        sprint.save()
 
   DialogController = ($scope, $mdDialog, title, availableFields) ->
     $scope.title = title

@@ -16,5 +16,7 @@ angular.module 'NotSoShitty.bdc'
     ctx.fillStyle = 'white'
     ctx.fillRect 0, 0, width, height
     ctx.drawImage img, 0, 0, width, height
+    result = canvas.toDataURL 'image/png'
+    document.body.removeChild canvas
 
-    canvas.toDataURL 'image/png'
+    result
