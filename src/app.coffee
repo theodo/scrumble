@@ -52,10 +52,6 @@ app.config (TrelloClientProvider) ->
     scope: ['read', 'account'] #, 'write']
   }
 
-app.config ($mdThemingProvider) ->
-  $mdThemingProvider.theme('default').primaryPalette('blue').accentPalette 'grey'
-  return
-
 app.config ($mdIconProvider) ->
   $mdIconProvider
     .defaultIconSet 'icons/mdi.light.svg'
@@ -67,5 +63,4 @@ app.config ($stateProvider) ->
   $stateProvider
   .state 'tab',
     abstract: true
-    controller: 'BaseCtrl'
     templateUrl: 'common/states/base.html'
