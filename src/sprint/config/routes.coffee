@@ -6,22 +6,24 @@ angular.module 'NotSoShitty.bdc'
     controller: 'CurrentSprintCtrl'
     templateUrl: 'sprint/states/current-sprint/view.html'
     resolve:
-      sprint: (NotSoShittyUser, Sprint) ->
+      sprint: (NotSoShittyUser, Sprint, $state) ->
         NotSoShittyUser.getCurrentUser()
         .then (user) ->
+          return $state.go 'trello-login' unless user?
+          return $state.go 'tab.project' unless user.project?
           Sprint.getActiveSprint user.project
-        .catch (err) ->
-          console.log err
-          return null
-      project: (NotSoShittyUser, Project) ->
+        .then (sprint) ->
+          $state.go 'tab.new-sprint' unless sprint?
+          sprint
+      project: (NotSoShittyUser, Project, $state) ->
         NotSoShittyUser.getCurrentUser()
         .then (user) ->
+          return $state.go 'trello-login' unless user?
+          return $state.go 'tab.project' unless user.project?
           Project.find user.project.objectId
-        .then (project) ->
-          project
         .catch (err) ->
-          console.log err
-          return null
+          if err.status is 404
+            $state.go 'tab.project'
   .state 'tab.new-sprint',
     url: '/sprint/edit'
     controller: 'EditSprintCtrl'
@@ -39,7 +41,7 @@ angular.module 'NotSoShitty.bdc'
         .then (user) ->
           new Sprint
             project: new Project user.project
-            info =
+            info:
               bdcTitle: 'Burndown Chart'
             number: null
             goal: null
@@ -70,3 +72,12 @@ angular.module 'NotSoShitty.bdc'
         Sprint.find($stateParams.sprintId).catch (err) ->
           console.warn err
           $state.go 'tab.new-sprint'
+  .state 'tab.sprint-list',
+    url: '/project/:projectId/sprints'
+    controller: 'SprintListCtrl'
+    templateUrl: 'sprint/states/list/view.html'
+    resolve:
+      project: (Project, $stateParams) ->
+        Project.find $stateParams.projectId
+      sprints: (Sprint, $stateParams) ->
+        Sprint.getByProjectId $stateParams.projectId

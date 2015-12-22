@@ -1,0 +1,26 @@
+div(layout="row" layout-align="center end")
+  md-card(flex="90")
+    md-toolbar.md-hue-2
+      .md-toolbar-tools
+        h2.md-title Sprints: {{ project.name }}
+        div(flex)
+        button.md-icon-button.md-button.md-default-theme(
+          ng-click='delete($event)' ng-show='selected.length'
+        )
+          md-icon(md-svg-icon='delete')
+    md-data-table-container
+      table.md-primary(md-data-table md-row-select="selected")
+        thead
+          tr
+            th(name="Number")
+            th(name="Goal")
+            th(name="Dates")
+            th(name="Burndown")
+        tbody
+          tr(ng-repeat="sprint in sprints")
+            td.clickable(ui-sref="tab.edit-sprint({sprintId: sprint.objectId})") {{ sprint.number }}
+            td.clickable(ui-sref="tab.edit-sprint({sprintId: sprint.objectId})") {{ sprint.goal }}
+            td.clickable(ui-sref="tab.edit-sprint({sprintId: sprint.objectId})") {{ sprint.dates.start }} -> {{ sprint.dates.end }}
+            td
+              md-icon-button.clickable(ng-click="showBurndown($event, sprint)")
+                md-icon(md-svg-icon="trending-down")

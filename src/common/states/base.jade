@@ -29,19 +29,13 @@ md-content.grey-background
             a.md-button.md-ink-ripple(ng-click='dailyReport()')
               md-icon(md-svg-src='gmail')
               |    Daily Report
-          menu-link
-            a.md-button.md-ink-ripple(ng-click='project()')
-              md-icon(md-svg-src='settings')
-              |    Settings
-      md-divider
-      ul.docs-menu
-        li
-          menu-link
-            a.md-button.md-ink-ripple(
-              href="http://attackwithnumbers.com/the-laws-of-shitty-dashboard"
-              target="_blank"
-            )
-              md-icon(md-svg-src='help')
-              |    Why Not So Shitty?
   .container(ui-view)
+  footer(flex)
+    p
+      a(
+          href="http://attackwithnumbers.com/the-laws-of-shitty-dashboard"
+          target="_blank"
+        ) The law of shitty dashboards
+      |  is broken
+
   feedback

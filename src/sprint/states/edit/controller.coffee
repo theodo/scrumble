@@ -30,6 +30,7 @@ angular.module 'NotSoShitty.bdc'
   promise = null
   $scope.saveLabel = if $state.is 'tab.new-sprint' then 'Start the sprint' else 'Save'
   $scope.title = if $state.is 'tab.new-sprint' then 'NEW SPRINT' else 'EDIT SPRINT'
+
   $scope.save = ->
     if isActivable()
       $scope.sprint.save()
@@ -37,7 +38,16 @@ angular.module 'NotSoShitty.bdc'
   $scope.activable = false
   isActivable = ->
     s = $scope.sprint
-    if s.number? and s.doneColumn? and s.dates.start? and s.dates.end? and s.dates.days.length > 0 and s.resources.matrix.length > 0 and s.resources.totalPoints? and s.resources.speed?
+    if (
+      s.number? and
+      s.doneColumn? and
+      s.dates.start? and
+      s.dates.end? and
+      s.dates.days.length > 0 and
+      s.resources.matrix.length > 0 and
+      s.resources.totalPoints? and
+      s.resources.speed?
+    )
       true
     else
       false
