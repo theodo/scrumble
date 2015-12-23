@@ -1,1 +1,6 @@
-angular.module 'NotSoShitty.login', []
+angular.module 'NotSoShitty.login', [
+  'LocalStorageModule'
+  'satellizer'
+  'ui.router'
+  'permission'
+]

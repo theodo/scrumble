@@ -9,7 +9,11 @@ angular.module 'NotSoShitty.login'
   userInfo = null
 
   getAuthorizationHeader = ->
-    "Bearer " + localStorageService.get 'google_token'
+    token = localStorageService.get 'google_token'
+    if token?
+      "Bearer " + token
+    else
+      null
 
   getUserInfo = ->
     deferred = $q.defer()
@@ -19,8 +23,9 @@ angular.module 'NotSoShitty.login'
       $http.get(
         'https://content.googleapis.com/oauth2/v2/userinfo',
         headers:
-          authorization: "Bearer " + localStorageService.get 'google_token'
+          authorization: getAuthorizationHeader()
       ).then (response) ->
+        userInfo = response.data
         deferred.resolve response.data
       .catch ->
         deferred.reject()
@@ -28,6 +33,7 @@ angular.module 'NotSoShitty.login'
 
   logout: ->
     localStorageService.remove 'google_token'
+    userInfo = null
 
   login: ->
     $auth.authenticate 'google'
@@ -39,7 +45,8 @@ angular.module 'NotSoShitty.login'
   isAuthenticated: ->
     deferred = $q.defer()
     if localStorageService.get 'google_token'
-      getUserInfo().then (user) ->
+      getUserInfo()
+      .then ->
         deferred.resolve true
       .catch ->
         deferred.resolve false
