@@ -6,4 +6,5 @@ angular.module 'NotSoShitty.login'
       'https://www.googleapis.com/auth/userinfo.email'
       'https://www.googleapis.com/auth/gmail.send'
     ]
+    redirectUri: window.location.origin + window.location.pathname
     responseType: 'token'
