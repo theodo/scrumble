@@ -21,7 +21,6 @@ gulp.task 'vendor', (done) ->
     'bower_components/d3/d3.min.js'
     'bower_components/d3-bdc/dist/d3-bdc.js'
     'bower_components/angular-material-data-table/dist/md-data-table.min.js' # should be included soon in angular-material
-    'bower_components/angular-google-gapi/angular-google-gapi.min.js'
     'bower_components/MimeJS/dist/mime.js'
     'bower_components/showdown/dist/showdown.min.js'
   ]

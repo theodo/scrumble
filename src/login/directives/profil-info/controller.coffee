@@ -1,17 +1,35 @@
 angular.module 'NotSoShitty.login'
-.controller 'ProfilInfoCtrl', ($rootScope, $scope, $auth, User, $state) ->
-  $scope.logout = ->
-    $auth.logout()
-    $scope.userInfo = null
-    $state.go 'trello-login'
-    $scope.showProfilCard = false
+.controller 'ProfilInfoCtrl', (
+  $scope
+  $timeout
+  $rootScope
+  trelloAuth
+  googleAuth
+) ->
+  $scope.googleUser =
+    picture: "images/default-profile.jpg"
+  $scope.openMenu = ($mdOpenMenu, ev) ->
+    originatorEv = ev
+    $mdOpenMenu ev
+
+  $scope.logout = trelloAuth.logout
 
   getTrelloInfo = ->
-    if $auth.isAuthenticated()
-      User.getTrelloInfo().then (info) ->
-        $scope.userInfo = info
+    trelloAuth.getTrelloInfo().then (user) ->
+      $scope.userInfo = user
+
   getTrelloInfo()
-  $rootScope.$on 'refresh-profil', getTrelloInfo
-  $scope.showProfilCard = false
-  $scope.toggleProfilCard = ->
-    $scope.showProfilCard = !$scope.showProfilCard
+
+  if googleAuth.isAuthenticated()
+    googleAuth.getUserInfo().then (user) ->
+      $scope.googleUser = user
+
+  $scope.googleLogin = ->
+    googleAuth.login().then ->
+      googleAuth.getUserInfo().then (user) ->
+        $scope.googleUser = user
+  $scope.googleLogout = ->
+    $scope.googleUser = null
+    $scope.googleUser =
+      picture: "images/default-profile.jpg"
+    googleAuth.logout()

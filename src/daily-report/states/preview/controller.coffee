@@ -1,5 +1,14 @@
 angular.module 'NotSoShitty.daily-report'
-.controller 'PreviewCtrl', ($scope, $mdDialog, $mdToast, mailer, message, rawMessage, reportBuilder) ->
+.controller 'PreviewCtrl', (
+  $scope
+  $mdDialog
+  $mdToast
+  googleAuth
+  mailer
+  message
+  rawMessage
+  reportBuilder
+) ->
   $scope.message = message
 
   $scope.hide = ->
@@ -7,6 +16,13 @@ angular.module 'NotSoShitty.daily-report'
 
   $scope.cancel = ->
     $mdDialog.cancel()
+
+  $scope.login = ->
+    googleAuth.login().then ->
+      googleAuth.isAuthenticated().then (isAuthenticated) ->
+        $scope.isAuthenticated = isAuthenticated
+  googleAuth.isAuthenticated().then (isAuthenticated) ->
+    $scope.isAuthenticated = isAuthenticated
 
   $scope.send = ->
     reportBuilder.render(rawMessage, true).then (message) ->

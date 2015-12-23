@@ -24,7 +24,8 @@ angular.module 'NotSoShitty.common'
     '#f2f2f2'
   ]
   getColor = (initials) ->
+    return colors[0] unless initials?
     hash = initials.charCodeAt(0)
     colors[hash%9]
 
-  $scope.color = getColor $scope.member.initials
+  $scope.color = getColor $scope.member?.initials
