@@ -100,17 +100,14 @@ angular.module 'NotSoShitty.bdc'
   $scope.dailyReport = ->
     $state.go 'tab.daily-report'
 
-  self = this
-  self.hidden = false
-  self.isOpen = false
-  self.hover = false
-  self.icon = 'menu'
+  $scope.menuIsOpen = false
+  $scope.tooltipVisible = false
   # On opening, add a delayed property which shows tooltips after the speed dial has opened
   # so that they have the proper position; if closing, immediately hide the tooltips
-  $scope.$watch 'menu.isOpen', (isOpen) ->
-    if isOpen
-      $timeout (->
-        $scope.tooltipVisible = self.isOpen
-      ), 600
+  $scope.$watch 'menuIsOpen', (isOpen) ->
+    if isOpen?
+      $timeout ->
+        $scope.tooltipVisible = $scope.menuIsOpen
+      , 600
     else
-      $scope.tooltipVisible = self.isOpen
+      $scope.tooltipVisible = $scope.menuIsOpen
