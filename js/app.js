@@ -1,7 +1,7 @@
 'use strict';
 var app;
 
-app = angular.module('NotSoShitty', ['ng', 'ngResource', 'ngAnimate', 'ngSanitize', 'ngMaterial', 'md.data.table', 'ui.router', 'app.templates', 'Parse', 'LocalStorageModule', 'satellizer', 'permission', 'trello-api-client', 'angular-google-gapi', 'NotSoShitty.bdc', 'NotSoShitty.common', 'NotSoShitty.daily-report', 'NotSoShitty.gmail-client', 'NotSoShitty.feedback', 'NotSoShitty.login', 'NotSoShitty.settings', 'NotSoShitty.storage']);
+app = angular.module('NotSoShitty', ['ng', 'ngResource', 'ngAnimate', 'ngSanitize', 'ngMaterial', 'md.data.table', 'ui.router', 'app.templates', 'Parse', 'LocalStorageModule', 'satellizer', 'permission', 'trello-api-client', 'NotSoShitty.bdc', 'NotSoShitty.common', 'NotSoShitty.daily-report', 'NotSoShitty.gmail-client', 'NotSoShitty.feedback', 'NotSoShitty.login', 'NotSoShitty.settings', 'NotSoShitty.storage']);
 
 app.config(function($locationProvider, $urlRouterProvider, ParseProvider) {
   $locationProvider.hashPrefix('!');
@@ -45,13 +45,13 @@ angular.module('NotSoShitty.feedback', []);
 
 angular.module('NotSoShitty.gmail-client', []);
 
+angular.module('NotSoShitty.login', ['LocalStorageModule', 'satellizer', 'ui.router', 'permission']);
+
 angular.module('NotSoShitty.settings', ['NotSoShitty.common']);
 
 angular.module('NotSoShitty.bdc', ['ui.router', 'Parse', 'ngMaterial']);
 
 angular.module('NotSoShitty.storage', []);
-
-angular.module('NotSoShitty.login', []);
 
 angular.module('NotSoShitty.common').config(function($mdThemingProvider) {
   var customAccent, customBackground, customPrimary, customWarn;
@@ -363,43 +363,6 @@ angular.module('NotSoShitty.daily-report').config(function($stateProvider) {
   });
 });
 
-var __hasProp = {}.hasOwnProperty,
-  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
-
-angular.module('NotSoShitty.daily-report').factory('DailyReport', function(Parse) {
-  var DailyReport;
-  return DailyReport = (function(_super) {
-    __extends(DailyReport, _super);
-
-    function DailyReport() {
-      return DailyReport.__super__.constructor.apply(this, arguments);
-    }
-
-    DailyReport.configure("DailyReport", "project", "message");
-
-    DailyReport.getByProject = function(project) {
-      return this.query({
-        where: {
-          project: {
-            __type: "Pointer",
-            className: "Project",
-            objectId: project.objectId
-          }
-        }
-      }).then(function(response) {
-        if (response.length > 0) {
-          return response[0];
-        } else {
-          return null;
-        }
-      });
-    };
-
-    return DailyReport;
-
-  })(Parse.Model);
-});
-
 angular.module('NotSoShitty.daily-report').service('reportBuilder', function($q, NotSoShittyUser, Sprint, Project, trelloUtils, dynamicFields) {
   var converter, project, promise, renderBDC, renderBehindAhead, renderTo, sprint;
   converter = new showdown.Converter();
@@ -505,6 +468,43 @@ angular.module('NotSoShitty.daily-report').service('reportBuilder', function($q,
   };
 });
 
+var __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+angular.module('NotSoShitty.daily-report').factory('DailyReport', function(Parse) {
+  var DailyReport;
+  return DailyReport = (function(_super) {
+    __extends(DailyReport, _super);
+
+    function DailyReport() {
+      return DailyReport.__super__.constructor.apply(this, arguments);
+    }
+
+    DailyReport.configure("DailyReport", "project", "message");
+
+    DailyReport.getByProject = function(project) {
+      return this.query({
+        where: {
+          project: {
+            __type: "Pointer",
+            className: "Project",
+            objectId: project.objectId
+          }
+        }
+      }).then(function(response) {
+        if (response.length > 0) {
+          return response[0];
+        } else {
+          return null;
+        }
+      });
+    };
+
+    return DailyReport;
+
+  })(Parse.Model);
+});
+
 angular.module('NotSoShitty.feedback').controller('feedbackCallToActionCtrl', function($scope, $mdDialog, $mdMedia) {
   var DialogController;
   $scope.customFullscreen = $mdMedia('sm');
@@ -578,36 +578,46 @@ angular.module('NotSoShitty.feedback').factory('Feedback', function(Parse) {
   })(Parse.Model);
 });
 
-angular.module('NotSoShitty.gmail-client').run(function(GApi, GAuth) {
-  GApi.load('gmail', 'v1');
-  GAuth.setClient('605908567890-3bg3dmamghq5gd7i9sqsdhvoflef0qku.apps.googleusercontent.com');
-  return GAuth.setScope('https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/gmail.send');
+angular.module('NotSoShitty.gmail-client').constant('SEND_EMAIL_ENDPOINT', 'https://content.googleapis.com/gmail/v1/users/me/messages/send').service('gmailClient', function($http, googleAuth, SEND_EMAIL_ENDPOINT) {
+  return {
+    send: function(raw) {
+      return $http.post(SEND_EMAIL_ENDPOINT, {
+        raw: raw
+      }, {
+        headers: {
+          authorization: googleAuth.getAuthorizationHeader()
+        },
+        params: {
+          alt: "json"
+        }
+      });
+    }
+  };
 });
 
-angular.module('NotSoShitty.gmail-client').service('mailer', function($state, $rootScope, GAuth) {
+angular.module('NotSoShitty.gmail-client').service('mailer', function($state, $rootScope, gmailClient, googleAuth) {
   return {
     send: function(message, callback) {
-      return GAuth.checkAuth().then(function() {
-        var base64EncodedEmail, originalMail, request, user;
-        if (message.to == null) {
-          return callback({
-            message: "No 'to' field",
-            code: 400
-          });
-        }
-        if (message.subject == null) {
-          return callback({
-            message: "No 'subject' field",
-            code: 400
-          });
-        }
-        if (message.body == null) {
-          return callback({
-            message: "No 'body' field",
-            code: 400
-          });
-        }
-        user = $rootScope.gapi.user;
+      if (message.to == null) {
+        return callback({
+          message: "No 'to' field",
+          code: 400
+        });
+      }
+      if (message.subject == null) {
+        return callback({
+          message: "No 'subject' field",
+          code: 400
+        });
+      }
+      if (message.body == null) {
+        return callback({
+          message: "No 'body' field",
+          code: 400
+        });
+      }
+      return googleAuth.getUserInfo().then(function(user) {
+        var base64EncodedEmail, originalMail;
         originalMail = {
           to: message.to,
           subject: message.subject,
@@ -619,16 +629,105 @@ angular.module('NotSoShitty.gmail-client').service('mailer', function($state, $r
         };
         base64EncodedEmail = btoa(Mime.toMimeTxt(originalMail));
         base64EncodedEmail = base64EncodedEmail.replace(/\+/g, '-').replace(/\//g, '_');
-        request = gapi.client.gmail.users.messages.send({
-          userId: 'me',
-          resource: {
-            raw: base64EncodedEmail
-          }
-        });
-        return request.execute(callback);
-      }, function() {
-        return $state.go('tab.google-login');
+        return gmailClient.send(base64EncodedEmail).then(callback);
       });
+    }
+  };
+});
+
+angular.module('NotSoShitty.login').config(function($authProvider) {
+  return $authProvider.google({
+    clientId: '605908567890-3bg3dmamghq5gd7i9sqsdhvoflef0qku.apps.googleusercontent.com',
+    scope: ['https://www.googleapis.com/auth/userinfo.email', 'https://www.googleapis.com/auth/gmail.send'],
+    responseType: 'token'
+  });
+});
+
+angular.module('NotSoShitty.login').run(function(Permission, localStorageService) {
+  return Permission.defineRole('trello-authenticated', function() {
+    return localStorageService.get('trello_token') != null;
+  });
+});
+
+angular.module('NotSoShitty.login').config(function($stateProvider) {
+  return $stateProvider.state('trello-login', {
+    url: '/login/trello',
+    controller: 'TrelloLoginCtrl',
+    templateUrl: 'login/states/trello/view.html'
+  });
+});
+
+angular.module('NotSoShitty.login').service('googleAuth', function($state, $auth, $http, $q, localStorageService) {
+  var getAuthorizationHeader, getUserInfo, userInfo;
+  userInfo = null;
+  getAuthorizationHeader = function() {
+    var token;
+    token = localStorageService.get('google_token');
+    if (token != null) {
+      return "Bearer " + token;
+    } else {
+      return null;
+    }
+  };
+  getUserInfo = function() {
+    var deferred;
+    deferred = $q.defer();
+    if (userInfo != null) {
+      deferred.resolve(userInfo);
+    } else {
+      $http.get('https://content.googleapis.com/oauth2/v2/userinfo', {
+        headers: {
+          authorization: getAuthorizationHeader()
+        }
+      }).then(function(response) {
+        userInfo = response.data;
+        return deferred.resolve(response.data);
+      })["catch"](function() {
+        return deferred.reject();
+      });
+    }
+    return deferred.promise;
+  };
+  return {
+    logout: function() {
+      localStorageService.remove('google_token');
+      return userInfo = null;
+    },
+    login: function() {
+      return $auth.authenticate('google').then(function(response) {
+        return localStorageService.set('google_token', response.access_token);
+      });
+    },
+    getAuthorizationHeader: getAuthorizationHeader,
+    getUserInfo: getUserInfo,
+    isAuthenticated: function() {
+      var deferred;
+      deferred = $q.defer();
+      if (localStorageService.get('google_token')) {
+        getUserInfo().then(function() {
+          return deferred.resolve(true);
+        })["catch"](function() {
+          return deferred.resolve(false);
+        });
+      } else {
+        deferred.resolve(false);
+      }
+      return deferred.promise;
+    }
+  };
+});
+
+angular.module('NotSoShitty.login').service('trelloAuth', function(localStorageService, TrelloClient, $state) {
+  return {
+    getTrelloInfo: function() {
+      return TrelloClient.get('/member/me').then(function(response) {
+        return response.data;
+      });
+    },
+    logout: function() {
+      localStorageService.remove('trello_email');
+      localStorageService.remove('trello_token');
+      return $state.go('trello-login');
     }
   };
 });
@@ -1131,44 +1230,6 @@ angular.module('NotSoShitty.storage').service('userService', function(NotSoShitt
   };
 });
 
-angular.module('NotSoShitty.login').run(function(Permission, localStorageService, GAuth) {
-  Permission.defineRole('trello-authenticated', function() {
-    return localStorageService.get('trello_token') != null;
-  });
-  return Permission.defineRole('google-authenticated', function() {
-    return GAuth.checkAuth();
-  });
-});
-
-angular.module('NotSoShitty.login').config(function($stateProvider) {
-  return $stateProvider.state('trello-login', {
-    url: '/login/trello',
-    controller: 'TrelloLoginCtrl',
-    templateUrl: 'login/states/trello/view.html'
-  }).state('tab.google-login', {
-    url: '/login/google',
-    controller: 'GoogleLoginCtrl',
-    templateUrl: 'login/states/google/view.html'
-  });
-});
-
-angular.module('NotSoShitty.login').service('trelloAuth', function(localStorageService, TrelloClient, $state) {
-  return {
-    getTrelloInfo: function() {
-      return TrelloClient.get('/member/me').then(function(response) {
-        return response.data;
-      });
-    },
-    logout: function() {
-      localStorageService.remove('trello_email');
-      localStorageService.remove('trello_token');
-      return $state.go('trello-login');
-    }
-  };
-});
-
-
-
 angular.module('NotSoShitty.common').directive('dynamicFieldsList', function() {
   return {
     restrict: 'E',
@@ -1223,7 +1284,7 @@ angular.module('NotSoShitty.common').factory('Avatar', function(TrelloClient) {
 });
 
 angular.module('NotSoShitty.common').controller('TrelloAvatarCtrl', function(Avatar, $scope) {
-  var colors, getColor;
+  var colors, getColor, _ref;
   if (!$scope.size) {
     $scope.size = '50';
   }
@@ -1242,10 +1303,13 @@ angular.module('NotSoShitty.common').controller('TrelloAvatarCtrl', function(Ava
   colors = ['#fbb4ae', '#b3cde3', '#ccebc5', '#decbe4', '#fed9a6', '#ffffcc', '#e5d8bd', '#fddaec', '#f2f2f2'];
   getColor = function(initials) {
     var hash;
+    if (initials == null) {
+      return colors[0];
+    }
     hash = initials.charCodeAt(0);
     return colors[hash % 9];
   };
-  return $scope.color = getColor($scope.member.initials);
+  return $scope.color = getColor((_ref = $scope.member) != null ? _ref.initials : void 0);
 });
 
 angular.module('NotSoShitty.common').directive('trelloAvatar', function() {
@@ -1260,7 +1324,7 @@ angular.module('NotSoShitty.common').directive('trelloAvatar', function() {
   };
 });
 
-angular.module('NotSoShitty.daily-report').controller('PreviewCtrl', function($scope, $mdDialog, $mdToast, mailer, message, rawMessage, reportBuilder) {
+angular.module('NotSoShitty.daily-report').controller('PreviewCtrl', function($scope, $mdDialog, $mdToast, googleAuth, mailer, message, rawMessage, reportBuilder) {
   $scope.message = message;
   $scope.hide = function() {
     return $mdDialog.hide();
@@ -1268,6 +1332,16 @@ angular.module('NotSoShitty.daily-report').controller('PreviewCtrl', function($s
   $scope.cancel = function() {
     return $mdDialog.cancel();
   };
+  $scope.login = function() {
+    return googleAuth.login().then(function() {
+      return googleAuth.isAuthenticated().then(function(isAuthenticated) {
+        return $scope.isAuthenticated = isAuthenticated;
+      });
+    });
+  };
+  googleAuth.isAuthenticated().then(function(isAuthenticated) {
+    return $scope.isAuthenticated = isAuthenticated;
+  });
   return $scope.send = function() {
     return reportBuilder.render(rawMessage, true).then(function(message) {
       return mailer.send(message, function(response) {
@@ -1315,6 +1389,78 @@ angular.module('NotSoShitty.daily-report').controller('DailyReportCtrl', functio
           return sprint;
         }
       }
+    });
+  };
+});
+
+angular.module('NotSoShitty.login').controller('ProfilInfoCtrl', function($scope, $timeout, $rootScope, trelloAuth, googleAuth) {
+  var getTrelloInfo;
+  $scope.googleUser = {
+    picture: "images/default-profile.jpg"
+  };
+  $scope.openMenu = function($mdOpenMenu, ev) {
+    var originatorEv;
+    originatorEv = ev;
+    return $mdOpenMenu(ev);
+  };
+  $scope.logout = trelloAuth.logout;
+  getTrelloInfo = function() {
+    return trelloAuth.getTrelloInfo().then(function(user) {
+      return $scope.userInfo = user;
+    });
+  };
+  getTrelloInfo();
+  if (googleAuth.isAuthenticated()) {
+    googleAuth.getUserInfo().then(function(user) {
+      return $scope.googleUser = user;
+    });
+  }
+  $scope.googleLogin = function() {
+    return googleAuth.login().then(function() {
+      return googleAuth.getUserInfo().then(function(user) {
+        return $scope.googleUser = user;
+      });
+    });
+  };
+  return $scope.googleLogout = function() {
+    $scope.googleUser = null;
+    $scope.googleUser = {
+      picture: "images/default-profile.jpg"
+    };
+    return googleAuth.logout();
+  };
+});
+
+angular.module('NotSoShitty.login').directive('profilInfo', function() {
+  return {
+    restrict: 'E',
+    templateUrl: 'login/directives/profil-info/view.html',
+    scope: {},
+    controller: 'ProfilInfoCtrl'
+  };
+});
+
+angular.module('NotSoShitty.login').controller('TrelloLoginCtrl', function($scope, $rootScope, TrelloClient, $state, $auth, NotSoShittyUser, localStorageService) {
+  if (localStorageService.get('trello_token')) {
+    $state.go('tab.current-sprint');
+  }
+  return $scope.login = function() {
+    return TrelloClient.authenticate().then(function(response) {
+      return TrelloClient.get('/member/me');
+    }).then(function(response) {
+      return response.data;
+    }).then(function(userInfo) {
+      return localStorageService.set('trello_email', userInfo.email);
+    }).then(function() {
+      return NotSoShittyUser.getCurrentUser();
+    }).then(function(user) {
+      if (user == null) {
+        user = new NotSoShittyUser();
+        user.email = localStorageService.get('trello_email');
+        return user.save();
+      }
+    }).then(function() {
+      return $state.go('tab.current-sprint');
     });
   };
 });
@@ -1871,73 +2017,6 @@ angular.module('NotSoShitty.bdc').controller('SprintListCtrl', function($scope, 
         }
       },
       fullscreen: useFullScreen
-    });
-  };
-});
-
-angular.module('NotSoShitty.login').controller('ProfilInfoCtrl', function($rootScope, $scope, $auth, User, $state) {
-  var getTrelloInfo;
-  $scope.logout = function() {
-    $auth.logout();
-    $scope.userInfo = null;
-    $state.go('trello-login');
-    return $scope.showProfilCard = false;
-  };
-  getTrelloInfo = function() {
-    if ($auth.isAuthenticated()) {
-      return User.getTrelloInfo().then(function(info) {
-        return $scope.userInfo = info;
-      });
-    }
-  };
-  getTrelloInfo();
-  $rootScope.$on('refresh-profil', getTrelloInfo);
-  $scope.showProfilCard = false;
-  return $scope.toggleProfilCard = function() {
-    return $scope.showProfilCard = !$scope.showProfilCard;
-  };
-});
-
-angular.module('NotSoShitty.login').directive('profilInfo', function() {
-  return {
-    restrict: 'E',
-    templateUrl: 'login/directives/profil-info/view.html',
-    scope: {},
-    controller: 'ProfilInfoCtrl'
-  };
-});
-
-angular.module('NotSoShitty.login').controller('GoogleLoginCtrl', function($scope, GAuth) {
-  return $scope.authenticate = function() {
-    return GAuth.login().then(function() {
-      return console.log('authenticated!');
-    }, function() {
-      return console.log('login fail');
-    });
-  };
-});
-
-angular.module('NotSoShitty.login').controller('TrelloLoginCtrl', function($scope, $rootScope, TrelloClient, $state, $auth, NotSoShittyUser, localStorageService) {
-  if (localStorageService.get('trello_token')) {
-    $state.go('tab.current-sprint');
-  }
-  return $scope.login = function() {
-    return TrelloClient.authenticate().then(function(response) {
-      return TrelloClient.get('/member/me');
-    }).then(function(response) {
-      return response.data;
-    }).then(function(userInfo) {
-      return localStorageService.set('trello_email', userInfo.email);
-    }).then(function() {
-      return NotSoShittyUser.getCurrentUser();
-    }).then(function(user) {
-      if (user == null) {
-        user = new NotSoShittyUser();
-        user.email = localStorageService.get('trello_email');
-        return user.save();
-      }
-    }).then(function() {
-      return $state.go('tab.current-sprint');
     });
   };
 });
