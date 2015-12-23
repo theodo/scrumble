@@ -181,11 +181,51 @@ trello-avatar .trello-avatar .member-avatar.initials {
 }
 .picture-link {
   width: 70px;
-  margin: 10px;
+  border: none;
+  margin-right: -25px;
+  top: -3px;
 }
-md-divider {
-  margin-top: 10px;
-  margin-bottom: 10px;
+.picture-link trello-avatar img {
+  box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.26);
+}
+.picture-link:focus {
+  border: none;
+  text-decoration: none;
+  outline: none;
+}
+.picture-link:not([disabled]):hover {
+  background-color: rgba(255, 255, 255, 0);
+}
+.account-details {
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: .010em;
+  margin: 0;
+  line-height: 1.3em;
+  padding: 0;
+}
+.account-details .md-avatar {
+  width: 50px;
+  height: 50px;
+}
+.account-details h3 {
+  font-weight: bold;
+  font-size: 14px;
+}
+.account-details h3,
+.account-details p {
+  margin: 0;
+}
+.account-details .trello-account,
+.account-details .gmail-account {
+  padding: 10px;
+}
+.account-details .gmail-account {
+  background-color: #eee;
+}
+.account-details .gmail-account .gmail-avatar {
+  margin: 5px;
+  border-radius: 50%;
 }
 
 resources-by-day .row {
