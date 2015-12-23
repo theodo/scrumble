@@ -15,7 +15,6 @@ app = angular.module 'NotSoShitty', [
   'satellizer'
   'permission'
   'trello-api-client'
-  'angular-google-gapi'
 
   'NotSoShitty.bdc'
   'NotSoShitty.common'

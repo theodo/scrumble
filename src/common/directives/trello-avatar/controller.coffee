@@ -1,7 +1,6 @@
 angular.module 'NotSoShitty.common'
 .controller 'TrelloAvatarCtrl',
 (Avatar, $scope) ->
-  console.log $scope
   $scope.size = '50' unless $scope.size
   $scope.$watch 'member', (member) ->
     unless member?

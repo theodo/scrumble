@@ -1,13 +1,10 @@
 angular.module 'NotSoShitty.gmail-client'
-.service 'mailer', ($state, $rootScope, GAuth) ->
+.service 'mailer', ($state, $rootScope, gmailClient, googleAuth) ->
   send: (message, callback) ->
-    GAuth.checkAuth().then ->
-      return callback message: "No 'to' field", code: 400 unless message.to?
-      return callback message: "No 'subject' field", code: 400 unless message.subject?
-      return callback message: "No 'body' field", code: 400 unless message.body?
-
-      user = $rootScope.gapi.user
-
+    return callback message: "No 'to' field", code: 400 unless message.to?
+    return callback message: "No 'subject' field", code: 400 unless message.subject?
+    return callback message: "No 'body' field", code: 400 unless message.body?
+    googleAuth.getUserInfo().then (user) ->
       originalMail =
         to: message.to
         subject: message.subject
@@ -19,10 +16,5 @@ angular.module 'NotSoShitty.gmail-client'
       base64EncodedEmail = btoa(Mime.toMimeTxt(originalMail))
       base64EncodedEmail = base64EncodedEmail.replace(/\+/g, '-').replace(/\//g, '_')
 
-      request = gapi.client.gmail.users.messages.send
-        userId: 'me'
-        resource:
-          raw: base64EncodedEmail
-
-      request.execute callback
-    , -> $state.go 'tab.google-login'
+      gmailClient.send base64EncodedEmail
+      .then callback
