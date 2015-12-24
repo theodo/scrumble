@@ -43,8 +43,6 @@ angular.module('NotSoShitty.daily-report', []);
 
 angular.module('NotSoShitty.feedback', []);
 
-angular.module('NotSoShitty.gmail-client', []);
-
 angular.module('NotSoShitty.login', ['LocalStorageModule', 'satellizer', 'ui.router', 'permission']);
 
 angular.module('NotSoShitty.settings', ['NotSoShitty.common']);
@@ -52,6 +50,8 @@ angular.module('NotSoShitty.settings', ['NotSoShitty.common']);
 angular.module('NotSoShitty.bdc', ['ui.router', 'Parse', 'ngMaterial']);
 
 angular.module('NotSoShitty.storage', []);
+
+angular.module('NotSoShitty.gmail-client', []);
 
 angular.module('NotSoShitty.common').config(function($mdThemingProvider) {
   var customAccent, customBackground, customPrimary, customWarn;
@@ -297,8 +297,8 @@ angular.module('NotSoShitty.common').service('trelloUtils', function(TrelloClien
   var getCardPoints;
   getCardPoints = function(card) {
     var match, matchVal, value, _i, _len;
-    if (!card.name) {
-      return;
+    if (!_.isString(card != null ? card.name : void 0)) {
+      return 0;
     }
     match = card.name.match(/\(([-+]?[0-9]*\.?[0-9]+)\)/);
     value = 0;
@@ -560,82 +560,6 @@ angular.module('NotSoShitty.feedback').directive('feedback', function() {
   };
 });
 
-var __hasProp = {}.hasOwnProperty,
-  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
-
-angular.module('NotSoShitty.feedback').factory('Feedback', function(Parse) {
-  var Feedback;
-  return Feedback = (function(_super) {
-    __extends(Feedback, _super);
-
-    function Feedback() {
-      return Feedback.__super__.constructor.apply(this, arguments);
-    }
-
-    Feedback.configure("Feedback", "reporter", "message");
-
-    return Feedback;
-
-  })(Parse.Model);
-});
-
-angular.module('NotSoShitty.gmail-client').constant('SEND_EMAIL_ENDPOINT', 'https://content.googleapis.com/gmail/v1/users/me/messages/send').service('gmailClient', function($http, googleAuth, SEND_EMAIL_ENDPOINT) {
-  return {
-    send: function(raw) {
-      return $http.post(SEND_EMAIL_ENDPOINT, {
-        raw: raw
-      }, {
-        headers: {
-          authorization: googleAuth.getAuthorizationHeader()
-        },
-        params: {
-          alt: "json"
-        }
-      });
-    }
-  };
-});
-
-angular.module('NotSoShitty.gmail-client').service('mailer', function($state, $rootScope, gmailClient, googleAuth) {
-  return {
-    send: function(message, callback) {
-      if (message.to == null) {
-        return callback({
-          message: "No 'to' field",
-          code: 400
-        });
-      }
-      if (message.subject == null) {
-        return callback({
-          message: "No 'subject' field",
-          code: 400
-        });
-      }
-      if (message.body == null) {
-        return callback({
-          message: "No 'body' field",
-          code: 400
-        });
-      }
-      return googleAuth.getUserInfo().then(function(user) {
-        var base64EncodedEmail, originalMail;
-        originalMail = {
-          to: message.to,
-          subject: message.subject,
-          fromName: user.name,
-          from: user.email,
-          body: message.body,
-          cids: message.cids,
-          attaches: []
-        };
-        base64EncodedEmail = btoa(Mime.toMimeTxt(originalMail));
-        base64EncodedEmail = base64EncodedEmail.replace(/\+/g, '-').replace(/\//g, '_');
-        return gmailClient.send(base64EncodedEmail).then(callback);
-      });
-    }
-  };
-});
-
 angular.module('NotSoShitty.login').config(function($authProvider) {
   return $authProvider.google({
     clientId: '605908567890-3bg3dmamghq5gd7i9sqsdhvoflef0qku.apps.googleusercontent.com',
@@ -732,6 +656,25 @@ angular.module('NotSoShitty.login').service('trelloAuth', function(localStorageS
       return $state.go('trello-login');
     }
   };
+});
+
+var __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+angular.module('NotSoShitty.feedback').factory('Feedback', function(Parse) {
+  var Feedback;
+  return Feedback = (function(_super) {
+    __extends(Feedback, _super);
+
+    function Feedback() {
+      return Feedback.__super__.constructor.apply(this, arguments);
+    }
+
+    Feedback.configure("Feedback", "reporter", "message");
+
+    return Feedback;
+
+  })(Parse.Model);
 });
 
 angular.module('NotSoShitty.settings').config(function($stateProvider) {
@@ -995,7 +938,7 @@ angular.module('NotSoShitty.bdc').factory('BDCDataProvider', function() {
   };
 });
 
-angular.module('NotSoShitty.bdc').service('svgToPng', function() {
+angular.module('NotSoShitty.bdc').service('bdc', function($q, trelloUtils) {
   return {
     getPngBase64: function(svg) {
       var canvas, ctx, height, img, result, serializer, svgStr, width;
@@ -1016,6 +959,29 @@ angular.module('NotSoShitty.bdc').service('svgToPng', function() {
       result = canvas.toDataURL('image/png');
       document.body.removeChild(canvas);
       return result;
+    },
+    setDonePointsAndSave: function(sprint) {
+      var deferred;
+      deferred = $q.defer();
+      if (sprint.doneColumn != null) {
+        trelloUtils.getColumnPoints(sprint.doneColumn).then(function(points) {
+          var day, i, _i, _len, _ref;
+          _ref = sprint.bdcData;
+          for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
+            day = _ref[i];
+            if (!((day.done != null) || day.done === '')) {
+              day.done = points;
+              break;
+            }
+          }
+          return sprint.save().then(function() {
+            return deferred.resolve();
+          });
+        });
+      } else {
+        deferred.reject('doneColumn is not set');
+      }
+      return deferred;
     }
   };
 });
@@ -1227,6 +1193,63 @@ angular.module('NotSoShitty.storage').service('userService', function(NotSoShitt
             return user;
           });
         }
+      });
+    }
+  };
+});
+
+angular.module('NotSoShitty.gmail-client').constant('SEND_EMAIL_ENDPOINT', 'https://content.googleapis.com/gmail/v1/users/me/messages/send').service('gmailClient', function($http, googleAuth, SEND_EMAIL_ENDPOINT) {
+  return {
+    send: function(raw) {
+      return $http.post(SEND_EMAIL_ENDPOINT, {
+        raw: raw
+      }, {
+        headers: {
+          authorization: googleAuth.getAuthorizationHeader()
+        },
+        params: {
+          alt: "json"
+        }
+      });
+    }
+  };
+});
+
+angular.module('NotSoShitty.gmail-client').service('mailer', function($state, $rootScope, gmailClient, googleAuth) {
+  return {
+    send: function(message, callback) {
+      if (message.to == null) {
+        return callback({
+          message: "No 'to' field",
+          code: 400
+        });
+      }
+      if (message.subject == null) {
+        return callback({
+          message: "No 'subject' field",
+          code: 400
+        });
+      }
+      if (message.body == null) {
+        return callback({
+          message: "No 'body' field",
+          code: 400
+        });
+      }
+      return googleAuth.getUserInfo().then(function(user) {
+        var base64EncodedEmail, originalMail;
+        originalMail = {
+          to: message.to,
+          subject: message.subject,
+          fromName: user.name,
+          from: user.email,
+          body: message.body,
+          cids: message.cids,
+          attaches: []
+        };
+        base64EncodedEmail = btoa(Mime.toMimeTxt(originalMail));
+        base64EncodedEmail = base64EncodedEmail.replace(/\+/g, '-').replace(/\//g, '_');
+        return gmailClient.send(base64EncodedEmail).then(callback);
       });
     }
   };
@@ -1716,9 +1739,8 @@ angular.module('NotSoShitty.bdc').directive('burndown', function() {
   };
 });
 
-angular.module('NotSoShitty.bdc').controller('CurrentSprintCtrl', function($scope, $state, $timeout, $mdDialog, $mdMedia, sprintUtils, TrelloClient, trelloUtils, dynamicFields, svgToPng, sprint, project, Sprint) {
+angular.module('NotSoShitty.bdc').controller('CurrentSprintCtrl', function($scope, $state, $timeout, $mdDialog, $mdMedia, sprintUtils, TrelloClient, trelloUtils, dynamicFields, bdc, sprint, project, Sprint) {
   var DialogController, day, _i, _len, _ref, _ref1;
-  $scope.sprint = sprint;
   $scope.project = project;
   dynamicFields.project(project);
   dynamicFields.sprint(sprint);
@@ -1730,15 +1752,15 @@ angular.module('NotSoShitty.bdc').controller('CurrentSprintCtrl', function($scop
     }
   }
   sprint.bdcData = sprintUtils.generateBDC(sprint.dates.days, sprint.resources, sprint.bdcData);
+  $scope.sprint = sprint;
   dynamicFields.render((_ref1 = project.settings) != null ? _ref1.bdcTitle : void 0).then(function(title) {
     return $scope.bdcTitle = title;
   });
-  $scope.bdcData = sprint.bdcData;
   $scope.showConfirmNewSprint = function(ev) {
     var confirm;
     confirm = $mdDialog.confirm().title('Start a new sprint').textContent('Starting a new sprint will end this one').targetEvent(ev).ok('OK').cancel('Cancel');
     return $mdDialog.show(confirm).then(function() {
-      return Sprint.close(sprint).then(function() {
+      return Sprint.close($scope.sprint).then(function() {
         return $state.go('tab.new-sprint');
       });
     });
@@ -1792,20 +1814,20 @@ angular.module('NotSoShitty.bdc').controller('CurrentSprintCtrl', function($scop
       fullscreen: useFullScreen,
       resolve: {
         data: function() {
-          return angular.copy(sprint.bdcData);
+          return angular.copy($scope.sprint.bdcData);
         },
         doneColumn: function() {
-          return sprint.doneColumn;
+          return $scope.sprint.doneColumn;
         }
       }
     }).then(function(data) {
       $scope.bdcData = data;
-      sprint.bdcData = data;
+      $scope.sprint.bdcData = data;
       return $timeout(function() {
         var svg;
         svg = d3.select('#bdcgraph')[0][0].firstChild;
-        sprint.bdcBase64 = svgToPng.getPngBase64(svg);
-        return sprint.save();
+        $scope.sprint.bdcBase64 = bdc.getPngBase64(svg);
+        return $scope.sprint.save();
       });
     });
   };
@@ -1827,7 +1849,7 @@ angular.module('NotSoShitty.bdc').controller('CurrentSprintCtrl', function($scop
   };
   $scope.menuIsOpen = false;
   $scope.tooltipVisible = false;
-  return $scope.$watch('menuIsOpen', function(isOpen) {
+  $scope.$watch('menuIsOpen', function(isOpen) {
     if (isOpen != null) {
       return $timeout(function() {
         return $scope.tooltipVisible = $scope.menuIsOpen;
@@ -1836,6 +1858,9 @@ angular.module('NotSoShitty.bdc').controller('CurrentSprintCtrl', function($scop
       return $scope.tooltipVisible = $scope.menuIsOpen;
     }
   });
+  return $scope.updateBDC = function() {
+    return bdc.setDonePointsAndSave($scope.sprint);
+  };
 });
 
 angular.module('NotSoShitty.bdc').controller('EditBDCCtrl', function($scope, $mdDialog, data, trelloUtils, doneColumn) {
