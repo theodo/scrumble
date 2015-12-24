@@ -1265,23 +1265,6 @@ angular.module('NotSoShitty.common').directive('dynamicFieldsList', function() {
   };
 });
 
-angular.module('NotSoShitty.common').directive('nssRound', function() {
-  return {
-    require: 'ngModel',
-    link: function(scope, element, attrs, ngModelController) {
-      ngModelController.$parsers.push(function(data) {
-        return parseFloat(data);
-      });
-      ngModelController.$formatters.push(function(data) {
-        if (_.isNumber(data)) {
-          data = data.toFixed(1);
-        }
-        return data;
-      });
-    }
-  };
-});
-
 angular.module('NotSoShitty.common').factory('Avatar', function(TrelloClient) {
   return {
     getMember: function(memberId) {
@@ -1346,6 +1329,23 @@ angular.module('NotSoShitty.common').directive('trelloAvatar', function() {
       member: '='
     },
     controller: 'TrelloAvatarCtrl'
+  };
+});
+
+angular.module('NotSoShitty.common').directive('nssRound', function() {
+  return {
+    require: 'ngModel',
+    link: function(scope, element, attrs, ngModelController) {
+      ngModelController.$parsers.push(function(data) {
+        return parseFloat(data);
+      });
+      ngModelController.$formatters.push(function(data) {
+        if (_.isNumber(data)) {
+          data = data.toFixed(1);
+        }
+        return data;
+      });
+    }
   };
 });
 
@@ -1971,6 +1971,7 @@ angular.module('NotSoShitty.bdc').controller('EditSprintCtrl', function($scope, 
     return $scope.sprint.resources.matrix = sprintUtils.generateResources((_ref2 = $scope.sprint.dates) != null ? _ref2.days : void 0, $scope.devTeam);
   });
   $scope.$watch('sprint.resources.matrix', function(newVal, oldVal) {
+    var previousSpeed;
     $scope.activable = isActivable();
     if (newVal === oldVal) {
       return;
@@ -1978,7 +1979,9 @@ angular.module('NotSoShitty.bdc').controller('EditSprintCtrl', function($scope, 
     if (!newVal) {
       return;
     }
-    return $scope.sprint.resources.totalManDays = sprintUtils.getTotalManDays(newVal);
+    previousSpeed = $scope.sprint.resources.speed;
+    $scope.sprint.resources.totalManDays = sprintUtils.getTotalManDays(newVal);
+    return $scope.sprint.resources.totalPoints = sprintUtils.calculateTotalPoints($scope.sprint.resources.totalManDays, previousSpeed);
   });
   $scope.$watch('sprint.resources.totalManDays', function(newVal, oldVal) {
     $scope.activable = isActivable();
