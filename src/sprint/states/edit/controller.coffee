@@ -74,7 +74,9 @@ angular.module 'NotSoShitty.bdc'
     $scope.activable = isActivable()
     return if newVal is oldVal
     return unless newVal
+    previousSpeed = $scope.sprint.resources.speed
     $scope.sprint.resources.totalManDays = sprintUtils.getTotalManDays newVal
+    $scope.sprint.resources.totalPoints = sprintUtils.calculateTotalPoints $scope.sprint.resources.totalManDays, previousSpeed
 
   $scope.$watch 'sprint.resources.totalManDays', (newVal, oldVal) ->
     $scope.activable = isActivable()
