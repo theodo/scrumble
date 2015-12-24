@@ -39,11 +39,9 @@ app.config(function($stateProvider) {
 
 angular.module('NotSoShitty.common', ['trello-api-client', 'ngMaterial']);
 
-angular.module('NotSoShitty.daily-report', []);
-
-angular.module('NotSoShitty.feedback', []);
-
 angular.module('NotSoShitty.gmail-client', []);
+
+angular.module('NotSoShitty.daily-report', []);
 
 angular.module('NotSoShitty.login', ['LocalStorageModule', 'satellizer', 'ui.router', 'permission']);
 
@@ -52,6 +50,8 @@ angular.module('NotSoShitty.settings', ['NotSoShitty.common']);
 angular.module('NotSoShitty.bdc', ['ui.router', 'Parse', 'ngMaterial']);
 
 angular.module('NotSoShitty.storage', []);
+
+angular.module('NotSoShitty.feedback', []);
 
 angular.module('NotSoShitty.common').config(function($mdThemingProvider) {
   var customAccent, customBackground, customPrimary, customWarn;
@@ -326,6 +326,63 @@ angular.module('NotSoShitty.common').service('trelloUtils', function(TrelloClien
   };
 });
 
+angular.module('NotSoShitty.gmail-client').constant('SEND_EMAIL_ENDPOINT', 'https://content.googleapis.com/gmail/v1/users/me/messages/send').service('gmailClient', function($http, googleAuth, SEND_EMAIL_ENDPOINT) {
+  return {
+    send: function(raw) {
+      return $http.post(SEND_EMAIL_ENDPOINT, {
+        raw: raw
+      }, {
+        headers: {
+          authorization: googleAuth.getAuthorizationHeader()
+        },
+        params: {
+          alt: "json"
+        }
+      });
+    }
+  };
+});
+
+angular.module('NotSoShitty.gmail-client').service('mailer', function($state, $rootScope, gmailClient, googleAuth) {
+  return {
+    send: function(message, callback) {
+      if (message.to == null) {
+        return callback({
+          message: "No 'to' field",
+          code: 400
+        });
+      }
+      if (message.subject == null) {
+        return callback({
+          message: "No 'subject' field",
+          code: 400
+        });
+      }
+      if (message.body == null) {
+        return callback({
+          message: "No 'body' field",
+          code: 400
+        });
+      }
+      return googleAuth.getUserInfo().then(function(user) {
+        var base64EncodedEmail, originalMail;
+        originalMail = {
+          to: message.to,
+          subject: message.subject,
+          fromName: user.name,
+          from: user.email,
+          body: message.body,
+          cids: message.cids,
+          attaches: []
+        };
+        base64EncodedEmail = btoa(Mime.toMimeTxt(originalMail));
+        base64EncodedEmail = base64EncodedEmail.replace(/\+/g, '-').replace(/\//g, '_');
+        return gmailClient.send(base64EncodedEmail).then(callback);
+      });
+    }
+  };
+});
+
 angular.module('NotSoShitty.daily-report').config(function($stateProvider) {
   return $stateProvider.state('tab.daily-report', {
     url: '/daily-report',
@@ -500,136 +557,6 @@ angular.module('NotSoShitty.daily-report').service('reportBuilder', function($q,
         return renderBDC(message, sprint.bdcBase64, useCid);
       }).then(function(message) {
         return renderTo(message);
-      });
-    }
-  };
-});
-
-angular.module('NotSoShitty.feedback').controller('feedbackCallToActionCtrl', function($scope, $mdDialog, $mdMedia) {
-  var DialogController;
-  $scope.customFullscreen = $mdMedia('sm');
-  $scope.openFeedbackModal = function(ev) {
-    $mdDialog.show({
-      controller: DialogController,
-      templateUrl: 'feedback/directives/dialog.html',
-      parent: angular.element(document.body),
-      targetEvent: ev,
-      clickOutsideToClose: true,
-      fullscreen: $mdMedia('sm') && $scope.customFullscreen
-    }).then((function(answer) {
-      $scope.status = 'You said the information was "' + answer + '".';
-    }), function() {
-      $scope.status = 'You cancelled the dialog.';
-    });
-    $scope.$watch((function() {
-      return $mdMedia('sm');
-    }), function(sm) {
-      $scope.customFullscreen = sm === true;
-    });
-  };
-  return DialogController = function($scope, $mdDialog, Feedback, localStorageService) {
-    $scope.message = null;
-    $scope.hide = function() {
-      return $mdDialog.hide();
-    };
-    $scope.cancel = function() {
-      return $mdDialog.cancel();
-    };
-    return $scope.send = function() {
-      var feedback;
-      console.log('yolo');
-      if ($scope.message != null) {
-        feedback = new Feedback();
-        feedback.reporter = localStorageService.get('trello_email');
-        feedback.message = $scope.message;
-        return feedback.save().then(function() {
-          return $mdDialog.hide();
-        });
-      }
-    };
-  };
-});
-
-angular.module('NotSoShitty.feedback').directive('feedback', function() {
-  return {
-    restrict: 'E',
-    templateUrl: 'feedback/directives/call-to-action.html',
-    scope: {},
-    controller: 'feedbackCallToActionCtrl'
-  };
-});
-
-var __hasProp = {}.hasOwnProperty,
-  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
-
-angular.module('NotSoShitty.feedback').factory('Feedback', function(Parse) {
-  var Feedback;
-  return Feedback = (function(_super) {
-    __extends(Feedback, _super);
-
-    function Feedback() {
-      return Feedback.__super__.constructor.apply(this, arguments);
-    }
-
-    Feedback.configure("Feedback", "reporter", "message");
-
-    return Feedback;
-
-  })(Parse.Model);
-});
-
-angular.module('NotSoShitty.gmail-client').constant('SEND_EMAIL_ENDPOINT', 'https://content.googleapis.com/gmail/v1/users/me/messages/send').service('gmailClient', function($http, googleAuth, SEND_EMAIL_ENDPOINT) {
-  return {
-    send: function(raw) {
-      return $http.post(SEND_EMAIL_ENDPOINT, {
-        raw: raw
-      }, {
-        headers: {
-          authorization: googleAuth.getAuthorizationHeader()
-        },
-        params: {
-          alt: "json"
-        }
-      });
-    }
-  };
-});
-
-angular.module('NotSoShitty.gmail-client').service('mailer', function($state, $rootScope, gmailClient, googleAuth) {
-  return {
-    send: function(message, callback) {
-      if (message.to == null) {
-        return callback({
-          message: "No 'to' field",
-          code: 400
-        });
-      }
-      if (message.subject == null) {
-        return callback({
-          message: "No 'subject' field",
-          code: 400
-        });
-      }
-      if (message.body == null) {
-        return callback({
-          message: "No 'body' field",
-          code: 400
-        });
-      }
-      return googleAuth.getUserInfo().then(function(user) {
-        var base64EncodedEmail, originalMail;
-        originalMail = {
-          to: message.to,
-          subject: message.subject,
-          fromName: user.name,
-          from: user.email,
-          body: message.body,
-          cids: message.cids,
-          attaches: []
-        };
-        base64EncodedEmail = btoa(Mime.toMimeTxt(originalMail));
-        base64EncodedEmail = base64EncodedEmail.replace(/\+/g, '-').replace(/\//g, '_');
-        return gmailClient.send(base64EncodedEmail).then(callback);
       });
     }
   };
@@ -1231,6 +1158,79 @@ angular.module('NotSoShitty.storage').service('userService', function(NotSoShitt
   };
 });
 
+angular.module('NotSoShitty.feedback').controller('feedbackCallToActionCtrl', function($scope, $mdDialog, $mdMedia) {
+  var DialogController;
+  $scope.customFullscreen = $mdMedia('sm');
+  $scope.openFeedbackModal = function(ev) {
+    $mdDialog.show({
+      controller: DialogController,
+      templateUrl: 'feedback/directives/dialog.html',
+      parent: angular.element(document.body),
+      targetEvent: ev,
+      clickOutsideToClose: true,
+      fullscreen: $mdMedia('sm') && $scope.customFullscreen
+    }).then((function(answer) {
+      $scope.status = 'You said the information was "' + answer + '".';
+    }), function() {
+      $scope.status = 'You cancelled the dialog.';
+    });
+    $scope.$watch((function() {
+      return $mdMedia('sm');
+    }), function(sm) {
+      $scope.customFullscreen = sm === true;
+    });
+  };
+  return DialogController = function($scope, $mdDialog, Feedback, localStorageService) {
+    $scope.message = null;
+    $scope.hide = function() {
+      return $mdDialog.hide();
+    };
+    $scope.cancel = function() {
+      return $mdDialog.cancel();
+    };
+    return $scope.send = function() {
+      var feedback;
+      console.log('yolo');
+      if ($scope.message != null) {
+        feedback = new Feedback();
+        feedback.reporter = localStorageService.get('trello_email');
+        feedback.message = $scope.message;
+        return feedback.save().then(function() {
+          return $mdDialog.hide();
+        });
+      }
+    };
+  };
+});
+
+angular.module('NotSoShitty.feedback').directive('feedback', function() {
+  return {
+    restrict: 'E',
+    templateUrl: 'feedback/directives/call-to-action.html',
+    scope: {},
+    controller: 'feedbackCallToActionCtrl'
+  };
+});
+
+var __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+angular.module('NotSoShitty.feedback').factory('Feedback', function(Parse) {
+  var Feedback;
+  return Feedback = (function(_super) {
+    __extends(Feedback, _super);
+
+    function Feedback() {
+      return Feedback.__super__.constructor.apply(this, arguments);
+    }
+
+    Feedback.configure("Feedback", "reporter", "message");
+
+    return Feedback;
+
+  })(Parse.Model);
+});
+
 angular.module('NotSoShitty.common').directive('dynamicFieldsList', function() {
   return {
     restrict: 'E',
@@ -1714,7 +1714,7 @@ angular.module('NotSoShitty.bdc').directive('burndown', function() {
 });
 
 angular.module('NotSoShitty.bdc').controller('CurrentSprintCtrl', function($scope, $state, $timeout, $mdDialog, $mdMedia, sprintUtils, TrelloClient, trelloUtils, dynamicFields, svgToPng, sprint, project, Sprint) {
-  var DialogController, day, self, _i, _len, _ref, _ref1;
+  var DialogController, day, _i, _len, _ref, _ref1;
   $scope.sprint = sprint;
   $scope.project = project;
   dynamicFields.project(project);
@@ -1822,18 +1822,15 @@ angular.module('NotSoShitty.bdc').controller('CurrentSprintCtrl', function($scop
   $scope.dailyReport = function() {
     return $state.go('tab.daily-report');
   };
-  self = this;
-  self.hidden = false;
-  self.isOpen = false;
-  self.hover = false;
-  self.icon = 'menu';
-  return $scope.$watch('menu.isOpen', function(isOpen) {
-    if (isOpen) {
-      return $timeout((function() {
-        return $scope.tooltipVisible = self.isOpen;
-      }), 600);
+  $scope.menuIsOpen = false;
+  $scope.tooltipVisible = false;
+  return $scope.$watch('menuIsOpen', function(isOpen) {
+    if (isOpen != null) {
+      return $timeout(function() {
+        return $scope.tooltipVisible = $scope.menuIsOpen;
+      }, 600);
     } else {
-      return $scope.tooltipVisible = self.isOpen;
+      return $scope.tooltipVisible = $scope.menuIsOpen;
     }
   });
 });
