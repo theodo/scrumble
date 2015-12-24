@@ -43,6 +43,8 @@ angular.module('NotSoShitty.daily-report', []);
 
 angular.module('NotSoShitty.feedback', []);
 
+angular.module('NotSoShitty.gmail-client', []);
+
 angular.module('NotSoShitty.login', ['LocalStorageModule', 'satellizer', 'ui.router', 'permission']);
 
 angular.module('NotSoShitty.settings', ['NotSoShitty.common']);
@@ -50,8 +52,6 @@ angular.module('NotSoShitty.settings', ['NotSoShitty.common']);
 angular.module('NotSoShitty.bdc', ['ui.router', 'Parse', 'ngMaterial']);
 
 angular.module('NotSoShitty.storage', []);
-
-angular.module('NotSoShitty.gmail-client', []);
 
 angular.module('NotSoShitty.common').config(function($mdThemingProvider) {
   var customAccent, customBackground, customPrimary, customWarn;
@@ -560,6 +560,82 @@ angular.module('NotSoShitty.feedback').directive('feedback', function() {
   };
 });
 
+var __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+angular.module('NotSoShitty.feedback').factory('Feedback', function(Parse) {
+  var Feedback;
+  return Feedback = (function(_super) {
+    __extends(Feedback, _super);
+
+    function Feedback() {
+      return Feedback.__super__.constructor.apply(this, arguments);
+    }
+
+    Feedback.configure("Feedback", "reporter", "message");
+
+    return Feedback;
+
+  })(Parse.Model);
+});
+
+angular.module('NotSoShitty.gmail-client').constant('SEND_EMAIL_ENDPOINT', 'https://content.googleapis.com/gmail/v1/users/me/messages/send').service('gmailClient', function($http, googleAuth, SEND_EMAIL_ENDPOINT) {
+  return {
+    send: function(raw) {
+      return $http.post(SEND_EMAIL_ENDPOINT, {
+        raw: raw
+      }, {
+        headers: {
+          authorization: googleAuth.getAuthorizationHeader()
+        },
+        params: {
+          alt: "json"
+        }
+      });
+    }
+  };
+});
+
+angular.module('NotSoShitty.gmail-client').service('mailer', function($state, $rootScope, gmailClient, googleAuth) {
+  return {
+    send: function(message, callback) {
+      if (message.to == null) {
+        return callback({
+          message: "No 'to' field",
+          code: 400
+        });
+      }
+      if (message.subject == null) {
+        return callback({
+          message: "No 'subject' field",
+          code: 400
+        });
+      }
+      if (message.body == null) {
+        return callback({
+          message: "No 'body' field",
+          code: 400
+        });
+      }
+      return googleAuth.getUserInfo().then(function(user) {
+        var base64EncodedEmail, originalMail;
+        originalMail = {
+          to: message.to,
+          subject: message.subject,
+          fromName: user.name,
+          from: user.email,
+          body: message.body,
+          cids: message.cids,
+          attaches: []
+        };
+        base64EncodedEmail = btoa(Mime.toMimeTxt(originalMail));
+        base64EncodedEmail = base64EncodedEmail.replace(/\+/g, '-').replace(/\//g, '_');
+        return gmailClient.send(base64EncodedEmail).then(callback);
+      });
+    }
+  };
+});
+
 angular.module('NotSoShitty.login').config(function($authProvider) {
   return $authProvider.google({
     clientId: '605908567890-3bg3dmamghq5gd7i9sqsdhvoflef0qku.apps.googleusercontent.com',
@@ -656,25 +732,6 @@ angular.module('NotSoShitty.login').service('trelloAuth', function(localStorageS
       return $state.go('trello-login');
     }
   };
-});
-
-var __hasProp = {}.hasOwnProperty,
-  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
-
-angular.module('NotSoShitty.feedback').factory('Feedback', function(Parse) {
-  var Feedback;
-  return Feedback = (function(_super) {
-    __extends(Feedback, _super);
-
-    function Feedback() {
-      return Feedback.__super__.constructor.apply(this, arguments);
-    }
-
-    Feedback.configure("Feedback", "reporter", "message");
-
-    return Feedback;
-
-  })(Parse.Model);
 });
 
 angular.module('NotSoShitty.settings').config(function($stateProvider) {
@@ -1198,63 +1255,6 @@ angular.module('NotSoShitty.storage').service('userService', function(NotSoShitt
   };
 });
 
-angular.module('NotSoShitty.gmail-client').constant('SEND_EMAIL_ENDPOINT', 'https://content.googleapis.com/gmail/v1/users/me/messages/send').service('gmailClient', function($http, googleAuth, SEND_EMAIL_ENDPOINT) {
-  return {
-    send: function(raw) {
-      return $http.post(SEND_EMAIL_ENDPOINT, {
-        raw: raw
-      }, {
-        headers: {
-          authorization: googleAuth.getAuthorizationHeader()
-        },
-        params: {
-          alt: "json"
-        }
-      });
-    }
-  };
-});
-
-angular.module('NotSoShitty.gmail-client').service('mailer', function($state, $rootScope, gmailClient, googleAuth) {
-  return {
-    send: function(message, callback) {
-      if (message.to == null) {
-        return callback({
-          message: "No 'to' field",
-          code: 400
-        });
-      }
-      if (message.subject == null) {
-        return callback({
-          message: "No 'subject' field",
-          code: 400
-        });
-      }
-      if (message.body == null) {
-        return callback({
-          message: "No 'body' field",
-          code: 400
-        });
-      }
-      return googleAuth.getUserInfo().then(function(user) {
-        var base64EncodedEmail, originalMail;
-        originalMail = {
-          to: message.to,
-          subject: message.subject,
-          fromName: user.name,
-          from: user.email,
-          body: message.body,
-          cids: message.cids,
-          attaches: []
-        };
-        base64EncodedEmail = btoa(Mime.toMimeTxt(originalMail));
-        base64EncodedEmail = base64EncodedEmail.replace(/\+/g, '-').replace(/\//g, '_');
-        return gmailClient.send(base64EncodedEmail).then(callback);
-      });
-    }
-  };
-});
-
 angular.module('NotSoShitty.common').directive('dynamicFieldsList', function() {
   return {
     restrict: 'E',
@@ -1514,14 +1514,26 @@ angular.module('NotSoShitty.settings').directive('projectWidget', function() {
 angular.module('NotSoShitty.settings').controller('ResourcesByDayCtrl', function($scope) {
   var changeResource;
   changeResource = function(dayIndex, memberIndex, matrix) {
-    matrix[dayIndex][memberIndex] += 0.5;
+    matrix[dayIndex][memberIndex] += 0.1;
     if (matrix[dayIndex][memberIndex] > 1) {
       matrix[dayIndex][memberIndex] = 0;
     }
     return matrix;
   };
-  return $scope.resourceClick = function(i, j) {
+  $scope.resourceClick = function(i, j) {
     return $scope.matrix = angular.copy(changeResource(i, j, $scope.matrix));
+  };
+  $scope.selected = [];
+  return $scope["delete"] = function() {
+    var day, index, _i, _len, _ref;
+    _ref = $scope.selected;
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      day = _ref[_i];
+      index = _.findIndex($scope.days, day);
+      _.remove($scope.days, day);
+      $scope.matrix.splice(index, 1);
+    }
+    return $scope.selected = [];
   };
 });
 
