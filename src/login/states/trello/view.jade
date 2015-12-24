@@ -2,7 +2,7 @@ div.landing-page(layout="row" layout-align="center center")
   div.hgroup
     h1 Not So Shitty
     h3 Automate your daily boring tasks
-    md-button.md-raised.md-primary(ng-click="login()")
+    md-button.md-raised.md-primary(ng-click="login()" ng-disabled="doing")
       md-icon(md-svg-icon='trello')
       |   Login with Trello
         

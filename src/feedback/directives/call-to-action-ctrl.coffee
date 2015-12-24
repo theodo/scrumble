@@ -24,6 +24,8 @@ angular.module 'NotSoShitty.feedback'
   DialogController = ($scope, $mdDialog, Feedback, localStorageService) ->
     $scope.message = null
 
+    $scope.doing = false
+
     $scope.hide = ->
       $mdDialog.hide()
 
@@ -31,8 +33,8 @@ angular.module 'NotSoShitty.feedback'
       $mdDialog.cancel()
 
     $scope.send = ->
-      console.log 'yolo'
       if $scope.message?
+        $scope.doing = true
         feedback = new Feedback()
         feedback.reporter = localStorageService.get 'trello_email'
         feedback.message = $scope.message

@@ -14,4 +14,4 @@ md-dialog
           label Your Feedback
           textarea(ng-model="message" rows="5" cols="1")
     md-dialog-actions(layout='row')
-      md-button.md-flat.md-primary(ng-click="send()") Send
+      md-button.md-flat.md-primary(ng-click="send()" ng-disabled="doing") Send
