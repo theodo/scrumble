@@ -1,7 +1,7 @@
 angular.module 'NotSoShitty.common'
 .service 'trelloUtils', (TrelloClient) ->
   getCardPoints = (card) ->
-    return unless card.name
+    return 0 unless _.isString card?.name
     match = card.name.match /\(([-+]?[0-9]*\.?[0-9]+)\)/
     value = 0
     if match

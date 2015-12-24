@@ -9,12 +9,11 @@ angular.module 'NotSoShitty.bdc'
   TrelloClient
   trelloUtils
   dynamicFields
-  svgToPng
+  bdc
   sprint
   project
   Sprint
 ) ->
-  $scope.sprint = sprint
   $scope.project = project
 
   dynamicFields.project project
@@ -25,10 +24,12 @@ angular.module 'NotSoShitty.bdc'
     for day in sprint.bdcData
       day.date = moment(day.date).toDate()
   sprint.bdcData = sprintUtils.generateBDC sprint.dates.days, sprint.resources, sprint.bdcData
+
+  $scope.sprint = sprint
+
   dynamicFields.render project.settings?.bdcTitle
   .then (title) ->
     $scope.bdcTitle = title
-  $scope.bdcData = sprint.bdcData
 
   $scope.showConfirmNewSprint = (ev) ->
     confirm = $mdDialog.confirm()
@@ -38,7 +39,7 @@ angular.module 'NotSoShitty.bdc'
       .ok 'OK'
       .cancel 'Cancel'
     $mdDialog.show(confirm).then ->
-      Sprint.close(sprint).then ->
+      Sprint.close($scope.sprint).then ->
         $state.go 'tab.new-sprint'
 
   $scope.openMenu = ($mdOpenMenu, ev) ->
@@ -75,15 +76,15 @@ angular.module 'NotSoShitty.bdc'
       clickOutsideToClose: true
       fullscreen: useFullScreen
       resolve:
-        data: -> angular.copy sprint.bdcData
-        doneColumn: -> sprint.doneColumn
+        data: -> angular.copy $scope.sprint.bdcData
+        doneColumn: -> $scope.sprint.doneColumn
     ).then (data) ->
       $scope.bdcData = data
-      sprint.bdcData = data
+      $scope.sprint.bdcData = data
       $timeout -> # bdc needs to be rendered before getting the png
         svg = d3.select('#bdcgraph')[0][0].firstChild
-        sprint.bdcBase64 = svgToPng.getPngBase64 svg
-        sprint.save()
+        $scope.sprint.bdcBase64 = bdc.getPngBase64 svg
+        $scope.sprint.save()
 
   DialogController = ($scope, $mdDialog, title, availableFields) ->
     $scope.title = title
@@ -111,3 +112,6 @@ angular.module 'NotSoShitty.bdc'
       , 600
     else
       $scope.tooltipVisible = $scope.menuIsOpen
+
+  $scope.updateBDC = ->
+    bdc.setDonePointsAndSave($scope.sprint)

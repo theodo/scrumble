@@ -1,5 +1,6 @@
 angular.module 'NotSoShitty.bdc'
-.service 'svgToPng', ->
+.service 'bdc', ($q, trelloUtils) ->
+
   getPngBase64: (svg) ->
     img = new Image()
     serializer = new XMLSerializer()
@@ -20,3 +21,18 @@ angular.module 'NotSoShitty.bdc'
     document.body.removeChild canvas
 
     result
+
+  setDonePointsAndSave: (sprint) ->
+    deferred = $q.defer()
+    if sprint.doneColumn?
+      trelloUtils.getColumnPoints(sprint.doneColumn).then (points) ->
+        for day, i in sprint.bdcData
+          unless day.done? or day.done == ''
+            day.done = points
+            break
+        sprint.save().then ->
+          deferred.resolve()
+    else
+      deferred.reject 'doneColumn is not set'
+
+    deferred
