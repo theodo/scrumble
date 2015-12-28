@@ -15,14 +15,15 @@ angular.module 'NotSoShitty.bdc'
         }
       current.add 1, 'days'
     days
-  generateResources = (days, devTeam) ->
+  generateResources = (days, devTeam, previous={days: [], matrix: []}) ->
     return unless days? and devTeam?
     matrix = []
     for day in days
-      line = []
-      for member in devTeam
-        line.push 1
-      matrix.push line
+      index = _.findIndex previous.days, day
+      if index > -1
+        matrix.push previous.matrix[index]
+      else
+        matrix.push (1 for member in devTeam)
     matrix
   getTotalManDays = (matrix = []) ->
     total = 0
@@ -79,8 +80,11 @@ angular.module 'NotSoShitty.bdc'
     return if source is 'number' or source is 'done'
     # regenerate date list if start or end values changed
     if source is 'date'
+      previous =
+        days: sprint.dates.days
+        matrix: sprint.resources.matrix
       sprint.dates.days = generateDayList sprint.dates.start, sprint.dates.end
-      sprint.resources.matrix = generateResources sprint.dates.days, devTeam
+      sprint.resources.matrix = generateResources sprint.dates.days, devTeam, previous
 
     if source is 'date' or source is 'resource' or source is 'speed'
       sprint.resources.totalManDays = getTotalManDays sprint.resources.matrix
