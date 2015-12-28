@@ -1,7 +1,7 @@
-div(layout="row" layout-align="center start")
-  md-card(flex="30")
+div(layout="column" layout-gt-md="row" layout-align="center start")
+  md-card(flex-gt-md="25" flex="90")
     project-widget(project="project")
-  md-card(flex="70")
+  md-card(flex-gt-md="70" flex="90")
     .md-toolbar-tools
       h2.md-title {{ bdcTitle }}
       span(flex)

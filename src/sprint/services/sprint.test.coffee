@@ -5,26 +5,40 @@ describe 'sprintUtils', ->
     @sprintUtils = sprintUtils
 
   describe 'generateDayList', ->
-    it 'should be a function', ->
-      expect(@sprintUtils.generateDayList).toEqual jasmine.any(Function)
-
     it 'should return undefined if start or end is not defined', ->
-      result = @sprintUtils.generateDayList null, '2015-12-20'
-      expect(result).toBe undefined
+      sprint =
+        dates:
+          start: null
+          end: '2015-12-20'
+        resources: {}
+      @sprintUtils.ensureDataConsistency 'date', sprint, []
+      expect(sprint.dates.days).toBe undefined
 
-      result = @sprintUtils.generateDayList '2015-12-20', null
-      expect(result).toBe undefined
+      sprint =
+        dates:
+          start: '2015-12-20'
+          end: null
+        resources: {}
+      @sprintUtils.ensureDataConsistency 'date', sprint, []
+      expect(sprint.dates.days).toBe undefined
 
     it 'should return undefined if start is later than end', ->
-      result = @sprintUtils.generateDayList null, '2015-12-20'
-      expect(result).toBe undefined
-
-      result = @sprintUtils.generateDayList '2015-12-20', '2015-12-19'
-      expect(result).toBe undefined
+      sprint =
+        dates:
+          start: '2015-12-20'
+          end: '2015-12-19'
+        resources: {}
+      @sprintUtils.ensureDataConsistency 'date', sprint, []
+      expect(sprint.dates.days).toBe undefined
 
     it 'should not return Satursdays and Sundays', ->
-      result = @sprintUtils.generateDayList '2015-12-16', '2015-12-23'
-      dates = (moment(day.date).format('YYYY-MM-DD') for day in result)
+      sprint =
+        dates:
+          start: '2015-12-16'
+          end: '2015-12-23'
+        resources: {}
+      @sprintUtils.ensureDataConsistency 'date', sprint, []
+      dates = (moment(day.date).format('YYYY-MM-DD') for day in sprint.dates.days)
 
       expect(dates).toContain '2015-12-16'
       expect(dates).toContain '2015-12-17'
@@ -36,85 +50,87 @@ describe 'sprintUtils', ->
       expect(dates).toContain '2015-12-23'
 
   describe 'generateResources', ->
-    it 'should be a function', ->
-      expect(@sprintUtils.generateResources).toEqual jasmine.any(Function)
-
     it 'should return undefined if an input is undefined', ->
-      result = @sprintUtils.generateResources null, []
-      expect(result).toBe undefined
+      sprint =
+        dates:
+          start: '2015-12-16'
+          end: undefined
+        resources: {}
+      @sprintUtils.ensureDataConsistency 'date', sprint, []
+      expect(sprint.resources.matrix).toBe undefined
 
     it 'should return a 2D array of size [days][teamLength]', ->
-      result = @sprintUtils.generateResources [null, null, null], [null, null]
-      expect(result.length).toBe 3
-      expect(result[0].length).toBe 2
+      sprint =
+        dates:
+          start: '2015-12-16'
+          end: '2015-12-18'
+        resources: {}
+      @sprintUtils.ensureDataConsistency 'date', sprint, [null, null]
+      matrix = sprint.resources.matrix
+      expect(matrix.length).toBe 3
+      expect(matrix[0].length).toBe 2
 
   describe 'getTotalManDays', ->
-    it 'should be a function', ->
-      expect(@sprintUtils.getTotalManDays).toEqual jasmine.any(Function)
-
     it 'should return 0 if an input is undefined', ->
-      result = @sprintUtils.getTotalManDays null
-      expect(result).toBe 0
+      sprint =
+        resources:
+          matrix: undefined
+      @sprintUtils.ensureDataConsistency 'resource', sprint
+      expect(sprint.resources.totalManDays).toBe 0
 
     it 'should return the expected value', ->
-      result = @sprintUtils.getTotalManDays []
-      expect(result).toBe 0
+      sprint =
+        resources:
+          matrix: []
+      @sprintUtils.ensureDataConsistency 'resource', sprint
+      expect(sprint.resources.totalManDays).toBe 0
 
-      result = @sprintUtils.getTotalManDays [[1,1,1], [1,1,1]]
-      expect(result).toBe 6
+      sprint =
+        resources:
+          matrix: [[1,1,1], [1,1,1]]
+      @sprintUtils.ensureDataConsistency 'resource', sprint
+      expect(sprint.resources.totalManDays).toBe 6
 
-      result = @sprintUtils.getTotalManDays [[1,1,0], [0.5,1,1]]
-      expect(result).toBe 4.5
+      sprint =
+        resources:
+          matrix: [[1,1,0], [0.5,1,1]]
+      @sprintUtils.ensureDataConsistency 'resource', sprint
+      expect(sprint.resources.totalManDays).toBe 4.5
 
   describe 'calculateTotalPoints', ->
-    it 'should be a function', ->
-      expect(@sprintUtils.calculateTotalPoints).toEqual jasmine.any(Function)
 
     it 'should return total * speed', ->
-      result = @sprintUtils.calculateTotalPoints 3, 2.5
-      expect(result).toBe 3*2.5
+      sprint =
+        resources:
+          matrix: [[1,1,0], [0.5,1,1]]
+          speed: 3
+      @sprintUtils.ensureDataConsistency 'resource', sprint
+      expect(sprint.resources.totalPoints).toBe 3*4.5
 
   describe 'calculateSpeed', ->
-    it 'should be a function', ->
-      expect(@sprintUtils.calculateSpeed).toEqual jasmine.any(Function)
 
     it 'should return totalPoints * totalManDay', ->
-      result = @sprintUtils.calculateSpeed 62, 12
-      expect(result).toBe 62/12
+      sprint =
+        resources:
+          totalPoints: 62
+          totalManDays: 12
+      @sprintUtils.ensureDataConsistency 'total', sprint
+      expect(sprint.resources.speed).toBe 62/12
 
     it 'should return undefined if totalManDay is inconsistent', ->
-      result = @sprintUtils.calculateSpeed 62, -2
-      expect(result).toBe undefined
+      sprint =
+        resources:
+          totalPoints: 62
+          totalManDays: -2
+      @sprintUtils.ensureDataConsistency 'total', sprint
+      expect(sprint.resources.speed).toBe undefined
 
-      result = @sprintUtils.calculateSpeed 62, null
-      expect(result).toBe undefined
-
-      # generateBDC: (days, resources, previous = []) ->
-      #   standard = 0
-      #   bdc = []
-      #   fetchDone = (date) ->
-      #     dayFromPrevious = _.find previous, (elt) -> elt.date = date
-      #     done = if dayFromPrevious? then dayFromPrevious.done else null
-      #
-      #   for day, i in days
-      #     date = moment(day.date).toDate()
-      #
-      #     bdc.push {
-      #       date: date
-      #       standard: standard
-      #       done: fetchDone(date)
-      #     }
-      #     standard += _.sum(resources.matrix[i]) * resources.speed
-      #
-      #   # add last point for ceremony
-      #   date = moment(day.date).add(1, 'days').toDate()
-      #   bdc.push {
-      #     date: date
-      #     standard: standard
-      #     done: fetchDone(date)
-      #   }
-      #
-      #   bdc
+      sprint =
+        resources:
+          totalPoints: 62
+          totalManDays: undefined
+      @sprintUtils.ensureDataConsistency 'total', sprint
+      expect(sprint.resources.speed).toBe undefined
 
   describe 'generateBDC', ->
     days = [

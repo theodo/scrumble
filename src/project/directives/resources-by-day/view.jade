@@ -21,7 +21,7 @@
             )
       tbody
         tr(ng-repeat="day in days")
-          td {{ day.date | date : 'longDate' }}
+          td {{ day.date | date : 'EEEE, MMMM d' }}
           td(ng-repeat="member in members")
             md-button.md-primary.row(
               ng-click="resourceClick($parent.$index,$index)"
