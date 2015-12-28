@@ -69,7 +69,18 @@ angular.module 'NotSoShitty.bdc'
           console.log err
           return null
       sprint: (Sprint, $stateParams, $state) ->
-        Sprint.find($stateParams.sprintId).catch (err) ->
+        Sprint.find($stateParams.sprintId)
+        .then (sprint) ->
+          if sprint.bdcData?
+            # the date is saved as a string so we've to convert it
+            for day in sprint.bdcData
+              day.date = moment(day.date).toDate()
+          if sprint?.dates?.start?
+            sprint.dates.start = moment(sprint.dates.start).toDate()
+          if sprint?.dates?.end?
+            sprint.dates.end = moment(sprint.dates.end).toDate()
+          sprint
+        .catch (err) ->
           console.warn err
           $state.go 'tab.new-sprint'
   .state 'tab.sprint-list',

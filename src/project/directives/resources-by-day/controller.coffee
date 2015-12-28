@@ -8,6 +8,8 @@ angular.module 'NotSoShitty.settings'
 
   $scope.resourceClick = (i, j) ->
     $scope.matrix = angular.copy changeResource i, j, $scope.matrix
+    $scope.onUpdate()
+    return
 
   $scope.selected = []
   $scope.delete = ->

@@ -1,6 +1,6 @@
 angular.module 'NotSoShitty.bdc'
 .service 'sprintUtils', ->
-  generateDayList: (start, end) ->
+  generateDayList = (start, end) ->
     return unless start? and end?
     # check if start < end
     current = moment start
@@ -15,7 +15,7 @@ angular.module 'NotSoShitty.bdc'
         }
       current.add 1, 'days'
     days
-  generateResources: (days, devTeam) ->
+  generateResources = (days, devTeam) ->
     return unless days? and devTeam?
     matrix = []
     for day in days
@@ -24,15 +24,15 @@ angular.module 'NotSoShitty.bdc'
         line.push 1
       matrix.push line
     matrix
-  getTotalManDays: (matrix = []) ->
+  getTotalManDays = (matrix = []) ->
     total = 0
     for line in matrix
       for cell in line
         total += cell
     total
-  calculateTotalPoints: (totalManDays, speed) ->
+  calculateTotalPoints = (totalManDays, speed) ->
     totalManDays * speed
-  calculateSpeed: (totalPoints, totalManDays) ->
+  calculateSpeed = (totalPoints, totalManDays) ->
     return unless totalManDays > 0
     totalPoints / totalManDays
   generateBDC: (days, resources, previous = []) ->
@@ -60,5 +60,31 @@ angular.module 'NotSoShitty.bdc'
       standard: standard
       done: fetchDone(date)
     }
-
     bdc
+  isActivable: (s) ->
+    if (
+      s.number? and
+      s.doneColumn? and
+      s.dates?.start? and
+      s.dates?.end? and
+      s.dates?.days?.length > 0 and
+      s.resources?.matrix?.length > 0 and
+      s.resources?.totalPoints? and
+      s.resources?.speed?
+    )
+      true
+    else
+      false
+  ensureDataConsistency: (source, sprint, devTeam) ->
+    return if source is 'number' or source is 'done'
+    # regenerate date list if start or end values changed
+    if source is 'date'
+      sprint.dates.days = generateDayList sprint.dates.start, sprint.dates.end
+      sprint.resources.matrix = generateResources sprint.dates.days, devTeam
+
+    if source is 'date' or source is 'resource' or source is 'speed'
+      sprint.resources.totalManDays = getTotalManDays sprint.resources.matrix
+      sprint.resources.totalPoints = calculateTotalPoints sprint.resources.totalManDays, sprint.resources.speed
+
+    if source is 'total'
+      sprint.resources.speed = calculateSpeed sprint.resources.totalPoints, sprint.resources.totalManDays
