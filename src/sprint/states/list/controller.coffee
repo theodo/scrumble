@@ -44,3 +44,11 @@ angular.module 'NotSoShitty.bdc'
       resolve:
         sprint: -> sprint
       fullscreen: useFullScreen
+
+  $scope.activateSprint = (sprint) ->
+    for s in $scope.sprints
+      if s.isActive and s != sprint
+        s.isActive = false
+        s.save()
+    sprint.isActive = true
+    sprint.save()

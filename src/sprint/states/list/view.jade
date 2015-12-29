@@ -1,13 +1,12 @@
 div(layout="row" layout-align="center end")
   md-card(flex="90")
-    md-toolbar.md-primary
-      .md-toolbar-tools
-        h2.md-title Sprints: {{ project.name }}
-        div(flex)
-        button.md-icon-button.md-button.md-default-theme(
-          ng-click='delete($event)' ng-show='selected.length'
-        )
-          md-icon(md-svg-icon='delete')
+    .md-toolbar-tools
+      h2.md-title Sprints: {{ project.name }}
+      div(flex)
+      button.md-icon-button.md-button.md-default-theme(
+        ng-click='delete($event)' ng-show='selected.length'
+      )
+        md-icon(md-svg-icon='delete')
     md-data-table-container
       table.md-primary(md-data-table md-row-select="selected")
         thead
@@ -16,6 +15,7 @@ div(layout="row" layout-align="center end")
             th(name="Goal")
             th(name="Dates")
             th(name="Burndown")
+            th(name="Active")
         tbody
           tr(ng-repeat="sprint in sprints")
             td.clickable(ui-sref="tab.edit-sprint({sprintId: sprint.objectId})") {{ sprint.number }}
@@ -24,3 +24,12 @@ div(layout="row" layout-align="center end")
             td
               md-icon-button.clickable(ng-click="showBurndown($event, sprint)")
                 md-icon(md-svg-icon="trending-down")
+            td.is-active
+              md-radio-group(
+                ng-model="sprint.isActive"
+                ng-click="activateSprint(sprint)"
+              )
+                md-radio-button(
+                  ng-value="true"
+                  aria-label="sprint is active"
+                )
