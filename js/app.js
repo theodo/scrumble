@@ -892,7 +892,23 @@ angular.module('NotSoShitty.bdc').config(function($stateProvider) {
         });
       },
       sprint: function(Sprint, $stateParams, $state) {
-        return Sprint.find($stateParams.sprintId)["catch"](function(err) {
+        return Sprint.find($stateParams.sprintId).then(function(sprint) {
+          var day, _i, _len, _ref, _ref1, _ref2;
+          if (sprint.bdcData != null) {
+            _ref = sprint.bdcData;
+            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+              day = _ref[_i];
+              day.date = moment(day.date).toDate();
+            }
+          }
+          if ((sprint != null ? (_ref1 = sprint.dates) != null ? _ref1.start : void 0 : void 0) != null) {
+            sprint.dates.start = moment(sprint.dates.start).toDate();
+          }
+          if ((sprint != null ? (_ref2 = sprint.dates) != null ? _ref2.end : void 0 : void 0) != null) {
+            sprint.dates.end = moment(sprint.dates.end).toDate();
+          }
+          return sprint;
+        })["catch"](function(err) {
           console.warn(err);
           return $state.go('tab.new-sprint');
         });
@@ -955,6 +971,8 @@ angular.module('NotSoShitty.storage').factory('Sprint', function(Parse) {
             objectId: projectId
           }
         }
+      }).then(function(sprints) {
+        return _.sortByOrder(sprints, 'number', false);
       });
     };
 
@@ -1044,70 +1062,85 @@ angular.module('NotSoShitty.bdc').service('bdc', function($q, trelloUtils) {
 });
 
 angular.module('NotSoShitty.bdc').service('sprintUtils', function() {
-  return {
-    generateDayList: function(start, end) {
-      var current, day, days, endM;
-      if (!((start != null) && (end != null))) {
-        return;
+  var calculateSpeed, calculateTotalPoints, generateDayList, generateResources, getTotalManDays;
+  generateDayList = function(start, end) {
+    var current, day, days, endM;
+    if (!((start != null) && (end != null))) {
+      return;
+    }
+    current = moment(start);
+    endM = moment(end).add(1, 'days');
+    if (!endM.isAfter(current)) {
+      return;
+    }
+    days = [];
+    while (!current.isSame(endM)) {
+      day = current.isoWeekday();
+      if (day !== 6 && day !== 7) {
+        days.push({
+          date: current.format()
+        });
       }
-      current = moment(start);
-      endM = moment(end).add(1, 'days');
-      if (!endM.isAfter(current)) {
-        return;
+      current.add(1, 'days');
+    }
+    return days;
+  };
+  generateResources = function(days, devTeam, previous) {
+    var day, index, matrix, member, _i, _len;
+    if (previous == null) {
+      previous = {
+        days: [],
+        matrix: []
+      };
+    }
+    if (!((days != null) && (devTeam != null))) {
+      return;
+    }
+    matrix = [];
+    for (_i = 0, _len = days.length; _i < _len; _i++) {
+      day = days[_i];
+      index = _.findIndex(previous.days, day);
+      if (index > -1) {
+        matrix.push(previous.matrix[index]);
+      } else {
+        matrix.push((function() {
+          var _j, _len1, _results;
+          _results = [];
+          for (_j = 0, _len1 = devTeam.length; _j < _len1; _j++) {
+            member = devTeam[_j];
+            _results.push(1);
+          }
+          return _results;
+        })());
       }
-      days = [];
-      while (!current.isSame(endM)) {
-        day = current.isoWeekday();
-        if (day !== 6 && day !== 7) {
-          days.push({
-            date: current.format()
-          });
-        }
-        current.add(1, 'days');
-      }
-      return days;
-    },
-    generateResources: function(days, devTeam) {
-      var day, line, matrix, member, _i, _j, _len, _len1;
-      if (!((days != null) && (devTeam != null))) {
-        return;
-      }
+    }
+    return matrix;
+  };
+  getTotalManDays = function(matrix) {
+    var cell, line, total, _i, _j, _len, _len1;
+    if (matrix == null) {
       matrix = [];
-      for (_i = 0, _len = days.length; _i < _len; _i++) {
-        day = days[_i];
-        line = [];
-        for (_j = 0, _len1 = devTeam.length; _j < _len1; _j++) {
-          member = devTeam[_j];
-          line.push(1);
-        }
-        matrix.push(line);
+    }
+    total = 0;
+    for (_i = 0, _len = matrix.length; _i < _len; _i++) {
+      line = matrix[_i];
+      for (_j = 0, _len1 = line.length; _j < _len1; _j++) {
+        cell = line[_j];
+        total += cell;
       }
-      return matrix;
-    },
-    getTotalManDays: function(matrix) {
-      var cell, line, total, _i, _j, _len, _len1;
-      if (matrix == null) {
-        matrix = [];
-      }
-      total = 0;
-      for (_i = 0, _len = matrix.length; _i < _len; _i++) {
-        line = matrix[_i];
-        for (_j = 0, _len1 = line.length; _j < _len1; _j++) {
-          cell = line[_j];
-          total += cell;
-        }
-      }
-      return total;
-    },
-    calculateTotalPoints: function(totalManDays, speed) {
-      return totalManDays * speed;
-    },
-    calculateSpeed: function(totalPoints, totalManDays) {
-      if (!(totalManDays > 0)) {
-        return;
-      }
-      return totalPoints / totalManDays;
-    },
+    }
+    return total;
+  };
+  calculateTotalPoints = function(totalManDays, speed) {
+    return totalManDays * speed;
+  };
+  calculateSpeed = function(totalPoints, totalManDays) {
+    if (!(totalManDays > 0)) {
+      return;
+    }
+    return totalPoints / totalManDays;
+  };
+  return {
     generateBDC: function(days, resources, previous) {
       var bdc, date, day, fetchDone, i, standard, _i, _len;
       if (previous == null) {
@@ -1139,6 +1172,35 @@ angular.module('NotSoShitty.bdc').service('sprintUtils', function() {
         done: fetchDone(date)
       });
       return bdc;
+    },
+    isActivable: function(s) {
+      var _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7;
+      if ((s.number != null) && (s.doneColumn != null) && (((_ref = s.dates) != null ? _ref.start : void 0) != null) && (((_ref1 = s.dates) != null ? _ref1.end : void 0) != null) && ((_ref2 = s.dates) != null ? (_ref3 = _ref2.days) != null ? _ref3.length : void 0 : void 0) > 0 && ((_ref4 = s.resources) != null ? (_ref5 = _ref4.matrix) != null ? _ref5.length : void 0 : void 0) > 0 && (((_ref6 = s.resources) != null ? _ref6.totalPoints : void 0) != null) && (((_ref7 = s.resources) != null ? _ref7.speed : void 0) != null)) {
+        return true;
+      } else {
+        return false;
+      }
+    },
+    ensureDataConsistency: function(source, sprint, devTeam) {
+      var previous;
+      if (source === 'number' || source === 'done') {
+        return;
+      }
+      if (source === 'date') {
+        previous = {
+          days: sprint.dates.days,
+          matrix: sprint.resources.matrix
+        };
+        sprint.dates.days = generateDayList(sprint.dates.start, sprint.dates.end);
+        sprint.resources.matrix = generateResources(sprint.dates.days, devTeam, previous);
+      }
+      if (source === 'date' || source === 'resource' || source === 'speed') {
+        sprint.resources.totalManDays = getTotalManDays(sprint.resources.matrix);
+        sprint.resources.totalPoints = calculateTotalPoints(sprint.resources.totalManDays, sprint.resources.speed);
+      }
+      if (source === 'total') {
+        return sprint.resources.speed = calculateSpeed(sprint.resources.totalPoints, sprint.resources.totalManDays);
+      }
     }
   };
 });
@@ -1265,6 +1327,23 @@ angular.module('NotSoShitty.common').directive('dynamicFieldsList', function() {
   };
 });
 
+angular.module('NotSoShitty.common').directive('nssRound', function() {
+  return {
+    require: 'ngModel',
+    link: function(scope, element, attrs, ngModelController) {
+      ngModelController.$parsers.push(function(data) {
+        return parseFloat(data);
+      });
+      ngModelController.$formatters.push(function(data) {
+        if (_.isNumber(data)) {
+          data = data.toFixed(1);
+        }
+        return data;
+      });
+    }
+  };
+});
+
 angular.module('NotSoShitty.common').factory('Avatar', function(TrelloClient) {
   return {
     getMember: function(memberId) {
@@ -1329,23 +1408,6 @@ angular.module('NotSoShitty.common').directive('trelloAvatar', function() {
       member: '='
     },
     controller: 'TrelloAvatarCtrl'
-  };
-});
-
-angular.module('NotSoShitty.common').directive('nssRound', function() {
-  return {
-    require: 'ngModel',
-    link: function(scope, element, attrs, ngModelController) {
-      ngModelController.$parsers.push(function(data) {
-        return parseFloat(data);
-      });
-      ngModelController.$formatters.push(function(data) {
-        if (_.isNumber(data)) {
-          data = data.toFixed(1);
-        }
-        return data;
-      });
-    }
   };
 });
 
@@ -1514,14 +1576,15 @@ angular.module('NotSoShitty.settings').directive('projectWidget', function() {
 angular.module('NotSoShitty.settings').controller('ResourcesByDayCtrl', function($scope) {
   var changeResource;
   changeResource = function(dayIndex, memberIndex, matrix) {
-    matrix[dayIndex][memberIndex] += 0.1;
+    matrix[dayIndex][memberIndex] += 0.5;
     if (matrix[dayIndex][memberIndex] > 1) {
       matrix[dayIndex][memberIndex] = 0;
     }
     return matrix;
   };
   $scope.resourceClick = function(i, j) {
-    return $scope.matrix = angular.copy(changeResource(i, j, $scope.matrix));
+    $scope.matrix = angular.copy(changeResource(i, j, $scope.matrix));
+    $scope.onUpdate();
   };
   $scope.selected = [];
   return $scope["delete"] = function() {
@@ -1544,7 +1607,8 @@ angular.module('NotSoShitty.settings').directive('resourcesByDay', function() {
     scope: {
       members: '=',
       matrix: '=',
-      days: '='
+      days: '=',
+      onUpdate: '&'
     },
     controller: 'ResourcesByDayCtrl'
   };
@@ -1907,112 +1971,33 @@ angular.module('NotSoShitty.bdc').controller('EditBDCCtrl', function($scope, $md
 });
 
 angular.module('NotSoShitty.bdc').controller('EditSprintCtrl', function($scope, $timeout, $state, TrelloClient, project, sprintUtils, sprint, Project) {
-  var day, isActivable, promise, _i, _len, _ref, _ref1;
-  $scope.project = project;
-  if (sprint.bdcData != null) {
-    _ref = sprint.bdcData;
-    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-      day = _ref[_i];
-      day.date = moment(day.date).toDate();
-    }
-    sprint.dates.start = moment(sprint.dates.start).toDate();
-    sprint.dates.end = moment(sprint.dates.end).toDate();
-  }
+  var _ref;
   $scope.sprint = sprint;
   TrelloClient.get("/boards/" + project.boardId + "/lists").then(function(response) {
     return $scope.boardLists = response.data;
   });
-  $scope.devTeam = (_ref1 = project.team) != null ? _ref1.dev : void 0;
-  promise = null;
+  $scope.devTeam = (_ref = project.team) != null ? _ref.dev : void 0;
   $scope.saveLabel = $state.is('tab.new-sprint') ? 'Start the sprint' : 'Save';
   $scope.title = $state.is('tab.new-sprint') ? 'NEW SPRINT' : 'EDIT SPRINT';
   $scope.save = function() {
-    if (isActivable()) {
+    if (sprintUtils.isActivable($scope.sprint)) {
       return $scope.sprint.save();
     }
   };
-  $scope.activable = false;
-  isActivable = function() {
-    var s;
-    s = $scope.sprint;
-    if ((s.number != null) && (s.doneColumn != null) && (s.dates.start != null) && (s.dates.end != null) && s.dates.days.length > 0 && s.resources.matrix.length > 0 && (s.resources.totalPoints != null) && (s.resources.speed != null)) {
-      return true;
-    } else {
-      return false;
-    }
-  };
+  $scope.activable = sprintUtils.isActivable($scope.sprint);
   $scope.activate = function() {
-    if (isActivable()) {
+    if (sprintUtils.isActivable($scope.sprint)) {
       $scope.sprint.isActive = true;
       return $scope.sprint.save().then(function() {
         return $state.go('tab.current-sprint');
       });
     }
   };
-  $scope.$watch('sprint.dates.end', function(newVal, oldVal) {
-    $scope.activable = isActivable();
-    if (newVal === oldVal) {
-      return;
-    }
-    if (newVal == null) {
-      return;
-    }
-    return $scope.sprint.dates.days = sprintUtils.generateDayList($scope.sprint.dates.start, $scope.sprint.dates.end);
-  });
-  $scope.$watch('sprint.dates.days', function(newVal, oldVal) {
-    var _base, _ref2;
-    $scope.activable = isActivable();
-    if (newVal === oldVal) {
-      return;
-    }
-    if ((_base = $scope.sprint).resources == null) {
-      _base.resources = {};
-    }
-    return $scope.sprint.resources.matrix = sprintUtils.generateResources((_ref2 = $scope.sprint.dates) != null ? _ref2.days : void 0, $scope.devTeam);
-  });
-  $scope.$watch('sprint.resources.matrix', function(newVal, oldVal) {
-    var previousSpeed;
-    $scope.activable = isActivable();
-    if (newVal === oldVal) {
-      return;
-    }
-    if (!newVal) {
-      return;
-    }
-    previousSpeed = $scope.sprint.resources.speed;
-    $scope.sprint.resources.totalManDays = sprintUtils.getTotalManDays(newVal);
-    return $scope.sprint.resources.totalPoints = sprintUtils.calculateTotalPoints($scope.sprint.resources.totalManDays, previousSpeed);
-  });
-  $scope.$watch('sprint.resources.totalManDays', function(newVal, oldVal) {
-    $scope.activable = isActivable();
-    if (newVal === oldVal) {
-      return;
-    }
-    if (!(newVal && newVal > 0)) {
-      return;
-    }
-    return $scope.sprint.resources.speed = sprintUtils.calculateSpeed($scope.sprint.resources.totalPoints, newVal);
-  });
-  $scope.$watch('sprint.resources.totalPoints', function(newVal, oldVal) {
-    $scope.activable = isActivable();
-    if (newVal === oldVal) {
-      return;
-    }
-    if (!((newVal != null) && newVal > 0)) {
-      return;
-    }
-    return $scope.sprint.resources.speed = sprintUtils.calculateSpeed(newVal, $scope.sprint.resources.totalManDays);
-  });
-  return $scope.$watch('sprint.resources.speed', function(newVal, oldVal) {
-    $scope.activable = isActivable();
-    if (newVal === oldVal) {
-      return;
-    }
-    if (!((newVal != null) && newVal > 0)) {
-      return;
-    }
-    return $scope.sprint.resources.totalPoints = sprintUtils.calculateTotalPoints($scope.sprint.resources.totalManDays, newVal);
-  });
+  return $scope.checkSprint = function(source) {
+    var _ref1;
+    $scope.activable = sprintUtils.isActivable($scope.sprint);
+    return sprintUtils.ensureDataConsistency(source, $scope.sprint, project != null ? (_ref1 = project.team) != null ? _ref1.dev : void 0 : void 0);
+  };
 });
 
 angular.module('NotSoShitty.bdc').controller('SprintListCtrl', function($scope, $mdDialog, $mdMedia, sprints, project) {
@@ -2043,7 +2028,7 @@ angular.module('NotSoShitty.bdc').controller('SprintListCtrl', function($scope, 
     $scope.sprint = sprint;
     return $scope.cancel = $mdDialog.cancel;
   };
-  return $scope.showBurndown = function(ev, sprint) {
+  $scope.showBurndown = function(ev, sprint) {
     var useFullScreen;
     useFullScreen = $mdMedia('sm') || $mdMedia('xs');
     return $mdDialog.show({
@@ -2059,5 +2044,18 @@ angular.module('NotSoShitty.bdc').controller('SprintListCtrl', function($scope, 
       },
       fullscreen: useFullScreen
     });
+  };
+  return $scope.activateSprint = function(sprint) {
+    var s, _i, _len, _ref;
+    _ref = $scope.sprints;
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      s = _ref[_i];
+      if (s.isActive && s !== sprint) {
+        s.isActive = false;
+        s.save();
+      }
+    }
+    sprint.isActive = true;
+    return sprint.save();
   };
 });
