@@ -252,16 +252,16 @@ select-people .member-select label {
   height: 100%;
 }
 
-.bdc-data md-input-container {
-  margin-bottom: 0;
-}
-.bdc-data md-input-container .md-errors-spacer {
-  display: none;
-}
-
 .clickable {
   cursor: pointer;
 }
 md-data-table-container td md-radio-button {
   margin-bottom: 0;
+}
+
+.bdc-data md-input-container {
+  margin-bottom: 0;
+}
+.bdc-data md-input-container .md-errors-spacer {
+  display: none;
 }

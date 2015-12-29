@@ -39,9 +39,9 @@ app.config(function($stateProvider) {
 
 angular.module('NotSoShitty.common', ['trello-api-client', 'ngMaterial']);
 
-angular.module('NotSoShitty.feedback', []);
-
 angular.module('NotSoShitty.daily-report', []);
+
+angular.module('NotSoShitty.feedback', []);
 
 angular.module('NotSoShitty.gmail-client', []);
 
@@ -326,80 +326,6 @@ angular.module('NotSoShitty.common').service('trelloUtils', function(TrelloClien
   };
 });
 
-angular.module('NotSoShitty.feedback').controller('feedbackCallToActionCtrl', function($scope, $mdDialog, $mdMedia) {
-  var DialogController;
-  $scope.customFullscreen = $mdMedia('sm');
-  $scope.openFeedbackModal = function(ev) {
-    $mdDialog.show({
-      controller: DialogController,
-      templateUrl: 'feedback/directives/dialog.html',
-      parent: angular.element(document.body),
-      targetEvent: ev,
-      clickOutsideToClose: true,
-      fullscreen: $mdMedia('sm') && $scope.customFullscreen
-    }).then((function(answer) {
-      $scope.status = 'You said the information was "' + answer + '".';
-    }), function() {
-      $scope.status = 'You cancelled the dialog.';
-    });
-    $scope.$watch((function() {
-      return $mdMedia('sm');
-    }), function(sm) {
-      $scope.customFullscreen = sm === true;
-    });
-  };
-  return DialogController = function($scope, $mdDialog, Feedback, localStorageService) {
-    $scope.message = null;
-    $scope.doing = false;
-    $scope.hide = function() {
-      return $mdDialog.hide();
-    };
-    $scope.cancel = function() {
-      return $mdDialog.cancel();
-    };
-    return $scope.send = function() {
-      var feedback;
-      if ($scope.message != null) {
-        $scope.doing = true;
-        feedback = new Feedback();
-        feedback.reporter = localStorageService.get('trello_email');
-        feedback.message = $scope.message;
-        return feedback.save().then(function() {
-          return $mdDialog.hide();
-        });
-      }
-    };
-  };
-});
-
-angular.module('NotSoShitty.feedback').directive('feedback', function() {
-  return {
-    restrict: 'E',
-    templateUrl: 'feedback/directives/call-to-action.html',
-    scope: {},
-    controller: 'feedbackCallToActionCtrl'
-  };
-});
-
-var __hasProp = {}.hasOwnProperty,
-  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
-
-angular.module('NotSoShitty.feedback').factory('Feedback', function(Parse) {
-  var Feedback;
-  return Feedback = (function(_super) {
-    __extends(Feedback, _super);
-
-    function Feedback() {
-      return Feedback.__super__.constructor.apply(this, arguments);
-    }
-
-    Feedback.configure("Feedback", "reporter", "message");
-
-    return Feedback;
-
-  })(Parse.Model);
-});
-
 angular.module('NotSoShitty.daily-report').config(function($stateProvider) {
   return $stateProvider.state('tab.daily-report', {
     url: '/daily-report',
@@ -614,6 +540,80 @@ angular.module('NotSoShitty.daily-report').service('reportBuilder', function($q,
       });
     }
   };
+});
+
+angular.module('NotSoShitty.feedback').controller('feedbackCallToActionCtrl', function($scope, $mdDialog, $mdMedia) {
+  var DialogController;
+  $scope.customFullscreen = $mdMedia('sm');
+  $scope.openFeedbackModal = function(ev) {
+    $mdDialog.show({
+      controller: DialogController,
+      templateUrl: 'feedback/directives/dialog.html',
+      parent: angular.element(document.body),
+      targetEvent: ev,
+      clickOutsideToClose: true,
+      fullscreen: $mdMedia('sm') && $scope.customFullscreen
+    }).then((function(answer) {
+      $scope.status = 'You said the information was "' + answer + '".';
+    }), function() {
+      $scope.status = 'You cancelled the dialog.';
+    });
+    $scope.$watch((function() {
+      return $mdMedia('sm');
+    }), function(sm) {
+      $scope.customFullscreen = sm === true;
+    });
+  };
+  return DialogController = function($scope, $mdDialog, Feedback, localStorageService) {
+    $scope.message = null;
+    $scope.doing = false;
+    $scope.hide = function() {
+      return $mdDialog.hide();
+    };
+    $scope.cancel = function() {
+      return $mdDialog.cancel();
+    };
+    return $scope.send = function() {
+      var feedback;
+      if ($scope.message != null) {
+        $scope.doing = true;
+        feedback = new Feedback();
+        feedback.reporter = localStorageService.get('trello_email');
+        feedback.message = $scope.message;
+        return feedback.save().then(function() {
+          return $mdDialog.hide();
+        });
+      }
+    };
+  };
+});
+
+angular.module('NotSoShitty.feedback').directive('feedback', function() {
+  return {
+    restrict: 'E',
+    templateUrl: 'feedback/directives/call-to-action.html',
+    scope: {},
+    controller: 'feedbackCallToActionCtrl'
+  };
+});
+
+var __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+angular.module('NotSoShitty.feedback').factory('Feedback', function(Parse) {
+  var Feedback;
+  return Feedback = (function(_super) {
+    __extends(Feedback, _super);
+
+    function Feedback() {
+      return Feedback.__super__.constructor.apply(this, arguments);
+    }
+
+    Feedback.configure("Feedback", "reporter", "message");
+
+    return Feedback;
+
+  })(Parse.Model);
 });
 
 angular.module('NotSoShitty.gmail-client').constant('SEND_EMAIL_ENDPOINT', 'https://content.googleapis.com/gmail/v1/users/me/messages/send').service('gmailClient', function($http, googleAuth, SEND_EMAIL_ENDPOINT) {
@@ -1870,6 +1870,96 @@ angular.module('NotSoShitty.bdc').directive('burndown', function() {
   };
 });
 
+angular.module('NotSoShitty.bdc').controller('EditSprintCtrl', function($scope, $timeout, $state, TrelloClient, project, sprintUtils, sprint, Project) {
+  var _ref;
+  $scope.sprint = sprint;
+  TrelloClient.get("/boards/" + project.boardId + "/lists").then(function(response) {
+    return $scope.boardLists = response.data;
+  });
+  $scope.devTeam = (_ref = project.team) != null ? _ref.dev : void 0;
+  $scope.saveLabel = $state.is('tab.new-sprint') ? 'Start the sprint' : 'Save';
+  $scope.title = $state.is('tab.new-sprint') ? 'NEW SPRINT' : 'EDIT SPRINT';
+  $scope.save = function() {
+    if (sprintUtils.isActivable($scope.sprint)) {
+      return $scope.sprint.save();
+    }
+  };
+  $scope.activable = sprintUtils.isActivable($scope.sprint);
+  $scope.activate = function() {
+    if (sprintUtils.isActivable($scope.sprint)) {
+      $scope.sprint.isActive = true;
+      return $scope.sprint.save().then(function() {
+        return $state.go('tab.current-sprint');
+      });
+    }
+  };
+  return $scope.checkSprint = function(source) {
+    var _ref1;
+    $scope.activable = sprintUtils.isActivable($scope.sprint);
+    return sprintUtils.ensureDataConsistency(source, $scope.sprint, project != null ? (_ref1 = project.team) != null ? _ref1.dev : void 0 : void 0);
+  };
+});
+
+angular.module('NotSoShitty.bdc').controller('SprintListCtrl', function($scope, $mdDialog, $mdMedia, sprints, project) {
+  var BDCDialogController;
+  sprints.forEach(function(sprint) {
+    sprint.dates.start = moment(sprint.dates.start).format("MMMM Do YYYY");
+    return sprint.dates.end = moment(sprint.dates.end).format("MMMM Do YYYY");
+  });
+  $scope.sprints = sprints;
+  $scope.project = project;
+  $scope.selected = [];
+  $scope["delete"] = function(event) {
+    var confirm;
+    confirm = $mdDialog.confirm().title('Delete sprints').textContent('Are you sure you want to do what you\'re trying to do ?').ariaLabel('Delete sprints dialog').targetEvent(event).ok('Delete').cancel('Cancel');
+    return $mdDialog.show(confirm).then(function() {
+      var sprint, _i, _len, _ref;
+      _ref = $scope.selected;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        sprint = _ref[_i];
+        sprint.destroy().then(function() {
+          return _.remove($scope.sprints, sprint);
+        });
+      }
+      return $scope.selected = [];
+    });
+  };
+  BDCDialogController = function($scope, $mdDialog, sprint) {
+    $scope.sprint = sprint;
+    return $scope.cancel = $mdDialog.cancel;
+  };
+  $scope.showBurndown = function(ev, sprint) {
+    var useFullScreen;
+    useFullScreen = $mdMedia('sm') || $mdMedia('xs');
+    return $mdDialog.show({
+      controller: BDCDialogController,
+      templateUrl: 'sprint/states/list/bdc.dialog.html',
+      parent: angular.element(document.body),
+      targetEvent: ev,
+      clickOutsideToClose: true,
+      resolve: {
+        sprint: function() {
+          return sprint;
+        }
+      },
+      fullscreen: useFullScreen
+    });
+  };
+  return $scope.activateSprint = function(sprint) {
+    var s, _i, _len, _ref;
+    _ref = $scope.sprints;
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      s = _ref[_i];
+      if (s.isActive && s !== sprint) {
+        s.isActive = false;
+        s.save();
+      }
+    }
+    sprint.isActive = true;
+    return sprint.save();
+  };
+});
+
 angular.module('NotSoShitty.bdc').controller('CurrentSprintCtrl', function($scope, $state, $timeout, $mdDialog, $mdMedia, sprintUtils, TrelloClient, trelloUtils, dynamicFields, bdc, sprint, project, Sprint) {
   var DialogController, day, _i, _len, _ref, _ref1;
   $scope.project = project;
@@ -2022,95 +2112,5 @@ angular.module('NotSoShitty.bdc').controller('EditBDCCtrl', function($scope, $md
         return $scope.data[$scope.currentDayIndex].done = points;
       });
     }
-  };
-});
-
-angular.module('NotSoShitty.bdc').controller('EditSprintCtrl', function($scope, $timeout, $state, TrelloClient, project, sprintUtils, sprint, Project) {
-  var _ref;
-  $scope.sprint = sprint;
-  TrelloClient.get("/boards/" + project.boardId + "/lists").then(function(response) {
-    return $scope.boardLists = response.data;
-  });
-  $scope.devTeam = (_ref = project.team) != null ? _ref.dev : void 0;
-  $scope.saveLabel = $state.is('tab.new-sprint') ? 'Start the sprint' : 'Save';
-  $scope.title = $state.is('tab.new-sprint') ? 'NEW SPRINT' : 'EDIT SPRINT';
-  $scope.save = function() {
-    if (sprintUtils.isActivable($scope.sprint)) {
-      return $scope.sprint.save();
-    }
-  };
-  $scope.activable = sprintUtils.isActivable($scope.sprint);
-  $scope.activate = function() {
-    if (sprintUtils.isActivable($scope.sprint)) {
-      $scope.sprint.isActive = true;
-      return $scope.sprint.save().then(function() {
-        return $state.go('tab.current-sprint');
-      });
-    }
-  };
-  return $scope.checkSprint = function(source) {
-    var _ref1;
-    $scope.activable = sprintUtils.isActivable($scope.sprint);
-    return sprintUtils.ensureDataConsistency(source, $scope.sprint, project != null ? (_ref1 = project.team) != null ? _ref1.dev : void 0 : void 0);
-  };
-});
-
-angular.module('NotSoShitty.bdc').controller('SprintListCtrl', function($scope, $mdDialog, $mdMedia, sprints, project) {
-  var BDCDialogController;
-  sprints.forEach(function(sprint) {
-    sprint.dates.start = moment(sprint.dates.start).format("MMMM Do YYYY");
-    return sprint.dates.end = moment(sprint.dates.end).format("MMMM Do YYYY");
-  });
-  $scope.sprints = sprints;
-  $scope.project = project;
-  $scope.selected = [];
-  $scope["delete"] = function(event) {
-    var confirm;
-    confirm = $mdDialog.confirm().title('Delete sprints').textContent('Are you sure you want to do what you\'re trying to do ?').ariaLabel('Delete sprints dialog').targetEvent(event).ok('Delete').cancel('Cancel');
-    return $mdDialog.show(confirm).then(function() {
-      var sprint, _i, _len, _ref;
-      _ref = $scope.selected;
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        sprint = _ref[_i];
-        sprint.destroy().then(function() {
-          return _.remove($scope.sprints, sprint);
-        });
-      }
-      return $scope.selected = [];
-    });
-  };
-  BDCDialogController = function($scope, $mdDialog, sprint) {
-    $scope.sprint = sprint;
-    return $scope.cancel = $mdDialog.cancel;
-  };
-  $scope.showBurndown = function(ev, sprint) {
-    var useFullScreen;
-    useFullScreen = $mdMedia('sm') || $mdMedia('xs');
-    return $mdDialog.show({
-      controller: BDCDialogController,
-      templateUrl: 'sprint/states/list/bdc.dialog.html',
-      parent: angular.element(document.body),
-      targetEvent: ev,
-      clickOutsideToClose: true,
-      resolve: {
-        sprint: function() {
-          return sprint;
-        }
-      },
-      fullscreen: useFullScreen
-    });
-  };
-  return $scope.activateSprint = function(sprint) {
-    var s, _i, _len, _ref;
-    _ref = $scope.sprints;
-    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-      s = _ref[_i];
-      if (s.isActive && s !== sprint) {
-        s.isActive = false;
-        s.save();
-      }
-    }
-    sprint.isActive = true;
-    return sprint.save();
   };
 });
