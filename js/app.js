@@ -39,9 +39,9 @@ app.config(function($stateProvider) {
 
 angular.module('NotSoShitty.common', ['trello-api-client', 'ngMaterial']);
 
-angular.module('NotSoShitty.daily-report', []);
-
 angular.module('NotSoShitty.feedback', []);
+
+angular.module('NotSoShitty.daily-report', []);
 
 angular.module('NotSoShitty.gmail-client', []);
 
@@ -326,6 +326,80 @@ angular.module('NotSoShitty.common').service('trelloUtils', function(TrelloClien
   };
 });
 
+angular.module('NotSoShitty.feedback').controller('feedbackCallToActionCtrl', function($scope, $mdDialog, $mdMedia) {
+  var DialogController;
+  $scope.customFullscreen = $mdMedia('sm');
+  $scope.openFeedbackModal = function(ev) {
+    $mdDialog.show({
+      controller: DialogController,
+      templateUrl: 'feedback/directives/dialog.html',
+      parent: angular.element(document.body),
+      targetEvent: ev,
+      clickOutsideToClose: true,
+      fullscreen: $mdMedia('sm') && $scope.customFullscreen
+    }).then((function(answer) {
+      $scope.status = 'You said the information was "' + answer + '".';
+    }), function() {
+      $scope.status = 'You cancelled the dialog.';
+    });
+    $scope.$watch((function() {
+      return $mdMedia('sm');
+    }), function(sm) {
+      $scope.customFullscreen = sm === true;
+    });
+  };
+  return DialogController = function($scope, $mdDialog, Feedback, localStorageService) {
+    $scope.message = null;
+    $scope.doing = false;
+    $scope.hide = function() {
+      return $mdDialog.hide();
+    };
+    $scope.cancel = function() {
+      return $mdDialog.cancel();
+    };
+    return $scope.send = function() {
+      var feedback;
+      if ($scope.message != null) {
+        $scope.doing = true;
+        feedback = new Feedback();
+        feedback.reporter = localStorageService.get('trello_email');
+        feedback.message = $scope.message;
+        return feedback.save().then(function() {
+          return $mdDialog.hide();
+        });
+      }
+    };
+  };
+});
+
+angular.module('NotSoShitty.feedback').directive('feedback', function() {
+  return {
+    restrict: 'E',
+    templateUrl: 'feedback/directives/call-to-action.html',
+    scope: {},
+    controller: 'feedbackCallToActionCtrl'
+  };
+});
+
+var __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+angular.module('NotSoShitty.feedback').factory('Feedback', function(Parse) {
+  var Feedback;
+  return Feedback = (function(_super) {
+    __extends(Feedback, _super);
+
+    function Feedback() {
+      return Feedback.__super__.constructor.apply(this, arguments);
+    }
+
+    Feedback.configure("Feedback", "reporter", "message");
+
+    return Feedback;
+
+  })(Parse.Model);
+});
+
 angular.module('NotSoShitty.daily-report').config(function($stateProvider) {
   return $stateProvider.state('tab.daily-report', {
     url: '/daily-report',
@@ -401,7 +475,7 @@ angular.module('NotSoShitty.daily-report').factory('DailyReport', function(Parse
 });
 
 angular.module('NotSoShitty.daily-report').service('reportBuilder', function($q, NotSoShittyUser, Sprint, Project, trelloUtils, dynamicFields) {
-  var converter, project, promise, renderBDC, renderBehindAhead, renderTo, sprint;
+  var converter, project, promise, renderBDC, renderBehindAhead, renderCc, renderTo, sprint;
   converter = new showdown.Converter();
   promise = void 0;
   project = void 0;
@@ -455,7 +529,9 @@ angular.module('NotSoShitty.daily-report').service('reportBuilder', function($q,
         _results = [];
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
           member = _ref[_i];
-          _results.push(member.email);
+          if (member.daily === 'to') {
+            _results.push(member.email);
+          }
         }
         return _results;
       })();
@@ -465,11 +541,44 @@ angular.module('NotSoShitty.daily-report').service('reportBuilder', function($q,
         _results = [];
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
           member = _ref[_i];
-          _results.push(member.email);
+          if (member.daily === 'to') {
+            _results.push(member.email);
+          }
         }
         return _results;
       })();
       message.to = _.filter(_.union(devsEmails, memberEmails));
+      return message;
+    });
+  };
+  renderCc = function(message) {
+    return promise.then(function() {
+      var devsEmails, member, memberEmails;
+      devsEmails = (function() {
+        var _i, _len, _ref, _results;
+        _ref = project.team.dev;
+        _results = [];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          member = _ref[_i];
+          if (member.daily === 'cc') {
+            _results.push(member.email);
+          }
+        }
+        return _results;
+      })();
+      memberEmails = (function() {
+        var _i, _len, _ref, _results;
+        _ref = project.team.rest;
+        _results = [];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          member = _ref[_i];
+          if (member.daily === 'cc') {
+            _results.push(member.email);
+          }
+        }
+        return _results;
+      })();
+      message.cc = _.filter(_.union(devsEmails, memberEmails));
       return message;
     });
   };
@@ -500,83 +609,11 @@ angular.module('NotSoShitty.daily-report').service('reportBuilder', function($q,
         return renderBDC(message, sprint.bdcBase64, useCid);
       }).then(function(message) {
         return renderTo(message);
+      }).then(function(message) {
+        return renderCc(message);
       });
     }
   };
-});
-
-angular.module('NotSoShitty.feedback').controller('feedbackCallToActionCtrl', function($scope, $mdDialog, $mdMedia) {
-  var DialogController;
-  $scope.customFullscreen = $mdMedia('sm');
-  $scope.openFeedbackModal = function(ev) {
-    $mdDialog.show({
-      controller: DialogController,
-      templateUrl: 'feedback/directives/dialog.html',
-      parent: angular.element(document.body),
-      targetEvent: ev,
-      clickOutsideToClose: true,
-      fullscreen: $mdMedia('sm') && $scope.customFullscreen
-    }).then((function(answer) {
-      $scope.status = 'You said the information was "' + answer + '".';
-    }), function() {
-      $scope.status = 'You cancelled the dialog.';
-    });
-    $scope.$watch((function() {
-      return $mdMedia('sm');
-    }), function(sm) {
-      $scope.customFullscreen = sm === true;
-    });
-  };
-  return DialogController = function($scope, $mdDialog, Feedback, localStorageService) {
-    $scope.message = null;
-    $scope.doing = false;
-    $scope.hide = function() {
-      return $mdDialog.hide();
-    };
-    $scope.cancel = function() {
-      return $mdDialog.cancel();
-    };
-    return $scope.send = function() {
-      var feedback;
-      if ($scope.message != null) {
-        $scope.doing = true;
-        feedback = new Feedback();
-        feedback.reporter = localStorageService.get('trello_email');
-        feedback.message = $scope.message;
-        return feedback.save().then(function() {
-          return $mdDialog.hide();
-        });
-      }
-    };
-  };
-});
-
-angular.module('NotSoShitty.feedback').directive('feedback', function() {
-  return {
-    restrict: 'E',
-    templateUrl: 'feedback/directives/call-to-action.html',
-    scope: {},
-    controller: 'feedbackCallToActionCtrl'
-  };
-});
-
-var __hasProp = {}.hasOwnProperty,
-  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
-
-angular.module('NotSoShitty.feedback').factory('Feedback', function(Parse) {
-  var Feedback;
-  return Feedback = (function(_super) {
-    __extends(Feedback, _super);
-
-    function Feedback() {
-      return Feedback.__super__.constructor.apply(this, arguments);
-    }
-
-    Feedback.configure("Feedback", "reporter", "message");
-
-    return Feedback;
-
-  })(Parse.Model);
 });
 
 angular.module('NotSoShitty.gmail-client').constant('SEND_EMAIL_ENDPOINT', 'https://content.googleapis.com/gmail/v1/users/me/messages/send').service('gmailClient', function($http, googleAuth, SEND_EMAIL_ENDPOINT) {
@@ -621,6 +658,7 @@ angular.module('NotSoShitty.gmail-client').service('mailer', function($state, $r
         var base64EncodedEmail, originalMail;
         originalMail = {
           to: message.to,
+          cc: message.cc,
           subject: message.subject,
           fromName: user.name,
           from: user.email,
@@ -1676,7 +1714,7 @@ angular.module('NotSoShitty.settings').directive('selectPeople', function() {
 });
 
 angular.module('NotSoShitty.settings').controller('ProjectCtrl', function($location, $mdToast, $scope, $state, $timeout, $q, boards, TrelloClient, localStorageService, Project, user) {
-  var fetchBoardData, project, promise, saveFeedback;
+  var fetchBoardData, project, saveFeedback;
   $scope.boards = boards;
   if (user.project != null) {
     project = user.project;
@@ -1730,8 +1768,9 @@ angular.module('NotSoShitty.settings').controller('ProjectCtrl', function($locat
     return $scope.save();
   };
   saveFeedback = $mdToast.simple().hideDelay(1000).position('top right').content('Saved!');
-  promise = null;
+  $scope.saving = false;
   $scope.save = function() {
+    $scope.saving = true;
     if ($scope.project.boardId == null) {
       return;
     }
@@ -1743,9 +1782,25 @@ angular.module('NotSoShitty.settings').controller('ProjectCtrl', function($locat
       return user.save().then(function() {
         $mdToast.show(saveFeedback);
         return $state.go('tab.current-sprint');
+      })["catch"](function() {
+        return $scope.saving = false;
       });
+    })["catch"](function() {
+      return $scope.saving = false;
     });
   };
+  $scope.daily = [
+    {
+      label: 'no',
+      value: 'no'
+    }, {
+      label: 'cc',
+      value: 'cc'
+    }, {
+      label: 'to',
+      value: 'to'
+    }
+  ];
 });
 
 angular.module('NotSoShitty.bdc').directive('burndown', function() {
