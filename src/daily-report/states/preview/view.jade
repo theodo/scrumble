@@ -13,6 +13,9 @@ md-dialog
             label To:
             input(ng-model="message.to" disabled)
           md-input-container
+            label Cc:
+            input(ng-model="message.cc" disabled)
+          md-input-container
             label Subject:
             input(ng-model="message.subject" disabled)
           div(ng-bind-html="message.body")

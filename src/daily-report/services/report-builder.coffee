@@ -36,9 +36,16 @@ angular.module 'NotSoShitty.daily-report'
 
   renderTo = (message) ->
     promise.then ->
-      devsEmails = (member.email for member in project.team.dev)
-      memberEmails = (member.email for member in project.team.rest)
+      devsEmails = (member.email for member in project.team.dev when member.daily is 'to')
+      memberEmails = (member.email for member in project.team.rest when member.daily is 'to')
       message.to = _.filter _.union devsEmails, memberEmails
+      message
+
+  renderCc = (message) ->
+    promise.then ->
+      devsEmails = (member.email for member in project.team.dev when member.daily is 'cc')
+      memberEmails = (member.email for member in project.team.rest when member.daily is 'cc')
+      message.cc = _.filter _.union devsEmails, memberEmails
       message
 
   init: ->
@@ -69,3 +76,5 @@ angular.module 'NotSoShitty.daily-report'
       renderBDC message, sprint.bdcBase64, useCid
     .then (message) ->
       renderTo message
+    .then (message) ->
+      renderCc message

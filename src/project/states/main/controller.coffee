@@ -75,8 +75,9 @@ angular.module 'NotSoShitty.settings'
     .position('top right')
     .content('Saved!')
 
-  promise = null
+  $scope.saving = false
   $scope.save = ->
+    $scope.saving = true
     return unless $scope.project.boardId?
     $scope.project.name = _.find(boards, (board) ->
       board.id == $scope.project.boardId
@@ -86,4 +87,20 @@ angular.module 'NotSoShitty.settings'
       user.save().then ->
         $mdToast.show saveFeedback
         $state.go 'tab.current-sprint'
+      .catch ->
+        $scope.saving = false
+    .catch ->
+      $scope.saving = false
+
+  $scope.daily = [
+    label: 'no'
+    value: 'no'
+  ,
+    label: 'cc'
+    value: 'cc'
+  ,
+    label: 'to'
+    value: 'to'
+  ,
+  ]
   return
