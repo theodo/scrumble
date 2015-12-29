@@ -3,13 +3,22 @@ html(lang="en", ng-app="NotSoShitty")
   head
     title Not so shitty
     meta(charset="utf-8")
-    meta(name="viewport", content="width=device-width, initial-scale=1")
-    link(rel="stylesheet", href="css/vendor.css")
-    link(rel="stylesheet", href="css/app.css")
-    link(rel="stylesheet", href="css/common/styles/style.css")
+    meta(name="viewport" content="width=device-width, initial-scale=1")
+    link(rel="stylesheet" href="css/please-wait.css")
+    link(rel="stylesheet" href="css/vendor.css")
+    link(rel="stylesheet" href="css/app.css")
+    link(rel="stylesheet" href="css/common/styles/style.css")
     link(rel="icon", type="image/x-icon", href="/favicon.ico")
   body(ui-view)
+    .inner(ng-view)
 
+    script(src='js/please-wait.min.js')
+    script.
+        window.loading_screen = window.pleaseWait({
+            logo: "images/theodo.png",
+            backgroundColor: '#1A69CD',
+            loadingHtml: "<p class='loading-message'>Automate your daily boring tasks</p>"
+            })
     script(src="js/vendor.js")
     script(src="js/templates.js")
     script(src="js/app.js")
