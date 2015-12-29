@@ -7,6 +7,7 @@ angular.module 'NotSoShitty.gmail-client'
     googleAuth.getUserInfo().then (user) ->
       originalMail =
         to: message.to
+        cc: message.cc
         subject: message.subject
         fromName: user.name
         from: user.email

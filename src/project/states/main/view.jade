@@ -27,6 +27,7 @@ div.sprint-body(layout="row" layout-align="center end")
               th(name="Email")
               th(name="Phone")
               th(name="Role")
+              th(name="Daily Mail")
           tbody
             tr(ng-repeat="dev in project.team.dev")
               td
@@ -45,6 +46,10 @@ div.sprint-body(layout="row" layout-align="center end")
                 md-input-container
                   label Role
                   input(ng-model="dev.role")
+              td
+                md-input-container
+                  md-select(ng-model="dev.daily")
+                    md-option(ng-value="elt.value" ng-repeat="elt in daily") {{elt.label}}
             tr(ng-repeat="rest in project.team.rest")
               td
                 trello-avatar(
@@ -62,6 +67,10 @@ div.sprint-body(layout="row" layout-align="center end")
                 md-input-container
                   label Role
                   input(ng-model="rest.role")
+              td
+                md-input-container
+                  md-select(ng-model="rest.daily")
+                    md-option(ng-value="elt.value" ng-repeat="elt in daily") {{elt.label}}
       .select-teams
         .select-dev-team
           div Select the dev team
@@ -77,4 +86,4 @@ div.sprint-body(layout="row" layout-align="center end")
           )
     section(layout="row" layout-sm="column" layout-align="center center" layout-wrap)
       md-button.md-warn(ng-click="clearTeam()") CLEAR THE TEAM
-      md-button.md-raised.md-primary(ng-click="save()") Save
+      md-button.md-raised.md-primary(ng-click="save()" ng-disabled="saving") Save
