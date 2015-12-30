@@ -1,12 +1,12 @@
-div.landing-page(layout="row" layout-align="center center")
-  div.hgroup
+div(layout="column" layout-fill)
+  main.landing-content(layout="column" layout-align="center center" flex)
     h1 Not So Shitty
     h3 Automate your daily boring tasks
     md-button.md-raised.md-primary(ng-click="login()" ng-disabled="doing")
       md-icon(md-svg-icon='trello')
       |   Login with Trello
-        
-footer
-  a(href='http://www.theodo.fr', target='_blank')
-    img(src='images/theodo.png')
-feedback
+
+  footer.landing-footer(layout="row" layout-align="center center")
+    a(href='http://www.theodo.fr', target='_blank')
+      img(src='images/theodo.png')
+  feedback
