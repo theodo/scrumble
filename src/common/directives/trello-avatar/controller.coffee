@@ -12,6 +12,8 @@ angular.module 'NotSoShitty.common'
     else
       $scope.hash = null
 
+  $scope.displayTooltip = if $scope.tooltip is 'true' then true else false
+
   colors = [
     '#fbb4ae'
     '#b3cde3'

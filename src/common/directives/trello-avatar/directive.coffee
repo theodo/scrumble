@@ -5,4 +5,5 @@ angular.module 'NotSoShitty.common'
   scope:
     size: '@'
     member: '='
+    tooltip: '@'
   controller: 'TrelloAvatarCtrl'
