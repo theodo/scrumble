@@ -49,9 +49,9 @@ angular.module('NotSoShitty.login', ['LocalStorageModule', 'satellizer', 'ui.rou
 
 angular.module('NotSoShitty.settings', ['NotSoShitty.common']);
 
-angular.module('NotSoShitty.bdc', ['ui.router', 'Parse', 'ngMaterial']);
-
 angular.module('NotSoShitty.storage', []);
+
+angular.module('NotSoShitty.bdc', ['ui.router', 'Parse', 'ngMaterial']);
 
 angular.module('NotSoShitty.common').config(function($mdThemingProvider) {
   var customAccent, customBackground, customPrimary, customWarn;
@@ -840,6 +840,118 @@ angular.module('NotSoShitty.storage').factory('Project', function(Parse, $q) {
   })(Parse.Model);
 });
 
+var __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+angular.module('NotSoShitty.storage').factory('NotSoShittyUser', function(Parse, $q, TrelloClient, Project, localStorageService) {
+  var NotSoShittyUser;
+  return NotSoShittyUser = (function(_super) {
+    __extends(NotSoShittyUser, _super);
+
+    function NotSoShittyUser() {
+      return NotSoShittyUser.__super__.constructor.apply(this, arguments);
+    }
+
+    NotSoShittyUser.configure("NotSoShittyUser", "email", "project");
+
+    NotSoShittyUser.getCurrentUser = function() {
+      return this.query({
+        where: {
+          email: localStorageService.get('trello_email')
+        },
+        include: 'project'
+      }).then(function(user) {
+        if (user.length > 0) {
+          return user[0];
+        } else {
+          return null;
+        }
+      });
+    };
+
+    NotSoShittyUser.getBoardId = function() {
+      var deferred, token;
+      deferred = $q.defer();
+      token = localStorageService.get('trello_token');
+      if (token == null) {
+        deferred.reject('No token');
+      }
+      TrelloClient.get('/member/me').then(function(response) {
+        return response.data;
+      }).then(function(userInfo) {
+        return UserBoard.query({
+          where: {
+            email: userInfo.email
+          }
+        });
+      }).then(function(userBoards) {
+        if (userBoards.length > 0) {
+          return deferred.resolve(userBoards[0].boardId);
+        } else {
+          return deferred.resolve(null);
+        }
+      });
+      return deferred.promise;
+    };
+
+    NotSoShittyUser.setBoardId = function(boardId) {
+      var deferred, token;
+      deferred = $q.defer();
+      token = localStorageService.get('trello_token');
+      if (token == null) {
+        deferred.reject('No token');
+      }
+      return TrelloClient.get('/member/me').then(function(response) {
+        return response.data;
+      }).then(function(userInfo) {
+        return this.query({
+          where: {
+            email: userInfo.email
+          }
+        }).then(function(user) {
+          var project;
+          user = user.length > 0 ? user[0] : null;
+          if (typeof board !== "undefined" && board !== null) {
+            board.boardId = boardId;
+            return board.save();
+          } else {
+            project = new Project();
+            project.boardId = boardId;
+            this.project = project;
+            return this.save();
+          }
+        });
+      });
+    };
+
+    return NotSoShittyUser;
+
+  })(Parse.Model);
+});
+
+angular.module('NotSoShitty.storage').service('userService', function(NotSoShittyUser) {
+  return {
+    getOrCreate: function(email) {
+      return NotSoShittyUser.query({
+        where: {
+          email: email
+        }
+      }).then(function(users) {
+        var user;
+        if (users.length > 0) {
+          return users[0];
+        } else {
+          user = new User();
+          user.email = email;
+          return user.save().then(function(user) {
+            return user;
+          });
+        }
+      });
+    }
+  };
+});
+
 angular.module('NotSoShitty.bdc').config(function($stateProvider) {
   return $stateProvider.state('tab.current-sprint', {
     url: '/sprint/current',
@@ -1243,118 +1355,6 @@ angular.module('NotSoShitty.bdc').service('sprintUtils', function() {
   };
 });
 
-var __hasProp = {}.hasOwnProperty,
-  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
-
-angular.module('NotSoShitty.storage').factory('NotSoShittyUser', function(Parse, $q, TrelloClient, Project, localStorageService) {
-  var NotSoShittyUser;
-  return NotSoShittyUser = (function(_super) {
-    __extends(NotSoShittyUser, _super);
-
-    function NotSoShittyUser() {
-      return NotSoShittyUser.__super__.constructor.apply(this, arguments);
-    }
-
-    NotSoShittyUser.configure("NotSoShittyUser", "email", "project");
-
-    NotSoShittyUser.getCurrentUser = function() {
-      return this.query({
-        where: {
-          email: localStorageService.get('trello_email')
-        },
-        include: 'project'
-      }).then(function(user) {
-        if (user.length > 0) {
-          return user[0];
-        } else {
-          return null;
-        }
-      });
-    };
-
-    NotSoShittyUser.getBoardId = function() {
-      var deferred, token;
-      deferred = $q.defer();
-      token = localStorageService.get('trello_token');
-      if (token == null) {
-        deferred.reject('No token');
-      }
-      TrelloClient.get('/member/me').then(function(response) {
-        return response.data;
-      }).then(function(userInfo) {
-        return UserBoard.query({
-          where: {
-            email: userInfo.email
-          }
-        });
-      }).then(function(userBoards) {
-        if (userBoards.length > 0) {
-          return deferred.resolve(userBoards[0].boardId);
-        } else {
-          return deferred.resolve(null);
-        }
-      });
-      return deferred.promise;
-    };
-
-    NotSoShittyUser.setBoardId = function(boardId) {
-      var deferred, token;
-      deferred = $q.defer();
-      token = localStorageService.get('trello_token');
-      if (token == null) {
-        deferred.reject('No token');
-      }
-      return TrelloClient.get('/member/me').then(function(response) {
-        return response.data;
-      }).then(function(userInfo) {
-        return this.query({
-          where: {
-            email: userInfo.email
-          }
-        }).then(function(user) {
-          var project;
-          user = user.length > 0 ? user[0] : null;
-          if (typeof board !== "undefined" && board !== null) {
-            board.boardId = boardId;
-            return board.save();
-          } else {
-            project = new Project();
-            project.boardId = boardId;
-            this.project = project;
-            return this.save();
-          }
-        });
-      });
-    };
-
-    return NotSoShittyUser;
-
-  })(Parse.Model);
-});
-
-angular.module('NotSoShitty.storage').service('userService', function(NotSoShittyUser) {
-  return {
-    getOrCreate: function(email) {
-      return NotSoShittyUser.query({
-        where: {
-          email: email
-        }
-      }).then(function(users) {
-        var user;
-        if (users.length > 0) {
-          return users[0];
-        } else {
-          user = new User();
-          user.email = email;
-          return user.save().then(function(user) {
-            return user;
-          });
-        }
-      });
-    }
-  };
-});
-
 angular.module('NotSoShitty.common').directive('dynamicFieldsList', function() {
   return {
     restrict: 'E',
@@ -1425,6 +1425,7 @@ angular.module('NotSoShitty.common').controller('TrelloAvatarCtrl', function(Ava
       return $scope.hash = null;
     }
   });
+  $scope.displayTooltip = $scope.tooltip === 'true' ? true : false;
   colors = ['#fbb4ae', '#b3cde3', '#ccebc5', '#decbe4', '#fed9a6', '#ffffcc', '#e5d8bd', '#fddaec', '#f2f2f2'];
   getColor = function(initials) {
     var hash;
@@ -1443,7 +1444,8 @@ angular.module('NotSoShitty.common').directive('trelloAvatar', function() {
     templateUrl: 'common/directives/trello-avatar/view.html',
     scope: {
       size: '@',
-      member: '='
+      member: '=',
+      tooltip: '@'
     },
     controller: 'TrelloAvatarCtrl'
   };
@@ -1870,96 +1872,6 @@ angular.module('NotSoShitty.bdc').directive('burndown', function() {
   };
 });
 
-angular.module('NotSoShitty.bdc').controller('EditSprintCtrl', function($scope, $timeout, $state, TrelloClient, project, sprintUtils, sprint, Project) {
-  var _ref;
-  $scope.sprint = sprint;
-  TrelloClient.get("/boards/" + project.boardId + "/lists").then(function(response) {
-    return $scope.boardLists = response.data;
-  });
-  $scope.devTeam = (_ref = project.team) != null ? _ref.dev : void 0;
-  $scope.saveLabel = $state.is('tab.new-sprint') ? 'Start the sprint' : 'Save';
-  $scope.title = $state.is('tab.new-sprint') ? 'NEW SPRINT' : 'EDIT SPRINT';
-  $scope.save = function() {
-    if (sprintUtils.isActivable($scope.sprint)) {
-      return $scope.sprint.save();
-    }
-  };
-  $scope.activable = sprintUtils.isActivable($scope.sprint);
-  $scope.activate = function() {
-    if (sprintUtils.isActivable($scope.sprint)) {
-      $scope.sprint.isActive = true;
-      return $scope.sprint.save().then(function() {
-        return $state.go('tab.current-sprint');
-      });
-    }
-  };
-  return $scope.checkSprint = function(source) {
-    var _ref1;
-    $scope.activable = sprintUtils.isActivable($scope.sprint);
-    return sprintUtils.ensureDataConsistency(source, $scope.sprint, project != null ? (_ref1 = project.team) != null ? _ref1.dev : void 0 : void 0);
-  };
-});
-
-angular.module('NotSoShitty.bdc').controller('SprintListCtrl', function($scope, $mdDialog, $mdMedia, sprints, project) {
-  var BDCDialogController;
-  sprints.forEach(function(sprint) {
-    sprint.dates.start = moment(sprint.dates.start).format("MMMM Do YYYY");
-    return sprint.dates.end = moment(sprint.dates.end).format("MMMM Do YYYY");
-  });
-  $scope.sprints = sprints;
-  $scope.project = project;
-  $scope.selected = [];
-  $scope["delete"] = function(event) {
-    var confirm;
-    confirm = $mdDialog.confirm().title('Delete sprints').textContent('Are you sure you want to do what you\'re trying to do ?').ariaLabel('Delete sprints dialog').targetEvent(event).ok('Delete').cancel('Cancel');
-    return $mdDialog.show(confirm).then(function() {
-      var sprint, _i, _len, _ref;
-      _ref = $scope.selected;
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        sprint = _ref[_i];
-        sprint.destroy().then(function() {
-          return _.remove($scope.sprints, sprint);
-        });
-      }
-      return $scope.selected = [];
-    });
-  };
-  BDCDialogController = function($scope, $mdDialog, sprint) {
-    $scope.sprint = sprint;
-    return $scope.cancel = $mdDialog.cancel;
-  };
-  $scope.showBurndown = function(ev, sprint) {
-    var useFullScreen;
-    useFullScreen = $mdMedia('sm') || $mdMedia('xs');
-    return $mdDialog.show({
-      controller: BDCDialogController,
-      templateUrl: 'sprint/states/list/bdc.dialog.html',
-      parent: angular.element(document.body),
-      targetEvent: ev,
-      clickOutsideToClose: true,
-      resolve: {
-        sprint: function() {
-          return sprint;
-        }
-      },
-      fullscreen: useFullScreen
-    });
-  };
-  return $scope.activateSprint = function(sprint) {
-    var s, _i, _len, _ref;
-    _ref = $scope.sprints;
-    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-      s = _ref[_i];
-      if (s.isActive && s !== sprint) {
-        s.isActive = false;
-        s.save();
-      }
-    }
-    sprint.isActive = true;
-    return sprint.save();
-  };
-});
-
 angular.module('NotSoShitty.bdc').controller('CurrentSprintCtrl', function($scope, $state, $timeout, $mdDialog, $mdMedia, sprintUtils, TrelloClient, trelloUtils, dynamicFields, bdc, sprint, project, Sprint) {
   var DialogController, day, _i, _len, _ref, _ref1;
   $scope.project = project;
@@ -2112,5 +2024,95 @@ angular.module('NotSoShitty.bdc').controller('EditBDCCtrl', function($scope, $md
         return $scope.data[$scope.currentDayIndex].done = points;
       });
     }
+  };
+});
+
+angular.module('NotSoShitty.bdc').controller('EditSprintCtrl', function($scope, $timeout, $state, TrelloClient, project, sprintUtils, sprint, Project) {
+  var _ref;
+  $scope.sprint = sprint;
+  TrelloClient.get("/boards/" + project.boardId + "/lists").then(function(response) {
+    return $scope.boardLists = response.data;
+  });
+  $scope.devTeam = (_ref = project.team) != null ? _ref.dev : void 0;
+  $scope.saveLabel = $state.is('tab.new-sprint') ? 'Start the sprint' : 'Save';
+  $scope.title = $state.is('tab.new-sprint') ? 'NEW SPRINT' : 'EDIT SPRINT';
+  $scope.save = function() {
+    if (sprintUtils.isActivable($scope.sprint)) {
+      return $scope.sprint.save();
+    }
+  };
+  $scope.activable = sprintUtils.isActivable($scope.sprint);
+  $scope.activate = function() {
+    if (sprintUtils.isActivable($scope.sprint)) {
+      $scope.sprint.isActive = true;
+      return $scope.sprint.save().then(function() {
+        return $state.go('tab.current-sprint');
+      });
+    }
+  };
+  return $scope.checkSprint = function(source) {
+    var _ref1;
+    $scope.activable = sprintUtils.isActivable($scope.sprint);
+    return sprintUtils.ensureDataConsistency(source, $scope.sprint, project != null ? (_ref1 = project.team) != null ? _ref1.dev : void 0 : void 0);
+  };
+});
+
+angular.module('NotSoShitty.bdc').controller('SprintListCtrl', function($scope, $mdDialog, $mdMedia, sprints, project) {
+  var BDCDialogController;
+  sprints.forEach(function(sprint) {
+    sprint.dates.start = moment(sprint.dates.start).format("MMMM Do YYYY");
+    return sprint.dates.end = moment(sprint.dates.end).format("MMMM Do YYYY");
+  });
+  $scope.sprints = sprints;
+  $scope.project = project;
+  $scope.selected = [];
+  $scope["delete"] = function(event) {
+    var confirm;
+    confirm = $mdDialog.confirm().title('Delete sprints').textContent('Are you sure you want to do what you\'re trying to do ?').ariaLabel('Delete sprints dialog').targetEvent(event).ok('Delete').cancel('Cancel');
+    return $mdDialog.show(confirm).then(function() {
+      var sprint, _i, _len, _ref;
+      _ref = $scope.selected;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        sprint = _ref[_i];
+        sprint.destroy().then(function() {
+          return _.remove($scope.sprints, sprint);
+        });
+      }
+      return $scope.selected = [];
+    });
+  };
+  BDCDialogController = function($scope, $mdDialog, sprint) {
+    $scope.sprint = sprint;
+    return $scope.cancel = $mdDialog.cancel;
+  };
+  $scope.showBurndown = function(ev, sprint) {
+    var useFullScreen;
+    useFullScreen = $mdMedia('sm') || $mdMedia('xs');
+    return $mdDialog.show({
+      controller: BDCDialogController,
+      templateUrl: 'sprint/states/list/bdc.dialog.html',
+      parent: angular.element(document.body),
+      targetEvent: ev,
+      clickOutsideToClose: true,
+      resolve: {
+        sprint: function() {
+          return sprint;
+        }
+      },
+      fullscreen: useFullScreen
+    });
+  };
+  return $scope.activateSprint = function(sprint) {
+    var s, _i, _len, _ref;
+    _ref = $scope.sprints;
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      s = _ref[_i];
+      if (s.isActive && s !== sprint) {
+        s.isActive = false;
+        s.save();
+      }
+    }
+    sprint.isActive = true;
+    return sprint.save();
   };
 });

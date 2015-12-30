@@ -1,66 +1,31 @@
-.landing-page {
-  min-height: 100%;
-}
-.landing-page div {
-  margin-top: -10%;
+.landing-content {
   text-align: center;
 }
-.landing-page h1,
-.landing-page h3 {
+.landing-content h1,
+.landing-content h3 {
   font-weight: 300;
 }
-.landing-page h1 {
+.landing-content h1 {
   color: #636363;
+  margin: 0;
 }
-.landing-page h3 {
+.landing-content h3 {
   color: #9E9E9E;
   font-style: italic;
 }
-footer {
-  position: absolute;
-  bottom: 0.5em;
-  width: 100%;
-  text-align: center;
-}
-footer p {
-  font-size: 13px;
-  font-style: italic;
-  color: #9E9E9E;
-}
-footer p a {
-  color: #9E9E9E;
-  text-decoration: none;
-  border-bottom: 2px solid #ddd;
-  -webkit-transition: color 0.1s, opacity 0.2s, background-color 0.2s, border-color 0.2s;
-  transition: color 0.1s, opacity 0.2s, background-color 0.2s, border-color 0.2s;
-}
-footer p a:hover {
-  border-bottom: 2px solid #2196F3;
-}
-footer img {
+.landing-footer img {
   width: 80px;
 }
-footer img:focus,
-footer footer a:focus {
+.landing-footer img:focus,
+.landing-footer footer a:focus {
   outline: none;
 }
 
 md-content.grey-background {
   background-color: #efefef;
-  min-height: 100%;
-}
-.column-width-80 {
-  width: 80%;
 }
 burndown {
   text-align: center;
-}
-.bdc-container {
-  margin-top: 40px;
-}
-.bdc-table {
-  margin-top: 20px;
-  margin-bottom: 50px;
 }
 h2.md-title {
   text-align: center;
@@ -88,6 +53,9 @@ md-fab-trigger {
 .md-toolbar-tools-bottom {
   font-size: small;
   font-weight: bold;
+}
+md-content.grey-background {
+  min-height: 100%;
 }
 /************
  * UTILS
@@ -136,6 +104,21 @@ md-sidenav md-toolbar {
 }
 .docs-menu button.md-button::-moz-focus-inner {
   padding: 0;
+}
+footer p {
+  font-size: 13px;
+  font-style: italic;
+  color: #9E9E9E;
+}
+footer p a {
+  color: #9E9E9E;
+  text-decoration: none;
+  border-bottom: 2px solid #ddd;
+  -webkit-transition: color 0.1s, opacity 0.2s, background-color 0.2s, border-color 0.2s;
+  transition: color 0.1s, opacity 0.2s, background-color 0.2s, border-color 0.2s;
+}
+footer p a:hover {
+  border-bottom: 2px solid #2196F3;
 }
 
 .feedback-call-to-action {
@@ -252,16 +235,16 @@ select-people .member-select label {
   height: 100%;
 }
 
-.clickable {
-  cursor: pointer;
-}
-md-data-table-container td md-radio-button {
-  margin-bottom: 0;
-}
-
 .bdc-data md-input-container {
   margin-bottom: 0;
 }
 .bdc-data md-input-container .md-errors-spacer {
   display: none;
+}
+
+.clickable {
+  cursor: pointer;
+}
+md-data-table-container td md-radio-button {
+  margin-bottom: 0;
 }
