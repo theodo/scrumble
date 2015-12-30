@@ -1,12 +1,14 @@
-md-content.grey-background
-  md-toolbar
-    .md-toolbar-tools
-      h2
-        span.clickable(ui-sref="tab.current-sprint") Not So Shitty
-      span(flex='')
-      profil-info
-  .container(ui-view)
-  footer(flex)
+md-content.grey-background(layout="column")
+  header
+    md-toolbar
+      .md-toolbar-tools
+        h2
+          span.clickable(ui-sref="tab.current-sprint") Not So Shitty
+        span(flex)
+        profil-info
+  main.md-padding(layout="row" flex ng-cloak)
+    .container(ui-view)
+  footer(layout="row" layout-align="center center")
     p
       a(
           href="http://attackwithnumbers.com/the-laws-of-shitty-dashboard"
