@@ -130,53 +130,8 @@ md-fab-trigger {
 md-content.grey-background {
   min-height: 100%;
 }
-/************
- * UTILS
- ************/
-md-sidenav md-toolbar {
-  background-image: url(../images/background.jpg);
-}
-.site-sidenav {
-  background: #F3F3F3;
-}
-.site-sidenav md-content {
-  background: transparent;
-}
-.site-sidenav,
-.site-sidenav.md-locked-open-add-active,
-.site-sidenav.md-locked-open {
-  width: 272px;
-  min-width: 272px;
-  max-width: 272px;
-}
-/************
- * DOCS MENU
- ************/
-.docs-menu {
-  padding: 0;
-}
-.docs-menu ul {
-  list-style: none;
-  padding: 0;
-  max-width: 100%;
-  overflow-x: hidden;
-}
-.docs-menu li {
-  margin: 0;
-}
-.docs-menu .md-button {
-  border-radius: 0;
-  color: rgba(0, 0, 0, 0.54);
-  line-height: 40px;
-  margin: 0;
-  max-height: 40px;
-  overflow: hidden;
-  padding: 0px 16px;
-  text-align: left;
+.container {
   width: 100%;
-}
-.docs-menu button.md-button::-moz-focus-inner {
-  padding: 0;
 }
 footer p {
   font-size: 13px;

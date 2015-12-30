@@ -1243,29 +1243,6 @@ angular.module('NotSoShitty.bdc').service('sprintUtils', function() {
   };
 });
 
-angular.module('NotSoShitty.storage').service('userService', function(NotSoShittyUser) {
-  return {
-    getOrCreate: function(email) {
-      return NotSoShittyUser.query({
-        where: {
-          email: email
-        }
-      }).then(function(users) {
-        var user;
-        if (users.length > 0) {
-          return users[0];
-        } else {
-          user = new User();
-          user.email = email;
-          return user.save().then(function(user) {
-            return user;
-          });
-        }
-      });
-    }
-  };
-});
-
 var __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
@@ -1353,6 +1330,29 @@ angular.module('NotSoShitty.storage').factory('NotSoShittyUser', function(Parse,
     return NotSoShittyUser;
 
   })(Parse.Model);
+});
+
+angular.module('NotSoShitty.storage').service('userService', function(NotSoShittyUser) {
+  return {
+    getOrCreate: function(email) {
+      return NotSoShittyUser.query({
+        where: {
+          email: email
+        }
+      }).then(function(users) {
+        var user;
+        if (users.length > 0) {
+          return users[0];
+        } else {
+          user = new User();
+          user.email = email;
+          return user.save().then(function(user) {
+            return user;
+          });
+        }
+      });
+    }
+  };
 });
 
 angular.module('NotSoShitty.common').directive('dynamicFieldsList', function() {
@@ -1448,6 +1448,42 @@ angular.module('NotSoShitty.common').directive('trelloAvatar', function() {
       tooltip: '@'
     },
     controller: 'TrelloAvatarCtrl'
+  };
+});
+
+angular.module('NotSoShitty.daily-report').controller('PreviewCtrl', function($scope, $mdDialog, $mdToast, googleAuth, mailer, message, rawMessage, reportBuilder) {
+  $scope.message = message;
+  $scope.hide = function() {
+    return $mdDialog.hide();
+  };
+  $scope.cancel = function() {
+    return $mdDialog.cancel();
+  };
+  $scope.login = function() {
+    return googleAuth.login().then(function() {
+      return googleAuth.isAuthenticated().then(function(isAuthenticated) {
+        return $scope.isAuthenticated = isAuthenticated;
+      });
+    });
+  };
+  googleAuth.isAuthenticated().then(function(isAuthenticated) {
+    return $scope.isAuthenticated = isAuthenticated;
+  });
+  return $scope.send = function() {
+    return reportBuilder.render(rawMessage, true).then(function(message) {
+      return mailer.send(message, function(response) {
+        var errorFeedback, sentFeedback;
+        if ((response.code != null) && response.code > 300) {
+          errorFeedback = $mdToast.simple().hideDelay(3000).position('top right').content("Failed to send message: '" + response.message + "'");
+          $mdToast.show(errorFeedback);
+          return $mdDialog.cancel();
+        } else {
+          sentFeedback = $mdToast.simple().hideDelay(1000).position('top right').content('Email sent');
+          $mdToast.show(sentFeedback);
+          return $mdDialog.cancel();
+        }
+      });
+    });
   };
 });
 
@@ -2078,41 +2114,5 @@ angular.module('NotSoShitty.bdc').controller('SprintListCtrl', function($scope, 
     }
     sprint.isActive = true;
     return sprint.save();
-  };
-});
-
-angular.module('NotSoShitty.daily-report').controller('PreviewCtrl', function($scope, $mdDialog, $mdToast, googleAuth, mailer, message, rawMessage, reportBuilder) {
-  $scope.message = message;
-  $scope.hide = function() {
-    return $mdDialog.hide();
-  };
-  $scope.cancel = function() {
-    return $mdDialog.cancel();
-  };
-  $scope.login = function() {
-    return googleAuth.login().then(function() {
-      return googleAuth.isAuthenticated().then(function(isAuthenticated) {
-        return $scope.isAuthenticated = isAuthenticated;
-      });
-    });
-  };
-  googleAuth.isAuthenticated().then(function(isAuthenticated) {
-    return $scope.isAuthenticated = isAuthenticated;
-  });
-  return $scope.send = function() {
-    return reportBuilder.render(rawMessage, true).then(function(message) {
-      return mailer.send(message, function(response) {
-        var errorFeedback, sentFeedback;
-        if ((response.code != null) && response.code > 300) {
-          errorFeedback = $mdToast.simple().hideDelay(3000).position('top right').content("Failed to send message: '" + response.message + "'");
-          $mdToast.show(errorFeedback);
-          return $mdDialog.cancel();
-        } else {
-          sentFeedback = $mdToast.simple().hideDelay(1000).position('top right').content('Email sent');
-          $mdToast.show(sentFeedback);
-          return $mdDialog.cancel();
-        }
-      });
-    });
   };
 });
