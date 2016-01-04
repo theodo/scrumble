@@ -14,6 +14,7 @@ div(layout="row" layout-align="center end")
             th(name="Number")
             th(name="Goal")
             th(name="Dates")
+            th(name="Speed")
             th(name="Burndown")
             th(name="Active")
         tbody
@@ -21,6 +22,7 @@ div(layout="row" layout-align="center end")
             td.clickable(ui-sref="tab.edit-sprint({sprintId: sprint.objectId})") {{ sprint.number }}
             td.clickable(ui-sref="tab.edit-sprint({sprintId: sprint.objectId})") {{ sprint.goal }}
             td.clickable(ui-sref="tab.edit-sprint({sprintId: sprint.objectId})") {{ sprint.dates.start }} -> {{ sprint.dates.end }}
+            td.clickable(ui-sref="tab.edit-sprint({sprintId: sprint.objectId})") {{ sprint.speed }}
             td
               md-icon-button.clickable(ng-click="showBurndown($event, sprint)")
                 md-icon(md-svg-icon="trending-down")
