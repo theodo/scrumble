@@ -254,7 +254,8 @@ angular.module('NotSoShitty.common').service('dynamicFields', function($q, trell
   };
   replaceYesterday = function(text) {
     return text.replace(/\{yesterday#(.+?)\}/g, function(match, dateFormat) {
-      return moment().subtract(1, 'days').format(dateFormat);
+      moment().subtract(1, 'days').format(dateFormat);
+      return console.log("test");
     });
   };
   return {
