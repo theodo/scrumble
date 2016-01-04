@@ -8,9 +8,6 @@ angular.module 'NotSoShitty.login'
   NotSoShittyUser
   localStorageService
 ) ->
-  if localStorageService.get 'trello_token'
-    $state.go 'tab.current-sprint'
-
   $scope.doing = false
 
   $scope.login = ->
