@@ -148,10 +148,9 @@ footer p a {
 footer p a:hover {
   border-bottom: 2px solid #2196F3;
 }
-
-.feedback-call-to-action {
+feedback {
   position: fixed;
-  bottom: 10px;
+  bottom: 0px;
   left: 10px;
 }
 
@@ -268,6 +267,11 @@ select-people .member-select label {
 }
 .bdc-data md-input-container .md-errors-spacer {
   display: none;
+}
+.board-call-to-actions {
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
 }
 
 .clickable {
