@@ -20,7 +20,7 @@ angular.module 'NotSoShitty.bdc'
     matrix = []
     for day in days
       index = _.findIndex previous.days, day
-      if index > -1
+      if index > -1 and devTeam.length == previous.matrix[index].length
         matrix.push previous.matrix[index]
       else
         matrix.push (1 for member in devTeam)
@@ -84,6 +84,12 @@ angular.module 'NotSoShitty.bdc'
         days: sprint.dates.days
         matrix: sprint.resources.matrix
       sprint.dates.days = generateDayList sprint.dates.start, sprint.dates.end
+      sprint.resources.matrix = generateResources sprint.dates.days, devTeam, previous
+
+    if source is 'team'
+      previous =
+        days: sprint.dates.days
+        matrix: sprint.resources.matrix
       sprint.resources.matrix = generateResources sprint.dates.days, devTeam, previous
 
     if source is 'date' or source is 'resource' or source is 'speed'

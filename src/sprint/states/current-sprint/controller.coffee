@@ -114,4 +114,7 @@ angular.module 'NotSoShitty.bdc'
       $scope.tooltipVisible = $scope.menuIsOpen
 
   $scope.updateBDC = ->
-    bdc.setDonePointsAndSave($scope.sprint)
+    bdc.setDonePointsAndSave($scope.sprint).then ->
+      svg = d3.select('#bdcgraph')[0][0].firstChild
+      $scope.sprint.bdcBase64 = bdc.getPngBase64 svg
+      $scope.sprint.save()

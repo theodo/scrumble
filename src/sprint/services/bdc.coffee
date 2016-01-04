@@ -35,4 +35,4 @@ angular.module 'NotSoShitty.bdc'
     else
       deferred.reject 'doneColumn is not set'
 
-    deferred
+    deferred.promise

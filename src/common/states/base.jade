@@ -1,19 +1,18 @@
-md-content.grey-background(layout="column")
-  header
-    md-toolbar
-      .md-toolbar-tools
-        h2
-          span.clickable(ui-sref="tab.current-sprint") Not So Shitty
-        span(flex)
-        profil-info
-  main.md-padding(layout="row" flex ng-cloak)
-    .container(ui-view)
-  footer(layout="row" layout-align="center center")
-    p
-      a(
-          href="http://attackwithnumbers.com/the-laws-of-shitty-dashboard"
-          target="_blank"
-        ) The law of shitty dashboards
-      |  is broken
+header
+  md-toolbar
+    .md-toolbar-tools
+      h2
+        span.clickable(ui-sref="tab.current-sprint") Not So Shitty
+      span(flex)
+      profil-info
+main.md-padding(layout="row" flex)
+  .container(ui-view)
+footer(layout="row" layout-align="center center")
+  p
+    a(
+        href="http://attackwithnumbers.com/the-laws-of-shitty-dashboard"
+        target="_blank"
+      ) The law of shitty dashboards
+    |  is broken
 
-  feedback
+feedback

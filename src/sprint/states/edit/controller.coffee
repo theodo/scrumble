@@ -34,3 +34,5 @@ angular.module 'NotSoShitty.bdc'
   $scope.checkSprint = (source) ->
     $scope.activable = sprintUtils.isActivable($scope.sprint)
     sprintUtils.ensureDataConsistency source, $scope.sprint, project?.team?.dev
+
+  $scope.checkSprint 'team'
