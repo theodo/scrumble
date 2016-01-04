@@ -19,10 +19,10 @@ angular.module 'NotSoShitty.daily-report'
                   '- Done: {done} / {total} points\n' +
                   '- To validate: {toValidate} points\n' +
                   '- Blocked: {blocked} points\n' +
-                  '- {behind/ahead}: {gap} points\n\n' +
+                  '- {behind/ahead}: {gap} points {color=smart}\n\n' +
                   '{bdc}\n\n' +
                   'Yesterday\'s goals:\n' +
-                  '- Eat carrots\n\n' +
+                  '- Eat carrots {color=green}\n\n' +
                   'Today\'s goals\n' +
                   '- Eat more carrots\n\n' +
                   'Regards!'

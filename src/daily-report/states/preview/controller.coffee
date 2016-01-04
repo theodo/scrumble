@@ -1,6 +1,7 @@
 angular.module 'NotSoShitty.daily-report'
 .controller 'PreviewCtrl', (
   $scope
+  $sce
   $mdDialog
   $mdToast
   googleAuth
@@ -10,6 +11,9 @@ angular.module 'NotSoShitty.daily-report'
   reportBuilder
 ) ->
   $scope.message = message
+
+  $scope.trustAsHtml = (string) ->
+    $sce.trustAsHtml string
 
   $scope.hide = ->
     $mdDialog.hide()

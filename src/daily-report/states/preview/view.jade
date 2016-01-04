@@ -18,7 +18,7 @@ md-dialog
           md-input-container
             label Subject:
             input(ng-model="message.subject" disabled)
-          div(ng-bind-html="message.body")
+          div(ng-bind-html="trustAsHtml(message.body)")
     md-dialog-actions(layout='row')
       md-button.md-raised.md-primary(ng-click="login()" ng-if="!isAuthenticated") Authorize Gmail
       md-button.md-raised.md-primary(ng-click="send()" ng-disabled="!isAuthenticated") Send
