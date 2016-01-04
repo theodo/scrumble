@@ -137,195 +137,6 @@ angular.module('NotSoShitty.common').config(function($mdThemingProvider) {
   }).backgroundPalette('customBackground');
 });
 
-angular.module('NotSoShitty.common').service('dynamicFields', function($q, trelloUtils) {
-  var dict, getCurrentDayIndex, project, replaceToday, replaceYesterday, sprint;
-  sprint = null;
-  project = null;
-  getCurrentDayIndex = function(bdcData) {
-    var day, i, _i, _len;
-    for (i = _i = 0, _len = bdcData.length; _i < _len; i = ++_i) {
-      day = bdcData[i];
-      if (day.done == null) {
-        return Math.max(i - 1, 0);
-      }
-    }
-    return i - 1;
-  };
-  dict = {
-    '{sprintNumber}': {
-      value: function() {
-        return sprint != null ? sprint.number : void 0;
-      },
-      description: 'Current sprint number',
-      icon: 'cow'
-    },
-    '{sprintGoal}': {
-      value: function() {
-        return sprint != null ? sprint.goal : void 0;
-      },
-      description: 'The sprint goal (never forget it)',
-      icon: 'target'
-    },
-    '{speed}': {
-      value: function() {
-        var _ref, _ref1, _ref2;
-        if (_.isNumber(sprint != null ? (_ref = sprint.resources) != null ? _ref.speed : void 0 : void 0)) {
-          return sprint != null ? (_ref1 = sprint.resources) != null ? _ref1.speed.toFixed(1) : void 0 : void 0;
-        } else {
-          return sprint != null ? (_ref2 = sprint.resources) != null ? _ref2.speed : void 0 : void 0;
-        }
-      },
-      description: 'Estimated number of points per day per person',
-      icon: 'run'
-    },
-    '{toValidate}': {
-      value: function() {
-        var _ref;
-        if ((project != null ? (_ref = project.columnMapping) != null ? _ref.toValidate : void 0 : void 0) != null) {
-          return trelloUtils.getColumnPoints(project.columnMapping.toValidate);
-        }
-      },
-      description: 'The number of points in the Trello to validate column',
-      icon: 'phone'
-    },
-    '{blocked}': {
-      value: function() {
-        var _ref;
-        if ((project != null ? (_ref = project.columnMapping) != null ? _ref.blocked : void 0 : void 0) != null) {
-          return trelloUtils.getColumnPoints(project.columnMapping.blocked);
-        }
-      },
-      description: 'The number of points in the Trello blocked column',
-      icon: 'radioactive'
-    },
-    '{done}': {
-      value: function() {
-        var index, _ref;
-        if ((sprint != null ? sprint.bdcData : void 0) != null) {
-          index = getCurrentDayIndex(sprint.bdcData);
-          return (_ref = sprint.bdcData[index]) != null ? _ref.done : void 0;
-        }
-      },
-      description: 'The number of points in the Trello done column',
-      icon: 'check'
-    },
-    '{gap}': {
-      value: function() {
-        var diff, index, _ref, _ref1;
-        if ((sprint != null ? sprint.bdcData : void 0) != null) {
-          index = getCurrentDayIndex(sprint.bdcData);
-          diff = ((_ref = sprint.bdcData[index]) != null ? _ref.done : void 0) - ((_ref1 = sprint.bdcData[index]) != null ? _ref1.standard : void 0);
-          return Math.abs(diff).toFixed(1);
-        }
-      },
-      description: 'The difference between the standard points and the done points',
-      icon: 'tshirt-crew'
-    },
-    '{total}': {
-      value: function() {
-        var _ref;
-        if (_.isNumber(sprint != null ? (_ref = sprint.resources) != null ? _ref.totalPoints : void 0 : void 0)) {
-          return sprint.resources.totalPoints;
-        }
-      },
-      description: 'The number of points to finish the sprint',
-      icon: 'cart'
-    }
-  };
-  replaceToday = function(text) {
-    return text.replace(/\{today#(.+?)\}/g, function(match, dateFormat) {
-      return moment().format(dateFormat);
-    });
-  };
-  replaceYesterday = function(text) {
-    return text.replace(/\{yesterday#(.+?)\}/g, function(match, dateFormat) {
-      return moment().subtract(1, 'days').format(dateFormat);
-    });
-  };
-  return {
-    sprint: function(_sprint_) {
-      return sprint = _sprint_;
-    },
-    project: function(_project_) {
-      return project = _project_;
-    },
-    getAvailableFields: function() {
-      var result;
-      result = _.map(dict, function(value, key) {
-        return {
-          key: key,
-          description: value.description,
-          icon: value.icon
-        };
-      });
-      result.push({
-        key: '{today#format}',
-        description: 'Today\'s date where format is a <a href="http://momentjs.com/docs/#/parsing/string-format/" target="_blank">moment format</a>',
-        icon: 'clock'
-      });
-      result.push({
-        key: '{yesterday#format}',
-        description: 'Yesterday\'s date where format is a <a href="http://momentjs.com/docs/#/parsing/string-format/" target="_blank">moment format</a>. examples: EEEE for weekday, YYYY-MM-DD',
-        icon: 'calendar-today'
-      });
-      return result;
-    },
-    render: function(text) {
-      var deferred, elt, key, promises, result;
-      result = text || '';
-      deferred = $q.defer();
-      promises = {};
-      for (key in dict) {
-        elt = dict[key];
-        promises[key] = elt.value();
-      }
-      $q.all(promises).then(function(builtDict) {
-        for (key in builtDict) {
-          elt = builtDict[key];
-          result = result.split(key).join(elt);
-        }
-        result = replaceToday(result);
-        result = replaceYesterday(result);
-        return deferred.resolve(result);
-      })["catch"](deferred.reject);
-      return deferred.promise;
-    }
-  };
-});
-
-angular.module('NotSoShitty.common').service('trelloUtils', function(TrelloClient) {
-  var getCardPoints;
-  getCardPoints = function(card) {
-    var match, matchVal, value, _i, _len;
-    if (!_.isString(card != null ? card.name : void 0)) {
-      return 0;
-    }
-    match = card.name.match(/\(([-+]?[0-9]*\.?[0-9]+)\)/);
-    value = 0;
-    if (match) {
-      for (_i = 0, _len = match.length; _i < _len; _i++) {
-        matchVal = match[_i];
-        if (!isNaN(parseFloat(matchVal, 10))) {
-          value = parseFloat(matchVal, 10);
-        }
-      }
-    }
-    return value;
-  };
-  return {
-    getColumnPoints: function(columnId) {
-      return TrelloClient.get('/lists/' + columnId + '/cards?fields=name').then(function(response) {
-        var cards;
-        cards = response.data;
-        return _.sum(cards, getCardPoints);
-      })["catch"](function(err) {
-        console.warn(err);
-        return 0;
-      });
-    }
-  };
-});
-
 angular.module('NotSoShitty.daily-report').config(function($stateProvider) {
   return $stateProvider.state('tab.daily-report', {
     url: '/daily-report',
@@ -788,7 +599,7 @@ angular.module('NotSoShitty.settings').config(function($stateProvider) {
         });
       },
       boards: function(TrelloClient) {
-        return TrelloClient.get('/members/me/boards').then(function(response) {
+        return TrelloClient.get('/members/me/boardsInvited').then(function(response) {
           return response.data;
         });
       }
@@ -1350,6 +1161,195 @@ angular.module('NotSoShitty.storage').service('userService', function(NotSoShitt
             return user;
           });
         }
+      });
+    }
+  };
+});
+
+angular.module('NotSoShitty.common').service('dynamicFields', function($q, trelloUtils) {
+  var dict, getCurrentDayIndex, project, replaceToday, replaceYesterday, sprint;
+  sprint = null;
+  project = null;
+  getCurrentDayIndex = function(bdcData) {
+    var day, i, _i, _len;
+    for (i = _i = 0, _len = bdcData.length; _i < _len; i = ++_i) {
+      day = bdcData[i];
+      if (day.done == null) {
+        return Math.max(i - 1, 0);
+      }
+    }
+    return i - 1;
+  };
+  dict = {
+    '{sprintNumber}': {
+      value: function() {
+        return sprint != null ? sprint.number : void 0;
+      },
+      description: 'Current sprint number',
+      icon: 'cow'
+    },
+    '{sprintGoal}': {
+      value: function() {
+        return sprint != null ? sprint.goal : void 0;
+      },
+      description: 'The sprint goal (never forget it)',
+      icon: 'target'
+    },
+    '{speed}': {
+      value: function() {
+        var _ref, _ref1, _ref2;
+        if (_.isNumber(sprint != null ? (_ref = sprint.resources) != null ? _ref.speed : void 0 : void 0)) {
+          return sprint != null ? (_ref1 = sprint.resources) != null ? _ref1.speed.toFixed(1) : void 0 : void 0;
+        } else {
+          return sprint != null ? (_ref2 = sprint.resources) != null ? _ref2.speed : void 0 : void 0;
+        }
+      },
+      description: 'Estimated number of points per day per person',
+      icon: 'run'
+    },
+    '{toValidate}': {
+      value: function() {
+        var _ref;
+        if ((project != null ? (_ref = project.columnMapping) != null ? _ref.toValidate : void 0 : void 0) != null) {
+          return trelloUtils.getColumnPoints(project.columnMapping.toValidate);
+        }
+      },
+      description: 'The number of points in the Trello to validate column',
+      icon: 'phone'
+    },
+    '{blocked}': {
+      value: function() {
+        var _ref;
+        if ((project != null ? (_ref = project.columnMapping) != null ? _ref.blocked : void 0 : void 0) != null) {
+          return trelloUtils.getColumnPoints(project.columnMapping.blocked);
+        }
+      },
+      description: 'The number of points in the Trello blocked column',
+      icon: 'radioactive'
+    },
+    '{done}': {
+      value: function() {
+        var index, _ref;
+        if ((sprint != null ? sprint.bdcData : void 0) != null) {
+          index = getCurrentDayIndex(sprint.bdcData);
+          return (_ref = sprint.bdcData[index]) != null ? _ref.done : void 0;
+        }
+      },
+      description: 'The number of points in the Trello done column',
+      icon: 'check'
+    },
+    '{gap}': {
+      value: function() {
+        var diff, index, _ref, _ref1;
+        if ((sprint != null ? sprint.bdcData : void 0) != null) {
+          index = getCurrentDayIndex(sprint.bdcData);
+          diff = ((_ref = sprint.bdcData[index]) != null ? _ref.done : void 0) - ((_ref1 = sprint.bdcData[index]) != null ? _ref1.standard : void 0);
+          return Math.abs(diff).toFixed(1);
+        }
+      },
+      description: 'The difference between the standard points and the done points',
+      icon: 'tshirt-crew'
+    },
+    '{total}': {
+      value: function() {
+        var _ref;
+        if (_.isNumber(sprint != null ? (_ref = sprint.resources) != null ? _ref.totalPoints : void 0 : void 0)) {
+          return sprint.resources.totalPoints;
+        }
+      },
+      description: 'The number of points to finish the sprint',
+      icon: 'cart'
+    }
+  };
+  replaceToday = function(text) {
+    return text.replace(/\{today#(.+?)\}/g, function(match, dateFormat) {
+      return moment().format(dateFormat);
+    });
+  };
+  replaceYesterday = function(text) {
+    return text.replace(/\{yesterday#(.+?)\}/g, function(match, dateFormat) {
+      return moment().subtract(1, 'days').format(dateFormat);
+    });
+  };
+  return {
+    sprint: function(_sprint_) {
+      return sprint = _sprint_;
+    },
+    project: function(_project_) {
+      return project = _project_;
+    },
+    getAvailableFields: function() {
+      var result;
+      result = _.map(dict, function(value, key) {
+        return {
+          key: key,
+          description: value.description,
+          icon: value.icon
+        };
+      });
+      result.push({
+        key: '{today#format}',
+        description: 'Today\'s date where format is a <a href="http://momentjs.com/docs/#/parsing/string-format/" target="_blank">moment format</a>',
+        icon: 'clock'
+      });
+      result.push({
+        key: '{yesterday#format}',
+        description: 'Yesterday\'s date where format is a <a href="http://momentjs.com/docs/#/parsing/string-format/" target="_blank">moment format</a>. examples: EEEE for weekday, YYYY-MM-DD',
+        icon: 'calendar-today'
+      });
+      return result;
+    },
+    render: function(text) {
+      var deferred, elt, key, promises, result;
+      result = text || '';
+      deferred = $q.defer();
+      promises = {};
+      for (key in dict) {
+        elt = dict[key];
+        promises[key] = elt.value();
+      }
+      $q.all(promises).then(function(builtDict) {
+        for (key in builtDict) {
+          elt = builtDict[key];
+          result = result.split(key).join(elt);
+        }
+        result = replaceToday(result);
+        result = replaceYesterday(result);
+        return deferred.resolve(result);
+      })["catch"](deferred.reject);
+      return deferred.promise;
+    }
+  };
+});
+
+angular.module('NotSoShitty.common').service('trelloUtils', function(TrelloClient) {
+  var getCardPoints;
+  getCardPoints = function(card) {
+    var match, matchVal, value, _i, _len;
+    if (!_.isString(card != null ? card.name : void 0)) {
+      return 0;
+    }
+    match = card.name.match(/\(([-+]?[0-9]*\.?[0-9]+)\)/);
+    value = 0;
+    if (match) {
+      for (_i = 0, _len = match.length; _i < _len; _i++) {
+        matchVal = match[_i];
+        if (!isNaN(parseFloat(matchVal, 10))) {
+          value = parseFloat(matchVal, 10);
+        }
+      }
+    }
+    return value;
+  };
+  return {
+    getColumnPoints: function(columnId) {
+      return TrelloClient.get('/lists/' + columnId + '/cards?fields=name').then(function(response) {
+        var cards;
+        cards = response.data;
+        return _.sum(cards, getCardPoints);
+      })["catch"](function(err) {
+        console.warn(err);
+        return 0;
       });
     }
   };
