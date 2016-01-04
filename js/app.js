@@ -1138,7 +1138,7 @@ angular.module('NotSoShitty.bdc').service('sprintUtils', function() {
     for (_i = 0, _len = days.length; _i < _len; _i++) {
       day = days[_i];
       index = _.findIndex(previous.days, day);
-      if (index > -1) {
+      if (index > -1 && devTeam.length === previous.matrix[index].length) {
         matrix.push(previous.matrix[index]);
       } else {
         matrix.push((function() {
@@ -1230,6 +1230,13 @@ angular.module('NotSoShitty.bdc').service('sprintUtils', function() {
           matrix: sprint.resources.matrix
         };
         sprint.dates.days = generateDayList(sprint.dates.start, sprint.dates.end);
+        sprint.resources.matrix = generateResources(sprint.dates.days, devTeam, previous);
+      }
+      if (source === 'team') {
+        previous = {
+          days: sprint.dates.days,
+          matrix: sprint.resources.matrix
+        };
         sprint.resources.matrix = generateResources(sprint.dates.days, devTeam, previous);
       }
       if (source === 'date' || source === 'resource' || source === 'speed') {
@@ -2050,11 +2057,12 @@ angular.module('NotSoShitty.bdc').controller('EditSprintCtrl', function($scope, 
       });
     }
   };
-  return $scope.checkSprint = function(source) {
+  $scope.checkSprint = function(source) {
     var _ref1;
     $scope.activable = sprintUtils.isActivable($scope.sprint);
     return sprintUtils.ensureDataConsistency(source, $scope.sprint, project != null ? (_ref1 = project.team) != null ? _ref1.dev : void 0 : void 0);
   };
+  return $scope.checkSprint('team');
 });
 
 angular.module('NotSoShitty.bdc').controller('SprintListCtrl', function($scope, $mdDialog, $mdMedia, sprints, project) {
