@@ -41,7 +41,8 @@ angular.module 'NotSoShitty.common'
       value: ->
         if sprint?.bdcData?
           index = getCurrentDayIndex sprint.bdcData
-          sprint.bdcData[index]?.done
+          done = sprint.bdcData[index]?.done
+          if _.isNumber done then done.toFixed(1) else done
       description: 'The number of points in the Trello done column'
       icon: 'check'
     '{gap}':
