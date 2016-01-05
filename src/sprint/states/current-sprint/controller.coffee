@@ -118,3 +118,10 @@ angular.module 'NotSoShitty.bdc'
       svg = d3.select('#bdcgraph')[0][0].firstChild
       $scope.sprint.bdcBase64 = bdc.getPngBase64 svg
       $scope.sprint.save()
+
+  $scope.printBDC = ->
+    printContents = document.getElementById('bdcgraph').innerHTML
+    popupWin = window.open('', '_blank')
+    popupWin.document.open()
+    popupWin.document.write '<html><head><link rel="stylesheet" type="text/css" href="style.css" /></head><body onload="window.print()">' + printContents + '</html>'
+    popupWin.document.close()
