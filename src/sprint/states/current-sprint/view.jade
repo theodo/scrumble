@@ -1,4 +1,4 @@
-div(layout="column" layout-gt-md="row" layout-align="center start" ng-cloak)
+div#scrum-board(layout="column" layout-gt-md="row" layout-align="center start" ng-cloak)
   md-card(flex-gt-md="25" flex="90")
     project-widget(project="project")
   md-card(flex-gt-md="70" flex="90")
@@ -21,8 +21,8 @@ div(layout="column" layout-gt-md="row" layout-align="center start" ng-cloak)
             md-button
               md-icon(md-svg-icon='settings')
               | Settings
-          md-menu-item(ng-click='print()')
-            md-button(disabled="disabled")
+          md-menu-item(ng-click='printBDC()')
+            md-button
               md-icon(md-svg-icon='printer')
               | Print
     md-card-content
