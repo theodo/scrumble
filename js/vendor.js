@@ -16754,7 +16754,7 @@ renderBDC = function(data, cfg) {
   first = data[0], last = data[data.length - 1];
   initialNumberOfPoints = last.standard;
   maxDone = d3.max(data, function(datum) {
-    return datum.done;
+    return datum.done || 0;
   });
   bdcgraph = d3.select(cfg.containerId);
   bdcgraph.select('*').remove();
