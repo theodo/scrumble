@@ -34,7 +34,7 @@ app.config (
 
   $locationProvider.hashPrefix '!'
 
-  $urlRouterProvider.otherwise '/sprint/current'
+  $urlRouterProvider.otherwise '/'
 
   ParseProvider.initialize(
     "UTkdR7MH2Wok5lyPEm1VHoxyFKWVcdOKAu6A4BWG", # Application ID

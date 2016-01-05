@@ -2,7 +2,7 @@ angular.module 'NotSoShitty.bdc'
 .config ($stateProvider) ->
   $stateProvider
   .state 'tab.current-sprint',
-    url: '/sprint/current'
+    url: '/'
     controller: 'CurrentSprintCtrl'
     templateUrl: 'sprint/states/current-sprint/view.html'
     resolve:
