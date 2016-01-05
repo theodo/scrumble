@@ -49,6 +49,7 @@ app.config (TrelloClientProvider) ->
     appName: 'Not So Shitty'
     tokenExpiration: 'never'
     scope: ['read', 'account'] #, 'write']
+    returnUrl: window.location.origin + window.location.pathname
   }
 
 app.config ($mdIconProvider) ->
