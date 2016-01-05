@@ -62,6 +62,11 @@ angular.module 'NotSoShitty.bdc'
       done: fetchDone(date)
     }
     bdc
+  computeSpeed: (sprint) ->
+    [first, ..., last] = sprint.bdcData
+    if _.isNumber last.done
+      speed = last.done / sprint.resources.totalManDays
+      speed.toFixed(1)
   isActivable: (s) ->
     if (
       s.number? and
