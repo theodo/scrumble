@@ -1,71 +1,33 @@
 div(layout="row" layout-align="center start")
-  md-card.layout-padding(flex="70")
-    form(name="dailyReportCreate")
-      h2.md-title(layout-align="center end") DAILY REPORT
-      div(layout="column" layout-sm="column")
-        md-input-container(flex)
-          label Subject
-          input(ng-model="dailyReport.message.subject")
-        md-input-container.md-block
-          label Body (in markdown)
-          md-button.md-icon-button.markdown-cheatsheet(
-            href="https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet"
-            target="_blank"
-            aria-label="Markdown Cheatsheet"
-          )
-            md-icon(md-svg-icon="code-braces")
-            md-tooltip(md-direction="bottom") Markdown Cheatsheet
-          textarea(ng-model="dailyReport.message.body" columns="1")
-        section(layout="row" layout-sm="column" layout-align="center center" layout-wrap)
-          md-button.md-raised.md-primary(ng-click="preview($event)") Preview
-          md-button.md-raised.md-primary(ng-click="save()") Save template
-  
-  md-card.layout-padding(flex="20")
-    md-list
-      h2.md-title(layout-align="center end") DYNAMIC FIELDS
-      md-list-item.md-2-line
-        div.md-list-item-text
-          h3 {today#YYYY-MM-DD}
-          p format is supposed to follow
-            a(href="http://momentjs.com/docs/#/parsing/string-format/" target="_blank")  moment format
-      md-list-item.md-2-line
-        div.md-list-item-text
-          h3 {sprintGoal}
-      md-list-item.md-2-line
-        div.md-list-item-text
-          h3 {sprintNumber}
-      md-list-item.md-2-line
-        div.md-list-item-text
-          h3 {bdc}
-          p The burndown chart image
-      md-list-item.md-2-line
-        div.md-list-item-text
-          h3 {total}
-          p Total number of points to do during the sprint
-      md-list-item.md-2-line
-        div.md-list-item-text
-          h3 {done}
-          p The number of points in the Trello done column
-      md-list-item.md-2-line
-        div.md-list-item-text
-          h3 {toValidate}
-          p The number of points in the Trello to validate column
-      md-list-item.md-2-line
-        div.md-list-item-text
-          h3 {blocked}
-          p The number of points in the Trello blocked column
-      md-list-item.md-2-line
-        div.md-list-item-text
-          h3 {gap}
-          p The difference between the standard points and the done points
-      md-list-item.md-3-line
-        div.md-list-item-text
-          h3 {behind/ahead}
-          p If your are behind or late according to the burn down chart
-          div(layout="row")
-            md-input-container(flex="50")
-              label Behind Label
-              input(ng-model="dailyReport.message.behindLabel")
-            md-input-container(flex="50")
-              label Ahead Label
-              input(ng-model="dailyReport.message.aheadLabel")
+  md-card.layout-padding(flex="90")
+    .md-toolbar-tools
+      h2.md-title Daily report
+      span(flex)
+      md-menu
+        md-button.md-icon-button(aria-label='Open menu' ng-click='openMenu($mdOpenMenu, $event)')
+          md-icon(md-menu-origin md-svg-icon='more')
+        md-menu-content(width='4')
+          md-menu-item(ng-click='openDynamicFields($event)')
+            md-button
+              md-icon(md-svg-icon='code-braces')
+              | Dynamic Fields
+          md-menu-item
+            md-button(
+              href="https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet"
+              target="_blank"
+              aria-label="Markdown Cheatsheet"
+            )
+              md-icon(md-svg-icon='markdown')
+              | Markdown Cheatsheet
+    md-card-content
+      form(name="dailyReportCreate")
+        div(layout="column" layout-sm="column")
+          md-input-container(flex)
+            label Subject
+            input(ng-model="dailyReport.message.subject")
+          md-input-container.md-block
+            label Body (in markdown)
+            textarea(ng-model="dailyReport.message.body" columns="1")
+          section(layout="row" layout-sm="column" layout-align="center center" layout-wrap)
+            md-button.md-raised.md-primary(ng-click="preview($event)") Preview
+            md-button.md-raised.md-primary(ng-click="save()") Save template

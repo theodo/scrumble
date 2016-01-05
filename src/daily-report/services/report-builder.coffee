@@ -6,7 +6,7 @@ angular.module 'NotSoShitty.daily-report'
   project = undefined
   sprint = undefined
 
-  renderBehindAhead = (message) ->
+  isAhead = ->
     getCurrentDayIndex = (bdcData) ->
       for day, i in bdcData
         return Math.max i-1, 0 unless day.done?
@@ -14,10 +14,22 @@ angular.module 'NotSoShitty.daily-report'
     promise.then ->
       index = getCurrentDayIndex sprint.bdcData
       diff = sprint.bdcData[index].done - sprint.bdcData[index].standard
-      label = if diff > 0 then message.aheadLabel else message.behindLabel
+      if diff > 0 then true else false
+
+  renderBehindAhead = (message) ->
+    isAhead().then (ahead) ->
+      label = if ahead then message.aheadLabel else message.behindLabel
       message.body = message.body.replace '{behind/ahead}', label
       message.subject = message.subject.replace '{behind/ahead}', label
+      message
 
+  renderColor = (message) ->
+    isAhead().then (ahead) ->
+      message.body = message.body.replace />(.*(\{color=(.+?)\}).*)</g, (match, line, toRemove, color) ->
+        line = line.replace toRemove, ""
+        if color is 'smart'
+          color = if ahead then 'green' else 'red'
+        "><span style='color: #{color};'>#{line}</span><"
       message
 
   renderBDC = (message, bdcBase64, useCid) ->
@@ -55,7 +67,20 @@ angular.module 'NotSoShitty.daily-report'
     .then (project) ->
       Sprint.getActiveSprint(new Project project).then (_sprint_) ->
         sprint = _sprint_
-
+  getAvailableFields: ->
+    [
+      key: '{bdc}'
+      description: 'The burndown chart image'
+      icon: 'trending-down'
+    ,
+      key: '{color=xxx}'
+      description: 'This field will color the line on which it is. "xxx" can be any css color. The "smart" color is also recognized: green when the team is ahead or red when the team is late'
+      icon: 'format-color-fill'
+    ,
+      key: '{behind/ahead}'
+      description: 'If your are behind or late according to the burn down chart'
+      icon: 'owl'
+    ]
   render: (message, useCid) ->
     message = angular.copy message
 
@@ -72,6 +97,8 @@ angular.module 'NotSoShitty.daily-report'
       message.body = body
     .then ->
       renderBehindAhead message
+    .then ->
+      renderColor message
     .then (message) ->
       renderBDC message, sprint.bdcBase64, useCid
     .then (message) ->

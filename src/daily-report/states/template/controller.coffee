@@ -8,6 +8,7 @@ angular.module 'NotSoShitty.daily-report'
   reportBuilder
   dailyReport
   sprint
+  dynamicFields
 ) ->
   reportBuilder.init()
 
@@ -21,6 +22,27 @@ angular.module 'NotSoShitty.daily-report'
   $scope.save = ->
     $scope.dailyReport.save().then ->
       $mdToast.show saveFeedback
+
+  $scope.openMenu = ($mdOpenMenu, ev) ->
+    originatorEv = ev
+    $mdOpenMenu ev
+
+  $scope.openDynamicFields = (ev) ->
+    useFullScreen = ($mdMedia 'sm' or $mdMedia 'xs')
+    $mdDialog.show
+      controller: 'DynamicFieldsModalCtrl'
+      templateUrl: 'daily-report/states/template/dynamic-fields.html'
+      parent: angular.element(document.body)
+      targetEvent: ev
+      clickOutsideToClose: true
+      fullscreen: useFullScreen
+      resolve:
+        dailyReport: -> dailyReport
+        availableFields: ->
+          _.union(
+            dynamicFields.getAvailableFields()
+            reportBuilder.getAvailableFields()
+          )
 
   $scope.preview = (ev) ->
     $mdDialog.show
