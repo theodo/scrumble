@@ -18,3 +18,4 @@ angular.module 'NotSoShitty.settings'
       _.remove $scope.days, day
       $scope.matrix.splice index, 1
     $scope.selected = []
+    $scope.onUpdate()
