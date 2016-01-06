@@ -103,4 +103,21 @@ angular.module 'NotSoShitty.settings'
     value: 'to'
   ,
   ]
+  $scope.roles = [
+    label: 'Developer'
+    value: 'Developer'
+  ,
+    label: 'Architect Developer'
+    value: 'Architect Developer'
+  ,
+    label: 'Product Owner'
+    value: 'Product Owner'
+  ,
+    label: 'Scrum Master'
+    value: 'Scrum Master'
+  ,
+    label: 'Stackholder'
+    value: 'Stackholder'
+  ,
+  ]
   return
