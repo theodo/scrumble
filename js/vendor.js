@@ -1065,7 +1065,8 @@ angular.module('trello-api-client').constant('TrelloClientConfig', {
   version: 1,
   tokenExpiration: 'never',
   scope: ['read', 'write', 'account'],
-  localStorageTokenName: 'trello_token'
+  localStorageTokenName: 'trello_token',
+  returnUrl: window.location.origin
 });
 
 angular.module('trello-api-client').factory('TrelloInterceptor', [
@@ -1109,7 +1110,7 @@ angular.module('trello-api-client').provider('TrelloClient', function($authProvi
     return $authProvider.oauth2({
       name: TrelloClientConfig.appName,
       key: TrelloClientConfig.key,
-      returnUrl: window.location.origin + window.location.pathname,
+      returnUrl: TrelloClientConfig.returnUrl,
       authorizationEndpoint: TrelloClientConfig.authEndpoint + "/" + TrelloClientConfig.version + "/authorize",
       defaultUrlParams: ['response_type', 'key', 'return_url', 'expiration', 'scope', 'name'],
       requiredUrlParams: null,

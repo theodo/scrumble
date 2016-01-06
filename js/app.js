@@ -1426,16 +1426,6 @@ angular.module('NotSoShitty.storage').service('userService', function(NotSoShitt
   };
 });
 
-angular.module('NotSoShitty.common').directive('dynamicFieldsList', function() {
-  return {
-    restrict: 'E',
-    templateUrl: 'common/directives/dynamic-fields/view.html',
-    scope: {
-      availableFields: '='
-    }
-  };
-});
-
 angular.module('NotSoShitty.common').directive('nssRound', function() {
   return {
     require: 'ngModel',
@@ -1449,6 +1439,16 @@ angular.module('NotSoShitty.common').directive('nssRound', function() {
         }
         return data;
       });
+    }
+  };
+});
+
+angular.module('NotSoShitty.common').directive('dynamicFieldsList', function() {
+  return {
+    restrict: 'E',
+    templateUrl: 'common/directives/dynamic-fields/view.html',
+    scope: {
+      availableFields: '='
     }
   };
 });
@@ -1748,7 +1748,8 @@ angular.module('NotSoShitty.settings').controller('ResourcesByDayCtrl', function
       _.remove($scope.days, day);
       $scope.matrix.splice(index, 1);
     }
-    return $scope.selected = [];
+    $scope.selected = [];
+    return $scope.onUpdate();
   };
 });
 
