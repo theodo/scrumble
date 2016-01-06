@@ -1426,6 +1426,16 @@ angular.module('NotSoShitty.storage').service('userService', function(NotSoShitt
   };
 });
 
+angular.module('NotSoShitty.common').directive('dynamicFieldsList', function() {
+  return {
+    restrict: 'E',
+    templateUrl: 'common/directives/dynamic-fields/view.html',
+    scope: {
+      availableFields: '='
+    }
+  };
+});
+
 angular.module('NotSoShitty.common').directive('nssRound', function() {
   return {
     require: 'ngModel',
@@ -1439,16 +1449,6 @@ angular.module('NotSoShitty.common').directive('nssRound', function() {
         }
         return data;
       });
-    }
-  };
-});
-
-angular.module('NotSoShitty.common').directive('dynamicFieldsList', function() {
-  return {
-    restrict: 'E',
-    templateUrl: 'common/directives/dynamic-fields/view.html',
-    scope: {
-      availableFields: '='
     }
   };
 });
@@ -1914,6 +1914,24 @@ angular.module('NotSoShitty.settings').controller('ProjectCtrl', function($locat
     }, {
       label: 'to',
       value: 'to'
+    }
+  ];
+  $scope.roles = [
+    {
+      label: 'Developer',
+      value: 'Developer'
+    }, {
+      label: 'Architect Developer',
+      value: 'Architect Developer'
+    }, {
+      label: 'Product Owner',
+      value: 'Product Owner'
+    }, {
+      label: 'Scrum Master',
+      value: 'Scrum Master'
+    }, {
+      label: 'Stackholder',
+      value: 'Stackholder'
     }
   ];
 });
