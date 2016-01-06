@@ -18,7 +18,8 @@ app.config(function(TrelloClientProvider) {
     key: '2dcb2ba290c521d2b5c2fd69cc06830e',
     appName: 'Not So Shitty',
     tokenExpiration: 'never',
-    scope: ['read', 'account']
+    scope: ['read', 'account'],
+    returnUrl: window.location.origin + window.location.pathname
   });
 });
 
@@ -734,7 +735,7 @@ angular.module('NotSoShitty.login').config(function($authProvider) {
   return $authProvider.google({
     clientId: '605908567890-3bg3dmamghq5gd7i9sqsdhvoflef0qku.apps.googleusercontent.com',
     scope: ['https://www.googleapis.com/auth/userinfo.email', 'https://www.googleapis.com/auth/gmail.send'],
-    redirectUrl: window.location.origin + window.location.pathname,
+    redirectUri: window.location.origin + window.location.pathname,
     responseType: 'token'
   });
 });
