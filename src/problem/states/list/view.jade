@@ -1,0 +1,30 @@
+div(layout="row" layout-align="center end")
+  md-card(flex="90" flex-sm="100")
+    .md-toolbar-tools
+      h2.md-title Problems
+    md-card-content
+      md-list
+        md-list-item(ng-repeat='problem in problems' layout="column" layout-align="start start")
+          p
+            b Description:&nbsp;
+            | {{ problem.description }}
+          p
+            b Cause Assumption:&nbsp;
+            | {{ problem.causeAssumption }}
+          h3 Resolution
+          p
+            b Action:&nbsp;
+            | {{ problem.resolution.action }}
+          p
+            b In charge:&nbsp;
+            | {{ problem.resolution.inCharge }}
+          p
+            b Date:&nbsp;
+            | {{ problem.resolution.date }}
+          md-divider
+md-button.md-fab.nss-call-to-action(
+  aria-label="Add problem"
+  ui-sref="tab.problem.new({projectId: projectId})"
+)
+  md-icon(md-svg-src="plus") Add
+  md-tooltip(md-direction="left") New problem
