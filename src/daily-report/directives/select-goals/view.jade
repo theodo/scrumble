@@ -1,0 +1,9 @@
+div(layout="column" layout-sm="column")
+  md-list-item(ng-repeat='card in trelloCards')
+    md-checkbox(ng-model='card.selected' ng-change='updateGoals()')
+    p {{ card.name }}
+    md-icon.md-secondary(
+      ng-click='edit($event, card)'
+      aria-label='Edit goal'
+      md-svg-icon='border-color'
+    )

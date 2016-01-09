@@ -17,6 +17,16 @@ div.sprint-body(layout="row" layout-align="center end")
         label Select "to validate" column
         md-select(ng-model="project.columnMapping.toValidate")
           md-option(ng-value="column.id" ng-repeat="column in boardColumns") {{ column.name }}
+      md-input-container
+        md-tooltip(md-direction="left") To be used in daily mail
+        label Select "doing" column
+        md-select(ng-model="project.columnMapping.doing")
+          md-option(ng-value="column.id" ng-repeat="column in boardColumns") {{ column.name }}
+      md-input-container
+        md-tooltip(md-direction="left") To be used in daily mail
+        label Select "sprint" column
+        md-select(ng-model="project.columnMapping.sprint")
+          md-option(ng-value="column.id" ng-repeat="column in boardColumns") {{ column.name }}
 
       h4.md-title The team
       md-data-table-container

@@ -1,0 +1,39 @@
+div(layout="row" layout-align="center center" flex="100")
+  md-card(flex="90")
+    .md-toolbar-tools
+      h2.md-title Daily report
+      span(flex)
+      md-menu
+        md-button.md-icon-button(aria-label='Open menu' ng-click='openMenu($mdOpenMenu, $event)')
+          md-icon(md-menu-origin md-svg-icon='more')
+        md-menu-content(width='4')
+          md-menu-item(ng-click='openDynamicFields($event)')
+            md-button
+              md-icon(md-svg-icon='code-braces')
+              | Dynamic Fields
+          md-menu-item
+            md-button(
+              href="https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet"
+              target="_blank"
+              aria-label="Markdown Cheatsheet"
+            )
+              md-icon(md-svg-icon='markdown')
+              | Markdown Cheatsheet
+    md-card-content
+      form(name="dailyReportCreate")
+        div(layout="column" layout-sm="column")
+          md-input-container(flex="100")
+            label Subject
+            input(ng-model="dailyReport.message.subject")
+          md-input-container.md-block
+            label Body (in markdown)
+            textarea(ng-model="dailyReport.message.body" columns="1")
+          section(layout="row" layout-sm="column" layout-align="center center" layout-wrap)
+            md-button.md-raised.md-primary(ng-click="preview($event)") Preview
+            md-button.md-raised.md-primary(ng-click="save()") Save template
+  div(layout="column")
+    md-card.layout-padding(flex="50")
+      .md-toolbar-tools
+        h2.md-title {todaysGoals}
+      md-card-content
+        select-goals(goals="todaysGoals" project="project")

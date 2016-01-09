@@ -1,1 +1,4 @@
-angular.module 'NotSoShitty.daily-report', []
+angular.module 'NotSoShitty.daily-report', [
+  'trello-api-client'
+  'ui.router'
+]
