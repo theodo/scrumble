@@ -21,6 +21,9 @@ div.md-padding(layout="column" layout-align="center center" flex="100")
     md-card-content
       h2.md-title {todaysGoals}
       select-goals(goals="todaysGoals" project="project")
+      
+      h2.md-title {previousGoals}
+      previous-goals(goals="previousGoals" sprint="sprint")
 
       h2.md-title {problems}
       md-input-container.md-block

@@ -16,3 +16,13 @@ angular.module 'NotSoShitty.daily-report'
     $q.all promises
     .then (responses) ->
       _.flatten (response.data for response in responses)
+
+  getDoneCardIds: (doneColumnId) ->
+    deferred = $q.defer()
+    if doneColumnId?
+      TrelloClient.get "/lists/#{doneColumnId}/cards"
+      .then (response) ->
+        deferred.resolve (card.id for card in response.data)
+    else
+      deferred.resolve []
+    deferred.promise

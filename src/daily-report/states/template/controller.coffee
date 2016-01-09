@@ -12,6 +12,7 @@ angular.module 'NotSoShitty.daily-report'
   dynamicFields
 ) ->
   $scope.project = project
+  $scope.sprint = sprint
 
   reportBuilder.init()
 
@@ -22,6 +23,7 @@ angular.module 'NotSoShitty.daily-report'
 
   $scope.dailyReport = dailyReport
   $scope.todaysGoals = []
+  $scope.previousGoals = dailyReport.metadata?.previousGoals
   $scope.problems = "## Problems\n"
 
   $scope.save = ->
@@ -61,12 +63,17 @@ angular.module 'NotSoShitty.daily-report'
         message: ->
           reportBuilder.render(
             $scope.dailyReport.message,
-            $scope.dailyReport.previousGoals,
+            _.filter($scope.previousGoals, 'display'),
             $scope.todaysGoals,
             $scope.problems,
             false
           )
         rawMessage: ->
           $scope.dailyReport.message
+        dailyReport: -> $scope.dailyReport
+        todaysGoals: -> $scope.todaysGoals
+        previousGoals: ->
+          _.filter $scope.previousGoals, 'display'
+        problems: -> $scope.problems
         sprint: ->
           sprint

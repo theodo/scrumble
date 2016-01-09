@@ -24,9 +24,19 @@ angular.module 'NotSoShitty.daily-report'
       message
 
   renderTodaysGoals = (body, goals) ->
+    return body unless _.isArray goals
     goalsNames = ("- " + goal.name for goal in goals)
     goalsString = goalsNames.join "\n"
     body.replace '{todaysGoals}', goalsString
+
+  renderPreviousGoals = (body, goals) ->
+    return body unless _.isArray goals
+    goalsNames = []
+    for goal in goals
+      color = if goal.isDone then 'green' else 'red'
+      goalsNames.push "- " + goal.name + " {color=#{color}}"
+    goalsString = goalsNames.join "\n"
+    body.replace '{previousGoals}', goalsString
 
   renderProblems = (body, problems) ->
     body.replace '{problems}', problems
@@ -92,6 +102,7 @@ angular.module 'NotSoShitty.daily-report'
   render: (message, previousGoals, todaysGoals, problems, useCid) ->
     message = angular.copy message
     message.body = renderTodaysGoals message.body, todaysGoals
+    message.body = renderPreviousGoals message.body, previousGoals
     message.body = renderProblems message.body, problems
     message.body = converter.makeHtml message.body
 
