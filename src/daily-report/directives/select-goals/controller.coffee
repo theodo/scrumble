@@ -14,14 +14,9 @@ angular.module 'NotSoShitty.daily-report'
   $scope.updateGoals = ->
     $scope.goals = _.filter $scope.trelloCards, 'selected'
 
-  DialogController = ($scope, $mdDialog, goal) ->
+  DialogController = ($scope, $controller, goal) ->
+    angular.extend @, $controller('ModalCtrl', $scope: $scope)
     $scope.goal = goal
-    $scope.hide = ->
-      $mdDialog.hide()
-    $scope.cancel = ->
-      $mdDialog.cancel()
-    $scope.save = ->
-      $mdDialog.hide $scope.goal.name
 
   $scope.edit = (ev, goal) ->
     useFullScreen = ($mdMedia 'sm' or $mdMedia 'xs')

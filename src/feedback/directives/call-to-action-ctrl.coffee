@@ -21,16 +21,11 @@ angular.module 'NotSoShitty.feedback'
       return
     return
 
-  DialogController = ($scope, $mdDialog, Feedback, localStorageService) ->
+  DialogController = ($scope, $mdDialog, $controller, Feedback, localStorageService) ->
+    angular.extend @, $controller('ModalCtrl', $scope: $scope)
     $scope.message = null
 
     $scope.doing = false
-
-    $scope.hide = ->
-      $mdDialog.hide()
-
-    $scope.cancel = ->
-      $mdDialog.cancel()
 
     $scope.send = ->
       if $scope.message?

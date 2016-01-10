@@ -10,5 +10,5 @@ md-dialog(aria-label='Edit Goal' ng-cloak)
       md-input-container
         textarea(ng-cloak ng-model="goal.name" aria-label="goal" md-autofocus)
   md-dialog-actions(layout='row')
-    md-button(ng-click="save()")
+    md-button(ng-click="save(goal.name)")
       | Save

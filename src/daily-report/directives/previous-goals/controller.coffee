@@ -16,14 +16,9 @@ angular.module 'NotSoShitty.daily-report'
       else
         card.isDone = false
 
-  DialogController = ($scope, $mdDialog, goal) ->
+  DialogController = ($scope, $controller, goal) ->
+    angular.extend @, $controller('ModalCtrl', $scope: $scope)
     $scope.goal = goal
-    $scope.hide = ->
-      $mdDialog.hide()
-    $scope.cancel = ->
-      $mdDialog.cancel()
-    $scope.save = ->
-      $mdDialog.hide $scope.goal
 
   $scope.edit = (ev, goal) ->
     useFullScreen = ($mdMedia 'sm' or $mdMedia 'xs')
