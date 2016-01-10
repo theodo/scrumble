@@ -1,5 +1,5 @@
 describe 'sprintUtils', ->
-  beforeEach module 'NotSoShitty.bdc'
+  beforeEach module 'NotSoShitty.sprint'
 
   beforeEach inject (sprintUtils) ->
     @sprintUtils = sprintUtils

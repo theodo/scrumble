@@ -16,7 +16,7 @@ app = angular.module 'NotSoShitty', [
   'permission'
   'trello-api-client'
 
-  'NotSoShitty.bdc'
+  'NotSoShitty.sprint'
   'NotSoShitty.common'
   'NotSoShitty.daily-report'
   'NotSoShitty.gmail-client'

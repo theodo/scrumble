@@ -1,4 +1,4 @@
-angular.module 'NotSoShitty.bdc'
+angular.module 'NotSoShitty.sprint'
 .config ($stateProvider) ->
   $stateProvider
   .state 'tab.current-sprint',
