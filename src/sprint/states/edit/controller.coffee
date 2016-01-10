@@ -29,7 +29,7 @@ angular.module 'NotSoShitty.sprint'
     if sprintUtils.isActivable($scope.sprint)
       $scope.sprint.isActive = true
       $scope.sprint.save().then ->
-        $state.go 'tab.current-sprint'
+        $state.go 'tab.board'
 
   $scope.checkSprint = (source) ->
     $scope.activable = sprintUtils.isActivable($scope.sprint)

@@ -29,7 +29,7 @@ angular.module 'NotSoShitty.sprint'
   $scope.openEditTitle = (ev) ->
     nssModal.show
       controller: DialogController
-      templateUrl: 'sprint/states/current-sprint/editBDCTitle.html'
+      templateUrl: 'sprint/directives/sprint-widget/editBDCTitle.html'
       targetEvent: ev
       resolve:
         title: -> $scope.project.settings?.bdcTitle
@@ -44,7 +44,7 @@ angular.module 'NotSoShitty.sprint'
   $scope.openEditBDC = (ev) ->
     nssModal.show
       controller: 'EditBDCCtrl'
-      templateUrl: 'sprint/states/current-sprint/editBDC.html'
+      templateUrl: 'sprint/directives/sprint-widget/editBDC.html'
       targetEvent: ev
       resolve:
         data: -> angular.copy $scope.sprint.bdcData

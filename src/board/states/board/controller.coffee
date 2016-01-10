@@ -1,15 +1,9 @@
 angular.module 'NotSoShitty.sprint'
-.controller 'CurrentSprintCtrl', (
+.controller 'BoardCtrl', (
   $scope
   $state
   $timeout
   $mdDialog
-  $mdMedia
-  sprintUtils
-  TrelloClient
-  trelloUtils
-  dynamicFields
-  bdc
   sprint
   project
   Sprint

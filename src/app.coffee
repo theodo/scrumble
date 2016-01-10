@@ -24,6 +24,7 @@ app = angular.module 'NotSoShitty', [
   'NotSoShitty.login'
   'NotSoShitty.settings'
   'NotSoShitty.storage'
+  'NotSoShitty.board'
 ]
 
 app.config (

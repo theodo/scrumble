@@ -1,5 +1,5 @@
 angular.module 'NotSoShitty.storage'
-.factory 'Sprint', (Parse, bdc) ->
+.factory 'Sprint', (Parse) ->
   class Sprint extends Parse.Model
     @configure "Sprint", "project", "number", "dates", "resources", "bdcData", "isActive", "doneColumn", "bdcBase64", "goal"
 
