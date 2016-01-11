@@ -1,4 +1,4 @@
-angular.module 'NotSoShitty.bdc'
+angular.module 'NotSoShitty.sprint'
 .controller 'EditBDCCtrl', ($scope, $mdDialog, data, trelloUtils, doneColumn) ->
   $scope.data = data
 

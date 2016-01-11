@@ -1,4 +1,4 @@
-angular.module 'NotSoShitty.bdc'
+angular.module 'NotSoShitty.sprint'
 .service 'sprintUtils', ->
   generateDayList = (start, end) ->
     return unless start? and end?
