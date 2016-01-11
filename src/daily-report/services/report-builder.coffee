@@ -39,7 +39,6 @@ angular.module 'NotSoShitty.daily-report'
     body.replace '{previousGoals}', goalsString
 
   renderSection = (body, key, value) ->
-    console.log key, value
     body.replace "{#{key}}", value
 
   renderColor = (message) ->
@@ -67,13 +66,13 @@ angular.module 'NotSoShitty.daily-report'
 
   renderTo = (message) ->
     promise.then ->
-      emails = (member.email for member in project.team.dev when member.daily is 'to')
+      emails = (member.email for member in project.team when member.daily is 'to')
       message.to = _.filter emails
       message
 
   renderCc = (message) ->
     promise.then ->
-      emails = (member.email for member in project.team.dev when member.daily is 'cc')
+      emails = (member.email for member in project.team when member.daily is 'cc')
       message.cc = _.filter emails
       message
 

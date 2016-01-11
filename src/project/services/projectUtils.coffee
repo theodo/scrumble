@@ -15,20 +15,24 @@ angular.module 'NotSoShitty.settings'
   getRoles: ->
     [
       label: 'Developer'
-      value: 'Developer'
+      value: 'dev'
     ,
       label: 'Architect Developer'
-      value: 'Architect Developer'
+      value: 'archi'
     ,
       label: 'Product Owner'
-      value: 'Product Owner'
+      value: 'PO'
     ,
       label: 'Scrum Master'
-      value: 'Scrum Master'
+      value: 'SM'
     ,
       label: 'Stakeholder'
-      value: 'Stakeholder'
+      value: 'stakeholder'
     ,
       label: 'Commercial'
-      value: 'Commercial'
+      value: 'com'
     ]
+  getDevTeam: (team) ->
+    return [] unless _.isArray team
+    _filter team, (member) ->
+      member?.role?.value in ['dev', 'archi']

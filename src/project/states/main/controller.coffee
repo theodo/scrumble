@@ -50,9 +50,7 @@ angular.module 'NotSoShitty.settings'
         console.log "No project with boardId #{boardId} found. Creating a new one"
         project = new Project()
         project.boardId = boardId
-        project.team =
-          rest: []
-          dev: []
+        project.team = []
         project.save()
       .then (project) ->
         $scope.project = project
@@ -67,10 +65,9 @@ angular.module 'NotSoShitty.settings'
     fetchBoardData next
 
   $scope.delete = (member) ->
-    _.remove $scope.project.team.dev, member
+    _.remove $scope.project.team, member
   $scope.clearTeam = ->
-    $scope.project.team.rest = []
-    $scope.project.team.dev = []
+    $scope.project.team = []
     $scope.save()
 
   $scope.saving = false

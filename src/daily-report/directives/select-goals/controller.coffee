@@ -2,8 +2,7 @@ angular.module 'NotSoShitty.daily-report'
 .controller 'SelectGoalsCtrl', (
   $scope
   $q
-  $mdMedia
-  $mdDialog
+  nssModal
   TrelloClient
   trelloCards
 ) ->
@@ -19,15 +18,11 @@ angular.module 'NotSoShitty.daily-report'
     $scope.goal = goal
 
   $scope.edit = (ev, goal) ->
-    useFullScreen = ($mdMedia 'sm' or $mdMedia 'xs')
-    $mdDialog.show(
+    nssModal.show
       controller: DialogController
       templateUrl: 'daily-report/directives/select-goals/edit-goal.html'
-      parent: angular.element(document.body)
       targetEvent: ev
-      clickOutsideToClose: true
-      fullscreen: useFullScreen
       resolve:
         goal: -> angular.copy goal
-    ).then (editedGoal) ->
+    .then (editedGoal) ->
       goal.name = editedGoal
