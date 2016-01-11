@@ -63,6 +63,7 @@ angular.module 'NotSoShitty.sprint'
     }
     bdc
   computeSpeed: (sprint) ->
+    return unless _.isArray sprint.bdcData
     [first, ..., last] = sprint.bdcData
     if _.isNumber last.done
       speed = last.done / sprint.resources.totalManDays
