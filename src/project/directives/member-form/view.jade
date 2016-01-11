@@ -1,0 +1,28 @@
+md-card
+  md-card-title
+    md-card-title-text
+      span.md-headline {{ member.fullName }}
+    md-card-title-media
+      .md-media-sm.card-media
+        trello-avatar(
+          member="member"
+        )
+  md-card-content(layout='column')
+    md-input-container
+      label Email (for daily mail)
+      input(ng-model="member.email")
+    md-input-container
+      label Phone
+      input(ng-model="member.phone")
+    div(layout='row')
+      md-input-container(flex="50")
+        label Role
+        md-select(ng-model="member.role")
+          md-option(ng-value="elt.value" ng-repeat="elt in roles") {{elt.label}}
+      md-input-container(flex="50")
+        label Daily Mail
+        md-select(ng-model="member.daily")
+          md-option(ng-value="elt.value" ng-repeat="elt in daily") {{elt.label}}
+  md-card-actions(layout="row" layout-align="end center")
+    md-button.md-icon-button(aria-label="delete" ng-click="delete()")
+      md-icon(md-svg-icon="delete")

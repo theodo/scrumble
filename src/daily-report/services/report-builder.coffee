@@ -66,16 +66,14 @@ angular.module 'NotSoShitty.daily-report'
 
   renderTo = (message) ->
     promise.then ->
-      devsEmails = (member.email for member in project.team.dev when member.daily is 'to')
-      memberEmails = (member.email for member in project.team.rest when member.daily is 'to')
-      message.to = _.filter _.union devsEmails, memberEmails
+      emails = (member.email for member in project.team.dev when member.daily is 'to')
+      message.to = _.filter emails
       message
 
   renderCc = (message) ->
     promise.then ->
-      devsEmails = (member.email for member in project.team.dev when member.daily is 'cc')
-      memberEmails = (member.email for member in project.team.rest when member.daily is 'cc')
-      message.cc = _.filter _.union devsEmails, memberEmails
+      emails = (member.email for member in project.team.dev when member.daily is 'cc')
+      message.cc = _.filter emails
       message
 
   init: ->

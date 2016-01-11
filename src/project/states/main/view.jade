@@ -29,71 +29,18 @@ div.sprint-body(layout="row" layout-align="center end")
           md-option(ng-value="column.id" ng-repeat="column in boardColumns") {{ column.name }}
 
       h4.md-title The team
-      md-data-table-container
-        table(md-data-table)
-          thead
-            tr
-              th(name="People")
-              th(name="Email")
-              th(name="Phone")
-              th(name="Role")
-              th(name="Daily Mail")
-          tbody
-            tr(ng-repeat="dev in project.team.dev")
-              td
-                trello-avatar(
-                  member="dev"
-                )
-              td
-                md-input-container
-                  label Email
-                  input(ng-model="dev.email")
-              td
-                md-input-container
-                  label Phone
-                  input(ng-model="dev.phone")
-              td
-                md-input-container
-                  md-select(ng-model="dev.role")
-                    md-option(ng-value="elt.value" ng-repeat="elt in roles") {{elt.label}}
-              td
-                md-input-container
-                  md-select(ng-model="dev.daily")
-                    md-option(ng-value="elt.value" ng-repeat="elt in daily") {{elt.label}}
-            tr(ng-repeat="rest in project.team.rest")
-              td
-                trello-avatar(
-                  member="rest"
-                )
-              td
-                md-input-container
-                  label Email
-                  input(ng-model="rest.email")
-              td
-                md-input-container
-                  label Phone
-                  input(ng-model="rest.phone")
-              td
-                md-input-container
-                  md-select(ng-model="rest.role")
-                    md-option(ng-value="elt.value" ng-repeat="elt in roles") {{elt.label}}
-              td
-                md-input-container
-                  md-select(ng-model="rest.daily")
-                    md-option(ng-value="elt.value" ng-repeat="elt in daily") {{elt.label}}
       .select-teams
         .select-dev-team
-          div Select the dev team
+          div Select the team
           select-people(
             members="boardMembers"
             selected-members="project.team.dev"
           )
-        .select-rest-team
-          div Select the rest of the team
-          select-people(
-            members="boardMembers"
-            selected-members="project.team.rest"
-          )
+      md-content.md-padding(
+        layout="row" layout-wrap layout-align="center start" layout-xs="column"
+      )
+        div(flex="50" flex-sm="100" flex-xs="100" layout="column" ng-repeat="dev in project.team.dev")
+          member-form(member="dev" delete="delete(dev)")
     section(layout="row" layout-sm="column" layout-align="center center" layout-wrap)
       md-button.md-warn(ng-click="clearTeam()") CLEAR THE TEAM
       md-button.md-raised.md-primary(ng-click="save()" ng-disabled="saving") Save
