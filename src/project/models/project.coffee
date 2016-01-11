@@ -17,3 +17,9 @@ angular.module 'NotSoShitty.storage'
       else
         deferred.reject 'No boardId'
       deferred.promise
+
+    @saveTitle = (project, title) ->
+      project.settings ?= {}
+      project.settings.bdcTitle = title
+      project.save().then ->
+        title

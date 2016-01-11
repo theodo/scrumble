@@ -86,7 +86,7 @@ angular.module 'NotSoShitty.settings'
       user.project = p
       user.save().then ->
         $mdToast.show saveFeedback
-        $state.go 'tab.current-sprint'
+        $state.go 'tab.board'
       .catch ->
         $scope.saving = false
     .catch ->
