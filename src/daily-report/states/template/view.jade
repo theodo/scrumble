@@ -1,21 +1,31 @@
-div.md-padding(layout="row" flex="100" layout-sm="column")
+div(layout="row" flex="100" layout-sm="column")
   md-card(flex="50" flex-sm="100")
+    md-card-title
+      md-card-title-text
+        span.md-headline {todaysGoals}
+        span.md-subhead The list of tickets in "sprint", "doing", "blocked", "toValidate" columns
     md-card-content
-      h2.md-title {todaysGoals}
       select-goals(goals="todaysGoals" project="project")
   md-card(flex="50" flex-sm="100")
+    md-card-title
+      md-card-title-text
+        span.md-headline {previousGoals}
+        span.md-subhead The list of goals in the previous email. It's green if the trello ticket is in the "done column"
     md-card-content
-      h2.md-title {previousGoals}
       previous-goals(goals="previousGoals" sprint="sprint")
 div(layout="row" flex="100" layout-sm="column")
-  md-card.md-padding(flex="50" flex-sm="100")
+  md-card(flex="50" flex-sm="100")
+    md-card-title
+      md-card-title-text
+        span.md-headline {problems}
     md-card-content
-      h2.md-title {problems}
       md-input-container.md-block
         textarea(ng-model="sections.problems" aria-label="problems")
   md-card(flex="50" flex-sm="100")
+    md-card-title
+      md-card-title-text
+        span.md-headline {intro}
     md-card-content
-      h2.md-title {intro}
       md-input-container.md-block
         textarea(ng-model="sections.intro" aria-label="intro")
           
