@@ -38,7 +38,7 @@ div.sprint-body(layout="row" layout-align="center end")
         layout="row" layout-wrap layout-align="center start" layout-xs="column"
       )
         div(
-          flex="50" flex-sm="100" flex-xs="100" layout="column"
+          flex="50" flex-gt-md="33" flex-sm="100" flex-xs="100"
           ng-repeat="member in project.team"
         )
           member-form(member="member" delete="delete(member)")
