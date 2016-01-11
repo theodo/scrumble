@@ -38,8 +38,9 @@ angular.module 'NotSoShitty.daily-report'
     goalsString = goalsNames.join "\n"
     body.replace '{previousGoals}', goalsString
 
-  renderProblems = (body, problems) ->
-    body.replace '{problems}', problems
+  renderSection = (body, key, value) ->
+    console.log key, value
+    body.replace "{#{key}}", value
 
   renderColor = (message) ->
     isAhead().then (ahead) ->
@@ -97,11 +98,12 @@ angular.module 'NotSoShitty.daily-report'
       description: 'If your are behind or late according to the burn down chart'
       icon: 'owl'
     ]
-  render: (message, previousGoals, todaysGoals, problems, useCid) ->
+  render: (message, previousGoals, todaysGoals, sections, useCid) ->
     message = angular.copy message
     message.body = renderTodaysGoals message.body, todaysGoals
     message.body = renderPreviousGoals message.body, previousGoals
-    message.body = renderProblems message.body, problems
+    for key, value of sections
+      message.body = renderSection message.body, key, value
     message.body = converter.makeHtml message.body
 
     dynamicFields.sprint sprint

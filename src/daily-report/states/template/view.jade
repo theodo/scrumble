@@ -12,12 +12,12 @@ div(layout="row" flex="100" layout-sm="column")
     md-card-content
       h2.md-title {problems}
       md-input-container.md-block
-        textarea(ng-model="problems" aria-label="problems")
+        textarea(ng-model="sections.problems" aria-label="problems")
   md-card(flex="50" flex-sm="100")
     md-card-content
       h2.md-title {intro}
       md-input-container.md-block
-        textarea(ng-model="intro" aria-label="intro")
+        textarea(ng-model="sections.intro" aria-label="intro")
           
 md-fab-speed-dial.md-scale.md-hover-full.board-call-to-actions(
   ng-cloak

@@ -12,7 +12,7 @@ angular.module 'NotSoShitty.daily-report'
   dailyReport
   todaysGoals
   previousGoals
-  problems
+  sections
 ) ->
   $scope.message = message
 
@@ -37,7 +37,7 @@ angular.module 'NotSoShitty.daily-report'
       rawMessage,
       previousGoals,
       todaysGoals,
-      problems, true)
+      sections, true)
     .then (message) ->
       mailer.send message, (response) ->
         if response.code? and response.code > 300

@@ -24,7 +24,9 @@ angular.module 'NotSoShitty.daily-report'
   $scope.dailyReport = dailyReport
   $scope.todaysGoals = []
   $scope.previousGoals = dailyReport.metadata?.previousGoals
-  $scope.problems = "## Problems\n"
+  $scope.sections =
+    problems: "## Problems\n"
+    intro: ""
 
   $scope.save = ->
     $scope.dailyReport.save().then ->
@@ -65,7 +67,7 @@ angular.module 'NotSoShitty.daily-report'
             $scope.dailyReport.message,
             _.filter($scope.previousGoals, 'display'),
             $scope.todaysGoals,
-            $scope.problems,
+            $scope.sections,
             false
           )
         rawMessage: ->
@@ -74,6 +76,6 @@ angular.module 'NotSoShitty.daily-report'
         todaysGoals: -> $scope.todaysGoals
         previousGoals: ->
           _.filter $scope.previousGoals, 'display'
-        problems: -> $scope.problems
+        sections: -> $scope.sections
         sprint: ->
           sprint
