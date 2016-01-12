@@ -23,28 +23,34 @@ roles =
     label: 'Commercial'
     value: 'com'
 
-query = new (Parse.Query)('Project')
-query.equalTo "name", "Test Not So Shitty"
-query.each (project) ->
-  console.log 'Updating object: ' + project.id
-
-  oldTeam = project.get 'team'
-  newTeam = _.union oldTeam.dev, oldTeam.rest
-  newTeam = _.map newTeam, (member) ->
-    if member.role in _.keys roles
-      member.role = roles member.role
-    else
-      if member in oldTeam.dev
-        member.role = roles['Developer']
-      else
-        member.role = roles['Scrum Master']
-    member
-  project.set 'teamNew', newTeam
-  project.save()
-
-# then delete the column in Parse app and create a new one of type array
 # query = new (Parse.Query)('Project')
 # query.each (project) ->
+#   console.log 'Updating object: ' + project.id
+#
+#   oldTeam = project.get('team') or {dev: [], rest: []}
+#   newTeam = _.union oldTeam.dev, oldTeam.rest
+#   newTeam = _.map newTeam, (member) ->
+#     if member.role in _.keys roles
+#       member.role = roles[member.role]
+#     else
+#       if member in oldTeam.dev
+#         member.role = roles['Developer']
+#       else
+#         member.role = roles['Scrum Master']
+#     member
+#   project.set 'teamNew', newTeam
+#   project.save()
+
+####
+# then delete the column in Parse app and create a new one of type array
+####
+
+# query = new (Parse.Query)('Project')
+# query.each (project) ->
+#   console.log 'Updating object: ' + project.id
 #   project.set('team', project.get('teamNew'))
 #   project.save()
+
+####
 # then delete the teamNew column
+####
