@@ -56,7 +56,7 @@ angular.module 'NotSoShitty.common'
     '{total}':
       value: ->
         if _.isNumber sprint?.resources?.totalPoints
-          sprint.resources.totalPoints
+          sprint.resources.totalPoints.toFixed(1)
       description: 'The number of points to finish the sprint'
       icon: 'cart'
 
