@@ -4,8 +4,4 @@ angular.module 'NotSoShitty.settings'
     originatorEv = ev
     $mdOpenMenu ev
 
-  roles = projectUtils.getRoles()
-  $scope.getRoleLabel = (key) ->
-    result = _.find roles, (role) ->
-      role.value is key
-    result?.label
+  $scope.getRoleLabel = projectUtils.getRoleLabel
