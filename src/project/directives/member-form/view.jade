@@ -18,7 +18,7 @@ md-card
       md-input-container(flex="50")
         label Role
         md-select(ng-model="member.role")
-          md-option(ng-value="elt" ng-repeat="elt in roles") {{elt.label}}
+          md-option(ng-value="elt.value" ng-repeat="elt in roles") {{elt.label}}
       md-input-container(flex="50")
         label Daily Mail
         md-select(ng-model="member.daily")

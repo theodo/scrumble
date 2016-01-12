@@ -25,7 +25,7 @@ div
           member="member"
         )
         .md-list-item-text(layout='column')
-          h3 {{ member.fullName }} - {{ member.role.label }}
+          h3 {{ member.fullName }} - {{ getRoleLabel(member.role) }}
           p {{ member.email }}
           p {{ member.phone }}
       md-list-item.md-3-line(ng-repeat="member in project.team.rest")
