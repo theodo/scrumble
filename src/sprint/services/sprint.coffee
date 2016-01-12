@@ -50,7 +50,7 @@ angular.module 'NotSoShitty.sprint'
       bdc.push {
         date: date
         standard: standard
-        done: fetchDone(date)
+        done: if i is 0 then 0 else fetchDone(date)
       }
       standard += _.sum(resources.matrix[i]) * resources.speed
 
