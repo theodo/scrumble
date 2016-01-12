@@ -34,5 +34,5 @@ angular.module 'NotSoShitty.settings'
     ]
   getDevTeam: (team) ->
     return [] unless _.isArray team
-    _filter team, (member) ->
+    _.filter team, (member) ->
       member?.role?.value in ['dev', 'archi']
