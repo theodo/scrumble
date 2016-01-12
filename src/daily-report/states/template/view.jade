@@ -1,33 +1,55 @@
-div(layout="row" layout-align="center start")
-  md-card.layout-padding(flex="90")
-    .md-toolbar-tools
-      h2.md-title Daily report
-      span(flex)
-      md-menu
-        md-button.md-icon-button(aria-label='Open menu' ng-click='openMenu($mdOpenMenu, $event)')
-          md-icon(md-menu-origin md-svg-icon='more')
-        md-menu-content(width='4')
-          md-menu-item(ng-click='openDynamicFields($event)')
-            md-button
-              md-icon(md-svg-icon='code-braces')
-              | Dynamic Fields
-          md-menu-item
-            md-button(
-              href="https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet"
-              target="_blank"
-              aria-label="Markdown Cheatsheet"
-            )
-              md-icon(md-svg-icon='markdown')
-              | Markdown Cheatsheet
+div(layout="row" flex="100" layout-sm="column")
+  md-card(flex="50" flex-sm="100")
+    md-card-title
+      md-card-title-text
+        span.md-headline {todaysGoals}
+        span.md-subhead The list of tickets in "sprint", "doing", "blocked", "toValidate" columns
     md-card-content
-      form(name="dailyReportCreate")
-        div(layout="column" layout-sm="column")
-          md-input-container(flex)
-            label Subject
-            input(ng-model="dailyReport.message.subject")
-          md-input-container.md-block
-            label Body (in markdown)
-            textarea(ng-model="dailyReport.message.body" columns="1")
-          section(layout="row" layout-sm="column" layout-align="center center" layout-wrap)
-            md-button.md-raised.md-primary(ng-click="preview($event)") Preview
-            md-button.md-raised.md-primary(ng-click="save()") Save template
+      select-goals(goals="todaysGoals" project="project")
+  md-card(flex="50" flex-sm="100")
+    md-card-title
+      md-card-title-text
+        span.md-headline {previousGoals}
+        span.md-subhead The list of goals in the previous email. It's green if the trello ticket is in the "done column"
+    md-card-content
+      previous-goals(goals="previousGoals" sprint="sprint")
+div(layout="row" flex="100" layout-sm="column")
+  md-card(flex="50" flex-sm="100")
+    md-card-title
+      md-card-title-text
+        span.md-headline {problems}
+    md-card-content
+      md-input-container.md-block
+        textarea(ng-model="sections.problems" aria-label="problems")
+  md-card(flex="50" flex-sm="100")
+    md-card-title
+      md-card-title-text
+        span.md-headline {intro}
+    md-card-content
+      md-input-container.md-block
+        textarea(ng-model="sections.intro" aria-label="intro")
+          
+md-fab-speed-dial.md-scale.md-hover-full.board-call-to-actions(
+  ng-cloak
+  md-direction='up'
+  md-open='menuIsOpen'
+  ng-mouseenter='menuIsOpen=true'
+  ng-mouseleave='menuIsOpen=false'
+)
+  md-fab-trigger
+    md-button.md-fab.md-warn
+      md-icon(md-svg-icon='menu')
+  md-fab-actions
+    md-button.md-fab.md-primary.md-hue-2.md-mini(ng-click="preview($event)")
+      md-icon(md-svg-icon='eye')
+      md-tooltip(md-direction='left') Preview
+    md-button.md-fab.md-primary.md-hue-2.md-mini(ng-click='openDynamicFields($event)')
+      md-icon(md-svg-icon='code-braces')
+      md-tooltip(md-direction='left') Edit Template
+    md-button.md-fab.md-primary.md-hue-2.md-mini(
+      href="https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet"
+      target="_blank"
+      aria-label="Markdown Cheatsheet"
+    )
+      md-icon(md-svg-src='markdown' aria-label='markdown')
+      md-tooltip(md-direction='left') Markdown Cheatsheet

@@ -8,8 +8,12 @@ angular.module 'NotSoShitty.daily-report'
   reportBuilder
   dailyReport
   sprint
+  project
   dynamicFields
 ) ->
+  $scope.project = project
+  $scope.sprint = sprint
+
   reportBuilder.init()
 
   saveFeedback = $mdToast.simple()
@@ -18,6 +22,11 @@ angular.module 'NotSoShitty.daily-report'
     .content('Saved!')
 
   $scope.dailyReport = dailyReport
+  $scope.todaysGoals = []
+  $scope.previousGoals = dailyReport.metadata?.previousGoals
+  $scope.sections =
+    problems: "## Problems\n"
+    intro: ""
 
   $scope.save = ->
     $scope.dailyReport.save().then ->
@@ -54,8 +63,19 @@ angular.module 'NotSoShitty.daily-report'
       fullscreen: $mdMedia 'sm'
       resolve:
         message: ->
-          reportBuilder.render $scope.dailyReport.message, false
+          reportBuilder.render(
+            $scope.dailyReport.message,
+            _.filter($scope.previousGoals, 'display'),
+            $scope.todaysGoals,
+            $scope.sections,
+            false
+          )
         rawMessage: ->
           $scope.dailyReport.message
+        dailyReport: -> $scope.dailyReport
+        todaysGoals: -> $scope.todaysGoals
+        previousGoals: ->
+          _.filter $scope.previousGoals, 'display'
+        sections: -> $scope.sections
         sprint: ->
           sprint

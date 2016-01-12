@@ -11,6 +11,7 @@ angular.module 'NotSoShitty.settings'
   localStorageService
   Project
   user
+  projectUtils
 ) ->
   $scope.boards = boards
   if user.project?
@@ -49,9 +50,7 @@ angular.module 'NotSoShitty.settings'
         console.log "No project with boardId #{boardId} found. Creating a new one"
         project = new Project()
         project.boardId = boardId
-        project.team =
-          rest: []
-          dev: []
+        project.team = []
         project.save()
       .then (project) ->
         $scope.project = project
@@ -65,15 +64,11 @@ angular.module 'NotSoShitty.settings'
     return unless next? and next != prev
     fetchBoardData next
 
+  $scope.delete = (member) ->
+    _.remove $scope.project.team, member
   $scope.clearTeam = ->
-    $scope.project.team.rest = []
-    $scope.project.team.dev = []
+    $scope.project.team = []
     $scope.save()
-
-  saveFeedback = $mdToast.simple()
-    .hideDelay(1000)
-    .position('top right')
-    .content('Saved!')
 
   $scope.saving = false
   $scope.save = ->
@@ -85,39 +80,9 @@ angular.module 'NotSoShitty.settings'
     $scope.project.save().then (p) ->
       user.project = p
       user.save().then ->
-        $mdToast.show saveFeedback
         $state.go 'tab.board'
       .catch ->
         $scope.saving = false
     .catch ->
       $scope.saving = false
-
-  $scope.daily = [
-    label: 'no'
-    value: 'no'
-  ,
-    label: 'cc'
-    value: 'cc'
-  ,
-    label: 'to'
-    value: 'to'
-  ,
-  ]
-  $scope.roles = [
-    label: 'Developer'
-    value: 'Developer'
-  ,
-    label: 'Architect Developer'
-    value: 'Architect Developer'
-  ,
-    label: 'Product Owner'
-    value: 'Product Owner'
-  ,
-    label: 'Scrum Master'
-    value: 'Scrum Master'
-  ,
-    label: 'Stackholder'
-    value: 'Stackholder'
-  ,
-  ]
   return

@@ -6,6 +6,7 @@ angular.module 'NotSoShitty.sprint'
   TrelloClient
   project
   sprintUtils
+  projectUtils
   sprint
   Project
 ) ->
@@ -15,7 +16,7 @@ angular.module 'NotSoShitty.sprint'
   .then (response) ->
     $scope.boardLists = response.data
 
-  $scope.devTeam = project.team?.dev
+  $scope.devTeam = projectUtils.getDevTeam project.team
 
   $scope.saveLabel = if $state.is 'tab.new-sprint' then 'Start the sprint' else 'Save'
   $scope.title = if $state.is 'tab.new-sprint' then 'NEW SPRINT' else 'EDIT SPRINT'
@@ -33,6 +34,6 @@ angular.module 'NotSoShitty.sprint'
 
   $scope.checkSprint = (source) ->
     $scope.activable = sprintUtils.isActivable($scope.sprint)
-    sprintUtils.ensureDataConsistency source, $scope.sprint, project?.team?.dev
+    sprintUtils.ensureDataConsistency source, $scope.sprint, $scope.devTeam
 
   $scope.checkSprint 'team'

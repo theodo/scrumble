@@ -1,7 +1,7 @@
 angular.module 'NotSoShitty.daily-report'
 .factory 'DailyReport', (Parse) ->
   class DailyReport extends Parse.Model
-    @configure "DailyReport", "project", "message"
+    @configure "DailyReport", "project", "message", "metadata"
 
     @getByProject = (project) ->
       @query(
