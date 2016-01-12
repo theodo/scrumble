@@ -1096,7 +1096,7 @@ angular.module('NotSoShitty.settings').service('projectUtils', function() {
       if (!_.isArray(team)) {
         return [];
       }
-      return _filter(team, function(member) {
+      return _.filter(team, function(member) {
         var _ref, _ref1;
         return (_ref = member != null ? (_ref1 = member.role) != null ? _ref1.value : void 0 : void 0) === 'dev' || _ref === 'archi';
       });
