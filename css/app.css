@@ -154,6 +154,18 @@ feedback {
   left: 10px;
 }
 
+.bdc-data md-input-container {
+  margin-bottom: 0;
+}
+.bdc-data md-input-container .md-errors-spacer {
+  display: none;
+}
+.board-call-to-actions {
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+}
+
 trello-avatar {
   display: inline-block;
   margin: 5px;
@@ -175,6 +187,9 @@ trello-avatar .trello-avatar .member-avatar.initials {
 .markdown-cheatsheet {
   position: absolute;
   right: 0;
+}
+.md-select-value *:first-child {
+  width: calc(76%);
 }
 
 .profil-button {
@@ -238,6 +253,13 @@ trello-avatar .trello-avatar .member-avatar.initials {
   border-radius: 50%;
 }
 
+member-form md-input-container {
+  margin-bottom: 0;
+}
+member-form md-card {
+  border: 2px solid #607D8B;
+}
+
 resources-by-day .row {
   height: 35px;
   margin: 0;
@@ -260,18 +282,6 @@ select-people .member-select.selected .initials {
 select-people .member-select label {
   width: 100%;
   height: 100%;
-}
-
-.bdc-data md-input-container {
-  margin-bottom: 0;
-}
-.bdc-data md-input-container .md-errors-spacer {
-  display: none;
-}
-.board-call-to-actions {
-  position: fixed;
-  bottom: 10px;
-  right: 10px;
 }
 
 .clickable {
