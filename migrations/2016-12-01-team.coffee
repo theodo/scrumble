@@ -34,7 +34,10 @@ query.each (project) ->
     if member.role in _.keys roles
       member.role = roles member.role
     else
-      member.role = roles['Developer']
+      if member in oldTeam.dev
+        member.role = roles['Developer']
+      else
+        member.role = roles['Scrum Master']
     member
   project.set 'teamNew', newTeam
   project.save()
