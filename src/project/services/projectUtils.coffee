@@ -35,7 +35,7 @@ angular.module 'NotSoShitty.settings'
   getDevTeam: (team) ->
     return [] unless _.isArray team
     _.filter team, (member) ->
-      member?.role?.value in ['dev', 'archi']
+      member?.role in ['dev', 'archi']
   getRoleLabel: (key) ->
     result = _.find roles, (role) ->
       role.value is key
