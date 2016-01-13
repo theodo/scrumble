@@ -39,10 +39,15 @@ angular.module 'NotSoShitty.sprint'
   generateBDC: (days, resources, previous = []) ->
     standard = 0
     bdc = []
-    fetchDone = (date) ->
+    fetchDone = (date, i) ->
       dayFromPrevious = _.find previous, (elt) ->
         moment(elt.date).format() is moment(date).format()
-      done = if dayFromPrevious? then dayFromPrevious.done else null
+      if dayFromPrevious?
+        return dayFromPrevious.done
+      else if i is 0
+        return 0
+      else
+        return null
 
     for day, i in days
       date = moment(day.date).toDate()
@@ -50,7 +55,7 @@ angular.module 'NotSoShitty.sprint'
       bdc.push {
         date: date
         standard: standard
-        done: fetchDone(date)
+        done: fetchDone(date, i)
       }
       standard += _.sum(resources.matrix[i]) * resources.speed
 

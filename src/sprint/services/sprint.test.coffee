@@ -155,9 +155,14 @@ describe 'sprintUtils', ->
       expectedShape =
         date: jasmine.any(Date)
         standard: jasmine.any(Number)
+        done: 0
+      expectedShape2 =
+        date: jasmine.any(Date)
+        standard: jasmine.any(Number)
         done: null
       result = @sprintUtils.generateBDC days, resources
       expect(result[0]).toEqual expectedShape
+      expect(result[1]).toEqual expectedShape2
 
     it 'should return expected standard values', ->
       result = @sprintUtils.generateBDC days, resources
