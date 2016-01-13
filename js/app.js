@@ -1427,12 +1427,18 @@ angular.module('NotSoShitty.sprint').service('sprintUtils', function() {
       }
       standard = 0;
       bdc = [];
-      fetchDone = function(date) {
-        var dayFromPrevious, done;
+      fetchDone = function(date, i) {
+        var dayFromPrevious;
         dayFromPrevious = _.find(previous, function(elt) {
           return moment(elt.date).format() === moment(date).format();
         });
-        return done = dayFromPrevious != null ? dayFromPrevious.done : null;
+        if (dayFromPrevious != null) {
+          return dayFromPrevious.done;
+        } else if (i === 0) {
+          return 0;
+        } else {
+          return null;
+        }
       };
       for (i = _i = 0, _len = days.length; _i < _len; i = ++_i) {
         day = days[i];
@@ -1440,7 +1446,7 @@ angular.module('NotSoShitty.sprint').service('sprintUtils', function() {
         bdc.push({
           date: date,
           standard: standard,
-          done: fetchDone(date)
+          done: fetchDone(date, i)
         });
         standard += _.sum(resources.matrix[i]) * resources.speed;
       }
@@ -2317,7 +2323,7 @@ angular.module('NotSoShitty.sprint').directive('burndown', function() {
 });
 
 angular.module('NotSoShitty.sprint').controller('SprintWidgetCtrl', function($scope, $timeout, nssModal, sprintUtils, dynamicFields, bdc, Project, Sprint) {
-  var DialogController, day, _i, _len, _ref, _ref1, _ref2;
+  var DialogController, day, noteInitialized, _i, _len, _ref, _ref1, _ref2;
   dynamicFields.project($scope.project);
   dynamicFields.sprint($scope.sprint);
   if ($scope.sprint.bdcData != null) {
@@ -2326,8 +2332,17 @@ angular.module('NotSoShitty.sprint').controller('SprintWidgetCtrl', function($sc
       day = _ref[_i];
       day.date = moment(day.date).toDate();
     }
+  } else {
+    noteInitialized = true;
   }
   $scope.sprint.bdcData = sprintUtils.generateBDC($scope.sprint.dates.days, $scope.sprint.resources, $scope.sprint.bdcData);
+  if (noteInitialized) {
+    $timeout(function() {
+      var svg;
+      svg = d3.select('#bdcgraph')[0][0].firstChild;
+      return bdc.saveImage($scope.sprint, svg);
+    });
+  }
   dynamicFields.render((_ref1 = $scope.project) != null ? (_ref2 = _ref1.settings) != null ? _ref2.bdcTitle : void 0 : void 0).then(function(title) {
     return $scope.bdcTitle = title;
   });
