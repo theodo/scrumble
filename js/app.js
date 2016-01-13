@@ -313,7 +313,7 @@ angular.module('NotSoShitty.common').service('dynamicFields', function($q, trell
       value: function() {
         var _ref;
         if (_.isNumber(sprint != null ? (_ref = sprint.resources) != null ? _ref.totalPoints : void 0 : void 0)) {
-          return sprint.resources.totalPoints;
+          return sprint.resources.totalPoints.toFixed(1);
         }
       },
       description: 'The number of points to finish the sprint',

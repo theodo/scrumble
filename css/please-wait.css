@@ -78,7 +78,7 @@ body.pg-loading {
 /* line 78, ../src/please-wait.scss */
 .pg-loading-screen .pg-loading-logo-header, .pg-loading-screen .pg-loading-html {
   width: 100%;
-  opacity: 0;
+  /*opacity: 0;*/
 }
 /* line 83, ../src/please-wait.scss */
 .pg-loading-screen .pg-loading-logo-header {
