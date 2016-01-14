@@ -1,17 +1,17 @@
 div(layout="row" flex="100" layout-sm="column")
   md-card(flex="50" flex-sm="100")
-    md-card-title
+    md-card-title(flex="nogrow")
       md-card-title-text
         span.md-headline {todaysGoals}
         span.md-subhead The list of tickets in "sprint", "doing", "blocked", "toValidate" columns
-    md-card-content
+    md-card-content(flex)
       select-goals(goals="todaysGoals" project="project")
   md-card(flex="50" flex-sm="100")
-    md-card-title
+    md-card-title(flex="nogrow")
       md-card-title-text
         span.md-headline {previousGoals}
         span.md-subhead The list of goals in the previous email. It's green if the trello ticket is in the "done column"
-    md-card-content
+    md-card-content(flex)
       previous-goals(goals="previousGoals" sprint="sprint")
 div(layout="row" flex="100" layout-sm="column")
   md-card(flex="50" flex-sm="100")
