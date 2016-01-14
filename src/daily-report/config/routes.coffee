@@ -36,3 +36,6 @@ angular.module 'NotSoShitty.daily-report'
         .catch (err) ->
           console.log err
           return null
+      project: (NotSoShittyUser) ->
+        NotSoShittyUser.getCurrentUser().then (user) ->
+          user.project

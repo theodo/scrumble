@@ -14,8 +14,8 @@ angular.module 'NotSoShitty.settings'
 
   $scope.$watch 'selectedMembers', (newVal) ->
     return unless newVal
+    $scope.teamCheck = {}
     if newVal.length > 0
-      $scope.teamCheck ?= {}
-      for member in $scope.selectedMembers
+      for member in newVal
         $scope.teamCheck[member.id] = true
-    else $scope.teamCheck = {}
+  , true

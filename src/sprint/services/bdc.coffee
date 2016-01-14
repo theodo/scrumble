@@ -1,7 +1,7 @@
-angular.module 'NotSoShitty.bdc'
+angular.module 'NotSoShitty.sprint'
 .service 'bdc', ($q, trelloUtils) ->
 
-  getPngBase64: (svg) ->
+  getPngBase64 = (svg) ->
     img = new Image()
     serializer = new XMLSerializer()
     svgStr = serializer.serializeToString(svg)
@@ -36,3 +36,6 @@ angular.module 'NotSoShitty.bdc'
       deferred.reject 'doneColumn is not set'
 
     deferred.promise
+  saveImage: (sprint, svg) ->
+    sprint.bdcBase64 = getPngBase64 svg
+    sprint.save()

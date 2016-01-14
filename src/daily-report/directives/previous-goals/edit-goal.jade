@@ -1,0 +1,16 @@
+md-dialog(aria-label="Edit Goal" ng-cloak)
+  md-toolbar
+    .md-toolbar-tools
+      h2 Edit
+      span(flex)
+      md-button.md-icon-button(ng-click="cancel()")
+        md-icon(md-svg-src="close", aria-label="Close dialog")
+  md-dialog-content
+    .md-dialog-content(layout="column")
+      md-checkbox(ng-model="goal.isDone")
+        p {{ goal.isDone? "Goal achieved" : "Goal not achieved" }}
+      md-input-container
+        textarea(ng-cloak ng-model="goal.name" aria-label="goal" md-autofocus)
+  md-dialog-actions(layout="row")
+    md-button(ng-click="save(goal)")
+      | Save

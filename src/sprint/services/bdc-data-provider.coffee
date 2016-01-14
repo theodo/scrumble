@@ -1,4 +1,4 @@
-angular.module 'NotSoShitty.bdc'
+angular.module 'NotSoShitty.sprint'
 .factory 'BDCDataProvider', ->
   initializeBDC = (days, resources) ->
     standard = 0

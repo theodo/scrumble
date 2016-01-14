@@ -2,3 +2,8 @@
   position: absolute;
   right: 0;
 }
+
+// see https://github.com/angular/material/issues/6312
+.md-select-value *:first-child {
+  width: calc(100% - 24px);
+}

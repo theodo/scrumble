@@ -1,0 +1,27 @@
+.md-toolbar-tools
+  h2.md-title {{ bdcTitle }}
+  span(flex)
+  md-button.md-icon-button(aria-label='Update BDC' ng-click="updateBDC()")
+    md-icon(md-svg-icon='autorenew')
+  md-menu
+    md-button.md-icon-button(aria-label='Open BDC menu' ng-click='openMenu($mdOpenMenu, $event)')
+      md-icon(md-menu-origin md-svg-icon='more')
+    md-menu-content(width='4')
+      md-menu-item(ng-click='openEditBDC($event)')
+        md-button
+          md-icon(md-svg-icon='table-edit')
+          | Edit BDC
+      md-menu-item(ng-click='openEditTitle($event)')
+        md-button
+          md-icon(md-svg-icon='border-color')
+          | Edit Title
+      md-menu-item(ui-sref='tab.edit-sprint({sprintId: sprint.objectId})')
+        md-button
+          md-icon(md-svg-icon='settings')
+          | Settings
+      md-menu-item(ng-click='printBDC()')
+        md-button
+          md-icon(md-svg-icon='printer')
+          | Print
+md-card-content
+  burndown(data="sprint.bdcData")

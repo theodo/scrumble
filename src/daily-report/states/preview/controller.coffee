@@ -9,6 +9,10 @@ angular.module 'NotSoShitty.daily-report'
   message
   rawMessage
   reportBuilder
+  dailyReport
+  todaysGoals
+  previousGoals
+  sections
 ) ->
   $scope.message = message
 
@@ -29,7 +33,12 @@ angular.module 'NotSoShitty.daily-report'
     $scope.isAuthenticated = isAuthenticated
 
   $scope.send = ->
-    reportBuilder.render(rawMessage, true).then (message) ->
+    reportBuilder.render(
+      rawMessage,
+      previousGoals,
+      todaysGoals,
+      sections, true)
+    .then (message) ->
       mailer.send message, (response) ->
         if response.code? and response.code > 300
           errorFeedback = $mdToast.simple()
@@ -39,9 +48,9 @@ angular.module 'NotSoShitty.daily-report'
           $mdToast.show errorFeedback
           $mdDialog.cancel()
         else
-          sentFeedback = $mdToast.simple()
-            .hideDelay(1000)
-            .position('top right')
-            .content('Email sent')
+          dailyReport.metadata =
+            previousGoals: todaysGoals
+          dailyReport.save()
+          sentFeedback = $mdToast.simple().content('Email sent')
           $mdToast.show sentFeedback
           $mdDialog.cancel()

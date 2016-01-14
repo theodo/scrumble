@@ -25,4 +25,4 @@ angular.module 'NotSoShitty.login'
         user.email = localStorageService.get 'trello_email'
         user.save()
     .then ->
-      $state.go 'tab.current-sprint'
+      $state.go 'tab.board'

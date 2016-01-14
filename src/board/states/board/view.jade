@@ -1,0 +1,22 @@
+div(layout="column" layout-gt-md="row" layout-align="center start" ng-cloak)
+  md-card(flex-gt-md="25" flex="90")
+    project-widget(project="project")
+  md-card(flex-gt-md="70" flex="90")
+    sprint-widget(project="project" sprint="sprint")
+
+  md-fab-speed-dial.md-scale.md-hover-full.board-call-to-actions(
+    md-direction="up"
+    md-open="menuIsOpen"
+    ng-mouseenter="menuIsOpen=true"
+    ng-mouseleave="menuIsOpen=false"
+  )
+    md-fab-trigger
+      md-button.md-fab.md-warn
+        md-icon(md-svg-icon="menu")
+    md-fab-actions
+      md-button.md-fab.md-primary.md-hue-2.md-mini(ui-sref="tab.daily-report")
+        md-icon(md-svg-icon="gmail")
+        md-tooltip(md-direction="left") Compose your Daily Report
+      md-button.md-fab.md-primary.md-hue-2.md-mini(ng-click="showConfirmNewSprint($event)")
+        md-icon(md-svg-src="plus" aria-label="Create")
+        md-tooltip(md-direction="left") Create a new sprint

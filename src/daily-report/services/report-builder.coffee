@@ -23,6 +23,24 @@ angular.module 'NotSoShitty.daily-report'
       message.subject = message.subject.replace '{behind/ahead}', label
       message
 
+  renderTodaysGoals = (body, goals) ->
+    return body unless _.isArray goals
+    goalsNames = ("- " + goal.name for goal in goals)
+    goalsString = goalsNames.join "\n"
+    body.replace '{todaysGoals}', goalsString
+
+  renderPreviousGoals = (body, goals) ->
+    return body unless _.isArray goals
+    goalsNames = []
+    for goal in goals
+      color = if goal.isDone then 'green' else 'red'
+      goalsNames.push "- " + goal.name + " {color=#{color}}"
+    goalsString = goalsNames.join "\n"
+    body.replace '{previousGoals}', goalsString
+
+  renderSection = (body, key, value) ->
+    body.replace "{#{key}}", value
+
   renderColor = (message) ->
     isAhead().then (ahead) ->
       message.body = message.body.replace />(.*(\{color=(.+?)\}).*)</g, (match, line, toRemove, color) ->
@@ -48,16 +66,14 @@ angular.module 'NotSoShitty.daily-report'
 
   renderTo = (message) ->
     promise.then ->
-      devsEmails = (member.email for member in project.team.dev when member.daily is 'to')
-      memberEmails = (member.email for member in project.team.rest when member.daily is 'to')
-      message.to = _.filter _.union devsEmails, memberEmails
+      emails = (member.email for member in project.team when member.daily is 'to')
+      message.to = _.filter emails
       message
 
   renderCc = (message) ->
     promise.then ->
-      devsEmails = (member.email for member in project.team.dev when member.daily is 'cc')
-      memberEmails = (member.email for member in project.team.rest when member.daily is 'cc')
-      message.cc = _.filter _.union devsEmails, memberEmails
+      emails = (member.email for member in project.team when member.daily is 'cc')
+      message.cc = _.filter emails
       message
 
   init: ->
@@ -81,9 +97,12 @@ angular.module 'NotSoShitty.daily-report'
       description: 'If your are behind or late according to the burn down chart'
       icon: 'owl'
     ]
-  render: (message, useCid) ->
+  render: (message, previousGoals, todaysGoals, sections, useCid) ->
     message = angular.copy message
-
+    message.body = renderTodaysGoals message.body, todaysGoals
+    message.body = renderPreviousGoals message.body, previousGoals
+    for key, value of sections
+      message.body = renderSection message.body, key, value
     message.body = converter.makeHtml message.body
 
     dynamicFields.sprint sprint

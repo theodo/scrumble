@@ -1,0 +1,8 @@
+div(layout="column" layout-sm="column")
+  md-list-item(ng-repeat='goal in goals')
+    p(ng-style="{color: goal.isDone ? 'green': 'red'}") {{ goal.name }}
+    md-icon.md-secondary(
+      ng-click='edit($event, goal)'
+      aria-label='Edit goal'
+      md-svg-icon='border-color'
+    )

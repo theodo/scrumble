@@ -1,4 +1,4 @@
-angular.module 'NotSoShitty.bdc'
+angular.module 'NotSoShitty.sprint'
 .controller 'EditSprintCtrl', (
   $scope
   $timeout
@@ -6,6 +6,7 @@ angular.module 'NotSoShitty.bdc'
   TrelloClient
   project
   sprintUtils
+  projectUtils
   sprint
   Project
 ) ->
@@ -15,7 +16,7 @@ angular.module 'NotSoShitty.bdc'
   .then (response) ->
     $scope.boardLists = response.data
 
-  $scope.devTeam = project.team?.dev
+  $scope.devTeam = projectUtils.getDevTeam project.team
 
   $scope.saveLabel = if $state.is 'tab.new-sprint' then 'Start the sprint' else 'Save'
   $scope.title = if $state.is 'tab.new-sprint' then 'NEW SPRINT' else 'EDIT SPRINT'
@@ -29,10 +30,10 @@ angular.module 'NotSoShitty.bdc'
     if sprintUtils.isActivable($scope.sprint)
       $scope.sprint.isActive = true
       $scope.sprint.save().then ->
-        $state.go 'tab.current-sprint'
+        $state.go 'tab.board'
 
   $scope.checkSprint = (source) ->
     $scope.activable = sprintUtils.isActivable($scope.sprint)
-    sprintUtils.ensureDataConsistency source, $scope.sprint, project?.team?.dev
+    sprintUtils.ensureDataConsistency source, $scope.sprint, $scope.devTeam
 
   $scope.checkSprint 'team'
