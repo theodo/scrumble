@@ -6,7 +6,7 @@ angular.module 'NotSoShitty.daily-report'
   TrelloClient
   trelloCards
 ) ->
-  trelloCards.getTodoCards $scope.project
+  trelloCards.getTodoCards $scope.project, $scope.sprint
   .then (cards) ->
     $scope.trelloCards = cards
 

@@ -3,7 +3,7 @@ angular.module 'NotSoShitty.daily-report'
   $q
   TrelloClient
 ) ->
-  getTodoCards: (project) ->
+  getTodoCards: (project, sprint) ->
     promises = []
     if project?.columnMapping?.blocked?
       promises.push TrelloClient.get "/lists/#{project.columnMapping.blocked}/cards"
@@ -11,7 +11,9 @@ angular.module 'NotSoShitty.daily-report'
       promises.push TrelloClient.get "/lists/#{project.columnMapping.toValidate}/cards"
     if project?.columnMapping?.doing?
       promises.push TrelloClient.get "/lists/#{project.columnMapping.doing}/cards"
-    if project?.columnMapping?.sprint?
+    if sprint?.sprintColumn?
+      promises.push TrelloClient.get "/lists/#{sprint.sprintColumn}/cards"
+    else if project?.columnMapping?.sprint?
       promises.push TrelloClient.get "/lists/#{project.columnMapping.sprint}/cards"
     $q.all promises
     .then (responses) ->

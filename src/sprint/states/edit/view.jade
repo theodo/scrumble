@@ -12,6 +12,10 @@ div.sprint-body(layout="row" layout-align="center end")
       label Select the done column
       md-select(ng-model="sprint.doneColumn" ng-change="checkSprint('done')")
         md-option(ng-value="column.id" ng-repeat="column in boardLists") {{ column.name }}
+    md-input-container
+      label Select the sprint column (if changing each sprint)
+      md-select(ng-model="sprint.sprintColumn" ng-change="checkSprint('done')")
+        md-option(ng-value="column.id" ng-repeat="column in boardLists") {{ column.name }}
     div(flex)
       md-datepicker(ng-model="sprint.dates.start", md-placeholder="Start Date" ng-change="checkSprint('date')")
       md-datepicker(ng-model="sprint.dates.end", md-placeholder="End date" ng-change="checkSprint('date')")
