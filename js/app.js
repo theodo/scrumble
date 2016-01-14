@@ -51,9 +51,9 @@ angular.module('NotSoShitty.login', ['LocalStorageModule', 'satellizer', 'ui.rou
 
 angular.module('NotSoShitty.settings', ['NotSoShitty.common']);
 
-angular.module('NotSoShitty.sprint', ['ui.router', 'Parse', 'ngMaterial']);
-
 angular.module('NotSoShitty.storage', []);
+
+angular.module('NotSoShitty.sprint', ['ui.router', 'Parse', 'ngMaterial']);
 
 angular.module('NotSoShitty.board').config(function($stateProvider) {
   return $stateProvider.state('tab.board', {
@@ -1113,6 +1113,118 @@ angular.module('NotSoShitty.settings').service('projectUtils', function() {
   };
 });
 
+var __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+angular.module('NotSoShitty.storage').factory('NotSoShittyUser', function(Parse, $q, TrelloClient, Project, localStorageService) {
+  var NotSoShittyUser;
+  return NotSoShittyUser = (function(_super) {
+    __extends(NotSoShittyUser, _super);
+
+    function NotSoShittyUser() {
+      return NotSoShittyUser.__super__.constructor.apply(this, arguments);
+    }
+
+    NotSoShittyUser.configure("NotSoShittyUser", "email", "project");
+
+    NotSoShittyUser.getCurrentUser = function() {
+      return this.query({
+        where: {
+          email: localStorageService.get('trello_email')
+        },
+        include: 'project'
+      }).then(function(user) {
+        if (user.length > 0) {
+          return user[0];
+        } else {
+          return null;
+        }
+      });
+    };
+
+    NotSoShittyUser.getBoardId = function() {
+      var deferred, token;
+      deferred = $q.defer();
+      token = localStorageService.get('trello_token');
+      if (token == null) {
+        deferred.reject('No token');
+      }
+      TrelloClient.get('/member/me').then(function(response) {
+        return response.data;
+      }).then(function(userInfo) {
+        return UserBoard.query({
+          where: {
+            email: userInfo.email
+          }
+        });
+      }).then(function(userBoards) {
+        if (userBoards.length > 0) {
+          return deferred.resolve(userBoards[0].boardId);
+        } else {
+          return deferred.resolve(null);
+        }
+      });
+      return deferred.promise;
+    };
+
+    NotSoShittyUser.setBoardId = function(boardId) {
+      var deferred, token;
+      deferred = $q.defer();
+      token = localStorageService.get('trello_token');
+      if (token == null) {
+        deferred.reject('No token');
+      }
+      return TrelloClient.get('/member/me').then(function(response) {
+        return response.data;
+      }).then(function(userInfo) {
+        return this.query({
+          where: {
+            email: userInfo.email
+          }
+        }).then(function(user) {
+          var project;
+          user = user.length > 0 ? user[0] : null;
+          if (typeof board !== "undefined" && board !== null) {
+            board.boardId = boardId;
+            return board.save();
+          } else {
+            project = new Project();
+            project.boardId = boardId;
+            this.project = project;
+            return this.save();
+          }
+        });
+      });
+    };
+
+    return NotSoShittyUser;
+
+  })(Parse.Model);
+});
+
+angular.module('NotSoShitty.storage').service('userService', function(NotSoShittyUser) {
+  return {
+    getOrCreate: function(email) {
+      return NotSoShittyUser.query({
+        where: {
+          email: email
+        }
+      }).then(function(users) {
+        var user;
+        if (users.length > 0) {
+          return users[0];
+        } else {
+          user = new User();
+          user.email = email;
+          return user.save().then(function(user) {
+            return user;
+          });
+        }
+      });
+    }
+  };
+});
+
 angular.module('NotSoShitty.sprint').config(function($stateProvider) {
   return $stateProvider.state('tab.new-sprint', {
     url: '/sprint/edit',
@@ -1504,118 +1616,6 @@ angular.module('NotSoShitty.sprint').service('sprintUtils', function() {
       if (source === 'total') {
         return sprint.resources.speed = calculateSpeed(sprint.resources.totalPoints, sprint.resources.totalManDays);
       }
-    }
-  };
-});
-
-var __hasProp = {}.hasOwnProperty,
-  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
-
-angular.module('NotSoShitty.storage').factory('NotSoShittyUser', function(Parse, $q, TrelloClient, Project, localStorageService) {
-  var NotSoShittyUser;
-  return NotSoShittyUser = (function(_super) {
-    __extends(NotSoShittyUser, _super);
-
-    function NotSoShittyUser() {
-      return NotSoShittyUser.__super__.constructor.apply(this, arguments);
-    }
-
-    NotSoShittyUser.configure("NotSoShittyUser", "email", "project");
-
-    NotSoShittyUser.getCurrentUser = function() {
-      return this.query({
-        where: {
-          email: localStorageService.get('trello_email')
-        },
-        include: 'project'
-      }).then(function(user) {
-        if (user.length > 0) {
-          return user[0];
-        } else {
-          return null;
-        }
-      });
-    };
-
-    NotSoShittyUser.getBoardId = function() {
-      var deferred, token;
-      deferred = $q.defer();
-      token = localStorageService.get('trello_token');
-      if (token == null) {
-        deferred.reject('No token');
-      }
-      TrelloClient.get('/member/me').then(function(response) {
-        return response.data;
-      }).then(function(userInfo) {
-        return UserBoard.query({
-          where: {
-            email: userInfo.email
-          }
-        });
-      }).then(function(userBoards) {
-        if (userBoards.length > 0) {
-          return deferred.resolve(userBoards[0].boardId);
-        } else {
-          return deferred.resolve(null);
-        }
-      });
-      return deferred.promise;
-    };
-
-    NotSoShittyUser.setBoardId = function(boardId) {
-      var deferred, token;
-      deferred = $q.defer();
-      token = localStorageService.get('trello_token');
-      if (token == null) {
-        deferred.reject('No token');
-      }
-      return TrelloClient.get('/member/me').then(function(response) {
-        return response.data;
-      }).then(function(userInfo) {
-        return this.query({
-          where: {
-            email: userInfo.email
-          }
-        }).then(function(user) {
-          var project;
-          user = user.length > 0 ? user[0] : null;
-          if (typeof board !== "undefined" && board !== null) {
-            board.boardId = boardId;
-            return board.save();
-          } else {
-            project = new Project();
-            project.boardId = boardId;
-            this.project = project;
-            return this.save();
-          }
-        });
-      });
-    };
-
-    return NotSoShittyUser;
-
-  })(Parse.Model);
-});
-
-angular.module('NotSoShitty.storage').service('userService', function(NotSoShittyUser) {
-  return {
-    getOrCreate: function(email) {
-      return NotSoShittyUser.query({
-        where: {
-          email: email
-        }
-      }).then(function(users) {
-        var user;
-        if (users.length > 0) {
-          return users[0];
-        } else {
-          user = new User();
-          user.email = email;
-          return user.save().then(function(user) {
-            return user;
-          });
-        }
-      });
     }
   };
 });
