@@ -7,7 +7,7 @@ angular.module 'NotSoShitty.login'
 ) ->
   $scope.problem = problem
   $scope.problem.project = project
-  $scope.teamMembers = _.union project.team.dev, project.team.rest
+  $scope.teamMembers = project.team
 
   $scope.save = ->
     problem.save().then ->
