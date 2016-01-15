@@ -1,0 +1,25 @@
+md-card(flex="100" flex-sm="100" ng-repeat='problem in problems' layout="column")
+  md-card-title Problems
+  md-card-content
+    p
+      b Description:&nbsp;
+      | {{ problem.description }}
+    p
+      b Cause Assumption:&nbsp;
+      | {{ problem.causeAssumption }}
+    h3 Resolution
+    p
+      b Action:&nbsp;
+      | {{ problem.resolution.action }}
+    p
+      b In charge:&nbsp;
+      | {{ problem.resolution.inCharge }}
+    p
+      b Date:&nbsp;
+      | {{ problem.resolution.date }}
+md-button.md-fab.board-call-to-actions(
+  aria-label="Add problem"
+  ui-sref="tab.problem.new({projectId: projectId})"
+)
+  md-icon(md-svg-src="plus") Add
+  md-tooltip(md-direction="left") New problem

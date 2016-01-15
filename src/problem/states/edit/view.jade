@@ -1,0 +1,30 @@
+div(layout="row" layout-align="center end")
+  md-card(flex="90" flex-sm="100")
+    .md-toolbar-tools(layout-align="center center")
+      h2.md-title NEW PROBLEM
+    md-card-content(layout="column")
+      div(flex)
+        md-datepicker(ng-model="problem.date", md-placeholder="Date")
+      md-input-container
+        label Description
+        input(ng-model="problem.description")
+      md-input-container
+        label Cause Assumption
+        input(ng-model="problem.causeAssumption")
+      h3.md-title Resolution
+      md-input-container
+        label Action
+        input(ng-model="problem.resolution.action")
+      md-input-container
+        label In Charge
+        md-select(ng-model="problem.resolution.inCharge")
+          md-option(ng-value="member.fullName" ng-repeat="member in teamMembers") {{ member.fullName }}
+      div(flex)
+        md-datepicker(ng-model="problem.resolution.date", md-placeholder="Date")
+      section(
+        layout="row"
+        layout-sm="column"
+        layout-align="center center"
+        layout-wrap
+      )
+        md-button.md-raised.md-primary(ng-click="save()") Save
