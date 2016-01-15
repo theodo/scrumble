@@ -5,4 +5,5 @@ angular.module 'NotSoShitty.daily-report'
   scope:
     goals: '='
     project: '='
+    sprint: '='
   controller: 'SelectGoalsCtrl'
