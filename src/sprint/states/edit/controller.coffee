@@ -9,6 +9,7 @@ angular.module 'NotSoShitty.sprint'
   projectUtils
   sprint
   Project
+  Sprint
 ) ->
   $scope.sprint = sprint
 
@@ -37,3 +38,16 @@ angular.module 'NotSoShitty.sprint'
     sprintUtils.ensureDataConsistency source, $scope.sprint, $scope.devTeam
 
   $scope.checkSprint 'team'
+
+  Sprint.getLastSpeeds(project.objectId)
+  .then (speedsInfo) ->
+    formatedInfo = _.map speedsInfo, (speedInfo) ->
+      "##{speedInfo.number}: #{speedInfo.speed}"
+    $scope.speedInfo = formatedInfo.join ', '
+    sum = _.sum speedsInfo, (speedInfo) ->
+      if _.isNumber speedInfo.speed
+        speedInfo.speed
+      else
+        0
+    speedAverage = sum / (speedsInfo.length or 1)
+    $scope.speedAverage = speedAverage.toFixed(1)
