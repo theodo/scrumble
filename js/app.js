@@ -1,7 +1,7 @@
 'use strict';
 var app;
 
-app = angular.module('NotSoShitty', ['ng', 'ngResource', 'ngAnimate', 'ngSanitize', 'ngMaterial', 'md.data.table', 'ui.router', 'app.templates', 'Parse', 'LocalStorageModule', 'satellizer', 'permission', 'trello-api-client', 'NotSoShitty.sprint', 'NotSoShitty.common', 'NotSoShitty.daily-report', 'NotSoShitty.gmail-client', 'NotSoShitty.feedback', 'NotSoShitty.login', 'NotSoShitty.settings', 'NotSoShitty.storage', 'NotSoShitty.board']);
+app = angular.module('Scrumble', ['ng', 'ngResource', 'ngAnimate', 'ngSanitize', 'ngMaterial', 'md.data.table', 'ui.router', 'app.templates', 'Parse', 'LocalStorageModule', 'satellizer', 'permission', 'trello-api-client', 'Scrumble.sprint', 'Scrumble.common', 'Scrumble.daily-report', 'Scrumble.gmail-client', 'Scrumble.feedback', 'Scrumble.login', 'Scrumble.settings', 'Scrumble.storage', 'Scrumble.board']);
 
 app.config(function($locationProvider, $urlRouterProvider, ParseProvider) {
   $locationProvider.hashPrefix('!');
@@ -16,7 +16,7 @@ app.config(function(localStorageServiceProvider) {
 app.config(function(TrelloClientProvider) {
   return TrelloClientProvider.init({
     key: '2dcb2ba290c521d2b5c2fd69cc06830e',
-    appName: 'Not So Shitty',
+    appName: 'Scrumble',
     tokenExpiration: 'never',
     scope: ['read', 'account']
   });
@@ -37,32 +37,32 @@ app.config(function($stateProvider) {
   });
 });
 
-angular.module('NotSoShitty.board', ['ui.router', 'ngMaterial']);
+angular.module('Scrumble.board', ['ui.router', 'ngMaterial']);
 
-angular.module('NotSoShitty.common', ['trello-api-client', 'ngMaterial', 'ui.router']);
+angular.module('Scrumble.common', ['trello-api-client', 'ngMaterial', 'ui.router']);
 
-angular.module('NotSoShitty.daily-report', ['trello-api-client', 'ui.router']);
+angular.module('Scrumble.daily-report', ['trello-api-client', 'ui.router']);
 
-angular.module('NotSoShitty.feedback', []);
+angular.module('Scrumble.feedback', []);
 
-angular.module('NotSoShitty.gmail-client', []);
+angular.module('Scrumble.gmail-client', []);
 
-angular.module('NotSoShitty.login', ['LocalStorageModule', 'satellizer', 'ui.router', 'permission']);
+angular.module('Scrumble.login', ['LocalStorageModule', 'satellizer', 'ui.router', 'permission']);
 
-angular.module('NotSoShitty.settings', ['NotSoShitty.common']);
+angular.module('Scrumble.settings', ['Scrumble.common']);
 
-angular.module('NotSoShitty.storage', []);
+angular.module('Scrumble.storage', []);
 
-angular.module('NotSoShitty.sprint', ['ui.router', 'Parse', 'ngMaterial']);
+angular.module('Scrumble.sprint', ['ui.router', 'Parse', 'ngMaterial']);
 
-angular.module('NotSoShitty.board').config(function($stateProvider) {
+angular.module('Scrumble.board').config(function($stateProvider) {
   return $stateProvider.state('tab.board', {
     url: '/',
     controller: 'BoardCtrl',
     templateUrl: 'board/states/board/view.html',
     resolve: {
-      sprint: function(NotSoShittyUser, Sprint, $state) {
-        return NotSoShittyUser.getCurrentUser().then(function(user) {
+      sprint: function(ScrumbleUser, Sprint, $state) {
+        return ScrumbleUser.getCurrentUser().then(function(user) {
           if (user == null) {
             return $state.go('trello-login');
           }
@@ -77,8 +77,8 @@ angular.module('NotSoShitty.board').config(function($stateProvider) {
           return sprint;
         });
       },
-      project: function(NotSoShittyUser, Project, $state) {
-        return NotSoShittyUser.getCurrentUser().then(function(user) {
+      project: function(ScrumbleUser, Project, $state) {
+        return ScrumbleUser.getCurrentUser().then(function(user) {
           if (user == null) {
             return $state.go('trello-login');
           }
@@ -96,7 +96,7 @@ angular.module('NotSoShitty.board').config(function($stateProvider) {
   });
 });
 
-angular.module('NotSoShitty.common').run(function($rootScope, $state, $window) {
+angular.module('Scrumble.common').run(function($rootScope, $state, $window) {
   var finish;
   finish = function() {
     return $window.loading_screen.finish();
@@ -106,7 +106,7 @@ angular.module('NotSoShitty.common').run(function($rootScope, $state, $window) {
   return $rootScope.$on('$stateNotFound', finish);
 });
 
-angular.module('NotSoShitty.common').config(function($mdThemingProvider) {
+angular.module('Scrumble.common').config(function($mdThemingProvider) {
   var customAccent, customBackground, customPrimary, customWarn;
   customPrimary = {
     '50': '#4b91e8',
@@ -190,7 +190,7 @@ angular.module('NotSoShitty.common').config(function($mdThemingProvider) {
   }).backgroundPalette('customBackground');
 });
 
-angular.module('NotSoShitty.common').controller('ModalCtrl', function($scope, $mdDialog) {
+angular.module('Scrumble.common').controller('ModalCtrl', function($scope, $mdDialog) {
   $scope.hide = function() {
     return $mdDialog.hide();
   };
@@ -202,7 +202,7 @@ angular.module('NotSoShitty.common').controller('ModalCtrl', function($scope, $m
   };
 });
 
-angular.module('NotSoShitty.common').service('nssModal', function($mdDialog, $mdMedia) {
+angular.module('Scrumble.common').service('nssModal', function($mdDialog, $mdMedia) {
   return {
     show: function(options) {
       var useFullScreen;
@@ -220,7 +220,7 @@ angular.module('NotSoShitty.common').service('nssModal', function($mdDialog, $md
   };
 });
 
-angular.module('NotSoShitty.common').service('dynamicFields', function($q, trelloUtils) {
+angular.module('Scrumble.common').service('dynamicFields', function($q, trelloUtils) {
   var dict, getCurrentDayIndex, project, replaceToday, replaceYesterday, sprint;
   sprint = null;
   project = null;
@@ -381,7 +381,7 @@ angular.module('NotSoShitty.common').service('dynamicFields', function($q, trell
   };
 });
 
-angular.module('NotSoShitty.common').service('trelloUtils', function(TrelloClient) {
+angular.module('Scrumble.common').service('trelloUtils', function(TrelloClient) {
   var getCardPoints;
   getCardPoints = function(card) {
     var match, matchVal, value, _i, _len;
@@ -414,14 +414,14 @@ angular.module('NotSoShitty.common').service('trelloUtils', function(TrelloClien
   };
 });
 
-angular.module('NotSoShitty.daily-report').config(function($stateProvider) {
+angular.module('Scrumble.daily-report').config(function($stateProvider) {
   return $stateProvider.state('tab.daily-report', {
     url: '/daily-report',
     templateUrl: 'daily-report/states/template/view.html',
     controller: 'DailyReportCtrl',
     resolve: {
-      dailyReport: function(NotSoShittyUser, DailyReport, Project) {
-        return NotSoShittyUser.getCurrentUser().then(function(user) {
+      dailyReport: function(ScrumbleUser, DailyReport, Project) {
+        return ScrumbleUser.getCurrentUser().then(function(user) {
           return DailyReport.getByProject(user.project).then(function(report) {
             if (report != null) {
               return report;
@@ -439,16 +439,16 @@ angular.module('NotSoShitty.daily-report').config(function($stateProvider) {
           });
         });
       },
-      sprint: function(NotSoShittyUser, Sprint) {
-        return NotSoShittyUser.getCurrentUser().then(function(user) {
+      sprint: function(ScrumbleUser, Sprint) {
+        return ScrumbleUser.getCurrentUser().then(function(user) {
           return Sprint.getActiveSprint(user.project);
         })["catch"](function(err) {
           console.log(err);
           return null;
         });
       },
-      project: function(NotSoShittyUser) {
-        return NotSoShittyUser.getCurrentUser().then(function(user) {
+      project: function(ScrumbleUser) {
+        return ScrumbleUser.getCurrentUser().then(function(user) {
           return user.project;
         });
       }
@@ -459,7 +459,7 @@ angular.module('NotSoShitty.daily-report').config(function($stateProvider) {
 var __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
-angular.module('NotSoShitty.daily-report').factory('DailyReport', function(Parse) {
+angular.module('Scrumble.daily-report').factory('DailyReport', function(Parse) {
   var DailyReport;
   return DailyReport = (function(_super) {
     __extends(DailyReport, _super);
@@ -493,9 +493,9 @@ angular.module('NotSoShitty.daily-report').factory('DailyReport', function(Parse
   })(Parse.Model);
 });
 
-angular.module('NotSoShitty.daily-report').service('trelloCards', function($q, TrelloClient) {
+angular.module('Scrumble.daily-report').service('trelloCards', function($q, TrelloClient) {
   return {
-    getTodoCards: function(project) {
+    getTodoCards: function(project, sprint) {
       var promises, _ref, _ref1, _ref2, _ref3;
       promises = [];
       if ((project != null ? (_ref = project.columnMapping) != null ? _ref.blocked : void 0 : void 0) != null) {
@@ -507,7 +507,9 @@ angular.module('NotSoShitty.daily-report').service('trelloCards', function($q, T
       if ((project != null ? (_ref2 = project.columnMapping) != null ? _ref2.doing : void 0 : void 0) != null) {
         promises.push(TrelloClient.get("/lists/" + project.columnMapping.doing + "/cards"));
       }
-      if ((project != null ? (_ref3 = project.columnMapping) != null ? _ref3.sprint : void 0 : void 0) != null) {
+      if ((sprint != null ? sprint.sprintColumn : void 0) != null) {
+        promises.push(TrelloClient.get("/lists/" + sprint.sprintColumn + "/cards"));
+      } else if ((project != null ? (_ref3 = project.columnMapping) != null ? _ref3.sprint : void 0 : void 0) != null) {
         promises.push(TrelloClient.get("/lists/" + project.columnMapping.sprint + "/cards"));
       }
       return $q.all(promises).then(function(responses) {
@@ -548,7 +550,7 @@ angular.module('NotSoShitty.daily-report').service('trelloCards', function($q, T
   };
 });
 
-angular.module('NotSoShitty.daily-report').service('reportBuilder', function($q, NotSoShittyUser, Sprint, Project, trelloUtils, dynamicFields) {
+angular.module('Scrumble.daily-report').service('reportBuilder', function($q, ScrumbleUser, Sprint, Project, trelloUtils, dynamicFields) {
   var converter, isAhead, project, promise, renderBDC, renderBehindAhead, renderCc, renderColor, renderPreviousGoals, renderSection, renderTo, renderTodaysGoals, sprint;
   converter = new showdown.Converter();
   promise = void 0;
@@ -690,7 +692,7 @@ angular.module('NotSoShitty.daily-report').service('reportBuilder', function($q,
   };
   return {
     init: function() {
-      return promise = NotSoShittyUser.getCurrentUser().then(function(user) {
+      return promise = ScrumbleUser.getCurrentUser().then(function(user) {
         project = user.project;
         return project;
       }).then(function(project) {
@@ -748,7 +750,7 @@ angular.module('NotSoShitty.daily-report').service('reportBuilder', function($q,
   };
 });
 
-angular.module('NotSoShitty.feedback').controller('feedbackCallToActionCtrl', function($scope, $mdDialog, $mdMedia) {
+angular.module('Scrumble.feedback').controller('feedbackCallToActionCtrl', function($scope, $mdDialog, $mdMedia) {
   var DialogController;
   $scope.customFullscreen = $mdMedia('sm');
   $scope.openFeedbackModal = function(ev) {
@@ -791,7 +793,7 @@ angular.module('NotSoShitty.feedback').controller('feedbackCallToActionCtrl', fu
   };
 });
 
-angular.module('NotSoShitty.feedback').directive('feedback', function() {
+angular.module('Scrumble.feedback').directive('feedback', function() {
   return {
     restrict: 'E',
     templateUrl: 'feedback/directives/call-to-action.html',
@@ -803,7 +805,7 @@ angular.module('NotSoShitty.feedback').directive('feedback', function() {
 var __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
-angular.module('NotSoShitty.feedback').factory('Feedback', function(Parse) {
+angular.module('Scrumble.feedback').factory('Feedback', function(Parse) {
   var Feedback;
   return Feedback = (function(_super) {
     __extends(Feedback, _super);
@@ -819,7 +821,7 @@ angular.module('NotSoShitty.feedback').factory('Feedback', function(Parse) {
   })(Parse.Model);
 });
 
-angular.module('NotSoShitty.gmail-client').constant('SEND_EMAIL_ENDPOINT', 'https://content.googleapis.com/gmail/v1/users/me/messages/send').service('gmailClient', function($http, googleAuth, SEND_EMAIL_ENDPOINT) {
+angular.module('Scrumble.gmail-client').constant('SEND_EMAIL_ENDPOINT', 'https://content.googleapis.com/gmail/v1/users/me/messages/send').service('gmailClient', function($http, googleAuth, SEND_EMAIL_ENDPOINT) {
   return {
     send: function(raw) {
       return $http.post(SEND_EMAIL_ENDPOINT, {
@@ -836,7 +838,7 @@ angular.module('NotSoShitty.gmail-client').constant('SEND_EMAIL_ENDPOINT', 'http
   };
 });
 
-angular.module('NotSoShitty.gmail-client').service('mailer', function($state, $rootScope, gmailClient, googleAuth) {
+angular.module('Scrumble.gmail-client').service('mailer', function($state, $rootScope, gmailClient, googleAuth) {
   return {
     send: function(message, callback) {
       if (message.to == null) {
@@ -877,7 +879,7 @@ angular.module('NotSoShitty.gmail-client').service('mailer', function($state, $r
   };
 });
 
-angular.module('NotSoShitty.login').config(function($authProvider) {
+angular.module('Scrumble.login').config(function($authProvider) {
   return $authProvider.google({
     clientId: '605908567890-3bg3dmamghq5gd7i9sqsdhvoflef0qku.apps.googleusercontent.com',
     scope: ['https://www.googleapis.com/auth/userinfo.email', 'https://www.googleapis.com/auth/gmail.send'],
@@ -886,13 +888,13 @@ angular.module('NotSoShitty.login').config(function($authProvider) {
   });
 });
 
-angular.module('NotSoShitty.login').run(function(Permission, localStorageService) {
+angular.module('Scrumble.login').run(function(Permission, localStorageService) {
   return Permission.defineRole('trello-authenticated', function() {
     return localStorageService.get('trello_token') != null;
   });
 });
 
-angular.module('NotSoShitty.login').config(function($stateProvider) {
+angular.module('Scrumble.login').config(function($stateProvider) {
   return $stateProvider.state('trello-login', {
     url: '/login/trello',
     controller: 'TrelloLoginCtrl',
@@ -900,7 +902,7 @@ angular.module('NotSoShitty.login').config(function($stateProvider) {
   });
 });
 
-angular.module('NotSoShitty.login').service('googleAuth', function($state, $auth, $http, $q, localStorageService) {
+angular.module('Scrumble.login').service('googleAuth', function($state, $auth, $http, $q, localStorageService) {
   var getAuthorizationHeader, getUserInfo, userInfo;
   userInfo = null;
   getAuthorizationHeader = function() {
@@ -960,7 +962,7 @@ angular.module('NotSoShitty.login').service('googleAuth', function($state, $auth
   };
 });
 
-angular.module('NotSoShitty.login').service('trelloAuth', function(localStorageService, TrelloClient, $state) {
+angular.module('Scrumble.login').service('trelloAuth', function(localStorageService, TrelloClient, $state) {
   return {
     getTrelloInfo: function() {
       return TrelloClient.get('/member/me').then(function(response) {
@@ -975,14 +977,14 @@ angular.module('NotSoShitty.login').service('trelloAuth', function(localStorageS
   };
 });
 
-angular.module('NotSoShitty.settings').config(function($stateProvider) {
+angular.module('Scrumble.settings').config(function($stateProvider) {
   return $stateProvider.state('tab.project', {
     url: '/project',
     controller: 'ProjectCtrl',
     templateUrl: 'project/states/main/view.html',
     resolve: {
-      user: function(NotSoShittyUser, localStorageService, $state) {
-        return NotSoShittyUser.getCurrentUser().then(function(user) {
+      user: function(ScrumbleUser, localStorageService, $state) {
+        return ScrumbleUser.getCurrentUser().then(function(user) {
           if (user == null) {
             localStorageService.clearAll();
             $state.go('trello-login');
@@ -1008,7 +1010,7 @@ angular.module('NotSoShitty.settings').config(function($stateProvider) {
 var __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
-angular.module('NotSoShitty.storage').factory('Project', function(Parse, $q) {
+angular.module('Scrumble.storage').factory('Project', function(Parse, $q) {
   var Project;
   return Project = (function(_super) {
     __extends(Project, _super);
@@ -1053,7 +1055,7 @@ angular.module('NotSoShitty.storage').factory('Project', function(Parse, $q) {
   })(Parse.Model);
 });
 
-angular.module('NotSoShitty.settings').service('projectUtils', function() {
+angular.module('Scrumble.settings').service('projectUtils', function() {
   var roles;
   roles = [
     {
@@ -1116,18 +1118,18 @@ angular.module('NotSoShitty.settings').service('projectUtils', function() {
 var __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
-angular.module('NotSoShitty.storage').factory('NotSoShittyUser', function(Parse, $q, TrelloClient, Project, localStorageService) {
-  var NotSoShittyUser;
-  return NotSoShittyUser = (function(_super) {
-    __extends(NotSoShittyUser, _super);
+angular.module('Scrumble.storage').factory('ScrumbleUser', function(Parse, $q, TrelloClient, Project, localStorageService) {
+  var ScrumbleUser;
+  return ScrumbleUser = (function(_super) {
+    __extends(ScrumbleUser, _super);
 
-    function NotSoShittyUser() {
-      return NotSoShittyUser.__super__.constructor.apply(this, arguments);
+    function ScrumbleUser() {
+      return ScrumbleUser.__super__.constructor.apply(this, arguments);
     }
 
-    NotSoShittyUser.configure("NotSoShittyUser", "email", "project");
+    ScrumbleUser.configure("ScrumbleUser", "email", "project");
 
-    NotSoShittyUser.getCurrentUser = function() {
+    ScrumbleUser.getCurrentUser = function() {
       return this.query({
         where: {
           email: localStorageService.get('trello_email')
@@ -1142,7 +1144,7 @@ angular.module('NotSoShitty.storage').factory('NotSoShittyUser', function(Parse,
       });
     };
 
-    NotSoShittyUser.getBoardId = function() {
+    ScrumbleUser.getBoardId = function() {
       var deferred, token;
       deferred = $q.defer();
       token = localStorageService.get('trello_token');
@@ -1167,7 +1169,7 @@ angular.module('NotSoShitty.storage').factory('NotSoShittyUser', function(Parse,
       return deferred.promise;
     };
 
-    NotSoShittyUser.setBoardId = function(boardId) {
+    ScrumbleUser.setBoardId = function(boardId) {
       var deferred, token;
       deferred = $q.defer();
       token = localStorageService.get('trello_token');
@@ -1197,15 +1199,15 @@ angular.module('NotSoShitty.storage').factory('NotSoShittyUser', function(Parse,
       });
     };
 
-    return NotSoShittyUser;
+    return ScrumbleUser;
 
   })(Parse.Model);
 });
 
-angular.module('NotSoShitty.storage').service('userService', function(NotSoShittyUser) {
+angular.module('Scrumble.storage').service('userService', function(ScrumbleUser) {
   return {
     getOrCreate: function(email) {
-      return NotSoShittyUser.query({
+      return ScrumbleUser.query({
         where: {
           email: email
         }
@@ -1225,22 +1227,22 @@ angular.module('NotSoShitty.storage').service('userService', function(NotSoShitt
   };
 });
 
-angular.module('NotSoShitty.sprint').config(function($stateProvider) {
+angular.module('Scrumble.sprint').config(function($stateProvider) {
   return $stateProvider.state('tab.new-sprint', {
     url: '/sprint/edit',
     controller: 'EditSprintCtrl',
     templateUrl: 'sprint/states/edit/view.html',
     resolve: {
-      project: function(NotSoShittyUser, Project) {
-        return NotSoShittyUser.getCurrentUser().then(function(user) {
+      project: function(ScrumbleUser, Project) {
+        return ScrumbleUser.getCurrentUser().then(function(user) {
           return new Project(user.project);
         })["catch"](function(err) {
           console.log(err);
           return null;
         });
       },
-      sprint: function(NotSoShittyUser, Project, Sprint) {
-        return NotSoShittyUser.getCurrentUser().then(function(user) {
+      sprint: function(ScrumbleUser, Project, Sprint) {
+        return ScrumbleUser.getCurrentUser().then(function(user) {
           return new Sprint({
             project: new Project(user.project),
             info: {
@@ -1269,8 +1271,8 @@ angular.module('NotSoShitty.sprint').config(function($stateProvider) {
     controller: 'EditSprintCtrl',
     templateUrl: 'sprint/states/edit/view.html',
     resolve: {
-      project: function(NotSoShittyUser, Project) {
-        return NotSoShittyUser.getCurrentUser().then(function(user) {
+      project: function(ScrumbleUser, Project) {
+        return ScrumbleUser.getCurrentUser().then(function(user) {
           return new Project(user.project);
         })["catch"](function(err) {
           console.log(err);
@@ -1318,7 +1320,7 @@ angular.module('NotSoShitty.sprint').config(function($stateProvider) {
 var __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
-angular.module('NotSoShitty.storage').factory('Sprint', function(Parse) {
+angular.module('Scrumble.storage').factory('Sprint', function(Parse, sprintUtils) {
   var Sprint;
   return Sprint = (function(_super) {
     __extends(Sprint, _super);
@@ -1327,7 +1329,7 @@ angular.module('NotSoShitty.storage').factory('Sprint', function(Parse) {
       return Sprint.__super__.constructor.apply(this, arguments);
     }
 
-    Sprint.configure("Sprint", "project", "number", "dates", "resources", "bdcData", "isActive", "doneColumn", "bdcBase64", "goal");
+    Sprint.configure("Sprint", "project", "number", "dates", "resources", "bdcData", "isActive", "doneColumn", "sprintColumn", "bdcBase64", "goal");
 
     Sprint.getActiveSprint = function(project) {
       return this.query({
@@ -1372,7 +1374,7 @@ angular.module('NotSoShitty.storage').factory('Sprint', function(Parse) {
   })(Parse.Model);
 });
 
-angular.module('NotSoShitty.sprint').factory('BDCDataProvider', function() {
+angular.module('Scrumble.sprint').factory('BDCDataProvider', function() {
   var initializeBDC;
   initializeBDC = function(days, resources) {
     var bdc, day, i, standard, _i, _len;
@@ -1399,7 +1401,7 @@ angular.module('NotSoShitty.sprint').factory('BDCDataProvider', function() {
   };
 });
 
-angular.module('NotSoShitty.sprint').service('bdc', function($q, trelloUtils) {
+angular.module('Scrumble.sprint').service('bdc', function($q, trelloUtils) {
   var getPngBase64;
   getPngBase64 = function(svg) {
     var canvas, ctx, height, img, result, serializer, svgStr, width;
@@ -1452,7 +1454,7 @@ angular.module('NotSoShitty.sprint').service('bdc', function($q, trelloUtils) {
   };
 });
 
-angular.module('NotSoShitty.sprint').service('sprintUtils', function() {
+angular.module('Scrumble.sprint').service('sprintUtils', function() {
   var calculateSpeed, calculateTotalPoints, generateDayList, generateResources, getTotalManDays;
   generateDayList = function(start, end) {
     var current, day, days, endM;
@@ -1620,7 +1622,7 @@ angular.module('NotSoShitty.sprint').service('sprintUtils', function() {
   };
 });
 
-angular.module('NotSoShitty.sprint').controller('BoardCtrl', function($scope, $state, $timeout, $mdDialog, sprint, project, Sprint) {
+angular.module('Scrumble.sprint').controller('BoardCtrl', function($scope, $state, $timeout, $mdDialog, sprint, project, Sprint) {
   $scope.project = project;
   $scope.sprint = sprint;
   $scope.showConfirmNewSprint = function(ev) {
@@ -1645,7 +1647,7 @@ angular.module('NotSoShitty.sprint').controller('BoardCtrl', function($scope, $s
   });
 });
 
-angular.module('NotSoShitty.common').directive('dynamicFieldsList', function() {
+angular.module('Scrumble.common').directive('dynamicFieldsList', function() {
   return {
     restrict: 'E',
     templateUrl: 'common/directives/dynamic-fields/view.html',
@@ -1655,7 +1657,7 @@ angular.module('NotSoShitty.common').directive('dynamicFieldsList', function() {
   };
 });
 
-angular.module('NotSoShitty.common').directive('nssRound', function() {
+angular.module('Scrumble.common').directive('nssRound', function() {
   return {
     require: 'ngModel',
     link: function(scope, element, attrs, ngModelController) {
@@ -1672,7 +1674,7 @@ angular.module('NotSoShitty.common').directive('nssRound', function() {
   };
 });
 
-angular.module('NotSoShitty.common').factory('Avatar', function(TrelloClient) {
+angular.module('Scrumble.common').factory('Avatar', function(TrelloClient) {
   return {
     getMember: function(memberId) {
       if (!memberId) {
@@ -1698,7 +1700,7 @@ angular.module('NotSoShitty.common').factory('Avatar', function(TrelloClient) {
   };
 });
 
-angular.module('NotSoShitty.common').controller('TrelloAvatarCtrl', function(Avatar, $scope) {
+angular.module('Scrumble.common').controller('TrelloAvatarCtrl', function(Avatar, $scope) {
   var colors, getColor, _ref;
   if (!$scope.size) {
     $scope.size = '50';
@@ -1728,7 +1730,7 @@ angular.module('NotSoShitty.common').controller('TrelloAvatarCtrl', function(Ava
   return $scope.color = getColor((_ref = $scope.member) != null ? _ref.initials : void 0);
 });
 
-angular.module('NotSoShitty.common').directive('trelloAvatar', function() {
+angular.module('Scrumble.common').directive('trelloAvatar', function() {
   return {
     restrict: 'E',
     templateUrl: 'common/directives/trello-avatar/view.html',
@@ -1743,7 +1745,7 @@ angular.module('NotSoShitty.common').directive('trelloAvatar', function() {
 
 var __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
-angular.module('NotSoShitty.daily-report').controller('PreviousGoalsCtrl', function($scope, $q, nssModal, TrelloClient, trelloCards) {
+angular.module('Scrumble.daily-report').controller('PreviousGoalsCtrl', function($scope, $q, nssModal, TrelloClient, trelloCards) {
   var DialogController;
   trelloCards.getDoneCardIds($scope.sprint.doneColumn).then(function(cardIds) {
     var card, _i, _len, _ref, _ref1, _results;
@@ -1783,7 +1785,7 @@ angular.module('NotSoShitty.daily-report').controller('PreviousGoalsCtrl', funct
   };
 });
 
-angular.module('NotSoShitty.daily-report').directive('previousGoals', function() {
+angular.module('Scrumble.daily-report').directive('previousGoals', function() {
   return {
     restrict: 'E',
     templateUrl: 'daily-report/directives/previous-goals/view.html',
@@ -1795,9 +1797,9 @@ angular.module('NotSoShitty.daily-report').directive('previousGoals', function()
   };
 });
 
-angular.module('NotSoShitty.daily-report').controller('SelectGoalsCtrl', function($scope, $q, nssModal, TrelloClient, trelloCards) {
+angular.module('Scrumble.daily-report').controller('SelectGoalsCtrl', function($scope, $q, nssModal, TrelloClient, trelloCards) {
   var DialogController;
-  trelloCards.getTodoCards($scope.project).then(function(cards) {
+  trelloCards.getTodoCards($scope.project, $scope.sprint).then(function(cards) {
     return $scope.trelloCards = cards;
   });
   $scope.updateGoals = function() {
@@ -1825,19 +1827,20 @@ angular.module('NotSoShitty.daily-report').controller('SelectGoalsCtrl', functio
   };
 });
 
-angular.module('NotSoShitty.daily-report').directive('selectGoals', function() {
+angular.module('Scrumble.daily-report').directive('selectGoals', function() {
   return {
     restrict: 'E',
     templateUrl: 'daily-report/directives/select-goals/view.html',
     scope: {
       goals: '=',
-      project: '='
+      project: '=',
+      sprint: '='
     },
     controller: 'SelectGoalsCtrl'
   };
 });
 
-angular.module('NotSoShitty.daily-report').controller('PreviewCtrl', function($scope, $sce, $mdDialog, $mdToast, googleAuth, mailer, message, rawMessage, reportBuilder, dailyReport, todaysGoals, previousGoals, sections) {
+angular.module('Scrumble.daily-report').controller('PreviewCtrl', function($scope, $sce, $mdDialog, $mdToast, googleAuth, mailer, message, rawMessage, reportBuilder, dailyReport, todaysGoals, previousGoals, sections) {
   $scope.message = message;
   $scope.trustAsHtml = function(string) {
     return $sce.trustAsHtml(string);
@@ -1880,7 +1883,7 @@ angular.module('NotSoShitty.daily-report').controller('PreviewCtrl', function($s
   };
 });
 
-angular.module('NotSoShitty.daily-report').controller('DailyReportCtrl', function($scope, $mdToast, $mdDialog, $mdMedia, mailer, reportBuilder, dailyReport, sprint, project, dynamicFields) {
+angular.module('Scrumble.daily-report').controller('DailyReportCtrl', function($scope, $mdToast, $mdDialog, $mdMedia, mailer, reportBuilder, dailyReport, sprint, project, dynamicFields) {
   var saveFeedback, _ref;
   $scope.project = project;
   $scope.sprint = sprint;
@@ -1958,7 +1961,7 @@ angular.module('NotSoShitty.daily-report').controller('DailyReportCtrl', functio
   };
 });
 
-angular.module('NotSoShitty.daily-report').controller('DynamicFieldsModalCtrl', function($scope, $mdDialog, availableFields, dailyReport) {
+angular.module('Scrumble.daily-report').controller('DynamicFieldsModalCtrl', function($scope, $mdDialog, availableFields, dailyReport) {
   $scope.availableFields = availableFields;
   $scope.dailyReport = dailyReport;
   $scope.hide = function() {
@@ -1974,7 +1977,7 @@ angular.module('NotSoShitty.daily-report').controller('DynamicFieldsModalCtrl', 
   };
 });
 
-angular.module('NotSoShitty.login').controller('ProfilInfoCtrl', function($scope, $timeout, $rootScope, trelloAuth, googleAuth) {
+angular.module('Scrumble.login').controller('ProfilInfoCtrl', function($scope, $timeout, $rootScope, trelloAuth, googleAuth) {
   var getTrelloInfo;
   $scope.googleUser = {
     picture: "images/default-profile.jpg"
@@ -2012,7 +2015,7 @@ angular.module('NotSoShitty.login').controller('ProfilInfoCtrl', function($scope
   };
 });
 
-angular.module('NotSoShitty.login').directive('profilInfo', function() {
+angular.module('Scrumble.login').directive('profilInfo', function() {
   return {
     restrict: 'E',
     templateUrl: 'login/directives/profil-info/view.html',
@@ -2021,7 +2024,7 @@ angular.module('NotSoShitty.login').directive('profilInfo', function() {
   };
 });
 
-angular.module('NotSoShitty.login').controller('TrelloLoginCtrl', function($scope, $rootScope, TrelloClient, $state, $auth, NotSoShittyUser, localStorageService) {
+angular.module('Scrumble.login').controller('TrelloLoginCtrl', function($scope, $rootScope, TrelloClient, $state, $auth, ScrumbleUser, localStorageService) {
   $scope.doing = false;
   return $scope.login = function() {
     $scope.doing = true;
@@ -2032,10 +2035,10 @@ angular.module('NotSoShitty.login').controller('TrelloLoginCtrl', function($scop
     }).then(function(userInfo) {
       return localStorageService.set('trello_email', userInfo.email);
     }).then(function() {
-      return NotSoShittyUser.getCurrentUser();
+      return ScrumbleUser.getCurrentUser();
     }).then(function(user) {
       if (user == null) {
-        user = new NotSoShittyUser();
+        user = new ScrumbleUser();
         user.email = localStorageService.get('trello_email');
         return user.save();
       }
@@ -2045,12 +2048,12 @@ angular.module('NotSoShitty.login').controller('TrelloLoginCtrl', function($scop
   };
 });
 
-angular.module('NotSoShitty.settings').controller('MemberFormCtrl', function($scope, projectUtils) {
+angular.module('Scrumble.settings').controller('MemberFormCtrl', function($scope, projectUtils) {
   $scope.daily = projectUtils.getDailyRecipient();
   return $scope.roles = projectUtils.getRoles();
 });
 
-angular.module('NotSoShitty.settings').directive('memberForm', function() {
+angular.module('Scrumble.settings').directive('memberForm', function() {
   return {
     restrict: 'E',
     templateUrl: 'project/directives/member-form/view.html',
@@ -2062,7 +2065,7 @@ angular.module('NotSoShitty.settings').directive('memberForm', function() {
   };
 });
 
-angular.module('NotSoShitty.settings').controller('ProjectWidgetCtrl', function($scope, projectUtils) {
+angular.module('Scrumble.settings').controller('ProjectWidgetCtrl', function($scope, projectUtils) {
   $scope.openMenu = function($mdOpenMenu, ev) {
     var originatorEv;
     originatorEv = ev;
@@ -2071,7 +2074,7 @@ angular.module('NotSoShitty.settings').controller('ProjectWidgetCtrl', function(
   return $scope.getRoleLabel = projectUtils.getRoleLabel;
 });
 
-angular.module('NotSoShitty.settings').directive('projectWidget', function() {
+angular.module('Scrumble.settings').directive('projectWidget', function() {
   return {
     restrict: 'E',
     templateUrl: 'project/directives/project-widget/view.html',
@@ -2082,7 +2085,7 @@ angular.module('NotSoShitty.settings').directive('projectWidget', function() {
   };
 });
 
-angular.module('NotSoShitty.settings').controller('ResourcesByDayCtrl', function($scope) {
+angular.module('Scrumble.settings').controller('ResourcesByDayCtrl', function($scope) {
   var changeResource;
   changeResource = function(dayIndex, memberIndex, matrix) {
     matrix[dayIndex][memberIndex] += 0.5;
@@ -2110,7 +2113,7 @@ angular.module('NotSoShitty.settings').controller('ResourcesByDayCtrl', function
   };
 });
 
-angular.module('NotSoShitty.settings').directive('resourcesByDay', function() {
+angular.module('Scrumble.settings').directive('resourcesByDay', function() {
   return {
     restrict: 'E',
     templateUrl: 'project/directives/resources-by-day/view.html',
@@ -2126,7 +2129,7 @@ angular.module('NotSoShitty.settings').directive('resourcesByDay', function() {
 
 var __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
-angular.module('NotSoShitty.settings').controller('SelectPeopleCtrl', function($scope) {
+angular.module('Scrumble.settings').controller('SelectPeopleCtrl', function($scope) {
   if ($scope.teamCheck == null) {
     $scope.teamCheck = {};
   }
@@ -2168,7 +2171,7 @@ angular.module('NotSoShitty.settings').controller('SelectPeopleCtrl', function($
   }, true);
 });
 
-angular.module('NotSoShitty.settings').directive('selectPeople', function() {
+angular.module('Scrumble.settings').directive('selectPeople', function() {
   return {
     restrict: 'E',
     templateUrl: 'project/directives/select-people/view.html',
@@ -2180,7 +2183,7 @@ angular.module('NotSoShitty.settings').directive('selectPeople', function() {
   };
 });
 
-angular.module('NotSoShitty.settings').controller('ProjectCtrl', function($location, $mdToast, $scope, $state, $timeout, $q, boards, TrelloClient, localStorageService, Project, user, projectUtils) {
+angular.module('Scrumble.settings').controller('ProjectCtrl', function($location, $mdToast, $scope, $state, $timeout, $q, boards, TrelloClient, localStorageService, Project, user, projectUtils) {
   var fetchBoardData, project;
   $scope.boards = boards;
   if (user.project != null) {
@@ -2242,6 +2245,9 @@ angular.module('NotSoShitty.settings').controller('ProjectCtrl', function($locat
     $scope.project.name = _.find(boards, function(board) {
       return board.id === $scope.project.boardId;
     }).name;
+    $scope.project.settings = {
+      bdcTitle: 'Sprint #{sprintNumber} - {sprintGoal} - Speed {speed}'
+    };
     return $scope.project.save().then(function(p) {
       user.project = p;
       return user.save().then(function() {
@@ -2255,7 +2261,7 @@ angular.module('NotSoShitty.settings').controller('ProjectCtrl', function($locat
   };
 });
 
-angular.module('NotSoShitty.sprint').directive('burndown', function() {
+angular.module('Scrumble.sprint').directive('burndown', function() {
   return {
     restrict: 'AE',
     scope: {
@@ -2322,7 +2328,7 @@ angular.module('NotSoShitty.sprint').directive('burndown', function() {
   };
 });
 
-angular.module('NotSoShitty.sprint').controller('SprintWidgetCtrl', function($scope, $timeout, nssModal, sprintUtils, dynamicFields, bdc, Project, Sprint) {
+angular.module('Scrumble.sprint').controller('SprintWidgetCtrl', function($scope, $timeout, nssModal, sprintUtils, dynamicFields, bdc, Project, Sprint) {
   var DialogController, day, noteInitialized, _i, _len, _ref, _ref1, _ref2;
   dynamicFields.project($scope.project);
   dynamicFields.sprint($scope.sprint);
@@ -2426,7 +2432,7 @@ angular.module('NotSoShitty.sprint').controller('SprintWidgetCtrl', function($sc
   };
 });
 
-angular.module('NotSoShitty.sprint').directive('sprintWidget', function() {
+angular.module('Scrumble.sprint').directive('sprintWidget', function() {
   return {
     restrict: 'E',
     templateUrl: 'sprint/directives/sprint-widget/view.html',
@@ -2438,7 +2444,7 @@ angular.module('NotSoShitty.sprint').directive('sprintWidget', function() {
   };
 });
 
-angular.module('NotSoShitty.sprint').controller('EditBDCCtrl', function($scope, $mdDialog, data, trelloUtils, doneColumn) {
+angular.module('Scrumble.sprint').controller('EditBDCCtrl', function($scope, $mdDialog, data, trelloUtils, doneColumn) {
   var getCurrentDayIndex;
   $scope.data = data;
   getCurrentDayIndex = function(data) {
@@ -2469,7 +2475,7 @@ angular.module('NotSoShitty.sprint').controller('EditBDCCtrl', function($scope, 
   };
 });
 
-angular.module('NotSoShitty.sprint').controller('EditSprintCtrl', function($scope, $timeout, $state, TrelloClient, project, sprintUtils, projectUtils, sprint, Project) {
+angular.module('Scrumble.sprint').controller('EditSprintCtrl', function($scope, $timeout, $state, TrelloClient, project, sprintUtils, projectUtils, sprint, Project) {
   $scope.sprint = sprint;
   TrelloClient.get("/boards/" + project.boardId + "/lists").then(function(response) {
     return $scope.boardLists = response.data;
@@ -2498,7 +2504,7 @@ angular.module('NotSoShitty.sprint').controller('EditSprintCtrl', function($scop
   return $scope.checkSprint('team');
 });
 
-angular.module('NotSoShitty.sprint').controller('SprintListCtrl', function($scope, $mdDialog, $mdMedia, sprintUtils, sprints, project) {
+angular.module('Scrumble.sprint').controller('SprintListCtrl', function($scope, $mdDialog, $mdMedia, sprintUtils, sprints, project) {
   var BDCDialogController;
   sprints.forEach(function(sprint) {
     sprint.speed = sprintUtils.computeSpeed(sprint);
