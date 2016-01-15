@@ -1,4 +1,4 @@
-angular.module 'NotSoShitty.storage'
+angular.module 'Scrumble.storage'
 .factory 'Sprint', (Parse, sprintUtils) ->
   class Sprint extends Parse.Model
     @configure(

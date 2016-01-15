@@ -1,4 +1,4 @@
-angular.module 'NotSoShitty.sprint'
+angular.module 'Scrumble.sprint'
 .controller 'SprintWidgetCtrl', (
   $scope
   $timeout

@@ -1,4 +1,4 @@
-angular.module 'NotSoShitty.sprint'
+angular.module 'Scrumble.sprint'
 .service 'bdc', ($q, trelloUtils) ->
 
   getPngBase64 = (svg) ->

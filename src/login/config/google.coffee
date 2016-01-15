@@ -1,4 +1,4 @@
-angular.module 'NotSoShitty.login'
+angular.module 'Scrumble.login'
 .config ($authProvider) ->
   $authProvider.google
     clientId: '605908567890-3bg3dmamghq5gd7i9sqsdhvoflef0qku.apps.googleusercontent.com'

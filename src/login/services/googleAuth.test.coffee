@@ -1,5 +1,5 @@
 describe 'dynamicFields', ->
-  beforeEach module 'NotSoShitty.login'
+  beforeEach module 'Scrumble.login'
 
   beforeEach inject (
     $state

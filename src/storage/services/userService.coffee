@@ -1,7 +1,7 @@
-angular.module 'NotSoShitty.storage'
-.service 'userService', (NotSoShittyUser) ->
+angular.module 'Scrumble.storage'
+.service 'userService', (ScrumbleUser) ->
   getOrCreate: (email) ->
-    NotSoShittyUser.query(
+    ScrumbleUser.query(
       where:
         email: email
     )

@@ -1,4 +1,4 @@
-angular.module 'NotSoShitty.sprint'
+angular.module 'Scrumble.sprint'
 .factory 'BDCDataProvider', ->
   initializeBDC = (days, resources) ->
     standard = 0

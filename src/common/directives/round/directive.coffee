@@ -1,4 +1,4 @@
-angular.module('NotSoShitty.common').directive 'nssRound', ->
+angular.module('Scrumble.common').directive 'nssRound', ->
   {
     require: 'ngModel'
     link: (scope, element, attrs, ngModelController) ->

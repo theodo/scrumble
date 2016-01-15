@@ -1,4 +1,4 @@
-angular.module 'NotSoShitty.login'
+angular.module 'Scrumble.login'
 .service 'trelloAuth', (
   localStorageService
   TrelloClient

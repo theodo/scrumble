@@ -1,5 +1,5 @@
 {
-  "name": "not-so-shitty",
+  "name": "scrumble",
   "description": "an app to interact with Trello boards and write daily mails",
   "main": "gulpfile.js",
   "authors": [
@@ -9,7 +9,7 @@
   "keywords": [
     "scrum"
   ],
-  "homepage": "https://github.com/theodo/not-so-shitty",
+  "homepage": "https://github.com/theodo/scrumble",
   "moduleType": [],
   "ignore": [
     "**/.*",

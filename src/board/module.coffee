@@ -1,4 +1,4 @@
-angular.module 'NotSoShitty.board', [
+angular.module 'Scrumble.board', [
   'ui.router'
   'ngMaterial'
 ]

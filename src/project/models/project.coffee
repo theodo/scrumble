@@ -1,4 +1,4 @@
-angular.module 'NotSoShitty.storage'
+angular.module 'Scrumble.storage'
 .factory 'Project', (Parse, $q) ->
   class Project extends Parse.Model
     @configure "Project", "boardId", "name", "columnMapping", "team", "currentSprint", "settings"

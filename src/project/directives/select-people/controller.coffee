@@ -1,4 +1,4 @@
-angular.module 'NotSoShitty.settings'
+angular.module 'Scrumble.settings'
 .controller 'SelectPeopleCtrl',
 ($scope) ->
   $scope.teamCheck ?= {}

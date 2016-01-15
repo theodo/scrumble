@@ -1,1 +1,1 @@
-angular.module 'NotSoShitty.storage', []
+angular.module 'Scrumble.storage', []

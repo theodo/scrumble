@@ -1,4 +1,4 @@
-angular.module 'NotSoShitty.login'
+angular.module 'Scrumble.login'
 .controller 'ProfilInfoCtrl', (
   $scope
   $timeout

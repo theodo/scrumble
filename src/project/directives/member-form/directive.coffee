@@ -1,4 +1,4 @@
-angular.module 'NotSoShitty.settings'
+angular.module 'Scrumble.settings'
 .directive 'memberForm', ->
   restrict: 'E'
   templateUrl: 'project/directives/member-form/view.html'

@@ -1,4 +1,4 @@
-angular.module 'NotSoShitty.common'
+angular.module 'Scrumble.common'
 .controller 'TrelloAvatarCtrl',
 (Avatar, $scope) ->
   $scope.size = '50' unless $scope.size

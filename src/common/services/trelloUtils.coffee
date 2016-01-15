@@ -1,4 +1,4 @@
-angular.module 'NotSoShitty.common'
+angular.module 'Scrumble.common'
 .service 'trelloUtils', (TrelloClient) ->
   getCardPoints = (card) ->
     return 0 unless _.isString card?.name

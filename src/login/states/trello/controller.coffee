@@ -1,11 +1,11 @@
-angular.module 'NotSoShitty.login'
+angular.module 'Scrumble.login'
 .controller 'TrelloLoginCtrl', (
   $scope
   $rootScope
   TrelloClient
   $state
   $auth
-  NotSoShittyUser
+  ScrumbleUser
   localStorageService
 ) ->
   $scope.doing = false
@@ -18,10 +18,10 @@ angular.module 'NotSoShitty.login'
     .then (userInfo) ->
       localStorageService.set 'trello_email', userInfo.email
     .then ->
-      NotSoShittyUser.getCurrentUser()
+      ScrumbleUser.getCurrentUser()
     .then (user) ->
       unless user?
-        user = new NotSoShittyUser()
+        user = new ScrumbleUser()
         user.email = localStorageService.get 'trello_email'
         user.save()
     .then ->

@@ -1,5 +1,5 @@
 describe 'trelloCards', ->
-  beforeEach module 'NotSoShitty.daily-report'
+  beforeEach module 'Scrumble.daily-report'
 
 
   describe 'getTodoCards', ->

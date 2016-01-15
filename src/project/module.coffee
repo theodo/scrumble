@@ -1,1 +1,1 @@
-angular.module 'NotSoShitty.settings', ['NotSoShitty.common']
+angular.module 'Scrumble.settings', ['Scrumble.common']

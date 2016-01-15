@@ -1,4 +1,4 @@
-angular.module 'NotSoShitty.common'
+angular.module 'Scrumble.common'
 .run ($rootScope, $state, $window) ->
   finish = ->
     $window.loading_screen.finish()

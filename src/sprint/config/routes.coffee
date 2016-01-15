@@ -1,4 +1,4 @@
-angular.module 'NotSoShitty.sprint'
+angular.module 'Scrumble.sprint'
 .config ($stateProvider) ->
   $stateProvider
   .state 'tab.new-sprint',
@@ -6,15 +6,15 @@ angular.module 'NotSoShitty.sprint'
     controller: 'EditSprintCtrl'
     templateUrl: 'sprint/states/edit/view.html'
     resolve:
-      project: (NotSoShittyUser, Project) ->
-        NotSoShittyUser.getCurrentUser()
+      project: (ScrumbleUser, Project) ->
+        ScrumbleUser.getCurrentUser()
         .then (user) ->
           new Project user.project
         .catch (err) ->
           console.log err
           return null
-      sprint: (NotSoShittyUser, Project, Sprint) ->
-        NotSoShittyUser.getCurrentUser()
+      sprint: (ScrumbleUser, Project, Sprint) ->
+        ScrumbleUser.getCurrentUser()
         .then (user) ->
           new Sprint
             project: new Project user.project
@@ -38,8 +38,8 @@ angular.module 'NotSoShitty.sprint'
     controller: 'EditSprintCtrl'
     templateUrl: 'sprint/states/edit/view.html'
     resolve:
-      project: (NotSoShittyUser, Project) ->
-        NotSoShittyUser.getCurrentUser()
+      project: (ScrumbleUser, Project) ->
+        ScrumbleUser.getCurrentUser()
         .then (user) ->
           new Project user.project
         .catch (err) ->

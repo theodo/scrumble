@@ -1,4 +1,4 @@
-angular.module 'NotSoShitty.daily-report'
+angular.module 'Scrumble.daily-report'
 .config ($stateProvider) ->
   $stateProvider
   .state 'tab.daily-report',
@@ -6,8 +6,8 @@ angular.module 'NotSoShitty.daily-report'
     templateUrl: 'daily-report/states/template/view.html'
     controller: 'DailyReportCtrl'
     resolve:
-      dailyReport: (NotSoShittyUser, DailyReport, Project) ->
-        NotSoShittyUser.getCurrentUser().then (user) ->
+      dailyReport: (ScrumbleUser, DailyReport, Project) ->
+        ScrumbleUser.getCurrentUser().then (user) ->
           DailyReport.getByProject(user.project).then (report) ->
             return report if report?
             report = new DailyReport
@@ -29,13 +29,13 @@ angular.module 'NotSoShitty.daily-report'
                 behindLabel: 'Behind'
                 aheadLabel: 'Ahead'
             report.save()
-      sprint: (NotSoShittyUser, Sprint) ->
-        NotSoShittyUser.getCurrentUser()
+      sprint: (ScrumbleUser, Sprint) ->
+        ScrumbleUser.getCurrentUser()
         .then (user) ->
           Sprint.getActiveSprint user.project
         .catch (err) ->
           console.log err
           return null
-      project: (NotSoShittyUser) ->
-        NotSoShittyUser.getCurrentUser().then (user) ->
+      project: (ScrumbleUser) ->
+        ScrumbleUser.getCurrentUser().then (user) ->
           user.project

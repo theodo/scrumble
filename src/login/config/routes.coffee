@@ -1,4 +1,4 @@
-angular.module 'NotSoShitty.login'
+angular.module 'Scrumble.login'
 .config ($stateProvider) ->
   $stateProvider
   .state 'trello-login',

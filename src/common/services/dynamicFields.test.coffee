@@ -1,5 +1,5 @@
 describe 'dynamicFields', ->
-  beforeEach module 'NotSoShitty.common'
+  beforeEach module 'Scrumble.common'
 
   beforeEach inject (dynamicFields, $rootScope) ->
     @dynamicFields = dynamicFields

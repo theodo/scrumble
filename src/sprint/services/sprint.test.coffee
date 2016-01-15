@@ -1,5 +1,5 @@
 describe 'sprintUtils', ->
-  beforeEach module 'NotSoShitty.sprint'
+  beforeEach module 'Scrumble.sprint'
 
   beforeEach inject (sprintUtils) ->
     @sprintUtils = sprintUtils

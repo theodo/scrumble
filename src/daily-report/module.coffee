@@ -1,4 +1,4 @@
-angular.module 'NotSoShitty.daily-report', [
+angular.module 'Scrumble.daily-report', [
   'trello-api-client'
   'ui.router'
 ]

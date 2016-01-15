@@ -1,4 +1,4 @@
-angular.module 'NotSoShitty.settings'
+angular.module 'Scrumble.settings'
 .controller 'ResourcesByDayCtrl', ($scope) ->
   changeResource = (dayIndex, memberIndex, matrix) ->
     matrix[dayIndex][memberIndex] += 0.5

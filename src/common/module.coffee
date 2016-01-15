@@ -1,4 +1,4 @@
-angular.module 'NotSoShitty.common', [
+angular.module 'Scrumble.common', [
   'trello-api-client'
   'ngMaterial'
   'ui.router'

@@ -1,4 +1,4 @@
-angular.module 'NotSoShitty.common'
+angular.module 'Scrumble.common'
 .directive 'dynamicFieldsList', ->
   restrict: 'E'
   templateUrl: 'common/directives/dynamic-fields/view.html'

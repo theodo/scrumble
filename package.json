@@ -1,9 +1,9 @@
 {
-  "name": "not-so-shitty",
+  "name": "scrumble",
   "description": "dashboard connected to trello and gmail",
   "repository": {
     "type": "git",
-    "url": "git@github.com:theodo/not-so-shitty.git"
+    "url": "git@github.com:theodo/scrumble.git"
   },
   "engines": {
     "node": "5.0.0"

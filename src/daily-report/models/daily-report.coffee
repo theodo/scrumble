@@ -1,4 +1,4 @@
-angular.module 'NotSoShitty.daily-report'
+angular.module 'Scrumble.daily-report'
 .factory 'DailyReport', (Parse) ->
   class DailyReport extends Parse.Model
     @configure "DailyReport", "project", "message", "metadata"

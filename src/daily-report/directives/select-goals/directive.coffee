@@ -1,4 +1,4 @@
-angular.module 'NotSoShitty.daily-report'
+angular.module 'Scrumble.daily-report'
 .directive 'selectGoals', ->
   restrict: 'E'
   templateUrl: 'daily-report/directives/select-goals/view.html'

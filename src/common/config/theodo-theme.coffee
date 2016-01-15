@@ -1,4 +1,4 @@
-angular.module 'NotSoShitty.common'
+angular.module 'Scrumble.common'
 .config ($mdThemingProvider) ->
   customPrimary = 
     '50': '#4b91e8'

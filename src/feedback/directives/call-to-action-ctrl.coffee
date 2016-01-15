@@ -1,4 +1,4 @@
-angular.module 'NotSoShitty.feedback'
+angular.module 'Scrumble.feedback'
 .controller 'feedbackCallToActionCtrl', ($scope, $mdDialog, $mdMedia) ->
   $scope.customFullscreen = $mdMedia 'sm'
   $scope.openFeedbackModal = (ev) ->

@@ -1,4 +1,4 @@
-angular.module 'NotSoShitty.settings'
+angular.module 'Scrumble.settings'
 .controller 'ProjectWidgetCtrl', ($scope, projectUtils) ->
   $scope.openMenu = ($mdOpenMenu, ev) ->
     originatorEv = ev

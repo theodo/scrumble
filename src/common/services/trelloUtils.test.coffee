@@ -1,5 +1,5 @@
 describe 'trelloUtils', ->
-  beforeEach module 'NotSoShitty.common'
+  beforeEach module 'Scrumble.common'
 
   beforeEach inject (trelloUtils, TrelloClient, $q, $rootScope) ->
     @trelloUtils = trelloUtils

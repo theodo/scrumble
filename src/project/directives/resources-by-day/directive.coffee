@@ -1,4 +1,4 @@
-angular.module 'NotSoShitty.settings'
+angular.module 'Scrumble.settings'
 .directive 'resourcesByDay', ->
   restrict: 'E'
   templateUrl: 'project/directives/resources-by-day/view.html'

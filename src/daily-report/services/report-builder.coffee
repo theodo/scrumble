@@ -1,5 +1,5 @@
-angular.module 'NotSoShitty.daily-report'
-.service 'reportBuilder', ($q, NotSoShittyUser, Sprint, Project, trelloUtils, dynamicFields)->
+angular.module 'Scrumble.daily-report'
+.service 'reportBuilder', ($q, ScrumbleUser, Sprint, Project, trelloUtils, dynamicFields)->
   converter = new showdown.Converter()
 
   promise = undefined
@@ -77,7 +77,7 @@ angular.module 'NotSoShitty.daily-report'
       message
 
   init: ->
-    promise = NotSoShittyUser.getCurrentUser().then (user) ->
+    promise = ScrumbleUser.getCurrentUser().then (user) ->
       project = user.project
       project
     .then (project) ->

@@ -1,4 +1,4 @@
-angular.module 'NotSoShitty.sprint'
+angular.module 'Scrumble.sprint'
 .service 'sprintUtils', ->
   generateDayList = (start, end) ->
     return unless start? and end?

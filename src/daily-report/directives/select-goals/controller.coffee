@@ -1,4 +1,4 @@
-angular.module 'NotSoShitty.daily-report'
+angular.module 'Scrumble.daily-report'
 .controller 'SelectGoalsCtrl', (
   $scope
   $q

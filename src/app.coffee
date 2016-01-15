@@ -1,6 +1,6 @@
 'use strict'
 
-app = angular.module 'NotSoShitty', [
+app = angular.module 'Scrumble', [
   'ng'
   'ngResource'
   'ngAnimate'
@@ -16,15 +16,15 @@ app = angular.module 'NotSoShitty', [
   'permission'
   'trello-api-client'
 
-  'NotSoShitty.sprint'
-  'NotSoShitty.common'
-  'NotSoShitty.daily-report'
-  'NotSoShitty.gmail-client'
-  'NotSoShitty.feedback'
-  'NotSoShitty.login'
-  'NotSoShitty.settings'
-  'NotSoShitty.storage'
-  'NotSoShitty.board'
+  'Scrumble.sprint'
+  'Scrumble.common'
+  'Scrumble.daily-report'
+  'Scrumble.gmail-client'
+  'Scrumble.feedback'
+  'Scrumble.login'
+  'Scrumble.settings'
+  'Scrumble.storage'
+  'Scrumble.board'
 ]
 
 app.config (
@@ -47,7 +47,7 @@ app.config (localStorageServiceProvider) ->
 app.config (TrelloClientProvider) ->
   TrelloClientProvider.init {
     key: '2dcb2ba290c521d2b5c2fd69cc06830e'
-    appName: 'Not So Shitty'
+    appName: 'Scrumble'
     tokenExpiration: 'never'
     scope: ['read', 'account'] #, 'write']
   }

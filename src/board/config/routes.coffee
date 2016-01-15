@@ -1,4 +1,4 @@
-angular.module 'NotSoShitty.board'
+angular.module 'Scrumble.board'
 .config ($stateProvider) ->
   $stateProvider
   .state 'tab.board',
@@ -6,8 +6,8 @@ angular.module 'NotSoShitty.board'
     controller: 'BoardCtrl'
     templateUrl: 'board/states/board/view.html'
     resolve:
-      sprint: (NotSoShittyUser, Sprint, $state) ->
-        NotSoShittyUser.getCurrentUser()
+      sprint: (ScrumbleUser, Sprint, $state) ->
+        ScrumbleUser.getCurrentUser()
         .then (user) ->
           return $state.go 'trello-login' unless user?
           return $state.go 'tab.project' unless user.project?
@@ -15,8 +15,8 @@ angular.module 'NotSoShitty.board'
         .then (sprint) ->
           $state.go 'tab.new-sprint' unless sprint?
           sprint
-      project: (NotSoShittyUser, Project, $state) ->
-        NotSoShittyUser.getCurrentUser()
+      project: (ScrumbleUser, Project, $state) ->
+        ScrumbleUser.getCurrentUser()
         .then (user) ->
           return $state.go 'trello-login' unless user?
           return $state.go 'tab.project' unless user.project?

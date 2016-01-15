@@ -1,1 +1,1 @@
-angular.module 'NotSoShitty.feedback', []
+angular.module 'Scrumble.feedback', []

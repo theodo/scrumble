@@ -1,4 +1,4 @@
-angular.module 'NotSoShitty.common'
+angular.module 'Scrumble.common'
 .service 'dynamicFields', ($q, trelloUtils) ->
   sprint = null
   project = null

@@ -1,4 +1,4 @@
-angular.module 'NotSoShitty.gmail-client'
+angular.module 'Scrumble.gmail-client'
 .service 'mailer', ($state, $rootScope, gmailClient, googleAuth) ->
   send: (message, callback) ->
     return callback message: "No 'to' field", code: 400 unless message.to?

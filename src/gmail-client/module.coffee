@@ -1,1 +1,1 @@
-angular.module 'NotSoShitty.gmail-client', []
+angular.module 'Scrumble.gmail-client', []

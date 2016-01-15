@@ -1,4 +1,4 @@
-angular.module 'NotSoShitty.settings'
+angular.module 'Scrumble.settings'
 .config ($stateProvider) ->
   $stateProvider
   .state 'tab.project',
@@ -6,8 +6,8 @@ angular.module 'NotSoShitty.settings'
     controller: 'ProjectCtrl'
     templateUrl: 'project/states/main/view.html'
     resolve:
-      user: (NotSoShittyUser, localStorageService, $state) ->
-        NotSoShittyUser.getCurrentUser().then (user) ->
+      user: (ScrumbleUser, localStorageService, $state) ->
+        ScrumbleUser.getCurrentUser().then (user) ->
           unless user?
             localStorageService.clearAll()
             $state.go 'trello-login'
