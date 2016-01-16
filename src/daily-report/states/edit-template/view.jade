@@ -1,0 +1,29 @@
+div(layout="column" flex="100" layout-sm="column")
+  md-card(flex="100")
+    md-card-title(flex="nogrow")
+      md-card-title-text
+        span.md-headline Edit Template
+    md-card-content(flex)
+      md-input-container
+        label Subject
+        input(ng-model="dailyReport.message.subject")
+      md-input-container.md-block
+        label Body (in markdown)
+        textarea(ng-model="dailyReport.message.body" columns="1")
+    md-card-actions(layout='row')
+      md-button(ng-click="save()")
+        | Save
+  md-card(flex="100")
+    md-card-title(flex="nogrow")
+      md-card-title-text
+        span.md-headline Dynamic Fields
+      md-card-content(flex)
+        dynamic-fields-list(available-fields='availableFields')
+        div(layout="row")
+          md-input-container(flex="50")
+            label Behind Label
+            input(ng-model="dailyReport.message.behindLabel")
+          md-input-container(flex="50")
+            label Ahead Label
+            input(ng-model="dailyReport.message.aheadLabel")
+  
