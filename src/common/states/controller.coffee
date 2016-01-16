@@ -1,11 +1,31 @@
 angular.module 'Scrumble.common'
-.controller 'BaseCtrl', ($scope, $mdSidenav, $state, project, sprint) ->
+.controller 'BaseCtrl', (
+  $scope
+  $mdSidenav
+  $mdDialog
+  $state
+  Sprint
+  projectUtils
+) ->
   $scope.toggleSidenav = ->
     $mdSidenav('left').toggle()
+
+  showConfirmNewSprint = (ev) ->
+    confirm = $mdDialog.confirm()
+      .title 'Start a new sprint'
+      .textContent 'Starting a new sprint will end this one'
+      .targetEvent ev
+      .ok 'OK'
+      .cancel 'Cancel'
+    $mdDialog.show(confirm).then ->
+      $state.go 'tab.new-sprint'
 
   $scope.goTo = (item) ->
     $state.go item.state, item.params
     $mdSidenav('left').close()
+
+  projectUtils.getCurrentProject().then (project) ->
+    $scope.menu[0].items[1].params.projectId = project.objectId
 
   $scope.menu = [
     title: 'Project'
@@ -16,7 +36,7 @@ angular.module 'Scrumble.common'
     ,
       state: 'tab.sprint-list'
       params:
-        projectId: project.objectId
+        projectId: null
       title: 'Sprints'
       icon: 'view-list'
     ,
@@ -24,15 +44,15 @@ angular.module 'Scrumble.common'
   ,
     title: 'Sprint'
     items: [
+      state: 'tab.edit-sprint'
+      params:
+        sprintId: sprint?.objectId
+      title: 'Settings'
+      icon: 'settings'
+    ,
       state: 'tab.board'
       title: 'Burndown Chart'
       icon: 'trending-down'
-    ,
-      state: 'tab.edit-sprint'
-      params:
-        sprintId: sprint.objectId
-      title: 'Settings'
-      icon: 'settings'
     ,
       state: 'tab.new-sprint'
       title: 'Start New Sprint'
@@ -48,7 +68,7 @@ angular.module 'Scrumble.common'
     ,
       state: 'tab.edit-template'
       params:
-        sprintId: sprint.objectId
+        sprintId: sprint?.objectId
       title: 'Edit Template'
       icon: 'code-braces'
     ,

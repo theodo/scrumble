@@ -24,6 +24,7 @@ angular.module 'Scrumble.storage'
             objectId: project.objectId
           isActive: true
       ).then (sprints) ->
+        console.warn 'Several sprints are active for this project' if sprints.length > 1
         sprint = if sprints.length > 0 then sprints[0] else null
         sprint
       .catch (err) ->
@@ -38,6 +39,9 @@ angular.module 'Scrumble.storage'
             objectId: projectId
       ).then (sprints) ->
         _.sortByOrder sprints, 'number', false
-    @close = (sprint) ->
-      sprint.isActive = false
-      sprint.save()
+
+    @closeActiveSprint = (project) ->
+      @getActiveSprint project
+      .then (sprint) ->
+        sprint.isActive = false
+        sprint.save()

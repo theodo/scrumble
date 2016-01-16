@@ -65,20 +65,3 @@ app.config ($stateProvider) ->
     abstract: true
     templateUrl: 'common/states/base.html'
     controller: 'BaseCtrl'
-    resolve:
-      project: (ScrumbleUser, Project) ->
-        ScrumbleUser.getCurrentUser()
-        .then (user) ->
-          new Project user.project
-        .catch (err) ->
-          console.log err
-          return null
-      sprint: (ScrumbleUser, Sprint, $state) ->
-        ScrumbleUser.getCurrentUser()
-        .then (user) ->
-          return $state.go 'trello-login' unless user?
-          return $state.go 'tab.project' unless user.project?
-          Sprint.getActiveSprint user.project
-        .then (sprint) ->
-          $state.go 'tab.new-sprint' unless sprint?
-          sprint
