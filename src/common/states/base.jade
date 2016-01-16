@@ -1,18 +1,32 @@
 header
   md-toolbar
     .md-toolbar-tools
+      md-button.md-icon-button(ng-click="toggleSidenav()" hide-gt-md)
+        md-icon(md-svg-src="menu", aria-label="Open menu")
       h2
         span.clickable(ui-sref="tab.board") Scrumble
       span(flex)
       profil-info
-main.md-padding(layout="row" flex)
-  .container(ui-view)
-footer(layout="row" layout-align="center center")
-  p
-    a(
-        href="http://attackwithnumbers.com/the-laws-of-shitty-dashboard"
-        target="_blank"
-      ) The law of shitty dashboards
-    |  is broken
-
+div(flex layout="row")
+  md-sidenav.md-sidenav-left.md-whiteframe-z2(
+    layout='column'
+    md-component-id='left'
+    md-is-locked-open="$mdMedia('gt-md')"
+  )
+    md-list
+      div(ng-repeat="section in menu")
+        md-subheader {{ section.title }}
+        md-list-item.md-clickable(
+          ng-repeat='item in section.items'
+          ng-click="goTo(item)"
+          md-ink-ripple
+        )
+          md-item-content( layout='row' layout-align='start center')
+            .inset
+              md-icon(md-svg-icon='{{item.icon}}')
+            .inset
+              | {{item.title}}
+        md-divider
+  main.md-padding(layout="row" flex)
+    .container(ui-view)
 feedback
