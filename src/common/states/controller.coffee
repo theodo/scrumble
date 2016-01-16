@@ -35,7 +35,7 @@ angular.module 'Scrumble.common'
       icon: 'settings'
     ,
       state: 'tab.new-sprint'
-      title: 'Start new sprint'
+      title: 'Start New Sprint'
       icon: 'plus'
     ,
     ]

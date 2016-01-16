@@ -15,8 +15,9 @@ angular.module 'Scrumble.daily-report'
     .content('Saved!')
 
   $scope.dailyReport = dailyReport
-  $scope.availableFields = _.union(
-    dynamicFields.getAvailableFields()
+  $scope.availableFields1 = dynamicFields.getAvailableFields()[..6]
+  $scope.availableFields2 = _.union(
+    dynamicFields.getAvailableFields()[7..]
     reportBuilder.getAvailableFields()
   )
 
