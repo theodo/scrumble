@@ -51,9 +51,9 @@ angular.module('Scrumble.login', ['LocalStorageModule', 'satellizer', 'ui.router
 
 angular.module('Scrumble.settings', ['Scrumble.common']);
 
-angular.module('Scrumble.storage', []);
-
 angular.module('Scrumble.sprint', ['ui.router', 'Parse', 'ngMaterial']);
+
+angular.module('Scrumble.storage', []);
 
 angular.module('Scrumble.board').config(function($stateProvider) {
   return $stateProvider.state('tab.board', {
@@ -1115,118 +1115,6 @@ angular.module('Scrumble.settings').service('projectUtils', function() {
   };
 });
 
-var __hasProp = {}.hasOwnProperty,
-  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
-
-angular.module('Scrumble.storage').factory('ScrumbleUser', function(Parse, $q, TrelloClient, Project, localStorageService) {
-  var ScrumbleUser;
-  return ScrumbleUser = (function(_super) {
-    __extends(ScrumbleUser, _super);
-
-    function ScrumbleUser() {
-      return ScrumbleUser.__super__.constructor.apply(this, arguments);
-    }
-
-    ScrumbleUser.configure("ScrumbleUser", "email", "project");
-
-    ScrumbleUser.getCurrentUser = function() {
-      return this.query({
-        where: {
-          email: localStorageService.get('trello_email')
-        },
-        include: 'project'
-      }).then(function(user) {
-        if (user.length > 0) {
-          return user[0];
-        } else {
-          return null;
-        }
-      });
-    };
-
-    ScrumbleUser.getBoardId = function() {
-      var deferred, token;
-      deferred = $q.defer();
-      token = localStorageService.get('trello_token');
-      if (token == null) {
-        deferred.reject('No token');
-      }
-      TrelloClient.get('/member/me').then(function(response) {
-        return response.data;
-      }).then(function(userInfo) {
-        return UserBoard.query({
-          where: {
-            email: userInfo.email
-          }
-        });
-      }).then(function(userBoards) {
-        if (userBoards.length > 0) {
-          return deferred.resolve(userBoards[0].boardId);
-        } else {
-          return deferred.resolve(null);
-        }
-      });
-      return deferred.promise;
-    };
-
-    ScrumbleUser.setBoardId = function(boardId) {
-      var deferred, token;
-      deferred = $q.defer();
-      token = localStorageService.get('trello_token');
-      if (token == null) {
-        deferred.reject('No token');
-      }
-      return TrelloClient.get('/member/me').then(function(response) {
-        return response.data;
-      }).then(function(userInfo) {
-        return this.query({
-          where: {
-            email: userInfo.email
-          }
-        }).then(function(user) {
-          var project;
-          user = user.length > 0 ? user[0] : null;
-          if (typeof board !== "undefined" && board !== null) {
-            board.boardId = boardId;
-            return board.save();
-          } else {
-            project = new Project();
-            project.boardId = boardId;
-            this.project = project;
-            return this.save();
-          }
-        });
-      });
-    };
-
-    return ScrumbleUser;
-
-  })(Parse.Model);
-});
-
-angular.module('Scrumble.storage').service('userService', function(ScrumbleUser) {
-  return {
-    getOrCreate: function(email) {
-      return ScrumbleUser.query({
-        where: {
-          email: email
-        }
-      }).then(function(users) {
-        var user;
-        if (users.length > 0) {
-          return users[0];
-        } else {
-          user = new User();
-          user.email = email;
-          return user.save().then(function(user) {
-            return user;
-          });
-        }
-      });
-    }
-  };
-});
-
 angular.module('Scrumble.sprint').config(function($stateProvider) {
   return $stateProvider.state('tab.new-sprint', {
     url: '/sprint/edit',
@@ -1618,6 +1506,118 @@ angular.module('Scrumble.sprint').service('sprintUtils', function() {
       if (source === 'total') {
         return sprint.resources.speed = calculateSpeed(sprint.resources.totalPoints, sprint.resources.totalManDays);
       }
+    }
+  };
+});
+
+var __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+angular.module('Scrumble.storage').factory('ScrumbleUser', function(Parse, $q, TrelloClient, Project, localStorageService) {
+  var NotSoShittyUser;
+  return NotSoShittyUser = (function(_super) {
+    __extends(NotSoShittyUser, _super);
+
+    function NotSoShittyUser() {
+      return NotSoShittyUser.__super__.constructor.apply(this, arguments);
+    }
+
+    NotSoShittyUser.configure("NotSoShittyUser", "email", "project");
+
+    NotSoShittyUser.getCurrentUser = function() {
+      return this.query({
+        where: {
+          email: localStorageService.get('trello_email')
+        },
+        include: 'project'
+      }).then(function(user) {
+        if (user.length > 0) {
+          return user[0];
+        } else {
+          return null;
+        }
+      });
+    };
+
+    NotSoShittyUser.getBoardId = function() {
+      var deferred, token;
+      deferred = $q.defer();
+      token = localStorageService.get('trello_token');
+      if (token == null) {
+        deferred.reject('No token');
+      }
+      TrelloClient.get('/member/me').then(function(response) {
+        return response.data;
+      }).then(function(userInfo) {
+        return UserBoard.query({
+          where: {
+            email: userInfo.email
+          }
+        });
+      }).then(function(userBoards) {
+        if (userBoards.length > 0) {
+          return deferred.resolve(userBoards[0].boardId);
+        } else {
+          return deferred.resolve(null);
+        }
+      });
+      return deferred.promise;
+    };
+
+    NotSoShittyUser.setBoardId = function(boardId) {
+      var deferred, token;
+      deferred = $q.defer();
+      token = localStorageService.get('trello_token');
+      if (token == null) {
+        deferred.reject('No token');
+      }
+      return TrelloClient.get('/member/me').then(function(response) {
+        return response.data;
+      }).then(function(userInfo) {
+        return this.query({
+          where: {
+            email: userInfo.email
+          }
+        }).then(function(user) {
+          var project;
+          user = user.length > 0 ? user[0] : null;
+          if (typeof board !== "undefined" && board !== null) {
+            board.boardId = boardId;
+            return board.save();
+          } else {
+            project = new Project();
+            project.boardId = boardId;
+            this.project = project;
+            return this.save();
+          }
+        });
+      });
+    };
+
+    return NotSoShittyUser;
+
+  })(Parse.Model);
+});
+
+angular.module('Scrumble.storage').service('userService', function(ScrumbleUser) {
+  return {
+    getOrCreate: function(email) {
+      return ScrumbleUser.query({
+        where: {
+          email: email
+        }
+      }).then(function(users) {
+        var user;
+        if (users.length > 0) {
+          return users[0];
+        } else {
+          user = new User();
+          user.email = email;
+          return user.save().then(function(user) {
+            return user;
+          });
+        }
+      });
     }
   };
 });
