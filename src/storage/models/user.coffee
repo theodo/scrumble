@@ -1,7 +1,7 @@
 angular.module 'Scrumble.storage'
 .factory 'ScrumbleUser', (Parse, $q, TrelloClient, Project, localStorageService) ->
-  class ScrumbleUser extends Parse.Model
-    @configure "ScrumbleUser", "email", "project"
+  class NotSoShittyUser extends Parse.Model
+    @configure "NotSoShittyUser", "email", "project"
 
     @getCurrentUser = ->
       @query(
