@@ -3,6 +3,7 @@ angular.module 'Scrumble.settings'
   $location
   $mdToast
   $scope
+  $rootScope
   $state
   $timeout
   $q
@@ -29,6 +30,7 @@ angular.module 'Scrumble.settings'
         $scope.boardColumns = response.data
       .catch (err) ->
         $scope.project.boardId = null
+        $rootScope.$emit 'currentProject', null
         console.warn "Could not fetch Trello board with id #{boardId}"
         console.log err
 
@@ -38,6 +40,7 @@ angular.module 'Scrumble.settings'
         $scope.boardMembers = response.data
       .catch (err) ->
         $scope.project.boardId = null
+        $rootScope.$emit 'currentProject', null
         console.warn "Could not fetch Trello board members"
         console.log err
 
@@ -54,15 +57,19 @@ angular.module 'Scrumble.settings'
         project.save()
       .then (project) ->
         $scope.project = project
+        $rootScope.$emit 'currentProject', project
     ]
 
   if $scope.project.boardId?
     fetchBoardData $scope.project.boardId
+    $scope.boardId = $scope.project.boardId
+  else
+    $scope.boardId = null
+    $rootScope.$emit 'currentProject', null
 
-  # Get board colums and members when board is set
-  $scope.$watch 'project.boardId', (next, prev) ->
-    return unless next? and next != prev
-    fetchBoardData next
+  $scope.selectProject = ->
+    if $scope.boardId isnt $scope.project.boardId
+      fetchBoardData $scope.boardId
 
   $scope.delete = (member) ->
     _.remove $scope.project.team, member

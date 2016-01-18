@@ -3,7 +3,7 @@ div.sprint-body(layout="row" layout-align="center end")
     h2.md-title(layout-align="center end") SET YOUR PROJECT
     md-input-container(layout="column")
       label Select a board: 
-      md-select(ng-model="project.boardId")
+      md-select(ng-model="boardId" ng-change="selectProject()")
         md-option(ng-value="board.id" ng-repeat="board in boards") {{ board.name }}
     
     div(ng-if="project.boardId" layout="column")

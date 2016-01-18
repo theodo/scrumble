@@ -1,6 +1,7 @@
 angular.module 'Scrumble.sprint'
 .controller 'SprintListCtrl', (
   $scope
+  $rootScope
   $mdDialog
   $mdMedia
   sprintUtils
@@ -14,6 +15,8 @@ angular.module 'Scrumble.sprint'
 
   $scope.sprints = sprints
   $scope.project = project
+
+  $rootScope.$emit 'currentProject', project
 
   $scope.selected = []
   $scope.delete = (event) ->
