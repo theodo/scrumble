@@ -27,6 +27,15 @@ angular.module 'Scrumble.common'
   projectUtils.getCurrentProject().then (project) ->
     $scope.menu[0].items[1].params.projectId = project.objectId
 
+    Sprint.getActiveSprint(project).then (sprint) ->
+      _.each $scope.menu, (section) ->
+        items = _.filter section.items, (item) ->
+          item.params?.sprintId?
+        for item in items
+          item.params.sprintId = sprint.objectId
+
+
+
   $scope.menu = [
     title: 'Project'
     items: [
@@ -46,7 +55,7 @@ angular.module 'Scrumble.common'
     items: [
       state: 'tab.edit-sprint'
       params:
-        sprintId: sprint?.objectId
+        sprintId: null
       title: 'Settings'
       icon: 'settings'
     ,
@@ -67,8 +76,6 @@ angular.module 'Scrumble.common'
       icon: 'gmail'
     ,
       state: 'tab.edit-template'
-      params:
-        sprintId: sprint?.objectId
       title: 'Edit Template'
       icon: 'code-braces'
     ,

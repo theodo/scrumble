@@ -1,5 +1,5 @@
 angular.module 'Scrumble.sprint'
-.service 'bdc', ($q, trelloUtils) ->
+.service 'bdc', ($q, trelloUtils, Sprint) ->
 
   getPngBase64 = (svg) ->
     img = new Image()
@@ -30,7 +30,7 @@ angular.module 'Scrumble.sprint'
           unless day.done? or day.done == ''
             day.done = points
             break
-        sprint.save().then ->
+        Sprint.save(sprint).then ->
           deferred.resolve()
     else
       deferred.reject 'doneColumn is not set'
@@ -38,4 +38,4 @@ angular.module 'Scrumble.sprint'
     deferred.promise
   saveImage: (sprint, svg) ->
     sprint.bdcBase64 = getPngBase64 svg
-    sprint.save()
+    Sprint.save(sprint)

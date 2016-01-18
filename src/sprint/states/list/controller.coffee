@@ -6,6 +6,7 @@ angular.module 'Scrumble.sprint'
   sprintUtils
   sprints
   project
+  Sprint
 ) ->
   sprints.forEach (sprint) ->
     sprint.speed = sprintUtils.computeSpeed sprint
@@ -50,7 +51,5 @@ angular.module 'Scrumble.sprint'
   $scope.activateSprint = (sprint) ->
     for s in $scope.sprints
       if s.isActive and s != sprint
-        s.isActive = false
-        s.save()
-    sprint.isActive = true
-    sprint.save()
+        Sprint.deactivateSprint s
+    Sprint.setActiveSprint sprint

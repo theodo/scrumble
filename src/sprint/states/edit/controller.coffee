@@ -27,13 +27,14 @@ angular.module 'Scrumble.sprint'
   $scope.save = ->
     if sprintUtils.isActivable($scope.sprint)
       closePromise.then ->
-        $scope.sprint.save()
+        Sprint.save $scope.sprint
 
   $scope.activable = sprintUtils.isActivable($scope.sprint)
   $scope.activate = ->
     if sprintUtils.isActivable($scope.sprint)
       $scope.sprint.isActive = true
-      $scope.sprint.save().then ->
+      Sprint.save $scope.sprint
+      .then ->
         $state.go 'tab.board'
 
   $scope.checkSprint = (source) ->
