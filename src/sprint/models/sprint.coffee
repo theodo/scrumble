@@ -12,7 +12,8 @@ angular.module 'Scrumble.storage'
       "doneColumn",
       "sprintColumn",
       "bdcBase64",
-      "goal"
+      "goal",
+      "indicators"
     )
 
 

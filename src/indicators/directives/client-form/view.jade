@@ -1,0 +1,49 @@
+md-card-content.md-padding
+  h2.md-title Satisfaction survey
+
+  p.question What is your appreciation of the speed of the team?
+  .answer
+    md-radio-group(ng-model="form.question1")
+      md-radio-button.md-primary(value="5") 5 - Excellent
+      md-radio-button.md-primary(value="4") 4 - Very good
+      md-radio-button.md-primary(value="3") 3 - Good
+      md-radio-button.md-primary(value="2") 2 - Average
+      md-radio-button.md-primary(value="1") 1 - Insufficient
+      md-radio-button.md-primary(value="0") 0 - Very insufficient
+    
+  p.question What is your appreciation of the quality of the coaching?
+  .answer
+    md-radio-group(ng-model="form.question2")
+      md-radio-button.md-primary(value="5") 5 - Excellent
+      md-radio-button.md-primary(value="4") 4 - Very good
+      md-radio-button.md-primary(value="3") 3 - Good
+      md-radio-button.md-primary(value="2") 2 - Average
+      md-radio-button.md-primary(value="1") 1 - Insufficient
+      md-radio-button.md-primary(value="0") 0 - Very insufficient
+
+  p.question What change/improve would make you to improve your appreciation?
+  .answer
+    md-input-container.md-block
+      textarea(ng-model="form.question3" aria-label="question3")
+      
+  p.question If you had a magic wand, what is "the" thing you would change
+  .answer
+    md-input-container.md-block
+      textarea(ng-model="form.question4" aria-label="question4")
+      
+  p.question Would you recommend us?
+  .answer
+    md-radio-group(ng-model="form.question5")
+      md-radio-button.md-primary(value="yes-of-course") Yes of course
+      md-radio-button.md-primary(value="yes") Yes
+      md-radio-button.md-primary(value="not-really") Not really
+      md-radio-button.md-primary(value="not-at-all") Not at all
+    
+  p.question Would you like to have a sales meeting in the coming week?
+  .answer
+    md-radio-group(ng-model="form.question6")
+      md-radio-button.md-primary(value="yes") Yes
+      md-radio-button.md-primary(value="no") No, it is not necessary for now
+  
+  section(layout="row" layout-sm="column" layout-align="center center" layout-wrap)
+    md-button.md-raised.md-primary(ng-click="save()") Save
