@@ -2,6 +2,7 @@ angular.module 'Scrumble.sprint'
 .controller 'SprintWidgetCtrl', (
   $scope
   $timeout
+  $state
   nssModal
   sprintUtils
   dynamicFields
@@ -78,8 +79,7 @@ angular.module 'Scrumble.sprint'
       bdc.saveImage $scope.sprint, svg
 
   $scope.printBDC = ->
-    printContents = document.getElementById('bdcgraph').innerHTML
-    popupWin = window.open('', '_blank')
-    popupWin.document.open()
-    popupWin.document.write '<html><head><link rel="stylesheet" type="text/css" href="style.css" /></head><body onload="window.print()">' + printContents + '</html>'
-    popupWin.document.close()
+    $state.go 'print-bdc', {
+      projectId: $scope.project.objectId,
+      sprintId: $scope.sprint.objectId
+    }
