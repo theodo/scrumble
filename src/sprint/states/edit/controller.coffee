@@ -29,10 +29,10 @@ angular.module 'Scrumble.sprint'
   $scope.activable = sprintUtils.isActivable($scope.editedSprint)
   $scope.activate = ->
     if sprintUtils.isActivable($scope.editedSprint)
-      $scope.sprint.isActive = true
+      $scope.editedSprint.isActive = true
       Sprint.save $scope.editedSprint
       .then (savedSprint) ->
-        $scope.$emit 'sprint:update', {sprint: savedSprint, nextState: 'tab.board'}
+        $scope.$emit 'sprint:update', nextState: 'tab.board'
 
   $scope.checkSprint = (source) ->
     $scope.activable = sprintUtils.isActivable($scope.editedSprint)

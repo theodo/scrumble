@@ -20,38 +20,24 @@ angular.module 'Scrumble.common'
     $state.go item.state, item.params
     $mdSidenav('left').close()
 
-  updateMenuLinks = ->
-    _.each $scope.menu, (section) ->
-      _.each section.items, (item) ->
-        if item.params?
-          item.params.sprintId = $scope.sprint.objectId
-          item.params.projectId = $scope.project.objectId
-
   $scope.$on 'project:update', (event, data) ->
-    Project.find data.project.objectId
-    .then (foundProject) ->
-      $scope.project = foundProject
-
-      Sprint.getActiveSprint foundProject
-    .then (activeSprint) ->
-      $scope.sprint = activeSprint
+    $state.reload 'tab'
     .then ->
-      updateMenuLinks()
       if data.nextState?
         $state.go data.nextState
 
   $scope.$on 'sprint:update', (event, data) ->
-    $scope.sprint = data.sprint
-    updateMenuLinks()
-    if data.nextState?
-      $state.go data.nextState
+    $state.reload 'tab'
+    .then ->
+      if data.nextState?
+        $state.go data.nextState
 
   $scope.menu = [
     title: 'Project'
     items: [
-      state: 'tab.project'
-      title: 'Settings'
-      icon: 'settings'
+      state: 'tab.new-sprint'
+      title: 'Start New Sprint'
+      icon: 'plus'
     ,
       state: 'tab.sprint-list'
       params:
@@ -59,23 +45,23 @@ angular.module 'Scrumble.common'
       title: 'Sprints'
       icon: 'view-list'
     ,
+      state: 'tab.project'
+      title: 'Settings'
+      icon: 'settings'
+    ,
     ]
   ,
     title: 'Current Sprint'
     items: [
+      state: 'tab.board'
+      title: 'Burndown Chart'
+      icon: 'trending-down'
+    ,
       state: 'tab.edit-sprint'
       params:
         sprintId: $scope.sprint?.objectId
       title: 'Settings'
       icon: 'settings'
-    ,
-      state: 'tab.board'
-      title: 'Burndown Chart'
-      icon: 'trending-down'
-    ,
-      state: 'tab.new-sprint'
-      title: 'Start New Sprint'
-      icon: 'plus'
     ,
     ]
   ,
