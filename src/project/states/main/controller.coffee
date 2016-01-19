@@ -10,6 +10,7 @@ angular.module 'Scrumble.settings'
   TrelloClient
   localStorageService
   Project
+  Sprint
   user
   projectUtils
 ) ->
@@ -18,7 +19,6 @@ angular.module 'Scrumble.settings'
     project = user.project
   else
     project = new Project()
-
   $scope.project = project
 
   fetchBoardData = (boardId) ->
@@ -66,9 +66,6 @@ angular.module 'Scrumble.settings'
 
   $scope.delete = (member) ->
     _.remove $scope.project.team, member
-  $scope.clearTeam = ->
-    $scope.project.team = []
-    $scope.save()
 
   $scope.saving = false
   $scope.save = ->
@@ -79,10 +76,10 @@ angular.module 'Scrumble.settings'
     ).name
     $scope.project.settings =
       bdcTitle: 'Sprint #{sprintNumber} - {sprintGoal} - Speed {speed}'
-    $scope.project.save().then (p) ->
-      user.project = p
+    $scope.project.save().then (savedProject) ->
+      user.project = savedProject
       user.save().then ->
-        $state.go 'tab.board'
+        $scope.$emit 'project:update', {project: savedProject, nextState: 'tab.board'}
       .catch ->
         $scope.saving = false
     .catch ->

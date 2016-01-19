@@ -7,14 +7,10 @@ angular.module 'Scrumble.sprint'
   project
   sprintUtils
   projectUtils
-  sprint
   Project
   Sprint
 ) ->
-  $scope.sprint = sprint
-
-  closePromise = Sprint.closeActiveSprint project
-
+  console.log $scope.sprint
   TrelloClient.get "/boards/#{project.boardId}/lists"
   .then (response) ->
     $scope.boardLists = response.data
@@ -26,7 +22,8 @@ angular.module 'Scrumble.sprint'
 
   $scope.save = ->
     if sprintUtils.isActivable($scope.sprint)
-      closePromise.then ->
+      Sprint.closeActiveSprint project
+      .then ->
         Sprint.save $scope.sprint
 
   $scope.activable = sprintUtils.isActivable($scope.sprint)

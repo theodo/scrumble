@@ -10,7 +10,6 @@ angular.module 'Scrumble.settings'
         ScrumbleUser.getCurrentUser().then (user) ->
           unless user?
             localStorageService.clearAll()
-            console.log 'tab.project:user -> trello-login'
             $state.go 'trello-login'
           user
       boards: (TrelloClient) ->

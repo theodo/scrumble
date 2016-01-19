@@ -6,13 +6,6 @@ angular.module 'Scrumble.sprint'
     controller: 'EditSprintCtrl'
     templateUrl: 'sprint/states/edit/view.html'
     resolve:
-      project: (ScrumbleUser, Project) ->
-        ScrumbleUser.getCurrentUser()
-        .then (user) ->
-          new Project user.project
-        .catch (err) ->
-          console.log err
-          return null
       sprint: (ScrumbleUser, Project, Sprint) ->
         ScrumbleUser.getCurrentUser()
         .then (user) ->
@@ -38,13 +31,6 @@ angular.module 'Scrumble.sprint'
     controller: 'EditSprintCtrl'
     templateUrl: 'sprint/states/edit/view.html'
     resolve:
-      project: (ScrumbleUser, Project) ->
-        ScrumbleUser.getCurrentUser()
-        .then (user) ->
-          new Project user.project
-        .catch (err) ->
-          console.log err
-          return null
       sprint: (Sprint, $stateParams, $state) ->
         Sprint.find($stateParams.sprintId)
         .then (sprint) ->

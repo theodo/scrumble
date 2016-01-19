@@ -6,7 +6,13 @@ angular.module 'Scrumble.common'
   $state
   Sprint
   projectUtils
+  project
+  sprint
+  Project
 ) ->
+  $scope.project = project
+  $scope.sprint = sprint
+
   $scope.toggleSidenav = ->
     $mdSidenav('left').toggle()
 
@@ -24,17 +30,25 @@ angular.module 'Scrumble.common'
     $state.go item.state, item.params
     $mdSidenav('left').close()
 
-  projectUtils.getCurrentProject().then (project) ->
-    $scope.menu[0].items[1].params.projectId = project.objectId
+  updateMenuLinks = ->
+    _.each $scope.menu, (section) ->
+      _.each section.items, (item) ->
+        if item.params?
+          item.params.sprintId = $scope.sprint.objectId
+          item.params.projectId = $scope.project.objectId
 
-    Sprint.getActiveSprint(project).then (sprint) ->
-      _.each $scope.menu, (section) ->
-        items = _.filter section.items, (item) ->
-          item.params?.sprintId?
-        for item in items
-          item.params.sprintId = sprint.objectId
+  $scope.$on 'project:update', (event, data) ->
+    Project.find data.project.objectId
+    .then (foundProject) ->
+      $scope.project = foundProject
 
-
+      Sprint.getActiveSprint foundProject
+    .then (activeSprint) ->
+      $scope.sprint = activeSprint
+    .then ->
+      updateMenuLinks()
+      if data.nextState?
+        $state.go data.nextState
 
   $scope.menu = [
     title: 'Project'
@@ -81,3 +95,4 @@ angular.module 'Scrumble.common'
     ,
     ]
   ]
+  updateMenuLinks()
