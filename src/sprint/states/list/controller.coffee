@@ -53,3 +53,4 @@ angular.module 'Scrumble.sprint'
       if s.isActive and s != sprint
         Sprint.deactivateSprint s
     Sprint.setActiveSprint sprint
+    $scope.$emit 'sprint:update', {sprint: sprint}
