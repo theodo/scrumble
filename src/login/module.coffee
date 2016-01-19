@@ -3,4 +3,5 @@ angular.module 'Scrumble.login', [
   'satellizer'
   'ui.router'
   'permission'
+  'trello-api-client'
 ]
