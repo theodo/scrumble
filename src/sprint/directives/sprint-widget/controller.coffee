@@ -29,10 +29,6 @@ angular.module 'Scrumble.sprint'
   .then (title) ->
     $scope.bdcTitle = title
 
-  $scope.openMenu = ($mdOpenMenu, ev) ->
-    originatorEv = ev
-    $mdOpenMenu ev
-
   $scope.openEditTitle = (ev) ->
     nssModal.show
       controller: DialogController
@@ -47,21 +43,6 @@ angular.module 'Scrumble.sprint'
         dynamicFields.render title
       .then (title) ->
         $scope.bdcTitle = title
-
-  $scope.openEditBDC = (ev) ->
-    nssModal.show
-      controller: 'EditBDCCtrl'
-      templateUrl: 'sprint/directives/sprint-widget/editBDC.html'
-      targetEvent: ev
-      resolve:
-        data: -> angular.copy $scope.sprint.bdcData
-        doneColumn: -> $scope.sprint.doneColumn
-    .then (data) ->
-      $scope.bdcData = data
-      $scope.sprint.bdcData = data
-      $timeout -> # bdc needs to be rendered before getting the png
-        svg = d3.select('#bdcgraph')[0][0].firstChild
-        bdc.saveImage $scope.sprint, svg
 
   DialogController = ($scope, $mdDialog, title, availableFields) ->
     $scope.title = title
