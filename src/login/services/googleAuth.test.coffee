@@ -19,6 +19,7 @@ describe 'dynamicFields', ->
     @googleAuth = googleAuth
     @$q = $q
     @$httpBackend = $injector.get '$httpBackend'
+    @localStorageService.set 'trello_token', 'abc'
 
   afterEach ->
     @localStorageService.clearAll()

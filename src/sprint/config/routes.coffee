@@ -6,13 +6,6 @@ angular.module 'Scrumble.sprint'
     controller: 'EditSprintCtrl'
     templateUrl: 'sprint/states/edit/view.html'
     resolve:
-      project: (ScrumbleUser, Project) ->
-        ScrumbleUser.getCurrentUser()
-        .then (user) ->
-          new Project user.project
-        .catch (err) ->
-          console.log err
-          return null
       sprint: (ScrumbleUser, Project, Sprint) ->
         ScrumbleUser.getCurrentUser()
         .then (user) ->
@@ -38,28 +31,24 @@ angular.module 'Scrumble.sprint'
     controller: 'EditSprintCtrl'
     templateUrl: 'sprint/states/edit/view.html'
     resolve:
-      project: (ScrumbleUser, Project) ->
-        ScrumbleUser.getCurrentUser()
-        .then (user) ->
-          new Project user.project
-        .catch (err) ->
-          console.log err
-          return null
       sprint: (Sprint, $stateParams, $state) ->
         Sprint.find($stateParams.sprintId)
-        .then (sprint) ->
-          if sprint.bdcData?
-            # the date is saved as a string so we've to convert it
-            for day in sprint.bdcData
-              day.date = moment(day.date).toDate()
-          if sprint?.dates?.start?
-            sprint.dates.start = moment(sprint.dates.start).toDate()
-          if sprint?.dates?.end?
-            sprint.dates.end = moment(sprint.dates.end).toDate()
-          sprint
         .catch (err) ->
-          console.warn err
           $state.go 'tab.new-sprint'
+    onEnter: (sprint) ->
+      if sprint.bdcData?
+        # the date is saved as a string so we've to convert it
+        for day in sprint.bdcData
+          day.date = moment(day.date).toDate()
+
+      # check start/end date consistency
+      if _.isArray(sprint?.dates?.days) and sprint?.dates?.days.length > 0
+        [first, ..., last] = sprint.dates.days
+        sprint.dates.start = moment(first.date).toDate()
+        sprint.dates.end = moment(last.date).toDate()
+      else
+        sprint.dates.start = null
+        sprint.dates.end = null
   .state 'tab.sprint-list',
     url: '/project/:projectId/sprints'
     controller: 'SprintListCtrl'

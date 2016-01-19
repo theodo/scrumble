@@ -7,15 +7,7 @@ angular.module 'Scrumble.settings'
     templateUrl: 'project/states/main/view.html'
     resolve:
       user: (ScrumbleUser, localStorageService, $state) ->
-        ScrumbleUser.getCurrentUser().then (user) ->
-          unless user?
-            localStorageService.clearAll()
-            $state.go 'trello-login'
-          user
+        ScrumbleUser.getCurrentUser()
       boards: (TrelloClient) ->
         TrelloClient.get('/members/me/boards').then (response) ->
           return response.data
-    data:
-      permissions:
-        only: ['trello-authenticated']
-        redirectTo: 'trello-login'

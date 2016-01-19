@@ -1,5 +1,6 @@
 angular.module 'Scrumble.settings'
-.service 'projectUtils', ->
+.service 'projectUtils', ($q, ScrumbleUser, Project) ->
+  currentProject = null
   roles = [
     label: 'Developer'
     value: 'dev'
@@ -40,3 +41,23 @@ angular.module 'Scrumble.settings'
     result = _.find roles, (role) ->
       role.value is key
     result?.label
+  getCurrentProject: ->
+    deferred = $q.defer()
+
+    deferred.resolve currentProject if currentProject?
+
+    ScrumbleUser.getCurrentUser()
+    .then (user) ->
+      return deferred.reject('no-user') unless user?
+      return deferred.reject('no-project') unless user.project?
+      Project.find(user.project.objectId).then (project) ->
+
+        currentProject = project
+        return deferred.resolve project
+      .catch (err) ->
+        if err.status is 404
+          return deferred.reject('no-project')
+
+    deferred.promise
+  setCurrentProject: (project) ->
+    currentProject = project
