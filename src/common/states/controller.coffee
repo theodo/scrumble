@@ -40,6 +40,12 @@ angular.module 'Scrumble.common'
       if data.nextState?
         $state.go data.nextState
 
+  $scope.$on 'sprint:update', (event, data) ->
+    $scope.sprint = data.sprint
+    updateMenuLinks()
+    if data.nextState?
+      $state.go data.nextState
+
   $scope.menu = [
     title: 'Project'
     items: [

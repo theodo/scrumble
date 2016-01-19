@@ -20,7 +20,7 @@ angular.module 'Scrumble.sprint'
   $scope.saveLabel = if $state.is 'tab.new-sprint' then 'Start the sprint' else 'Save'
   $scope.title = if $state.is 'tab.new-sprint' then 'NEW SPRINT' else 'EDIT SPRINT'
 
-  $scope.save = ->
+  save = ->
     if sprintUtils.isActivable($scope.editedSprint)
       Sprint.closeActiveSprint $scope.project
       .then ->
@@ -31,8 +31,8 @@ angular.module 'Scrumble.sprint'
     if sprintUtils.isActivable($scope.editedSprint)
       $scope.sprint.isActive = true
       Sprint.save $scope.editedSprint
-      .then ->
-        $state.go 'tab.board'
+      .then (savedSprint) ->
+        $scope.$emit 'sprint:update', {sprint: savedSprint, nextState: 'tab.board'}
 
   $scope.checkSprint = (source) ->
     $scope.activable = sprintUtils.isActivable($scope.editedSprint)
