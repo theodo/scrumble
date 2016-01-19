@@ -1,6 +1,7 @@
 angular.module 'Scrumble.sprint'
 .controller 'BoardCtrl', (
   $scope
+  $rootScope
   $state
   $timeout
   $mdDialog
@@ -10,6 +11,8 @@ angular.module 'Scrumble.sprint'
 ) ->
   $scope.project = project
   $scope.sprint = sprint
+
+  $rootScope.$emit 'currentProjectAndSprint', project
 
   $scope.showConfirmNewSprint = (ev) ->
     confirm = $mdDialog.confirm()

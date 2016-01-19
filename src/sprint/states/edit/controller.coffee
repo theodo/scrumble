@@ -1,6 +1,7 @@
 angular.module 'Scrumble.sprint'
 .controller 'EditSprintCtrl', (
   $scope
+  $rootScope
   $timeout
   $state
   TrelloClient
@@ -11,6 +12,8 @@ angular.module 'Scrumble.sprint'
   Project
 ) ->
   $scope.sprint = sprint
+  $rootScope.$emit 'currentProject', project
+
 
   TrelloClient.get "/boards/#{project.boardId}/lists"
   .then (response) ->
