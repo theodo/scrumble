@@ -2,29 +2,19 @@ angular.module 'Scrumble.common'
 .controller 'BaseCtrl', (
   $scope
   $mdSidenav
-  $mdDialog
   $state
   Sprint
-  projectUtils
-  project
-  sprint
   Project
+  sprint
+  project
 ) ->
+  # since views are nested, project and sprint objects will be available
+  # for all child states
   $scope.project = project
   $scope.sprint = sprint
 
   $scope.toggleSidenav = ->
     $mdSidenav('left').toggle()
-
-  showConfirmNewSprint = (ev) ->
-    confirm = $mdDialog.confirm()
-      .title 'Start a new sprint'
-      .textContent 'Starting a new sprint will end this one'
-      .targetEvent ev
-      .ok 'OK'
-      .cancel 'Cancel'
-    $mdDialog.show(confirm).then ->
-      $state.go 'tab.new-sprint'
 
   $scope.goTo = (item) ->
     $state.go item.state, item.params
@@ -59,17 +49,17 @@ angular.module 'Scrumble.common'
     ,
       state: 'tab.sprint-list'
       params:
-        projectId: null
+        projectId: $scope.project?.objectId
       title: 'Sprints'
       icon: 'view-list'
     ,
     ]
   ,
-    title: 'Sprint'
+    title: 'Current Sprint'
     items: [
       state: 'tab.edit-sprint'
       params:
-        sprintId: null
+        sprintId: $scope.sprint?.objectId
       title: 'Settings'
       icon: 'settings'
     ,
@@ -95,4 +85,3 @@ angular.module 'Scrumble.common'
     ,
     ]
   ]
-  updateMenuLinks()
