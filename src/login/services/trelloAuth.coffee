@@ -11,3 +11,7 @@ angular.module 'Scrumble.login'
     localStorageService.remove 'trello_email'
     localStorageService.remove 'trello_token'
     $state.go 'trello-login'
+
+  isLoggedUnsafe: ->
+    token = localStorageService.get 'trello_token'
+    token?
