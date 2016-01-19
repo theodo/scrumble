@@ -11,7 +11,6 @@ angular.module 'Scrumble.sprint'
 ) ->
   dynamicFields.project $scope.project
   dynamicFields.sprint $scope.sprint
-
   if $scope.sprint.bdcData?
     # the date is saved as a string so we've to convert it
     for day in $scope.sprint.bdcData
