@@ -79,7 +79,7 @@ angular.module 'Scrumble.settings'
     $scope.project.save().then (savedProject) ->
       user.project = savedProject
       user.save().then ->
-        $scope.$emit 'project:update', {project: savedProject, nextState: 'tab.board'}
+        $scope.$emit 'project:update', nextState: 'tab.board'
       .catch ->
         $scope.saving = false
     .catch ->
