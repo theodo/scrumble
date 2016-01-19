@@ -37,8 +37,6 @@ app.config(function($stateProvider) {
   });
 });
 
-angular.module('Scrumble.board', ['ui.router', 'ngMaterial']);
-
 angular.module('Scrumble.common', ['trello-api-client', 'ngMaterial', 'ui.router']);
 
 angular.module('Scrumble.daily-report', ['trello-api-client', 'ui.router']);
@@ -49,52 +47,13 @@ angular.module('Scrumble.gmail-client', []);
 
 angular.module('Scrumble.login', ['LocalStorageModule', 'satellizer', 'ui.router', 'permission']);
 
+angular.module('Scrumble.board', ['ui.router', 'ngMaterial']);
+
 angular.module('Scrumble.settings', ['Scrumble.common']);
 
 angular.module('Scrumble.sprint', ['ui.router', 'Parse', 'ngMaterial']);
 
 angular.module('Scrumble.storage', []);
-
-angular.module('Scrumble.board').config(function($stateProvider) {
-  return $stateProvider.state('tab.board', {
-    url: '/',
-    controller: 'BoardCtrl',
-    templateUrl: 'board/states/board/view.html',
-    resolve: {
-      sprint: function(ScrumbleUser, Sprint, $state) {
-        return ScrumbleUser.getCurrentUser().then(function(user) {
-          if (user == null) {
-            return $state.go('trello-login');
-          }
-          if (user.project == null) {
-            return $state.go('tab.project');
-          }
-          return Sprint.getActiveSprint(user.project);
-        }).then(function(sprint) {
-          if (sprint == null) {
-            $state.go('tab.new-sprint');
-          }
-          return sprint;
-        });
-      },
-      project: function(ScrumbleUser, Project, $state) {
-        return ScrumbleUser.getCurrentUser().then(function(user) {
-          if (user == null) {
-            return $state.go('trello-login');
-          }
-          if (user.project == null) {
-            return $state.go('tab.project');
-          }
-          return Project.find(user.project.objectId);
-        })["catch"](function(err) {
-          if (err.status === 404) {
-            return $state.go('tab.project');
-          }
-        });
-      }
-    }
-  });
-});
 
 angular.module('Scrumble.common').run(function($rootScope, $state, $window) {
   var finish;
@@ -977,6 +936,47 @@ angular.module('Scrumble.login').service('trelloAuth', function(localStorageServ
   };
 });
 
+angular.module('Scrumble.board').config(function($stateProvider) {
+  return $stateProvider.state('tab.board', {
+    url: '/',
+    controller: 'BoardCtrl',
+    templateUrl: 'board/states/board/view.html',
+    resolve: {
+      sprint: function(ScrumbleUser, Sprint, $state) {
+        return ScrumbleUser.getCurrentUser().then(function(user) {
+          if (user == null) {
+            return $state.go('trello-login');
+          }
+          if (user.project == null) {
+            return $state.go('tab.project');
+          }
+          return Sprint.getActiveSprint(user.project);
+        }).then(function(sprint) {
+          if (sprint == null) {
+            $state.go('tab.new-sprint');
+          }
+          return sprint;
+        });
+      },
+      project: function(ScrumbleUser, Project, $state) {
+        return ScrumbleUser.getCurrentUser().then(function(user) {
+          if (user == null) {
+            return $state.go('trello-login');
+          }
+          if (user.project == null) {
+            return $state.go('tab.project');
+          }
+          return Project.find(user.project.objectId);
+        })["catch"](function(err) {
+          if (err.status === 404) {
+            return $state.go('tab.project');
+          }
+        });
+      }
+    }
+  });
+});
+
 angular.module('Scrumble.settings').config(function($stateProvider) {
   return $stateProvider.state('tab.project', {
     url: '/project',
@@ -1622,31 +1622,6 @@ angular.module('Scrumble.storage').service('userService', function(ScrumbleUser)
   };
 });
 
-angular.module('Scrumble.sprint').controller('BoardCtrl', function($scope, $state, $timeout, $mdDialog, sprint, project, Sprint) {
-  $scope.project = project;
-  $scope.sprint = sprint;
-  $scope.showConfirmNewSprint = function(ev) {
-    var confirm;
-    confirm = $mdDialog.confirm().title('Start a new sprint').textContent('Starting a new sprint will end this one').targetEvent(ev).ok('OK').cancel('Cancel');
-    return $mdDialog.show(confirm).then(function() {
-      return Sprint.close($scope.sprint).then(function() {
-        return $state.go('tab.new-sprint');
-      });
-    });
-  };
-  $scope.menuIsOpen = false;
-  $scope.tooltipVisible = false;
-  return $scope.$watch('menuIsOpen', function(isOpen) {
-    if (isOpen != null) {
-      return $timeout(function() {
-        return $scope.tooltipVisible = $scope.menuIsOpen;
-      }, 600);
-    } else {
-      return $scope.tooltipVisible = $scope.menuIsOpen;
-    }
-  });
-});
-
 angular.module('Scrumble.common').directive('dynamicFieldsList', function() {
   return {
     restrict: 'E',
@@ -2046,6 +2021,31 @@ angular.module('Scrumble.login').controller('TrelloLoginCtrl', function($scope, 
       return $state.go('tab.board');
     });
   };
+});
+
+angular.module('Scrumble.sprint').controller('BoardCtrl', function($scope, $state, $timeout, $mdDialog, sprint, project, Sprint) {
+  $scope.project = project;
+  $scope.sprint = sprint;
+  $scope.showConfirmNewSprint = function(ev) {
+    var confirm;
+    confirm = $mdDialog.confirm().title('Start a new sprint').textContent('Starting a new sprint will end this one').targetEvent(ev).ok('OK').cancel('Cancel');
+    return $mdDialog.show(confirm).then(function() {
+      return Sprint.close($scope.sprint).then(function() {
+        return $state.go('tab.new-sprint');
+      });
+    });
+  };
+  $scope.menuIsOpen = false;
+  $scope.tooltipVisible = false;
+  return $scope.$watch('menuIsOpen', function(isOpen) {
+    if (isOpen != null) {
+      return $timeout(function() {
+        return $scope.tooltipVisible = $scope.menuIsOpen;
+      }, 600);
+    } else {
+      return $scope.tooltipVisible = $scope.menuIsOpen;
+    }
+  });
 });
 
 angular.module('Scrumble.settings').controller('MemberFormCtrl', function($scope, projectUtils) {
