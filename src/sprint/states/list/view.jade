@@ -1,6 +1,6 @@
-md-card.md-padding(flex="100")
+md-card.md-padding(layout="row" layout-wrap layout-align="center start" layout-xs="column" flew="100")
   div(
-    flex="50" flex-gt-sm="33" flex-xs="100"
+    flex="50" flex-xs="100"
     ng-repeat="sprint in sprints"
   )
     sprint-details(sprint="sprint" sprints="sprints")

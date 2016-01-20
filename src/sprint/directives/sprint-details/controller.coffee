@@ -21,8 +21,8 @@ angular.module 'Scrumble.sprint'
     for s in $scope.sprints
       if s.isActive and s != sprint
         Sprint.deactivateSprint s
-    Sprint.setActiveSprint sprint
-    $scope.$emit 'sprint:update', {sprint: sprint}
+    Sprint.setActiveSprint(sprint).then ->
+      $scope.$emit 'sprint:update'
 
   $scope.delete = (event) ->
     confirm = $mdDialog.confirm()
