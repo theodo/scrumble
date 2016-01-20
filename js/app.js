@@ -1150,54 +1150,6 @@ angular.module('Scrumble.settings').config(function($stateProvider) {
   });
 });
 
-var __hasProp = {}.hasOwnProperty,
-  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
-
-angular.module('Scrumble.storage').factory('Project', function(Parse, $q) {
-  var Project;
-  return Project = (function(_super) {
-    __extends(Project, _super);
-
-    function Project() {
-      return Project.__super__.constructor.apply(this, arguments);
-    }
-
-    Project.configure("Project", "boardId", "name", "columnMapping", "team", "currentSprint", "settings");
-
-    Project.get = function(boardId) {
-      var deferred;
-      deferred = $q.defer();
-      if (boardId != null) {
-        this.query({
-          where: {
-            boardId: boardId
-          }
-        }).then(function(projectsArray) {
-          var project;
-          project = projectsArray.length > 0 ? projectsArray[0] : null;
-          return deferred.resolve(project);
-        })["catch"](deferred.reject);
-      } else {
-        deferred.reject('No boardId');
-      }
-      return deferred.promise;
-    };
-
-    Project.saveTitle = function(project, title) {
-      if (project.settings == null) {
-        project.settings = {};
-      }
-      project.settings.bdcTitle = title;
-      return project.save().then(function() {
-        return title;
-      });
-    };
-
-    return Project;
-
-  })(Parse.Model);
-});
-
 angular.module('Scrumble.settings').service('projectUtils', function($q, ScrumbleUser, Project) {
   var currentProject, roles;
   currentProject = null;
@@ -1284,6 +1236,54 @@ angular.module('Scrumble.settings').service('projectUtils', function($q, Scrumbl
       return currentProject = project;
     }
   };
+});
+
+var __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+angular.module('Scrumble.storage').factory('Project', function(Parse, $q) {
+  var Project;
+  return Project = (function(_super) {
+    __extends(Project, _super);
+
+    function Project() {
+      return Project.__super__.constructor.apply(this, arguments);
+    }
+
+    Project.configure("Project", "boardId", "name", "columnMapping", "team", "currentSprint", "settings");
+
+    Project.get = function(boardId) {
+      var deferred;
+      deferred = $q.defer();
+      if (boardId != null) {
+        this.query({
+          where: {
+            boardId: boardId
+          }
+        }).then(function(projectsArray) {
+          var project;
+          project = projectsArray.length > 0 ? projectsArray[0] : null;
+          return deferred.resolve(project);
+        })["catch"](deferred.reject);
+      } else {
+        deferred.reject('No boardId');
+      }
+      return deferred.promise;
+    };
+
+    Project.saveTitle = function(project, title) {
+      if (project.settings == null) {
+        project.settings = {};
+      }
+      project.settings.bdcTitle = title;
+      return project.save().then(function() {
+        return title;
+      });
+    };
+
+    return Project;
+
+  })(Parse.Model);
 });
 
 angular.module('Scrumble.sprint').config(function($stateProvider) {
@@ -2181,11 +2181,14 @@ angular.module('Scrumble.daily-report').controller('DailyReportCtrl', function($
 angular.module('Scrumble.indicators').controller('ClientFormCtrl', function($scope, Sprint) {
   var _ref, _ref1;
   $scope.form = (_ref = $scope.sprint) != null ? (_ref1 = _ref.indicators) != null ? _ref1.clientSurvey : void 0 : void 0;
-  return $scope.save = function() {
+  $scope.save = function() {
     $scope.sprint.indicators = {
       clientSurvey: $scope.form
     };
     return Sprint.save($scope.sprint);
+  };
+  return $scope.print = function() {
+    return window.print();
   };
 });
 
