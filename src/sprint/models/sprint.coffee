@@ -31,7 +31,7 @@ angular.module 'Scrumble.storage'
         sprint
 
     @setActiveSprint = (sprint) ->
-      activeSprint = sprint
+      sprint.isActive = true
       sprint.save()
 
     @deactivateSprint = (sprint) ->

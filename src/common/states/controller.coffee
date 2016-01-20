@@ -23,13 +23,13 @@ angular.module 'Scrumble.common'
   $scope.$on 'project:update', (event, data) ->
     $state.reload 'tab'
     .then ->
-      if data.nextState?
+      if data?.nextState?
         $state.go data.nextState
 
   $scope.$on 'sprint:update', (event, data) ->
     $state.reload 'tab'
     .then ->
-      if data.nextState?
+      if data?.nextState?
         $state.go data.nextState
 
   $scope.menu = [
