@@ -1316,6 +1316,18 @@ angular.module('Scrumble.sprint').config(function($stateProvider) {
         return Sprint.getByProjectId($stateParams.projectId);
       }
     }
+  }).state('print-bdc', {
+    url: '/project/:projectId/sprint/:sprintId/print',
+    controller: 'PrintBDCCtrl',
+    templateUrl: 'sprint/states/print-bdc/view.html',
+    resolve: {
+      project: function(Project, $stateParams) {
+        return Project.find($stateParams.projectId);
+      },
+      sprint: function(Sprint, $stateParams) {
+        return Sprint.find($stateParams.sprintId);
+      }
+    }
   });
 });
 
@@ -1760,16 +1772,6 @@ angular.module('Scrumble.storage').service('userService', function(ScrumbleUser)
 
 angular.module('Scrumble.sprint').controller('BoardCtrl', function() {});
 
-angular.module('Scrumble.common').directive('dynamicFieldsList', function() {
-  return {
-    restrict: 'E',
-    templateUrl: 'common/directives/dynamic-fields/view.html',
-    scope: {
-      availableFields: '='
-    }
-  };
-});
-
 angular.module('Scrumble.common').directive('nssRound', function() {
   return {
     require: 'ngModel',
@@ -1783,6 +1785,16 @@ angular.module('Scrumble.common').directive('nssRound', function() {
         }
         return data;
       });
+    }
+  };
+});
+
+angular.module('Scrumble.common').directive('dynamicFieldsList', function() {
+  return {
+    restrict: 'E',
+    templateUrl: 'common/directives/dynamic-fields/view.html',
+    scope: {
+      availableFields: '='
     }
   };
 });
@@ -2444,7 +2456,7 @@ angular.module('Scrumble.sprint').directive('burndown', function() {
   };
 });
 
-angular.module('Scrumble.sprint').controller('SprintWidgetCtrl', function($scope, $timeout, nssModal, sprintUtils, dynamicFields, bdc, Project, Sprint) {
+angular.module('Scrumble.sprint').controller('SprintWidgetCtrl', function($scope, $timeout, $state, nssModal, sprintUtils, dynamicFields, bdc, Project, Sprint) {
   var DialogController, day, noteInitialized, _i, _len, _ref, _ref1, _ref2;
   dynamicFields.project($scope.project);
   dynamicFields.sprint($scope.sprint);
@@ -2539,12 +2551,10 @@ angular.module('Scrumble.sprint').controller('SprintWidgetCtrl', function($scope
     });
   };
   return $scope.printBDC = function() {
-    var popupWin, printContents;
-    printContents = document.getElementById('bdcgraph').innerHTML;
-    popupWin = window.open('', '_blank');
-    popupWin.document.open();
-    popupWin.document.write('<html><head><link rel="stylesheet" type="text/css" href="style.css" /></head><body onload="window.print()">' + printContents + '</html>');
-    return popupWin.document.close();
+    return $state.go('print-bdc', {
+      projectId: $scope.project.objectId,
+      sprintId: $scope.sprint.objectId
+    });
   };
 });
 
@@ -2685,4 +2695,12 @@ angular.module('Scrumble.sprint').controller('SprintListCtrl', function($scope, 
       sprint: sprint
     });
   };
+});
+
+angular.module('Scrumble.sprint').controller('PrintBDCCtrl', function($scope, $timeout, sprint, project) {
+  $scope.project = project;
+  $scope.sprint = sprint;
+  return $timeout(function() {
+    return window.print();
+  }, 500);
 });
