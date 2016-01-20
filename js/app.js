@@ -1,7 +1,7 @@
 'use strict';
 var app;
 
-app = angular.module('Scrumble', ['ng', 'ngResource', 'ngAnimate', 'ngSanitize', 'ngMaterial', 'md.data.table', 'ui.router', 'app.templates', 'Parse', 'LocalStorageModule', 'satellizer', 'permission', 'trello-api-client', 'Scrumble.sprint', 'Scrumble.common', 'Scrumble.daily-report', 'Scrumble.gmail-client', 'Scrumble.feedback', 'Scrumble.login', 'Scrumble.settings', 'Scrumble.storage', 'Scrumble.board']);
+app = angular.module('Scrumble', ['ng', 'ngResource', 'ngAnimate', 'ngSanitize', 'ngMaterial', 'md.data.table', 'ui.router', 'app.templates', 'Parse', 'LocalStorageModule', 'satellizer', 'permission', 'trello-api-client', 'Scrumble.sprint', 'Scrumble.common', 'Scrumble.daily-report', 'Scrumble.gmail-client', 'Scrumble.feedback', 'Scrumble.login', 'Scrumble.settings', 'Scrumble.storage', 'Scrumble.board', 'Scrumble.indicators']);
 
 app.config(function($locationProvider, $urlRouterProvider, ParseProvider) {
   $locationProvider.hashPrefix('!');
@@ -40,6 +40,8 @@ angular.module('Scrumble.feedback', []);
 
 angular.module('Scrumble.gmail-client', []);
 
+angular.module('Scrumble.indicators', []);
+
 angular.module('Scrumble.login', ['LocalStorageModule', 'satellizer', 'ui.router', 'permission', 'trello-api-client']);
 
 angular.module('Scrumble.settings', ['Scrumble.common']);
@@ -61,6 +63,18 @@ angular.module('Scrumble.board').config(function($stateProvider) {
         if (sprint == null) {
           return $state.go('tab.new-sprint');
         }
+      }
+    },
+    onEnter: function(sprint) {
+      var day, _i, _len, _ref, _results;
+      if (sprint.bdcData != null) {
+        _ref = sprint.bdcData;
+        _results = [];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          day = _ref[_i];
+          _results.push(day.date = moment(day.date).toDate());
+        }
+        return _results;
       }
     }
   });
@@ -416,7 +430,7 @@ angular.module('Scrumble.common').service('trelloUtils', function(TrelloClient) 
 });
 
 angular.module('Scrumble.common').controller('BaseCtrl', function($scope, $mdSidenav, $state, Sprint, Project, sprint, project) {
-  var _ref, _ref1;
+  var _ref, _ref1, _ref2;
   $scope.project = project;
   $scope.sprint = sprint;
   $scope.toggleSidenav = function() {
@@ -469,9 +483,16 @@ angular.module('Scrumble.common').controller('BaseCtrl', function($scope, $mdSid
           title: 'Burndown Chart',
           icon: 'trending-down'
         }, {
-          state: 'tab.edit-sprint',
+          state: 'tab.indicators',
           params: {
             sprintId: (_ref1 = $scope.sprint) != null ? _ref1.objectId : void 0
+          },
+          title: 'Indicators',
+          icon: 'chart-bar'
+        }, {
+          state: 'tab.edit-sprint',
+          params: {
+            sprintId: (_ref2 = $scope.sprint) != null ? _ref2.objectId : void 0
           },
           title: 'Settings',
           icon: 'settings'
@@ -984,6 +1005,27 @@ angular.module('Scrumble.gmail-client').service('mailer', function($state, $root
   };
 });
 
+angular.module('Scrumble.indicators').config(function($stateProvider) {
+  return $stateProvider.state('tab.indicators', {
+    url: '/sprint/:sprintId/indicators',
+    templateUrl: 'indicators/states/base/view.html',
+    resolve: {
+      sprint: function(Sprint, $stateParams) {
+        return Sprint.find($stateParams.sprintId);
+      }
+    }
+  }).state('print-indicators', {
+    url: '/sprint/:sprintId/indicators/client-survey/print',
+    templateUrl: 'indicators/states/print-client-survey/view.html',
+    controller: 'PrintClientSurveyCtrl',
+    resolve: {
+      sprint: function(Sprint, $stateParams) {
+        return Sprint.find($stateParams.sprintId);
+      }
+    }
+  });
+});
+
 angular.module('Scrumble.login').config(function($authProvider) {
   return $authProvider.google({
     clientId: '605908567890-3bg3dmamghq5gd7i9sqsdhvoflef0qku.apps.googleusercontent.com',
@@ -1343,7 +1385,7 @@ angular.module('Scrumble.storage').factory('Sprint', function(Parse, sprintUtils
       return Sprint.__super__.constructor.apply(this, arguments);
     }
 
-    Sprint.configure("Sprint", "project", "number", "dates", "resources", "bdcData", "isActive", "doneColumn", "sprintColumn", "bdcBase64", "goal");
+    Sprint.configure("Sprint", "project", "number", "dates", "resources", "bdcData", "isActive", "doneColumn", "sprintColumn", "bdcBase64", "goal", "indicators");
 
     Sprint.getActiveSprint = function(project) {
       return this.query({
@@ -1770,7 +1812,47 @@ angular.module('Scrumble.storage').service('userService', function(ScrumbleUser)
   };
 });
 
-angular.module('Scrumble.sprint').controller('BoardCtrl', function() {});
+angular.module('Scrumble.sprint').controller('BoardCtrl', function($scope, $timeout, bdc, trelloUtils) {
+  var getCurrentDayIndex;
+  $scope.tableData = angular.copy($scope.sprint.bdcData);
+  $scope.selectedIndex = 0;
+  getCurrentDayIndex = function(data) {
+    var day, i, _i, _len;
+    for (i = _i = 0, _len = data.length; _i < _len; i = ++_i) {
+      day = data[i];
+      if (day.done == null) {
+        return i;
+      }
+    }
+  };
+  $scope.currentDayIndex = getCurrentDayIndex($scope.tableData);
+  $scope.fetchTrelloDonePoints = function() {
+    if ($scope.sprint.doneColumn != null) {
+      return trelloUtils.getColumnPoints($scope.sprint.doneColumn).then(function(points) {
+        return $scope.tableData[$scope.currentDayIndex].done = points;
+      });
+    }
+  };
+  return $scope.save = function() {
+    $scope.sprint.bdcData = $scope.tableData;
+    $scope.selectedIndex = 0;
+    return $timeout(function() {
+      var svg;
+      svg = d3.select('#bdcgraph')[0][0].firstChild;
+      return bdc.saveImage($scope.sprint, svg);
+    });
+  };
+});
+
+angular.module('Scrumble.common').directive('dynamicFieldsList', function() {
+  return {
+    restrict: 'E',
+    templateUrl: 'common/directives/dynamic-fields/view.html',
+    scope: {
+      availableFields: '='
+    }
+  };
+});
 
 angular.module('Scrumble.common').directive('nssRound', function() {
   return {
@@ -1785,16 +1867,6 @@ angular.module('Scrumble.common').directive('nssRound', function() {
         }
         return data;
       });
-    }
-  };
-});
-
-angular.module('Scrumble.common').directive('dynamicFieldsList', function() {
-  return {
-    restrict: 'E',
-    templateUrl: 'common/directives/dynamic-fields/view.html',
-    scope: {
-      availableFields: '='
     }
   };
 });
@@ -2105,6 +2177,35 @@ angular.module('Scrumble.daily-report').controller('DailyReportCtrl', function($
       }
     });
   };
+});
+
+angular.module('Scrumble.indicators').controller('ClientFormCtrl', function($scope, Sprint) {
+  var _ref, _ref1;
+  $scope.form = (_ref = $scope.sprint) != null ? (_ref1 = _ref.indicators) != null ? _ref1.clientSurvey : void 0 : void 0;
+  return $scope.save = function() {
+    $scope.sprint.indicators = {
+      clientSurvey: $scope.form
+    };
+    return Sprint.save($scope.sprint);
+  };
+});
+
+angular.module('Scrumble.indicators').directive('clientForm', function() {
+  return {
+    restrict: 'E',
+    templateUrl: 'indicators/directives/client-form/view.html',
+    scope: {
+      sprint: '='
+    },
+    controller: 'ClientFormCtrl'
+  };
+});
+
+angular.module('Scrumble.indicators').controller('PrintClientSurveyCtrl', function($scope, $timeout, sprint) {
+  $scope.sprint = sprint;
+  return $timeout(function() {
+    return window.print();
+  }, 500);
 });
 
 angular.module('Scrumble.login').controller('ProfilInfoCtrl', function($scope, $timeout, $rootScope, trelloAuth, googleAuth) {
@@ -2480,11 +2581,6 @@ angular.module('Scrumble.sprint').controller('SprintWidgetCtrl', function($scope
   dynamicFields.render((_ref1 = $scope.project) != null ? (_ref2 = _ref1.settings) != null ? _ref2.bdcTitle : void 0 : void 0).then(function(title) {
     return $scope.bdcTitle = title;
   });
-  $scope.openMenu = function($mdOpenMenu, ev) {
-    var originatorEv;
-    originatorEv = ev;
-    return $mdOpenMenu(ev);
-  };
   $scope.openEditTitle = function(ev) {
     return nssModal.show({
       controller: DialogController,
@@ -2504,29 +2600,6 @@ angular.module('Scrumble.sprint').controller('SprintWidgetCtrl', function($scope
         return dynamicFields.render(title);
       }).then(function(title) {
         return $scope.bdcTitle = title;
-      });
-    });
-  };
-  $scope.openEditBDC = function(ev) {
-    return nssModal.show({
-      controller: 'EditBDCCtrl',
-      templateUrl: 'sprint/directives/sprint-widget/editBDC.html',
-      targetEvent: ev,
-      resolve: {
-        data: function() {
-          return angular.copy($scope.sprint.bdcData);
-        },
-        doneColumn: function() {
-          return $scope.sprint.doneColumn;
-        }
-      }
-    }).then(function(data) {
-      $scope.bdcData = data;
-      $scope.sprint.bdcData = data;
-      return $timeout(function() {
-        var svg;
-        svg = d3.select('#bdcgraph')[0][0].firstChild;
-        return bdc.saveImage($scope.sprint, svg);
       });
     });
   };
@@ -2564,40 +2637,10 @@ angular.module('Scrumble.sprint').directive('sprintWidget', function() {
     templateUrl: 'sprint/directives/sprint-widget/view.html',
     scope: {
       project: '=',
-      sprint: '='
+      sprint: '=',
+      callToActions: '='
     },
     controller: 'SprintWidgetCtrl'
-  };
-});
-
-angular.module('Scrumble.sprint').controller('EditBDCCtrl', function($scope, $mdDialog, data, trelloUtils, doneColumn) {
-  var getCurrentDayIndex;
-  $scope.data = data;
-  getCurrentDayIndex = function(data) {
-    var day, i, _i, _len;
-    for (i = _i = 0, _len = data.length; _i < _len; i = ++_i) {
-      day = data[i];
-      if (day.done == null) {
-        return i;
-      }
-    }
-  };
-  $scope.currentDayIndex = getCurrentDayIndex($scope.data);
-  $scope.hide = function() {
-    return $mdDialog.hide();
-  };
-  $scope.cancel = function() {
-    return $mdDialog.cancel();
-  };
-  $scope.save = function() {
-    return $mdDialog.hide($scope.data);
-  };
-  return $scope.fetchTrelloDonePoints = function() {
-    if (doneColumn != null) {
-      return trelloUtils.getColumnPoints(doneColumn).then(function(points) {
-        return $scope.data[$scope.currentDayIndex].done = points;
-      });
-    }
   };
 });
 
