@@ -217,6 +217,92 @@ angular.module('Scrumble.common').controller('ModalCtrl', function($scope, $mdDi
   };
 });
 
+angular.module('Scrumble.common').controller('BaseCtrl', function($scope, $mdSidenav, $state, Sprint, Project, sprint, project) {
+  var _ref, _ref1, _ref2;
+  $scope.project = project;
+  $scope.sprint = sprint;
+  $scope.toggleSidenav = function() {
+    return $mdSidenav('left').toggle();
+  };
+  $scope.goTo = function(item) {
+    $state.go(item.state, item.params);
+    return $mdSidenav('left').close();
+  };
+  $scope.$on('project:update', function(event, data) {
+    return $state.reload('tab').then(function() {
+      if (data.nextState != null) {
+        return $state.go(data.nextState);
+      }
+    });
+  });
+  $scope.$on('sprint:update', function(event, data) {
+    return $state.reload('tab').then(function() {
+      if (data.nextState != null) {
+        return $state.go(data.nextState);
+      }
+    });
+  });
+  return $scope.menu = [
+    {
+      title: 'Project',
+      items: [
+        {
+          state: 'tab.new-sprint',
+          title: 'Start New Sprint',
+          icon: 'plus'
+        }, {
+          state: 'tab.sprint-list',
+          params: {
+            projectId: (_ref = $scope.project) != null ? _ref.objectId : void 0
+          },
+          title: 'Sprints',
+          icon: 'view-list'
+        }, {
+          state: 'tab.project',
+          title: 'Settings',
+          icon: 'settings'
+        }
+      ]
+    }, {
+      title: 'Current Sprint',
+      items: [
+        {
+          state: 'tab.board',
+          title: 'Burndown Chart',
+          icon: 'trending-down'
+        }, {
+          state: 'tab.indicators',
+          params: {
+            sprintId: (_ref1 = $scope.sprint) != null ? _ref1.objectId : void 0
+          },
+          title: 'Indicators',
+          icon: 'chart-bar'
+        }, {
+          state: 'tab.edit-sprint',
+          params: {
+            sprintId: (_ref2 = $scope.sprint) != null ? _ref2.objectId : void 0
+          },
+          title: 'Settings',
+          icon: 'settings'
+        }
+      ]
+    }, {
+      title: 'Daily Mail',
+      items: [
+        {
+          state: 'tab.daily-report',
+          title: 'Write Today\'s Daily',
+          icon: 'gmail'
+        }, {
+          state: 'tab.edit-template',
+          title: 'Edit Template',
+          icon: 'code-braces'
+        }
+      ]
+    }
+  ];
+});
+
 angular.module('Scrumble.common').service('nssModal', function($mdDialog, $mdMedia) {
   return {
     show: function(options) {
@@ -427,92 +513,6 @@ angular.module('Scrumble.common').service('trelloUtils', function(TrelloClient) 
       });
     }
   };
-});
-
-angular.module('Scrumble.common').controller('BaseCtrl', function($scope, $mdSidenav, $state, Sprint, Project, sprint, project) {
-  var _ref, _ref1, _ref2;
-  $scope.project = project;
-  $scope.sprint = sprint;
-  $scope.toggleSidenav = function() {
-    return $mdSidenav('left').toggle();
-  };
-  $scope.goTo = function(item) {
-    $state.go(item.state, item.params);
-    return $mdSidenav('left').close();
-  };
-  $scope.$on('project:update', function(event, data) {
-    return $state.reload('tab').then(function() {
-      if (data.nextState != null) {
-        return $state.go(data.nextState);
-      }
-    });
-  });
-  $scope.$on('sprint:update', function(event, data) {
-    return $state.reload('tab').then(function() {
-      if (data.nextState != null) {
-        return $state.go(data.nextState);
-      }
-    });
-  });
-  return $scope.menu = [
-    {
-      title: 'Project',
-      items: [
-        {
-          state: 'tab.new-sprint',
-          title: 'Start New Sprint',
-          icon: 'plus'
-        }, {
-          state: 'tab.sprint-list',
-          params: {
-            projectId: (_ref = $scope.project) != null ? _ref.objectId : void 0
-          },
-          title: 'Sprints',
-          icon: 'view-list'
-        }, {
-          state: 'tab.project',
-          title: 'Settings',
-          icon: 'settings'
-        }
-      ]
-    }, {
-      title: 'Current Sprint',
-      items: [
-        {
-          state: 'tab.board',
-          title: 'Burndown Chart',
-          icon: 'trending-down'
-        }, {
-          state: 'tab.indicators',
-          params: {
-            sprintId: (_ref1 = $scope.sprint) != null ? _ref1.objectId : void 0
-          },
-          title: 'Indicators',
-          icon: 'chart-bar'
-        }, {
-          state: 'tab.edit-sprint',
-          params: {
-            sprintId: (_ref2 = $scope.sprint) != null ? _ref2.objectId : void 0
-          },
-          title: 'Settings',
-          icon: 'settings'
-        }
-      ]
-    }, {
-      title: 'Daily Mail',
-      items: [
-        {
-          state: 'tab.daily-report',
-          title: 'Write Today\'s Daily',
-          icon: 'gmail'
-        }, {
-          state: 'tab.edit-template',
-          title: 'Edit Template',
-          icon: 'code-braces'
-        }
-      ]
-    }
-  ];
 });
 
 angular.module('Scrumble.daily-report').config(function($stateProvider) {
