@@ -9,3 +9,6 @@ angular.module 'Scrumble.indicators'
     $scope.sprint.indicators =
       clientSurvey: $scope.form
     Sprint.save $scope.sprint
+
+  $scope.print = ->
+    window.print()

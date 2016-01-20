@@ -1,5 +1,8 @@
 md-card-content.md-padding
   h2.md-title Satisfaction survey
+    md-button.md-icon-button(ng-click="print()")
+      md-icon(md-svg-src="printer", aria-label="Print")
+        md-tooltip(md-direction="bottom") Print
 
   p.question What is your appreciation of the speed of the team?
   .answer
