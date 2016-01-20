@@ -217,92 +217,6 @@ angular.module('Scrumble.common').controller('ModalCtrl', function($scope, $mdDi
   };
 });
 
-angular.module('Scrumble.common').controller('BaseCtrl', function($scope, $mdSidenav, $state, Sprint, Project, sprint, project) {
-  var _ref, _ref1, _ref2;
-  $scope.project = project;
-  $scope.sprint = sprint;
-  $scope.toggleSidenav = function() {
-    return $mdSidenav('left').toggle();
-  };
-  $scope.goTo = function(item) {
-    $state.go(item.state, item.params);
-    return $mdSidenav('left').close();
-  };
-  $scope.$on('project:update', function(event, data) {
-    return $state.reload('tab').then(function() {
-      if (data.nextState != null) {
-        return $state.go(data.nextState);
-      }
-    });
-  });
-  $scope.$on('sprint:update', function(event, data) {
-    return $state.reload('tab').then(function() {
-      if (data.nextState != null) {
-        return $state.go(data.nextState);
-      }
-    });
-  });
-  return $scope.menu = [
-    {
-      title: 'Project',
-      items: [
-        {
-          state: 'tab.new-sprint',
-          title: 'Start New Sprint',
-          icon: 'plus'
-        }, {
-          state: 'tab.sprint-list',
-          params: {
-            projectId: (_ref = $scope.project) != null ? _ref.objectId : void 0
-          },
-          title: 'Sprints',
-          icon: 'view-list'
-        }, {
-          state: 'tab.project',
-          title: 'Settings',
-          icon: 'settings'
-        }
-      ]
-    }, {
-      title: 'Current Sprint',
-      items: [
-        {
-          state: 'tab.board',
-          title: 'Burndown Chart',
-          icon: 'trending-down'
-        }, {
-          state: 'tab.indicators',
-          params: {
-            sprintId: (_ref1 = $scope.sprint) != null ? _ref1.objectId : void 0
-          },
-          title: 'Indicators',
-          icon: 'chart-bar'
-        }, {
-          state: 'tab.edit-sprint',
-          params: {
-            sprintId: (_ref2 = $scope.sprint) != null ? _ref2.objectId : void 0
-          },
-          title: 'Settings',
-          icon: 'settings'
-        }
-      ]
-    }, {
-      title: 'Daily Mail',
-      items: [
-        {
-          state: 'tab.daily-report',
-          title: 'Write Today\'s Daily',
-          icon: 'gmail'
-        }, {
-          state: 'tab.edit-template',
-          title: 'Edit Template',
-          icon: 'code-braces'
-        }
-      ]
-    }
-  ];
-});
-
 angular.module('Scrumble.common').service('nssModal', function($mdDialog, $mdMedia) {
   return {
     show: function(options) {
@@ -513,6 +427,92 @@ angular.module('Scrumble.common').service('trelloUtils', function(TrelloClient) 
       });
     }
   };
+});
+
+angular.module('Scrumble.common').controller('BaseCtrl', function($scope, $mdSidenav, $state, Sprint, Project, sprint, project) {
+  var _ref, _ref1, _ref2;
+  $scope.project = project;
+  $scope.sprint = sprint;
+  $scope.toggleSidenav = function() {
+    return $mdSidenav('left').toggle();
+  };
+  $scope.goTo = function(item) {
+    $state.go(item.state, item.params);
+    return $mdSidenav('left').close();
+  };
+  $scope.$on('project:update', function(event, data) {
+    return $state.reload('tab').then(function() {
+      if ((data != null ? data.nextState : void 0) != null) {
+        return $state.go(data.nextState);
+      }
+    });
+  });
+  $scope.$on('sprint:update', function(event, data) {
+    return $state.reload('tab').then(function() {
+      if ((data != null ? data.nextState : void 0) != null) {
+        return $state.go(data.nextState);
+      }
+    });
+  });
+  return $scope.menu = [
+    {
+      title: 'Project',
+      items: [
+        {
+          state: 'tab.new-sprint',
+          title: 'Start New Sprint',
+          icon: 'plus'
+        }, {
+          state: 'tab.sprint-list',
+          params: {
+            projectId: (_ref = $scope.project) != null ? _ref.objectId : void 0
+          },
+          title: 'Sprints',
+          icon: 'view-list'
+        }, {
+          state: 'tab.project',
+          title: 'Settings',
+          icon: 'settings'
+        }
+      ]
+    }, {
+      title: 'Current Sprint',
+      items: [
+        {
+          state: 'tab.board',
+          title: 'Burndown Chart',
+          icon: 'trending-down'
+        }, {
+          state: 'tab.indicators',
+          params: {
+            sprintId: (_ref1 = $scope.sprint) != null ? _ref1.objectId : void 0
+          },
+          title: 'Indicators',
+          icon: 'chart-bar'
+        }, {
+          state: 'tab.edit-sprint',
+          params: {
+            sprintId: (_ref2 = $scope.sprint) != null ? _ref2.objectId : void 0
+          },
+          title: 'Settings',
+          icon: 'settings'
+        }
+      ]
+    }, {
+      title: 'Daily Mail',
+      items: [
+        {
+          state: 'tab.daily-report',
+          title: 'Write Today\'s Daily',
+          icon: 'gmail'
+        }, {
+          state: 'tab.edit-template',
+          title: 'Edit Template',
+          icon: 'code-braces'
+        }
+      ]
+    }
+  ];
 });
 
 angular.module('Scrumble.daily-report').config(function($stateProvider) {
@@ -1408,8 +1408,7 @@ angular.module('Scrumble.storage').factory('Sprint', function(Parse, sprintUtils
     };
 
     Sprint.setActiveSprint = function(sprint) {
-      var activeSprint;
-      activeSprint = sprint;
+      sprint.isActive = true;
       return sprint.save();
     };
 
@@ -2557,6 +2556,71 @@ angular.module('Scrumble.sprint').directive('burndown', function() {
   };
 });
 
+angular.module('Scrumble.sprint').controller('SprintDetailsCtrl', function($scope, $mdMedia, $mdDialog, Sprint) {
+  var BDCDialogController;
+  $scope.showBurndown = function(ev, sprint) {
+    var useFullScreen;
+    useFullScreen = $mdMedia('sm') || $mdMedia('xs');
+    return $mdDialog.show({
+      controller: BDCDialogController,
+      templateUrl: 'sprint/states/list/bdc.dialog.html',
+      parent: angular.element(document.body),
+      targetEvent: ev,
+      clickOutsideToClose: true,
+      resolve: {
+        sprint: function() {
+          return sprint;
+        }
+      },
+      fullscreen: useFullScreen
+    });
+  };
+  $scope.activateSprint = function(sprint) {
+    var s, _i, _len, _ref;
+    _ref = $scope.sprints;
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      s = _ref[_i];
+      if (s.isActive && s !== sprint) {
+        Sprint.deactivateSprint(s);
+      }
+    }
+    return Sprint.setActiveSprint(sprint).then(function() {
+      return $scope.$emit('sprint:update');
+    });
+  };
+  $scope["delete"] = function(event) {
+    var confirm;
+    confirm = $mdDialog.confirm().title('Delete sprints').textContent('Are you sure you want to do what you\'re trying to do ?').ariaLabel('Delete sprints dialog').targetEvent(event).ok('Delete').cancel('Cancel');
+    return $mdDialog.show(confirm).then(function() {
+      var sprint, _i, _len, _ref;
+      _ref = $scope.selected;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        sprint = _ref[_i];
+        sprint.destroy().then(function() {
+          return _.remove($scope.sprints, sprint);
+        });
+      }
+      return $scope.selected = [];
+    });
+  };
+  return BDCDialogController = function($scope, $mdDialog, sprint) {
+    $scope.sprint = sprint;
+    return $scope.cancel = $mdDialog.cancel;
+  };
+});
+
+angular.module('Scrumble.sprint').directive('sprintDetails', function() {
+  return {
+    restrict: 'E',
+    templateUrl: 'sprint/directives/sprint-details/view.html',
+    scope: {
+      sprint: '=',
+      sprints: '='
+    },
+    controller: 'SprintDetailsCtrl'
+  };
+});
+
 angular.module('Scrumble.sprint').controller('SprintWidgetCtrl', function($scope, $timeout, $state, nssModal, sprintUtils, dynamicFields, bdc, Project, Sprint) {
   var DialogController, day, noteInitialized, _i, _len, _ref, _ref1, _ref2;
   dynamicFields.project($scope.project);
@@ -2678,66 +2742,14 @@ angular.module('Scrumble.sprint').controller('EditSprintCtrl', function($scope, 
   return $scope.checkSprint('team');
 });
 
-angular.module('Scrumble.sprint').controller('SprintListCtrl', function($scope, $mdDialog, $mdMedia, sprintUtils, sprints, project, Sprint) {
-  var BDCDialogController;
+angular.module('Scrumble.sprint').controller('SprintListCtrl', function($scope, sprintUtils, sprints, project) {
   sprints.forEach(function(sprint) {
     sprint.speed = sprintUtils.computeSpeed(sprint);
     sprint.dates.start = moment(sprint.dates.start).format("MMMM Do YYYY");
     return sprint.dates.end = moment(sprint.dates.end).format("MMMM Do YYYY");
   });
   $scope.sprints = sprints;
-  $scope.project = project;
-  $scope.selected = [];
-  $scope["delete"] = function(event) {
-    var confirm;
-    confirm = $mdDialog.confirm().title('Delete sprints').textContent('Are you sure you want to do what you\'re trying to do ?').ariaLabel('Delete sprints dialog').targetEvent(event).ok('Delete').cancel('Cancel');
-    return $mdDialog.show(confirm).then(function() {
-      var sprint, _i, _len, _ref;
-      _ref = $scope.selected;
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        sprint = _ref[_i];
-        sprint.destroy().then(function() {
-          return _.remove($scope.sprints, sprint);
-        });
-      }
-      return $scope.selected = [];
-    });
-  };
-  BDCDialogController = function($scope, $mdDialog, sprint) {
-    $scope.sprint = sprint;
-    return $scope.cancel = $mdDialog.cancel;
-  };
-  $scope.showBurndown = function(ev, sprint) {
-    var useFullScreen;
-    useFullScreen = $mdMedia('sm') || $mdMedia('xs');
-    return $mdDialog.show({
-      controller: BDCDialogController,
-      templateUrl: 'sprint/states/list/bdc.dialog.html',
-      parent: angular.element(document.body),
-      targetEvent: ev,
-      clickOutsideToClose: true,
-      resolve: {
-        sprint: function() {
-          return sprint;
-        }
-      },
-      fullscreen: useFullScreen
-    });
-  };
-  return $scope.activateSprint = function(sprint) {
-    var s, _i, _len, _ref;
-    _ref = $scope.sprints;
-    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-      s = _ref[_i];
-      if (s.isActive && s !== sprint) {
-        Sprint.deactivateSprint(s);
-      }
-    }
-    Sprint.setActiveSprint(sprint);
-    return $scope.$emit('sprint:update', {
-      sprint: sprint
-    });
-  };
+  return $scope.project = project;
 });
 
 angular.module('Scrumble.sprint').controller('PrintBDCCtrl', function($scope, $timeout, sprint, project) {
