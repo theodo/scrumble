@@ -57,6 +57,12 @@ angular.module 'Scrumble.common'
       title: 'Burndown Chart'
       icon: 'trending-down'
     ,
+      state: 'tab.indicators'
+      params:
+        sprintId: $scope.sprint?.objectId
+      title: 'Indicators'
+      icon: 'chart-bar'
+    ,
       state: 'tab.edit-sprint'
       params:
         sprintId: $scope.sprint?.objectId
