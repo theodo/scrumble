@@ -9,3 +9,8 @@ angular.module 'Scrumble.board'
       checkProjectAndSprint: (project, sprint, $state) ->
         return $state.go 'tab.project' unless project?
         return $state.go 'tab.new-sprint' unless sprint?
+    onEnter: (sprint) ->
+      if sprint.bdcData?
+        # the date is saved as a string so we've to convert it
+        for day in sprint.bdcData
+          day.date = moment(day.date).toDate()
