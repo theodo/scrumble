@@ -137,6 +137,9 @@ md-fab-trigger {
     transform: scale3D(0, 0, 1);
   }
 }
+md-toast {
+  position: fixed;
+}
 
 @media print {
   header,
