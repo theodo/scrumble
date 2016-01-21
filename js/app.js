@@ -80,6 +80,18 @@ angular.module('Scrumble.board').config(function($stateProvider) {
   });
 });
 
+angular.module('Scrumble.common').controller('ModalCtrl', function($scope, $mdDialog) {
+  $scope.hide = function() {
+    return $mdDialog.hide();
+  };
+  $scope.cancel = function() {
+    return $mdDialog.cancel();
+  };
+  return $scope.save = function(response) {
+    return $mdDialog.hide(response);
+  };
+});
+
 angular.module('Scrumble.common').run(function($rootScope, $state, $window) {
   var finish;
   finish = function() {
@@ -203,18 +215,6 @@ angular.module('Scrumble.common').config(function($mdThemingProvider) {
   }).warnPalette('customWarn', {
     'default': '500'
   }).backgroundPalette('customBackground');
-});
-
-angular.module('Scrumble.common').controller('ModalCtrl', function($scope, $mdDialog) {
-  $scope.hide = function() {
-    return $mdDialog.hide();
-  };
-  $scope.cancel = function() {
-    return $mdDialog.cancel();
-  };
-  return $scope.save = function(response) {
-    return $mdDialog.hide(response);
-  };
 });
 
 angular.module('Scrumble.common').service('nssModal', function($mdDialog, $mdMedia) {
@@ -1009,17 +1009,9 @@ angular.module('Scrumble.indicators').config(function($stateProvider) {
   return $stateProvider.state('tab.indicators', {
     url: '/sprint/:sprintId/indicators',
     templateUrl: 'indicators/states/base/view.html',
+    controller: 'IndicatorsCtrl',
     resolve: {
-      sprint: function(Sprint, $stateParams) {
-        return Sprint.find($stateParams.sprintId);
-      }
-    }
-  }).state('print-indicators', {
-    url: '/sprint/:sprintId/indicators/client-survey/print',
-    templateUrl: 'indicators/states/print-client-survey/view.html',
-    controller: 'PrintClientSurveyCtrl',
-    resolve: {
-      sprint: function(Sprint, $stateParams) {
+      currentSprint: function(Sprint, $stateParams) {
         return Sprint.find($stateParams.sprintId);
       }
     }
@@ -1150,6 +1142,54 @@ angular.module('Scrumble.settings').config(function($stateProvider) {
   });
 });
 
+var __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+angular.module('Scrumble.storage').factory('Project', function(Parse, $q) {
+  var Project;
+  return Project = (function(_super) {
+    __extends(Project, _super);
+
+    function Project() {
+      return Project.__super__.constructor.apply(this, arguments);
+    }
+
+    Project.configure("Project", "boardId", "name", "columnMapping", "team", "currentSprint", "settings");
+
+    Project.get = function(boardId) {
+      var deferred;
+      deferred = $q.defer();
+      if (boardId != null) {
+        this.query({
+          where: {
+            boardId: boardId
+          }
+        }).then(function(projectsArray) {
+          var project;
+          project = projectsArray.length > 0 ? projectsArray[0] : null;
+          return deferred.resolve(project);
+        })["catch"](deferred.reject);
+      } else {
+        deferred.reject('No boardId');
+      }
+      return deferred.promise;
+    };
+
+    Project.saveTitle = function(project, title) {
+      if (project.settings == null) {
+        project.settings = {};
+      }
+      project.settings.bdcTitle = title;
+      return project.save().then(function() {
+        return title;
+      });
+    };
+
+    return Project;
+
+  })(Parse.Model);
+});
+
 angular.module('Scrumble.settings').service('projectUtils', function($q, ScrumbleUser, Project) {
   var currentProject, roles;
   currentProject = null;
@@ -1236,54 +1276,6 @@ angular.module('Scrumble.settings').service('projectUtils', function($q, Scrumbl
       return currentProject = project;
     }
   };
-});
-
-var __hasProp = {}.hasOwnProperty,
-  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
-
-angular.module('Scrumble.storage').factory('Project', function(Parse, $q) {
-  var Project;
-  return Project = (function(_super) {
-    __extends(Project, _super);
-
-    function Project() {
-      return Project.__super__.constructor.apply(this, arguments);
-    }
-
-    Project.configure("Project", "boardId", "name", "columnMapping", "team", "currentSprint", "settings");
-
-    Project.get = function(boardId) {
-      var deferred;
-      deferred = $q.defer();
-      if (boardId != null) {
-        this.query({
-          where: {
-            boardId: boardId
-          }
-        }).then(function(projectsArray) {
-          var project;
-          project = projectsArray.length > 0 ? projectsArray[0] : null;
-          return deferred.resolve(project);
-        })["catch"](deferred.reject);
-      } else {
-        deferred.reject('No boardId');
-      }
-      return deferred.promise;
-    };
-
-    Project.saveTitle = function(project, title) {
-      if (project.settings == null) {
-        project.settings = {};
-      }
-      project.settings.bdcTitle = title;
-      return project.save().then(function() {
-        return title;
-      });
-    };
-
-    return Project;
-
-  })(Parse.Model);
 });
 
 angular.module('Scrumble.sprint').config(function($stateProvider) {
@@ -2178,18 +2170,112 @@ angular.module('Scrumble.daily-report').controller('DailyReportCtrl', function($
   };
 });
 
-angular.module('Scrumble.indicators').controller('ClientFormCtrl', function($scope, Sprint) {
-  var _ref, _ref1;
-  $scope.form = (_ref = $scope.sprint) != null ? (_ref1 = _ref.indicators) != null ? _ref1.clientSurvey : void 0 : void 0;
+angular.module('Scrumble.indicators').controller('ClientFormCtrl', function($scope, Sprint, loadingToast, defaultSatisfactionForm) {
+  var _ref, _ref1, _ref2, _ref3;
+  if (((_ref = $scope.sprint) != null ? (_ref1 = _ref.indicators) != null ? _ref1.clientSurvey : void 0 : void 0) != null) {
+    $scope.survey = (_ref2 = $scope.sprint) != null ? (_ref3 = _ref2.indicators) != null ? _ref3.clientSurvey : void 0 : void 0;
+  } else {
+    $scope.survey = angular.copy(defaultSatisfactionForm);
+  }
   $scope.save = function() {
     $scope.sprint.indicators = {
-      clientSurvey: $scope.form
+      clientSurvey: $scope.survey
     };
     return Sprint.save($scope.sprint);
   };
   return $scope.print = function() {
     return window.print();
   };
+});
+
+angular.module('Scrumble.indicators').service('defaultSatisfactionForm', function() {
+  return [
+    {
+      label: 'What is your appreciation of the speed of the team?',
+      type: 'radio',
+      items: [
+        {
+          value: 5,
+          label: '5 - Excellent'
+        }, {
+          value: 4,
+          label: '4 - Very good'
+        }, {
+          value: 3,
+          label: '3 - Good'
+        }, {
+          value: 2,
+          label: '2 - Average'
+        }, {
+          value: 1,
+          label: '1 - Insufficient'
+        }, {
+          value: 0,
+          label: '0 - Very insufficient'
+        }
+      ]
+    }, {
+      label: 'What is your appreciation of the quality of the coaching?',
+      type: 'radio',
+      items: [
+        {
+          value: 5,
+          label: '5 - Excellent'
+        }, {
+          value: 4,
+          label: '4 - Very good'
+        }, {
+          value: 3,
+          label: '3 - Good'
+        }, {
+          value: 2,
+          label: '2 - Average'
+        }, {
+          value: 1,
+          label: '1 - Insufficient'
+        }, {
+          value: 0,
+          label: '0 - Very insufficient'
+        }
+      ]
+    }, {
+      label: 'What change/improve would make you to improve your appreciation?',
+      type: 'textarea'
+    }, {
+      label: 'If you had a magic wand, what is "the" thing you would change',
+      type: 'textarea'
+    }, {
+      label: 'Would you recommend us?',
+      type: 'radio',
+      items: [
+        {
+          value: 'yes-of-course',
+          label: 'Yes of course'
+        }, {
+          value: 'yes',
+          label: 'Yes'
+        }, {
+          value: 'not-really',
+          label: 'Not really'
+        }, {
+          value: 'not-at-all',
+          label: 'Not at all'
+        }
+      ]
+    }, {
+      label: 'Would you like to have a sales meeting in the coming week?',
+      type: 'radio',
+      items: [
+        {
+          value: 'yes',
+          label: 'Yes'
+        }, {
+          value: 'no',
+          label: 'No, it is not necessary for now'
+        }
+      ]
+    }
+  ];
 });
 
 angular.module('Scrumble.indicators').directive('clientForm', function() {
@@ -2203,11 +2289,8 @@ angular.module('Scrumble.indicators').directive('clientForm', function() {
   };
 });
 
-angular.module('Scrumble.indicators').controller('PrintClientSurveyCtrl', function($scope, $timeout, sprint) {
-  $scope.sprint = sprint;
-  return $timeout(function() {
-    return window.print();
-  }, 500);
+angular.module('Scrumble.indicators').controller('IndicatorsCtrl', function($scope, currentSprint) {
+  return $scope.currentSprint = currentSprint;
 });
 
 angular.module('Scrumble.login').controller('ProfilInfoCtrl', function($scope, $timeout, $rootScope, trelloAuth, googleAuth) {
