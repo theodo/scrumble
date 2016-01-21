@@ -1,17 +1,19 @@
 div(layout="column")
-  h2.md-title Sprint {{ sprint.number }}: {{ sprint.goal }}
-  p Dates: {{ sprint.dates.start }} -> {{ sprint.dates.end }}
-  p(ng-if="sprint.speed") Real Speed: {{ sprint.speed }}
-md-grid-tile-footer(layout="row")
-  md-button.md-icon-button(ng-click="activateSprint(sprint)")
-    md-icon(md-svg-icon="hexagon" ng-class="{ 'active-sprint': sprint.isActive }")
-    md-tooltip(md-direction="top") Activate This Sprint
-  md-button.md-icon-button(ng-click="showBurndown($event, sprint)")
-    md-icon(md-svg-icon="trending-down")
-    md-tooltip(md-direction="top") See Burndown Chart
-  md-button.md-icon-button(aria-label="indicators" ng-click="indicators()")
-    md-icon(md-svg-icon="chart-bar") Indicators
-    md-tooltip(md-direction="top") Go to indicators
-  md-button.md-icon-button(aria-label="delete" ng-click="delete()")
-    md-icon(md-svg-icon="delete")
-    md-tooltip(md-direction="top") Delete this sprint
+  div(layout="column" layout-align="start center")
+    div(flex)
+      h2.md-title Sprint {{ sprint.number }}: {{ sprint.goal }}
+    div(flex) {{ sprint.dates.start | date : 'MMMM d' }} to {{ sprint.dates.end | date : 'MMMM d' }}
+    div(flex ng-if="sprint.speed") Real Speed: {{ sprint.speed }}
+  div(layout="row" layout-align="center")
+    md-button.md-icon-button(ng-click="activateSprint(sprint)")
+      md-icon(md-svg-icon="hexagon" ng-class="{ 'active-sprint': sprint.isActive }")
+      md-tooltip(md-direction="top") Activate This Sprint
+    md-button.md-icon-button(ng-click="showBurndown($event, sprint)")
+      md-icon(md-svg-icon="trending-down")
+      md-tooltip(md-direction="top") See Burndown Chart
+    md-button.md-icon-button(aria-label="indicators" ng-click="indicators()")
+      md-icon(md-svg-icon="chart-bar") Indicators
+      md-tooltip(md-direction="top") Go to indicators
+    md-button.md-icon-button(aria-label="delete" ng-click="delete()")
+      md-icon(md-svg-icon="delete")
+      md-tooltip(md-direction="top") Delete this sprint

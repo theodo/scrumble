@@ -35,10 +35,8 @@ angular.module 'Scrumble.sprint'
     .cancel 'Cancel'
 
     $mdDialog.show(confirm).then ->
-      for sprint in $scope.selected
-        sprint.destroy().then ->
-          _.remove $scope.sprints, sprint
-      $scope.selected = []
+      sprint.destroy().then ->
+        _.remove $scope.sprints, sprint
 
   $scope.indicators = ->
     $state.go 'tab.indicators', {sprintId: sprint.objectId}

@@ -7,6 +7,7 @@ angular.module 'Scrumble.sprint'
 ) ->
   _.forEach sprints, (sprint) ->
     sprint.speed = sprintUtils.computeSpeed sprint
+    sprint.success = sprintUtils.computeSuccess sprint
 
   $scope.sprints = sprints
   $scope.project = project
