@@ -35,20 +35,6 @@ angular.module 'Scrumble.sprint'
         Sprint.find($stateParams.sprintId)
         .catch (err) ->
           $state.go 'tab.new-sprint'
-    onEnter: (sprint) ->
-      if sprint.bdcData?
-        # the date is saved as a string so we've to convert it
-        for day in sprint.bdcData
-          day.date = moment(day.date).toDate()
-
-      # check start/end date consistency
-      if _.isArray(sprint?.dates?.days) and sprint?.dates?.days.length > 0
-        [first, ..., last] = sprint.dates.days
-        sprint.dates.start = moment(first.date).toDate()
-        sprint.dates.end = moment(last.date).toDate()
-      else
-        sprint.dates.start = null
-        sprint.dates.end = null
   .state 'tab.sprint-list',
     url: '/project/:projectId/sprints'
     controller: 'SprintListCtrl'
