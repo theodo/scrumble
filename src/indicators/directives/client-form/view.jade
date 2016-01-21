@@ -14,4 +14,4 @@ md-card-content.md-padding
         textarea(ng-model="question.answer" aria-label="answer")
   
   section(layout="row" layout-sm="column" layout-align="center center" layout-wrap)
-    md-button.md-raised.md-primary(ng-click="save()") Save
+    md-button.md-raised.md-primary(ng-click="save()" ng-disabled="saving") Save
