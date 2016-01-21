@@ -19,7 +19,7 @@ angular.module 'Scrumble.storage'
     find = @find
 
     handleDates = (sprint) ->
-      if sprint.bdcData?
+      if sprint?.bdcData?
         # the date is saved as a string so we've to convert it
         for day in sprint.bdcData
           day.date = moment(day.date).toDate()
