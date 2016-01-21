@@ -36,13 +36,13 @@ angular.module('Scrumble.common', ['trello-api-client', 'ngMaterial', 'ui.router
 
 angular.module('Scrumble.daily-report', ['trello-api-client', 'ui.router']);
 
-angular.module('Scrumble.feedback', []);
-
 angular.module('Scrumble.gmail-client', []);
 
 angular.module('Scrumble.indicators', []);
 
 angular.module('Scrumble.login', ['LocalStorageModule', 'satellizer', 'ui.router', 'permission', 'trello-api-client']);
+
+angular.module('Scrumble.feedback', []);
 
 angular.module('Scrumble.settings', ['Scrumble.common']);
 
@@ -78,18 +78,6 @@ angular.module('Scrumble.board').config(function($stateProvider) {
       }
     }
   });
-});
-
-angular.module('Scrumble.common').controller('ModalCtrl', function($scope, $mdDialog) {
-  $scope.hide = function() {
-    return $mdDialog.hide();
-  };
-  $scope.cancel = function() {
-    return $mdDialog.cancel();
-  };
-  return $scope.save = function(response) {
-    return $mdDialog.hide(response);
-  };
 });
 
 angular.module('Scrumble.common').run(function($rootScope, $state, $window) {
@@ -215,6 +203,18 @@ angular.module('Scrumble.common').config(function($mdThemingProvider) {
   }).warnPalette('customWarn', {
     'default': '500'
   }).backgroundPalette('customBackground');
+});
+
+angular.module('Scrumble.common').controller('ModalCtrl', function($scope, $mdDialog) {
+  $scope.hide = function() {
+    return $mdDialog.hide();
+  };
+  $scope.cancel = function() {
+    return $mdDialog.cancel();
+  };
+  return $scope.save = function(response) {
+    return $mdDialog.hide(response);
+  };
 });
 
 angular.module('Scrumble.common').service('nssModal', function($mdDialog, $mdMedia) {
@@ -876,77 +876,6 @@ angular.module('Scrumble.daily-report').service('reportBuilder', function($q, Sc
   };
 });
 
-angular.module('Scrumble.feedback').controller('feedbackCallToActionCtrl', function($scope, $mdDialog, $mdMedia) {
-  var DialogController;
-  $scope.customFullscreen = $mdMedia('sm');
-  $scope.openFeedbackModal = function(ev) {
-    $mdDialog.show({
-      controller: DialogController,
-      templateUrl: 'feedback/directives/dialog.html',
-      parent: angular.element(document.body),
-      targetEvent: ev,
-      clickOutsideToClose: true,
-      fullscreen: $mdMedia('sm') && $scope.customFullscreen
-    }).then((function(answer) {
-      $scope.status = 'You said the information was "' + answer + '".';
-    }), function() {
-      $scope.status = 'You cancelled the dialog.';
-    });
-    $scope.$watch((function() {
-      return $mdMedia('sm');
-    }), function(sm) {
-      $scope.customFullscreen = sm === true;
-    });
-  };
-  return DialogController = function($scope, $mdDialog, $controller, Feedback, localStorageService) {
-    angular.extend(this, $controller('ModalCtrl', {
-      $scope: $scope
-    }));
-    $scope.message = null;
-    $scope.doing = false;
-    return $scope.send = function() {
-      var feedback;
-      if ($scope.message != null) {
-        $scope.doing = true;
-        feedback = new Feedback();
-        feedback.reporter = localStorageService.get('trello_email');
-        feedback.message = $scope.message;
-        return feedback.save().then(function() {
-          return $mdDialog.hide();
-        });
-      }
-    };
-  };
-});
-
-angular.module('Scrumble.feedback').directive('feedback', function() {
-  return {
-    restrict: 'E',
-    templateUrl: 'feedback/directives/call-to-action.html',
-    scope: {},
-    controller: 'feedbackCallToActionCtrl'
-  };
-});
-
-var __hasProp = {}.hasOwnProperty,
-  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
-
-angular.module('Scrumble.feedback').factory('Feedback', function(Parse) {
-  var Feedback;
-  return Feedback = (function(_super) {
-    __extends(Feedback, _super);
-
-    function Feedback() {
-      return Feedback.__super__.constructor.apply(this, arguments);
-    }
-
-    Feedback.configure("Feedback", "reporter", "message");
-
-    return Feedback;
-
-  })(Parse.Model);
-});
-
 angular.module('Scrumble.gmail-client').constant('SEND_EMAIL_ENDPOINT', 'https://content.googleapis.com/gmail/v1/users/me/messages/send').service('gmailClient', function($http, googleAuth, SEND_EMAIL_ENDPOINT) {
   return {
     send: function(raw) {
@@ -1122,6 +1051,77 @@ angular.module('Scrumble.login').service('trelloAuth', function(localStorageServ
       return token != null;
     }
   };
+});
+
+angular.module('Scrumble.feedback').controller('feedbackCallToActionCtrl', function($scope, $mdDialog, $mdMedia) {
+  var DialogController;
+  $scope.customFullscreen = $mdMedia('sm');
+  $scope.openFeedbackModal = function(ev) {
+    $mdDialog.show({
+      controller: DialogController,
+      templateUrl: 'feedback/directives/dialog.html',
+      parent: angular.element(document.body),
+      targetEvent: ev,
+      clickOutsideToClose: true,
+      fullscreen: $mdMedia('sm') && $scope.customFullscreen
+    }).then((function(answer) {
+      $scope.status = 'You said the information was "' + answer + '".';
+    }), function() {
+      $scope.status = 'You cancelled the dialog.';
+    });
+    $scope.$watch((function() {
+      return $mdMedia('sm');
+    }), function(sm) {
+      $scope.customFullscreen = sm === true;
+    });
+  };
+  return DialogController = function($scope, $mdDialog, $controller, Feedback, localStorageService) {
+    angular.extend(this, $controller('ModalCtrl', {
+      $scope: $scope
+    }));
+    $scope.message = null;
+    $scope.doing = false;
+    return $scope.send = function() {
+      var feedback;
+      if ($scope.message != null) {
+        $scope.doing = true;
+        feedback = new Feedback();
+        feedback.reporter = localStorageService.get('trello_email');
+        feedback.message = $scope.message;
+        return feedback.save().then(function() {
+          return $mdDialog.hide();
+        });
+      }
+    };
+  };
+});
+
+angular.module('Scrumble.feedback').directive('feedback', function() {
+  return {
+    restrict: 'E',
+    templateUrl: 'feedback/directives/call-to-action.html',
+    scope: {},
+    controller: 'feedbackCallToActionCtrl'
+  };
+});
+
+var __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+angular.module('Scrumble.feedback').factory('Feedback', function(Parse) {
+  var Feedback;
+  return Feedback = (function(_super) {
+    __extends(Feedback, _super);
+
+    function Feedback() {
+      return Feedback.__super__.constructor.apply(this, arguments);
+    }
+
+    Feedback.configure("Feedback", "reporter", "message");
+
+    return Feedback;
+
+  })(Parse.Model);
 });
 
 angular.module('Scrumble.settings').config(function($stateProvider) {
@@ -2172,14 +2172,14 @@ angular.module('Scrumble.daily-report').controller('DailyReportCtrl', function($
 
 angular.module('Scrumble.indicators').controller('ClientFormCtrl', function($scope, Sprint, loadingToast, defaultSatisfactionForm) {
   var _ref, _ref1, _ref2, _ref3;
-  if (((_ref = $scope.sprint) != null ? (_ref1 = _ref.indicators) != null ? _ref1.clientSurvey : void 0 : void 0) != null) {
-    $scope.survey = (_ref2 = $scope.sprint) != null ? (_ref3 = _ref2.indicators) != null ? _ref3.clientSurvey : void 0 : void 0;
+  if (((_ref = $scope.sprint) != null ? (_ref1 = _ref.indicators) != null ? _ref1.satisfactionSurvey : void 0 : void 0) != null) {
+    $scope.survey = (_ref2 = $scope.sprint) != null ? (_ref3 = _ref2.indicators) != null ? _ref3.satisfactionSurvey : void 0 : void 0;
   } else {
     $scope.survey = angular.copy(defaultSatisfactionForm);
   }
   $scope.save = function() {
     $scope.sprint.indicators = {
-      clientSurvey: $scope.survey
+      satisfactionSurvey: $scope.survey
     };
     return Sprint.save($scope.sprint);
   };
