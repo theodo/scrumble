@@ -32,8 +32,6 @@ app.run(function($rootScope, $state) {
 
 angular.module('Scrumble.board', ['ui.router', 'ngMaterial']);
 
-angular.module('Scrumble.daily-report', ['trello-api-client', 'ui.router']);
-
 angular.module('Scrumble.common', ['trello-api-client', 'ngMaterial', 'ui.router']);
 
 angular.module('Scrumble.feedback', []);
@@ -49,6 +47,8 @@ angular.module('Scrumble.settings', ['Scrumble.common']);
 angular.module('Scrumble.sprint', ['ui.router', 'Parse', 'ngMaterial']);
 
 angular.module('Scrumble.storage', []);
+
+angular.module('Scrumble.daily-report', ['trello-api-client', 'ui.router']);
 
 angular.module('Scrumble.board').config(function($stateProvider) {
   return $stateProvider.state('tab.board', {
@@ -78,367 +78,6 @@ angular.module('Scrumble.board').config(function($stateProvider) {
       }
     }
   });
-});
-
-angular.module('Scrumble.daily-report').config(function($stateProvider) {
-  return $stateProvider.state('tab.edit-template', {
-    url: '/daily-report/edit',
-    templateUrl: 'daily-report/states/edit-template/view.html',
-    controller: 'EditTemplateCtrl',
-    resolve: {
-      dailyReport: function(ScrumbleUser, DailyReport, Project) {
-        return ScrumbleUser.getCurrentUser().then(function(user) {
-          return DailyReport.getByProject(user.project).then(function(report) {
-            if (report != null) {
-              return report;
-            }
-            report = new DailyReport({
-              project: new Project(user.project),
-              message: {
-                subject: '[MyProject] Sprint #{sprintNumber} - Daily Mail {today#YYYY-MM-DD}',
-                body: 'Hello Batman,\n\n' + 'here is the daily mail:\n\n' + '- Done: {done} / {total} points\n' + '- To validate: {toValidate} points\n' + '- Blocked: {blocked} points\n' + '- {behind/ahead}: {gap} points {color=smart}\n\n' + '{bdc}\n\n' + 'Yesterday\'s goals:\n' + '- Eat carrots {color=green}\n\n' + 'Today\'s goals\n' + '- Eat more carrots\n\n' + 'Regards!',
-                behindLabel: 'Behind',
-                aheadLabel: 'Ahead'
-              }
-            });
-            return report.save();
-          });
-        });
-      }
-    }
-  }).state('tab.daily-report', {
-    url: '/daily-report',
-    templateUrl: 'daily-report/states/template/view.html',
-    controller: 'DailyReportCtrl',
-    resolve: {
-      dailyReport: function(ScrumbleUser, DailyReport, Project) {
-        return ScrumbleUser.getCurrentUser().then(function(user) {
-          return DailyReport.getByProject(user.project).then(function(report) {
-            if (report != null) {
-              return report;
-            }
-            report = new DailyReport({
-              project: new Project(user.project),
-              message: {
-                subject: '[MyProject] Sprint #{sprintNumber} - Daily Mail {today#YYYY-MM-DD}',
-                body: 'Hello Batman,\n\n' + 'here is the daily mail:\n\n' + '- Done: {done} / {total} points\n' + '- To validate: {toValidate} points\n' + '- Blocked: {blocked} points\n' + '- {behind/ahead}: {gap} points {color=smart}\n\n' + '{bdc}\n\n' + 'Yesterday\'s goals:\n' + '- Eat carrots {color=green}\n\n' + 'Today\'s goals\n' + '- Eat more carrots\n\n' + 'Regards!',
-                behindLabel: 'Behind',
-                aheadLabel: 'Ahead'
-              }
-            });
-            return report.save();
-          });
-        });
-      },
-      sprint: function(ScrumbleUser, Sprint) {
-        return ScrumbleUser.getCurrentUser().then(function(user) {
-          return Sprint.getActiveSprint(user.project);
-        })["catch"](function(err) {
-          console.log(err);
-          return null;
-        });
-      },
-      project: function(ScrumbleUser) {
-        return ScrumbleUser.getCurrentUser().then(function(user) {
-          return user.project;
-        });
-      }
-    }
-  });
-});
-
-var __hasProp = {}.hasOwnProperty,
-  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
-
-angular.module('Scrumble.daily-report').factory('DailyReport', function(Parse) {
-  var DailyReport;
-  return DailyReport = (function(_super) {
-    __extends(DailyReport, _super);
-
-    function DailyReport() {
-      return DailyReport.__super__.constructor.apply(this, arguments);
-    }
-
-    DailyReport.configure("DailyReport", "project", "message", "metadata");
-
-    DailyReport.getByProject = function(project) {
-      return this.query({
-        where: {
-          project: {
-            __type: "Pointer",
-            className: "Project",
-            objectId: project.objectId
-          }
-        }
-      }).then(function(response) {
-        if (response.length > 0) {
-          return response[0];
-        } else {
-          return null;
-        }
-      });
-    };
-
-    return DailyReport;
-
-  })(Parse.Model);
-});
-
-angular.module('Scrumble.daily-report').service('trelloCards', function($q, TrelloClient) {
-  return {
-    getTodoCards: function(project, sprint) {
-      var promises, _ref, _ref1, _ref2, _ref3;
-      promises = [];
-      if ((project != null ? (_ref = project.columnMapping) != null ? _ref.blocked : void 0 : void 0) != null) {
-        promises.push(TrelloClient.get("/lists/" + project.columnMapping.blocked + "/cards"));
-      }
-      if ((project != null ? (_ref1 = project.columnMapping) != null ? _ref1.toValidate : void 0 : void 0) != null) {
-        promises.push(TrelloClient.get("/lists/" + project.columnMapping.toValidate + "/cards"));
-      }
-      if ((project != null ? (_ref2 = project.columnMapping) != null ? _ref2.doing : void 0 : void 0) != null) {
-        promises.push(TrelloClient.get("/lists/" + project.columnMapping.doing + "/cards"));
-      }
-      if ((sprint != null ? sprint.sprintColumn : void 0) != null) {
-        promises.push(TrelloClient.get("/lists/" + sprint.sprintColumn + "/cards"));
-      } else if ((project != null ? (_ref3 = project.columnMapping) != null ? _ref3.sprint : void 0 : void 0) != null) {
-        promises.push(TrelloClient.get("/lists/" + project.columnMapping.sprint + "/cards"));
-      }
-      return $q.all(promises).then(function(responses) {
-        var response;
-        return _.flatten((function() {
-          var _i, _len, _results;
-          _results = [];
-          for (_i = 0, _len = responses.length; _i < _len; _i++) {
-            response = responses[_i];
-            _results.push(response.data);
-          }
-          return _results;
-        })());
-      });
-    },
-    getDoneCardIds: function(doneColumnId) {
-      var deferred;
-      deferred = $q.defer();
-      if (doneColumnId != null) {
-        TrelloClient.get("/lists/" + doneColumnId + "/cards").then(function(response) {
-          var card;
-          return deferred.resolve((function() {
-            var _i, _len, _ref, _results;
-            _ref = response.data;
-            _results = [];
-            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-              card = _ref[_i];
-              _results.push(card.id);
-            }
-            return _results;
-          })());
-        });
-      } else {
-        deferred.resolve([]);
-      }
-      return deferred.promise;
-    }
-  };
-});
-
-angular.module('Scrumble.daily-report').service('reportBuilder', function($q, ScrumbleUser, Sprint, Project, trelloUtils, dynamicFields) {
-  var converter, isAhead, project, promise, renderBDC, renderBehindAhead, renderCc, renderColor, renderPreviousGoals, renderSection, renderTo, renderTodaysGoals, sprint;
-  converter = new showdown.Converter();
-  promise = void 0;
-  project = void 0;
-  sprint = void 0;
-  isAhead = function() {
-    var getCurrentDayIndex;
-    getCurrentDayIndex = function(bdcData) {
-      var day, i, _i, _len;
-      for (i = _i = 0, _len = bdcData.length; _i < _len; i = ++_i) {
-        day = bdcData[i];
-        if (day.done == null) {
-          return Math.max(i - 1, 0);
-        }
-      }
-      return i - 1;
-    };
-    return promise.then(function() {
-      var diff, index;
-      index = getCurrentDayIndex(sprint.bdcData);
-      diff = sprint.bdcData[index].done - sprint.bdcData[index].standard;
-      if (diff > 0) {
-        return true;
-      } else {
-        return false;
-      }
-    });
-  };
-  renderBehindAhead = function(message) {
-    return isAhead().then(function(ahead) {
-      var label;
-      label = ahead ? message.aheadLabel : message.behindLabel;
-      message.body = message.body.replace('{behind/ahead}', label);
-      message.subject = message.subject.replace('{behind/ahead}', label);
-      return message;
-    });
-  };
-  renderTodaysGoals = function(body, goals) {
-    var goal, goalsNames, goalsString;
-    if (!_.isArray(goals)) {
-      return body;
-    }
-    goalsNames = (function() {
-      var _i, _len, _results;
-      _results = [];
-      for (_i = 0, _len = goals.length; _i < _len; _i++) {
-        goal = goals[_i];
-        _results.push("- " + goal.name);
-      }
-      return _results;
-    })();
-    goalsString = goalsNames.join("\n");
-    return body.replace('{todaysGoals}', goalsString);
-  };
-  renderPreviousGoals = function(body, goals) {
-    var color, goal, goalsNames, goalsString, _i, _len;
-    if (!_.isArray(goals)) {
-      return body;
-    }
-    goalsNames = [];
-    for (_i = 0, _len = goals.length; _i < _len; _i++) {
-      goal = goals[_i];
-      color = goal.isDone ? 'green' : 'red';
-      goalsNames.push("- " + goal.name + (" {color=" + color + "}"));
-    }
-    goalsString = goalsNames.join("\n");
-    return body.replace('{previousGoals}', goalsString);
-  };
-  renderSection = function(body, key, value) {
-    return body.replace("{" + key + "}", value);
-  };
-  renderColor = function(message) {
-    return isAhead().then(function(ahead) {
-      message.body = message.body.replace(/>(.*(\{color=(.+?)\}).*)</g, function(match, line, toRemove, color) {
-        line = line.replace(toRemove, "");
-        if (color === 'smart') {
-          color = ahead ? 'green' : 'red';
-        }
-        return "><span style='color: " + color + ";'>" + line + "</span><";
-      });
-      return message;
-    });
-  };
-  renderBDC = function(message, bdcBase64, useCid) {
-    var src;
-    src = useCid ? 'cid:bdc' : bdcBase64;
-    return promise.then(function() {
-      message.body = message.body.replace('{bdc}', "<img src='" + src + "' />");
-      if (useCid) {
-        message.cids = [
-          {
-            type: 'image/png',
-            name: 'BDC',
-            base64: bdcBase64.split(',')[1],
-            id: 'bdc'
-          }
-        ];
-      }
-      return message;
-    });
-  };
-  renderTo = function(message) {
-    return promise.then(function() {
-      var emails, member;
-      emails = (function() {
-        var _i, _len, _ref, _results;
-        _ref = project.team;
-        _results = [];
-        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-          member = _ref[_i];
-          if (member.daily === 'to') {
-            _results.push(member.email);
-          }
-        }
-        return _results;
-      })();
-      message.to = _.filter(emails);
-      return message;
-    });
-  };
-  renderCc = function(message) {
-    return promise.then(function() {
-      var emails, member;
-      emails = (function() {
-        var _i, _len, _ref, _results;
-        _ref = project.team;
-        _results = [];
-        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-          member = _ref[_i];
-          if (member.daily === 'cc') {
-            _results.push(member.email);
-          }
-        }
-        return _results;
-      })();
-      message.cc = _.filter(emails);
-      return message;
-    });
-  };
-  return {
-    init: function() {
-      return promise = ScrumbleUser.getCurrentUser().then(function(user) {
-        project = user.project;
-        return project;
-      }).then(function(project) {
-        return Sprint.getActiveSprint(new Project(project)).then(function(_sprint_) {
-          return sprint = _sprint_;
-        });
-      });
-    },
-    getAvailableFields: function() {
-      return [
-        {
-          key: '{bdc}',
-          description: 'The burndown chart image',
-          icon: 'trending-down'
-        }, {
-          key: '{color=xxx}',
-          description: 'This field will color the line on which it is. "xxx" can be any css color. The "smart" color is also recognized: green when the team is ahead or red when the team is late',
-          icon: 'format-color-fill'
-        }, {
-          key: '{behind/ahead}',
-          description: 'If your are behind or late according to the burn down chart',
-          icon: 'owl'
-        }
-      ];
-    },
-    render: function(message, previousGoals, todaysGoals, sections, useCid) {
-      var key, value;
-      message = angular.copy(message);
-      message.body = renderTodaysGoals(message.body, todaysGoals);
-      message.body = renderPreviousGoals(message.body, previousGoals);
-      for (key in sections) {
-        value = sections[key];
-        message.body = renderSection(message.body, key, value);
-      }
-      message.body = converter.makeHtml(message.body);
-      dynamicFields.sprint(sprint);
-      dynamicFields.project(project);
-      return dynamicFields.render(message.subject).then(function(subject) {
-        message.subject = subject;
-        return dynamicFields.render(message.body);
-      }).then(function(body) {
-        return message.body = body;
-      }).then(function() {
-        return renderBehindAhead(message);
-      }).then(function() {
-        return renderColor(message);
-      }).then(function(message) {
-        return renderBDC(message, sprint.bdcBase64, useCid);
-      }).then(function(message) {
-        return renderTo(message);
-      }).then(function(message) {
-        return renderCc(message);
-      });
-    }
-  };
 });
 
 angular.module('Scrumble.common').run(function($rootScope, $state, $window) {
@@ -1335,24 +974,6 @@ angular.module('Scrumble.sprint').config(function($stateProvider) {
           return $state.go('tab.new-sprint');
         });
       }
-    },
-    onEnter: function(sprint) {
-      var day, first, last, _i, _len, _ref, _ref1, _ref2, _ref3;
-      if (sprint.bdcData != null) {
-        _ref = sprint.bdcData;
-        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-          day = _ref[_i];
-          day.date = moment(day.date).toDate();
-        }
-      }
-      if (_.isArray(sprint != null ? (_ref1 = sprint.dates) != null ? _ref1.days : void 0 : void 0) && (sprint != null ? (_ref2 = sprint.dates) != null ? _ref2.days.length : void 0 : void 0) > 0) {
-        _ref3 = sprint.dates.days, first = _ref3[0], last = _ref3[_ref3.length - 1];
-        sprint.dates.start = moment(first.date).toDate();
-        return sprint.dates.end = moment(last.date).toDate();
-      } else {
-        sprint.dates.start = null;
-        return sprint.dates.end = null;
-      }
     }
   }).state('tab.sprint-list', {
     url: '/project/:projectId/sprints',
@@ -1387,6 +1008,8 @@ var __hasProp = {}.hasOwnProperty,
 angular.module('Scrumble.storage').factory('Sprint', function(Parse, sprintUtils, $q) {
   var Sprint;
   return Sprint = (function(_super) {
+    var find, handleDates;
+
     __extends(Sprint, _super);
 
     function Sprint() {
@@ -1394,6 +1017,34 @@ angular.module('Scrumble.storage').factory('Sprint', function(Parse, sprintUtils
     }
 
     Sprint.configure("Sprint", "project", "number", "dates", "resources", "bdcData", "isActive", "doneColumn", "sprintColumn", "bdcBase64", "goal", "indicators");
+
+    find = Sprint.find;
+
+    handleDates = function(sprint) {
+      var day, first, last, _i, _len, _ref, _ref1, _ref2, _ref3;
+      if (sprint.bdcData != null) {
+        _ref = sprint.bdcData;
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          day = _ref[_i];
+          day.date = moment(day.date).toDate();
+        }
+      }
+      if (_.isArray(sprint != null ? (_ref1 = sprint.dates) != null ? _ref1.days : void 0 : void 0) && (sprint != null ? (_ref2 = sprint.dates) != null ? _ref2.days.length : void 0 : void 0) > 0) {
+        _ref3 = sprint.dates.days, first = _ref3[0], last = _ref3[_ref3.length - 1];
+        sprint.dates.start = moment(first.date).toDate();
+        sprint.dates.end = moment(last.date).toDate();
+      } else {
+        sprint.dates.start = null;
+        sprint.dates.end = null;
+      }
+      return sprint;
+    };
+
+    Sprint.find = function(sprintId) {
+      return find.call(this, sprintId).then(function(sprint) {
+        return handleDates(sprint);
+      });
+    };
 
     Sprint.getActiveSprint = function(project) {
       return this.query({
@@ -1411,7 +1062,7 @@ angular.module('Scrumble.storage').factory('Sprint', function(Parse, sprintUtils
           console.warn('Several sprints are active for this project');
         }
         sprint = sprints.length > 0 ? sprints[0] : null;
-        return sprint;
+        return handleDates(sprint);
       });
     };
 
@@ -1436,6 +1087,13 @@ angular.module('Scrumble.storage').factory('Sprint', function(Parse, sprintUtils
         }
       }).then(function(sprints) {
         return _.sortByOrder(sprints, 'number', false);
+      }).then(function(sprints) {
+        var sprint, _i, _len;
+        for (_i = 0, _len = sprints.length; _i < _len; _i++) {
+          sprint = sprints[_i];
+          handleDates(sprint);
+        }
+        return sprints;
       });
     };
 
@@ -1819,6 +1477,367 @@ angular.module('Scrumble.storage').service('userService', function(ScrumbleUser)
   };
 });
 
+angular.module('Scrumble.daily-report').config(function($stateProvider) {
+  return $stateProvider.state('tab.edit-template', {
+    url: '/daily-report/edit',
+    templateUrl: 'daily-report/states/edit-template/view.html',
+    controller: 'EditTemplateCtrl',
+    resolve: {
+      dailyReport: function(ScrumbleUser, DailyReport, Project) {
+        return ScrumbleUser.getCurrentUser().then(function(user) {
+          return DailyReport.getByProject(user.project).then(function(report) {
+            if (report != null) {
+              return report;
+            }
+            report = new DailyReport({
+              project: new Project(user.project),
+              message: {
+                subject: '[MyProject] Sprint #{sprintNumber} - Daily Mail {today#YYYY-MM-DD}',
+                body: 'Hello Batman,\n\n' + 'here is the daily mail:\n\n' + '- Done: {done} / {total} points\n' + '- To validate: {toValidate} points\n' + '- Blocked: {blocked} points\n' + '- {behind/ahead}: {gap} points {color=smart}\n\n' + '{bdc}\n\n' + 'Yesterday\'s goals:\n' + '- Eat carrots {color=green}\n\n' + 'Today\'s goals\n' + '- Eat more carrots\n\n' + 'Regards!',
+                behindLabel: 'Behind',
+                aheadLabel: 'Ahead'
+              }
+            });
+            return report.save();
+          });
+        });
+      }
+    }
+  }).state('tab.daily-report', {
+    url: '/daily-report',
+    templateUrl: 'daily-report/states/template/view.html',
+    controller: 'DailyReportCtrl',
+    resolve: {
+      dailyReport: function(ScrumbleUser, DailyReport, Project) {
+        return ScrumbleUser.getCurrentUser().then(function(user) {
+          return DailyReport.getByProject(user.project).then(function(report) {
+            if (report != null) {
+              return report;
+            }
+            report = new DailyReport({
+              project: new Project(user.project),
+              message: {
+                subject: '[MyProject] Sprint #{sprintNumber} - Daily Mail {today#YYYY-MM-DD}',
+                body: 'Hello Batman,\n\n' + 'here is the daily mail:\n\n' + '- Done: {done} / {total} points\n' + '- To validate: {toValidate} points\n' + '- Blocked: {blocked} points\n' + '- {behind/ahead}: {gap} points {color=smart}\n\n' + '{bdc}\n\n' + 'Yesterday\'s goals:\n' + '- Eat carrots {color=green}\n\n' + 'Today\'s goals\n' + '- Eat more carrots\n\n' + 'Regards!',
+                behindLabel: 'Behind',
+                aheadLabel: 'Ahead'
+              }
+            });
+            return report.save();
+          });
+        });
+      },
+      sprint: function(ScrumbleUser, Sprint) {
+        return ScrumbleUser.getCurrentUser().then(function(user) {
+          return Sprint.getActiveSprint(user.project);
+        })["catch"](function(err) {
+          console.log(err);
+          return null;
+        });
+      },
+      project: function(ScrumbleUser) {
+        return ScrumbleUser.getCurrentUser().then(function(user) {
+          return user.project;
+        });
+      }
+    }
+  });
+});
+
+var __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+angular.module('Scrumble.daily-report').factory('DailyReport', function(Parse) {
+  var DailyReport;
+  return DailyReport = (function(_super) {
+    __extends(DailyReport, _super);
+
+    function DailyReport() {
+      return DailyReport.__super__.constructor.apply(this, arguments);
+    }
+
+    DailyReport.configure("DailyReport", "project", "message", "metadata");
+
+    DailyReport.getByProject = function(project) {
+      return this.query({
+        where: {
+          project: {
+            __type: "Pointer",
+            className: "Project",
+            objectId: project.objectId
+          }
+        }
+      }).then(function(response) {
+        if (response.length > 0) {
+          return response[0];
+        } else {
+          return null;
+        }
+      });
+    };
+
+    return DailyReport;
+
+  })(Parse.Model);
+});
+
+angular.module('Scrumble.daily-report').service('trelloCards', function($q, TrelloClient) {
+  return {
+    getTodoCards: function(project, sprint) {
+      var promises, _ref, _ref1, _ref2, _ref3;
+      promises = [];
+      if ((project != null ? (_ref = project.columnMapping) != null ? _ref.blocked : void 0 : void 0) != null) {
+        promises.push(TrelloClient.get("/lists/" + project.columnMapping.blocked + "/cards"));
+      }
+      if ((project != null ? (_ref1 = project.columnMapping) != null ? _ref1.toValidate : void 0 : void 0) != null) {
+        promises.push(TrelloClient.get("/lists/" + project.columnMapping.toValidate + "/cards"));
+      }
+      if ((project != null ? (_ref2 = project.columnMapping) != null ? _ref2.doing : void 0 : void 0) != null) {
+        promises.push(TrelloClient.get("/lists/" + project.columnMapping.doing + "/cards"));
+      }
+      if ((sprint != null ? sprint.sprintColumn : void 0) != null) {
+        promises.push(TrelloClient.get("/lists/" + sprint.sprintColumn + "/cards"));
+      } else if ((project != null ? (_ref3 = project.columnMapping) != null ? _ref3.sprint : void 0 : void 0) != null) {
+        promises.push(TrelloClient.get("/lists/" + project.columnMapping.sprint + "/cards"));
+      }
+      return $q.all(promises).then(function(responses) {
+        var response;
+        return _.flatten((function() {
+          var _i, _len, _results;
+          _results = [];
+          for (_i = 0, _len = responses.length; _i < _len; _i++) {
+            response = responses[_i];
+            _results.push(response.data);
+          }
+          return _results;
+        })());
+      });
+    },
+    getDoneCardIds: function(doneColumnId) {
+      var deferred;
+      deferred = $q.defer();
+      if (doneColumnId != null) {
+        TrelloClient.get("/lists/" + doneColumnId + "/cards").then(function(response) {
+          var card;
+          return deferred.resolve((function() {
+            var _i, _len, _ref, _results;
+            _ref = response.data;
+            _results = [];
+            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+              card = _ref[_i];
+              _results.push(card.id);
+            }
+            return _results;
+          })());
+        });
+      } else {
+        deferred.resolve([]);
+      }
+      return deferred.promise;
+    }
+  };
+});
+
+angular.module('Scrumble.daily-report').service('reportBuilder', function($q, ScrumbleUser, Sprint, Project, trelloUtils, dynamicFields) {
+  var converter, isAhead, project, promise, renderBDC, renderBehindAhead, renderCc, renderColor, renderPreviousGoals, renderSection, renderTo, renderTodaysGoals, sprint;
+  converter = new showdown.Converter();
+  promise = void 0;
+  project = void 0;
+  sprint = void 0;
+  isAhead = function() {
+    var getCurrentDayIndex;
+    getCurrentDayIndex = function(bdcData) {
+      var day, i, _i, _len;
+      for (i = _i = 0, _len = bdcData.length; _i < _len; i = ++_i) {
+        day = bdcData[i];
+        if (day.done == null) {
+          return Math.max(i - 1, 0);
+        }
+      }
+      return i - 1;
+    };
+    return promise.then(function() {
+      var diff, index;
+      index = getCurrentDayIndex(sprint.bdcData);
+      diff = sprint.bdcData[index].done - sprint.bdcData[index].standard;
+      if (diff > 0) {
+        return true;
+      } else {
+        return false;
+      }
+    });
+  };
+  renderBehindAhead = function(message) {
+    return isAhead().then(function(ahead) {
+      var label;
+      label = ahead ? message.aheadLabel : message.behindLabel;
+      message.body = message.body.replace('{behind/ahead}', label);
+      message.subject = message.subject.replace('{behind/ahead}', label);
+      return message;
+    });
+  };
+  renderTodaysGoals = function(body, goals) {
+    var goal, goalsNames, goalsString;
+    if (!_.isArray(goals)) {
+      return body;
+    }
+    goalsNames = (function() {
+      var _i, _len, _results;
+      _results = [];
+      for (_i = 0, _len = goals.length; _i < _len; _i++) {
+        goal = goals[_i];
+        _results.push("- " + goal.name);
+      }
+      return _results;
+    })();
+    goalsString = goalsNames.join("\n");
+    return body.replace('{todaysGoals}', goalsString);
+  };
+  renderPreviousGoals = function(body, goals) {
+    var color, goal, goalsNames, goalsString, _i, _len;
+    if (!_.isArray(goals)) {
+      return body;
+    }
+    goalsNames = [];
+    for (_i = 0, _len = goals.length; _i < _len; _i++) {
+      goal = goals[_i];
+      color = goal.isDone ? 'green' : 'red';
+      goalsNames.push("- " + goal.name + (" {color=" + color + "}"));
+    }
+    goalsString = goalsNames.join("\n");
+    return body.replace('{previousGoals}', goalsString);
+  };
+  renderSection = function(body, key, value) {
+    return body.replace("{" + key + "}", value);
+  };
+  renderColor = function(message) {
+    return isAhead().then(function(ahead) {
+      message.body = message.body.replace(/>(.*(\{color=(.+?)\}).*)</g, function(match, line, toRemove, color) {
+        line = line.replace(toRemove, "");
+        if (color === 'smart') {
+          color = ahead ? 'green' : 'red';
+        }
+        return "><span style='color: " + color + ";'>" + line + "</span><";
+      });
+      return message;
+    });
+  };
+  renderBDC = function(message, bdcBase64, useCid) {
+    var src;
+    src = useCid ? 'cid:bdc' : bdcBase64;
+    return promise.then(function() {
+      message.body = message.body.replace('{bdc}', "<img src='" + src + "' />");
+      if (useCid) {
+        message.cids = [
+          {
+            type: 'image/png',
+            name: 'BDC',
+            base64: bdcBase64.split(',')[1],
+            id: 'bdc'
+          }
+        ];
+      }
+      return message;
+    });
+  };
+  renderTo = function(message) {
+    return promise.then(function() {
+      var emails, member;
+      emails = (function() {
+        var _i, _len, _ref, _results;
+        _ref = project.team;
+        _results = [];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          member = _ref[_i];
+          if (member.daily === 'to') {
+            _results.push(member.email);
+          }
+        }
+        return _results;
+      })();
+      message.to = _.filter(emails);
+      return message;
+    });
+  };
+  renderCc = function(message) {
+    return promise.then(function() {
+      var emails, member;
+      emails = (function() {
+        var _i, _len, _ref, _results;
+        _ref = project.team;
+        _results = [];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          member = _ref[_i];
+          if (member.daily === 'cc') {
+            _results.push(member.email);
+          }
+        }
+        return _results;
+      })();
+      message.cc = _.filter(emails);
+      return message;
+    });
+  };
+  return {
+    init: function() {
+      return promise = ScrumbleUser.getCurrentUser().then(function(user) {
+        project = user.project;
+        return project;
+      }).then(function(project) {
+        return Sprint.getActiveSprint(new Project(project)).then(function(_sprint_) {
+          return sprint = _sprint_;
+        });
+      });
+    },
+    getAvailableFields: function() {
+      return [
+        {
+          key: '{bdc}',
+          description: 'The burndown chart image',
+          icon: 'trending-down'
+        }, {
+          key: '{color=xxx}',
+          description: 'This field will color the line on which it is. "xxx" can be any css color. The "smart" color is also recognized: green when the team is ahead or red when the team is late',
+          icon: 'format-color-fill'
+        }, {
+          key: '{behind/ahead}',
+          description: 'If your are behind or late according to the burn down chart',
+          icon: 'owl'
+        }
+      ];
+    },
+    render: function(message, previousGoals, todaysGoals, sections, useCid) {
+      var key, value;
+      message = angular.copy(message);
+      message.body = renderTodaysGoals(message.body, todaysGoals);
+      message.body = renderPreviousGoals(message.body, previousGoals);
+      for (key in sections) {
+        value = sections[key];
+        message.body = renderSection(message.body, key, value);
+      }
+      message.body = converter.makeHtml(message.body);
+      dynamicFields.sprint(sprint);
+      dynamicFields.project(project);
+      return dynamicFields.render(message.subject).then(function(subject) {
+        message.subject = subject;
+        return dynamicFields.render(message.body);
+      }).then(function(body) {
+        return message.body = body;
+      }).then(function() {
+        return renderBehindAhead(message);
+      }).then(function() {
+        return renderColor(message);
+      }).then(function(message) {
+        return renderBDC(message, sprint.bdcBase64, useCid);
+      }).then(function(message) {
+        return renderTo(message);
+      }).then(function(message) {
+        return renderCc(message);
+      });
+    }
+  };
+});
+
 angular.module('Scrumble.sprint').controller('BoardCtrl', function($scope, $timeout, bdc, trelloUtils) {
   var getCurrentDayIndex;
   $scope.tableData = angular.copy($scope.sprint.bdcData);
@@ -1847,245 +1866,6 @@ angular.module('Scrumble.sprint').controller('BoardCtrl', function($scope, $time
       var svg;
       svg = d3.select('#bdcgraph')[0][0].firstChild;
       return bdc.saveImage($scope.sprint, svg);
-    });
-  };
-});
-
-angular.module('Scrumble.daily-report').directive('markdownHelper', function() {
-  return {
-    restrict: 'E',
-    templateUrl: 'daily-report/directives/markdown-helper/view.html'
-  };
-});
-
-var __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
-
-angular.module('Scrumble.daily-report').controller('PreviousGoalsCtrl', function($scope, $q, nssModal, TrelloClient, trelloCards) {
-  var DialogController;
-  trelloCards.getDoneCardIds($scope.sprint.doneColumn).then(function(cardIds) {
-    var card, _i, _len, _ref, _ref1, _results;
-    _ref = $scope.goals;
-    _results = [];
-    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-      card = _ref[_i];
-      card.display = true;
-      if (_ref1 = card.id, __indexOf.call(cardIds, _ref1) >= 0) {
-        _results.push(card.isDone = true);
-      } else {
-        _results.push(card.isDone = false);
-      }
-    }
-    return _results;
-  });
-  DialogController = function($scope, $controller, goal) {
-    angular.extend(this, $controller('ModalCtrl', {
-      $scope: $scope
-    }));
-    return $scope.goal = goal;
-  };
-  return $scope.edit = function(ev, goal) {
-    return nssModal.show({
-      controller: DialogController,
-      templateUrl: 'daily-report/directives/previous-goals/edit-goal.html',
-      targetEvent: ev,
-      resolve: {
-        goal: function() {
-          return angular.copy(goal);
-        }
-      }
-    }).then(function(editedGoal) {
-      goal.isDone = editedGoal.isDone;
-      return goal.name = editedGoal.name;
-    });
-  };
-});
-
-angular.module('Scrumble.daily-report').directive('previousGoals', function() {
-  return {
-    restrict: 'E',
-    templateUrl: 'daily-report/directives/previous-goals/view.html',
-    scope: {
-      goals: '=',
-      sprint: '='
-    },
-    controller: 'PreviousGoalsCtrl'
-  };
-});
-
-angular.module('Scrumble.daily-report').controller('SelectGoalsCtrl', function($scope, $q, nssModal, TrelloClient, trelloCards) {
-  var DialogController;
-  trelloCards.getTodoCards($scope.project, $scope.sprint).then(function(cards) {
-    return $scope.trelloCards = cards;
-  });
-  $scope.updateGoals = function() {
-    return $scope.goals = _.filter($scope.trelloCards, 'selected');
-  };
-  DialogController = function($scope, $controller, goal) {
-    angular.extend(this, $controller('ModalCtrl', {
-      $scope: $scope
-    }));
-    return $scope.goal = goal;
-  };
-  return $scope.edit = function(ev, goal) {
-    return nssModal.show({
-      controller: DialogController,
-      templateUrl: 'daily-report/directives/select-goals/edit-goal.html',
-      targetEvent: ev,
-      resolve: {
-        goal: function() {
-          return angular.copy(goal);
-        }
-      }
-    }).then(function(editedGoal) {
-      return goal.name = editedGoal;
-    });
-  };
-});
-
-angular.module('Scrumble.daily-report').directive('selectGoals', function() {
-  return {
-    restrict: 'E',
-    templateUrl: 'daily-report/directives/select-goals/view.html',
-    scope: {
-      goals: '=',
-      project: '=',
-      sprint: '='
-    },
-    controller: 'SelectGoalsCtrl'
-  };
-});
-
-angular.module('Scrumble.daily-report').controller('EditTemplateCtrl', function($scope, $mdToast, mailer, reportBuilder, dailyReport, dynamicFields) {
-  var saveFeedback;
-  reportBuilder.init();
-  saveFeedback = $mdToast.simple().hideDelay(1000).position('top right').content('Saved!');
-  $scope.dailyReport = dailyReport;
-  $scope.availableFields1 = dynamicFields.getAvailableFields().slice(0, 7);
-  $scope.availableFields2 = _.union(dynamicFields.getAvailableFields().slice(7), reportBuilder.getAvailableFields());
-  return $scope.save = function() {
-    return $scope.dailyReport.save().then(function() {
-      return $mdToast.show(saveFeedback);
-    });
-  };
-});
-
-angular.module('Scrumble.daily-report').controller('PreviewCtrl', function($scope, $sce, $mdDialog, $mdToast, googleAuth, mailer, message, rawMessage, reportBuilder, dailyReport, todaysGoals, previousGoals, sections) {
-  $scope.message = message;
-  $scope.trustAsHtml = function(string) {
-    return $sce.trustAsHtml(string);
-  };
-  $scope.hide = function() {
-    return $mdDialog.hide();
-  };
-  $scope.cancel = function() {
-    return $mdDialog.cancel();
-  };
-  $scope.login = function() {
-    return googleAuth.login().then(function() {
-      return googleAuth.isAuthenticated().then(function(isAuthenticated) {
-        return $scope.isAuthenticated = isAuthenticated;
-      });
-    });
-  };
-  googleAuth.isAuthenticated().then(function(isAuthenticated) {
-    return $scope.isAuthenticated = isAuthenticated;
-  });
-  return $scope.send = function() {
-    return reportBuilder.render(rawMessage, previousGoals, todaysGoals, sections, true).then(function(message) {
-      return mailer.send(message, function(response) {
-        var errorFeedback, sentFeedback;
-        if ((response.code != null) && response.code > 300) {
-          errorFeedback = $mdToast.simple().hideDelay(3000).position('top right').content("Failed to send message: '" + response.message + "'");
-          $mdToast.show(errorFeedback);
-          return $mdDialog.cancel();
-        } else {
-          dailyReport.metadata = {
-            previousGoals: todaysGoals
-          };
-          dailyReport.save();
-          sentFeedback = $mdToast.simple().content('Email sent');
-          $mdToast.show(sentFeedback);
-          return $mdDialog.cancel();
-        }
-      });
-    });
-  };
-});
-
-angular.module('Scrumble.daily-report').controller('DailyReportCtrl', function($scope, $mdToast, $mdDialog, $mdMedia, mailer, reportBuilder, dailyReport, sprint, project, dynamicFields) {
-  var saveFeedback, _ref;
-  $scope.project = project;
-  $scope.sprint = sprint;
-  reportBuilder.init();
-  saveFeedback = $mdToast.simple().hideDelay(1000).position('top right').content('Saved!');
-  $scope.dailyReport = dailyReport;
-  $scope.todaysGoals = [];
-  $scope.previousGoals = (_ref = dailyReport.metadata) != null ? _ref.previousGoals : void 0;
-  $scope.sections = {
-    problems: "## Problems\n",
-    intro: ""
-  };
-  $scope.save = function() {
-    return $scope.dailyReport.save().then(function() {
-      return $mdToast.show(saveFeedback);
-    });
-  };
-  $scope.openMenu = function($mdOpenMenu, ev) {
-    var originatorEv;
-    originatorEv = ev;
-    return $mdOpenMenu(ev);
-  };
-  $scope.openDynamicFields = function(ev) {
-    var useFullScreen;
-    useFullScreen = $mdMedia('sm' || $mdMedia('xs'));
-    return $mdDialog.show({
-      controller: 'DynamicFieldsModalCtrl',
-      templateUrl: 'daily-report/states/template/dynamic-fields.html',
-      parent: angular.element(document.body),
-      targetEvent: ev,
-      clickOutsideToClose: true,
-      fullscreen: useFullScreen,
-      resolve: {
-        dailyReport: function() {
-          return dailyReport;
-        },
-        availableFields: function() {
-          return _.union(dynamicFields.getAvailableFields(), reportBuilder.getAvailableFields());
-        }
-      }
-    });
-  };
-  return $scope.preview = function(ev) {
-    return $mdDialog.show({
-      controller: 'PreviewCtrl',
-      templateUrl: 'daily-report/states/preview/view.html',
-      parent: angular.element(document.body),
-      targetEvent: ev,
-      clickOutsideToClose: true,
-      fullscreen: $mdMedia('sm'),
-      resolve: {
-        message: function() {
-          return reportBuilder.render($scope.dailyReport.message, _.filter($scope.previousGoals, 'display'), $scope.todaysGoals, $scope.sections, false);
-        },
-        rawMessage: function() {
-          return $scope.dailyReport.message;
-        },
-        dailyReport: function() {
-          return $scope.dailyReport;
-        },
-        todaysGoals: function() {
-          return $scope.todaysGoals;
-        },
-        previousGoals: function() {
-          return _.filter($scope.previousGoals, 'display');
-        },
-        sections: function() {
-          return $scope.sections;
-        },
-        sprint: function() {
-          return sprint;
-        }
-      }
     });
   };
 });
@@ -2425,7 +2205,7 @@ angular.module('Scrumble.settings').directive('projectWidget', function() {
 angular.module('Scrumble.settings').controller('ResourcesByDayCtrl', function($scope) {
   var changeResource;
   changeResource = function(dayIndex, memberIndex, matrix) {
-    matrix[dayIndex][memberIndex] += 0.5;
+    matrix[dayIndex][memberIndex] += 0.25;
     if (matrix[dayIndex][memberIndex] > 1) {
       matrix[dayIndex][memberIndex] = 0;
     }
@@ -2865,4 +2645,243 @@ angular.module('Scrumble.sprint').controller('PrintBDCCtrl', function($scope, $t
   return $timeout(function() {
     return window.print();
   }, 500);
+});
+
+angular.module('Scrumble.daily-report').directive('markdownHelper', function() {
+  return {
+    restrict: 'E',
+    templateUrl: 'daily-report/directives/markdown-helper/view.html'
+  };
+});
+
+var __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
+
+angular.module('Scrumble.daily-report').controller('PreviousGoalsCtrl', function($scope, $q, nssModal, TrelloClient, trelloCards) {
+  var DialogController;
+  trelloCards.getDoneCardIds($scope.sprint.doneColumn).then(function(cardIds) {
+    var card, _i, _len, _ref, _ref1, _results;
+    _ref = $scope.goals;
+    _results = [];
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      card = _ref[_i];
+      card.display = true;
+      if (_ref1 = card.id, __indexOf.call(cardIds, _ref1) >= 0) {
+        _results.push(card.isDone = true);
+      } else {
+        _results.push(card.isDone = false);
+      }
+    }
+    return _results;
+  });
+  DialogController = function($scope, $controller, goal) {
+    angular.extend(this, $controller('ModalCtrl', {
+      $scope: $scope
+    }));
+    return $scope.goal = goal;
+  };
+  return $scope.edit = function(ev, goal) {
+    return nssModal.show({
+      controller: DialogController,
+      templateUrl: 'daily-report/directives/previous-goals/edit-goal.html',
+      targetEvent: ev,
+      resolve: {
+        goal: function() {
+          return angular.copy(goal);
+        }
+      }
+    }).then(function(editedGoal) {
+      goal.isDone = editedGoal.isDone;
+      return goal.name = editedGoal.name;
+    });
+  };
+});
+
+angular.module('Scrumble.daily-report').directive('previousGoals', function() {
+  return {
+    restrict: 'E',
+    templateUrl: 'daily-report/directives/previous-goals/view.html',
+    scope: {
+      goals: '=',
+      sprint: '='
+    },
+    controller: 'PreviousGoalsCtrl'
+  };
+});
+
+angular.module('Scrumble.daily-report').controller('SelectGoalsCtrl', function($scope, $q, nssModal, TrelloClient, trelloCards) {
+  var DialogController;
+  trelloCards.getTodoCards($scope.project, $scope.sprint).then(function(cards) {
+    return $scope.trelloCards = cards;
+  });
+  $scope.updateGoals = function() {
+    return $scope.goals = _.filter($scope.trelloCards, 'selected');
+  };
+  DialogController = function($scope, $controller, goal) {
+    angular.extend(this, $controller('ModalCtrl', {
+      $scope: $scope
+    }));
+    return $scope.goal = goal;
+  };
+  return $scope.edit = function(ev, goal) {
+    return nssModal.show({
+      controller: DialogController,
+      templateUrl: 'daily-report/directives/select-goals/edit-goal.html',
+      targetEvent: ev,
+      resolve: {
+        goal: function() {
+          return angular.copy(goal);
+        }
+      }
+    }).then(function(editedGoal) {
+      return goal.name = editedGoal;
+    });
+  };
+});
+
+angular.module('Scrumble.daily-report').directive('selectGoals', function() {
+  return {
+    restrict: 'E',
+    templateUrl: 'daily-report/directives/select-goals/view.html',
+    scope: {
+      goals: '=',
+      project: '=',
+      sprint: '='
+    },
+    controller: 'SelectGoalsCtrl'
+  };
+});
+
+angular.module('Scrumble.daily-report').controller('EditTemplateCtrl', function($scope, $mdToast, mailer, reportBuilder, dailyReport, dynamicFields) {
+  var saveFeedback;
+  reportBuilder.init();
+  saveFeedback = $mdToast.simple().hideDelay(1000).position('top right').content('Saved!');
+  $scope.dailyReport = dailyReport;
+  $scope.availableFields1 = dynamicFields.getAvailableFields().slice(0, 7);
+  $scope.availableFields2 = _.union(dynamicFields.getAvailableFields().slice(7), reportBuilder.getAvailableFields());
+  return $scope.save = function() {
+    return $scope.dailyReport.save().then(function() {
+      return $mdToast.show(saveFeedback);
+    });
+  };
+});
+
+angular.module('Scrumble.daily-report').controller('PreviewCtrl', function($scope, $sce, $mdDialog, $mdToast, googleAuth, mailer, message, rawMessage, reportBuilder, dailyReport, todaysGoals, previousGoals, sections) {
+  $scope.message = message;
+  $scope.trustAsHtml = function(string) {
+    return $sce.trustAsHtml(string);
+  };
+  $scope.hide = function() {
+    return $mdDialog.hide();
+  };
+  $scope.cancel = function() {
+    return $mdDialog.cancel();
+  };
+  $scope.login = function() {
+    return googleAuth.login().then(function() {
+      return googleAuth.isAuthenticated().then(function(isAuthenticated) {
+        return $scope.isAuthenticated = isAuthenticated;
+      });
+    });
+  };
+  googleAuth.isAuthenticated().then(function(isAuthenticated) {
+    return $scope.isAuthenticated = isAuthenticated;
+  });
+  return $scope.send = function() {
+    return reportBuilder.render(rawMessage, previousGoals, todaysGoals, sections, true).then(function(message) {
+      return mailer.send(message, function(response) {
+        var errorFeedback, sentFeedback;
+        if ((response.code != null) && response.code > 300) {
+          errorFeedback = $mdToast.simple().hideDelay(3000).position('top right').content("Failed to send message: '" + response.message + "'");
+          $mdToast.show(errorFeedback);
+          return $mdDialog.cancel();
+        } else {
+          dailyReport.metadata = {
+            previousGoals: todaysGoals
+          };
+          dailyReport.save();
+          sentFeedback = $mdToast.simple().content('Email sent');
+          $mdToast.show(sentFeedback);
+          return $mdDialog.cancel();
+        }
+      });
+    });
+  };
+});
+
+angular.module('Scrumble.daily-report').controller('DailyReportCtrl', function($scope, $mdToast, $mdDialog, $mdMedia, mailer, reportBuilder, dailyReport, sprint, project, dynamicFields) {
+  var saveFeedback, _ref;
+  $scope.project = project;
+  $scope.sprint = sprint;
+  reportBuilder.init();
+  saveFeedback = $mdToast.simple().hideDelay(1000).position('top right').content('Saved!');
+  $scope.dailyReport = dailyReport;
+  $scope.todaysGoals = [];
+  $scope.previousGoals = (_ref = dailyReport.metadata) != null ? _ref.previousGoals : void 0;
+  $scope.sections = {
+    problems: "## Problems\n",
+    intro: ""
+  };
+  $scope.save = function() {
+    return $scope.dailyReport.save().then(function() {
+      return $mdToast.show(saveFeedback);
+    });
+  };
+  $scope.openMenu = function($mdOpenMenu, ev) {
+    var originatorEv;
+    originatorEv = ev;
+    return $mdOpenMenu(ev);
+  };
+  $scope.openDynamicFields = function(ev) {
+    var useFullScreen;
+    useFullScreen = $mdMedia('sm' || $mdMedia('xs'));
+    return $mdDialog.show({
+      controller: 'DynamicFieldsModalCtrl',
+      templateUrl: 'daily-report/states/template/dynamic-fields.html',
+      parent: angular.element(document.body),
+      targetEvent: ev,
+      clickOutsideToClose: true,
+      fullscreen: useFullScreen,
+      resolve: {
+        dailyReport: function() {
+          return dailyReport;
+        },
+        availableFields: function() {
+          return _.union(dynamicFields.getAvailableFields(), reportBuilder.getAvailableFields());
+        }
+      }
+    });
+  };
+  return $scope.preview = function(ev) {
+    return $mdDialog.show({
+      controller: 'PreviewCtrl',
+      templateUrl: 'daily-report/states/preview/view.html',
+      parent: angular.element(document.body),
+      targetEvent: ev,
+      clickOutsideToClose: true,
+      fullscreen: $mdMedia('sm'),
+      resolve: {
+        message: function() {
+          return reportBuilder.render($scope.dailyReport.message, _.filter($scope.previousGoals, 'display'), $scope.todaysGoals, $scope.sections, false);
+        },
+        rawMessage: function() {
+          return $scope.dailyReport.message;
+        },
+        dailyReport: function() {
+          return $scope.dailyReport;
+        },
+        todaysGoals: function() {
+          return $scope.todaysGoals;
+        },
+        previousGoals: function() {
+          return _.filter($scope.previousGoals, 'display');
+        },
+        sections: function() {
+          return $scope.sections;
+        },
+        sprint: function() {
+          return sprint;
+        }
+      }
+    });
+  };
 });
