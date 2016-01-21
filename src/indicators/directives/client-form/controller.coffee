@@ -5,14 +5,14 @@ angular.module 'Scrumble.indicators'
   loadingToast
   defaultSatisfactionForm
 ) ->
-  if $scope.sprint?.indicators?.clientSurvey?
-    $scope.survey = $scope.sprint?.indicators?.clientSurvey
+  if $scope.sprint?.indicators?.satisfactionSurvey?
+    $scope.survey = $scope.sprint?.indicators?.satisfactionSurvey
   else
     $scope.survey = angular.copy defaultSatisfactionForm
 
   $scope.save = ->
     $scope.sprint.indicators =
-      clientSurvey: $scope.survey
+      satisfactionSurvey: $scope.survey
     Sprint.save $scope.sprint
 
   $scope.print = ->
