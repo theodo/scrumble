@@ -65,7 +65,7 @@ angular.module('Scrumble.board').config(function($stateProvider) {
         }
       }
     },
-    onEnter: function(sprint) {
+    onEnter: function(sprint, $state) {
       var day, _i, _len, _ref, _results;
       if (sprint.bdcData != null) {
         _ref = sprint.bdcData;
@@ -1840,8 +1840,11 @@ angular.module('Scrumble.storage').service('userService', function(ScrumbleUser)
   };
 });
 
-angular.module('Scrumble.sprint').controller('BoardCtrl', function($scope, $timeout, bdc, trelloUtils) {
-  var getCurrentDayIndex;
+angular.module('Scrumble.sprint').controller('BoardCtrl', function($scope, $timeout, bdc, trelloUtils, sprintUtils) {
+  var getCurrentDayIndex, _ref;
+  if (!((_ref = $scope.sprint) != null ? _ref.bdcData : void 0)) {
+    $scope.sprint.bdcData = sprintUtils.generateBDC($scope.sprint.dates.days, $scope.sprint.resources, $scope.sprint.bdcData);
+  }
   $scope.tableData = angular.copy($scope.sprint.bdcData);
   $scope.selectedIndex = 0;
   getCurrentDayIndex = function(data) {
