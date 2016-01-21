@@ -1395,8 +1395,10 @@ angular.module('Scrumble.storage').factory('Sprint', function(Parse, sprintUtils
         sprint.dates.start = moment(first.date).toDate();
         sprint.dates.end = moment(last.date).toDate();
       } else {
-        sprint.dates.start = null;
-        sprint.dates.end = null;
+        if (sprint != null) {
+          sprint.dates.start = null;
+          sprint.dates.end = null;
+        }
       }
       return sprint;
     };
