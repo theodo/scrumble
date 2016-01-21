@@ -16,6 +16,29 @@ angular.module 'Scrumble.storage'
       "indicators"
     )
 
+    find = @find
+
+    handleDates = (sprint) ->
+      if sprint?.bdcData?
+        # the date is saved as a string so we've to convert it
+        for day in sprint.bdcData
+          day.date = moment(day.date).toDate()
+
+      # check start/end date consistency
+      if _.isArray(sprint?.dates?.days) and sprint?.dates?.days.length > 0
+        [first, ..., last] = sprint.dates.days
+        sprint.dates.start = moment(first.date).toDate()
+        sprint.dates.end = moment(last.date).toDate()
+      else
+        if sprint?
+          sprint.dates.start = null
+          sprint.dates.end = null
+      sprint
+
+    @find = (sprintId) ->
+      find.call @, sprintId
+      .then (sprint) ->
+        handleDates sprint
 
     @getActiveSprint = (project) ->
       @query(
@@ -28,7 +51,7 @@ angular.module 'Scrumble.storage'
       ).then (sprints) ->
         console.warn 'Several sprints are active for this project' if sprints.length > 1
         sprint = if sprints.length > 0 then sprints[0] else null
-        sprint
+        handleDates sprint
 
     @setActiveSprint = (sprint) ->
       sprint.isActive = true
@@ -47,6 +70,10 @@ angular.module 'Scrumble.storage'
             objectId: projectId
       ).then (sprints) ->
         _.sortByOrder sprints, 'number', false
+      .then (sprints) ->
+        for sprint in sprints
+          handleDates sprint
+        sprints
 
     @closeActiveSprint = (project) ->
       @getActiveSprint project

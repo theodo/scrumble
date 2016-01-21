@@ -25,4 +25,4 @@
           td(ng-repeat="member in members")
             md-button.md-primary.row(
               ng-click="resourceClick($parent.$index,$index)"
-            ) {{ matrix[$parent.$parent.$index][$index] | number : 1 }}
+            ) {{ matrix[$parent.$parent.$index][$index] | number : 2 }}
