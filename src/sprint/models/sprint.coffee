@@ -30,8 +30,9 @@ angular.module 'Scrumble.storage'
         sprint.dates.start = moment(first.date).toDate()
         sprint.dates.end = moment(last.date).toDate()
       else
-        sprint.dates.start = null
-        sprint.dates.end = null
+        if sprint?
+          sprint.dates.start = null
+          sprint.dates.end = null
       sprint
 
     @find = (sprintId) ->
