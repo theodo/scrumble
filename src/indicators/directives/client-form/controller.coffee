@@ -3,18 +3,16 @@ angular.module 'Scrumble.indicators'
   $scope
   Sprint
   loadingToast
-  defaultSatisfactionForm
 ) ->
-  if $scope.sprint?.indicators?.satisfactionSurvey?
-    $scope.survey = $scope.sprint?.indicators?.satisfactionSurvey
+  if $scope.sprint?.indicators?.clientSatisfaction?
+    $scope.survey = $scope.sprint?.indicators?.clientSatisfaction
   else
-    $scope.survey = angular.copy defaultSatisfactionForm
-
+    $scope.survey = _.find $scope.templates, company: 'Theodo'
   $scope.save = ->
     loadingToast.show()
     $scope.saving = true
     $scope.sprint.indicators =
-      satisfactionSurvey: $scope.survey
+      clientSatisfaction: $scope.survey
     Sprint.save $scope.sprint
     .then ->
       loadingToast.hide()

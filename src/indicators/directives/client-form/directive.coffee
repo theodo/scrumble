@@ -4,4 +4,5 @@ angular.module 'Scrumble.indicators'
   templateUrl: 'indicators/directives/client-form/view.html'
   scope:
     sprint: '='
+    templates: '='
   controller: 'ClientFormCtrl'

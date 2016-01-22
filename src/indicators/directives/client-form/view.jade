@@ -4,7 +4,11 @@ md-card-content.md-padding
       md-icon(md-svg-src="printer", aria-label="Print")
         md-tooltip(md-direction="bottom") Print
   
-  div(ng-repeat="question in survey")
+  md-input-container
+    label Company
+    md-select(ng-model="survey" aria-label="survey")
+      md-option(ng-repeat="template in templates" ng-value="template") {{ template.company }}
+  div(ng-repeat="question in survey.questions")
     p.question {{ question.label }}
     .answer
       md-radio-group(ng-if="question.type == 'radio'" ng-model="question.answer")
