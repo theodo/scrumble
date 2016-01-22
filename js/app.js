@@ -80,14 +80,27 @@ angular.module('Scrumble.board').config(function($stateProvider) {
   });
 });
 
-angular.module('Scrumble.common').run(function($rootScope, $state, $window) {
+angular.module('Scrumble.common').run(function($rootScope, $state, $window, loadingToast) {
   var finish;
   finish = function() {
     return $window.loading_screen.finish();
   };
-  $rootScope.$on('$stateChangeSuccess', finish);
-  $rootScope.$on('$stateChangeError', finish);
-  return $rootScope.$on('$stateNotFound', finish);
+  $rootScope.$on('$stateChangeSuccess', function() {
+    loadingToast.hide('loading');
+    return finish();
+  });
+  $rootScope.$on('$stateChangeError', function() {
+    loadingToast.hide('loading');
+    return finish();
+  });
+  $rootScope.$on('$stateNotFound', function() {
+    loadingToast.hide('loading');
+    return finish();
+  });
+  return $rootScope.$on('$stateChangeStart', function() {
+    loadingToast.show('loading');
+    return finish();
+  });
 });
 
 angular.module('Scrumble.common').config(function($stateProvider) {
@@ -397,17 +410,29 @@ angular.module('Scrumble.common').service('dynamicFields', function($q, trelloUt
 });
 
 angular.module('Scrumble.common').service('loadingToast', function($mdToast) {
-  var toast;
-  toast = $mdToast.build({
+  var toastLoading, toastSaving;
+  toastLoading = $mdToast.build({
     templateUrl: 'common/views/loading-toast.html',
     position: 'top left'
   });
+  toastSaving = $mdToast.build({
+    templateUrl: 'common/views/saving-toast.html',
+    position: 'top left'
+  });
   return {
-    show: function() {
-      return $mdToast.show(toast);
+    show: function(message) {
+      if (message === 'loading') {
+        return $mdToast.show(toastLoading);
+      } else {
+        return $mdToast.show(toastSaving);
+      }
     },
-    hide: function() {
-      return $mdToast.hide(toast);
+    hide: function(message) {
+      if (message === 'loading') {
+        return $mdToast.hide(toastLoading);
+      } else {
+        return $mdToast.hide(toastSaving);
+      }
     }
   };
 });
@@ -1029,9 +1054,31 @@ angular.module('Scrumble.indicators').config(function($stateProvider) {
     resolve: {
       currentSprint: function(Sprint, $stateParams) {
         return Sprint.find($stateParams.sprintId);
+      },
+      satisfactionSurveyTemplates: function(SatisfactionSurveyTemplate) {
+        return SatisfactionSurveyTemplate.query();
       }
     }
   });
+});
+
+var __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+angular.module('Scrumble.indicators').factory('SatisfactionSurveyTemplate', function(Parse) {
+  var SatisfactionSurveyTemplate;
+  return SatisfactionSurveyTemplate = (function(_super) {
+    __extends(SatisfactionSurveyTemplate, _super);
+
+    function SatisfactionSurveyTemplate() {
+      return SatisfactionSurveyTemplate.__super__.constructor.apply(this, arguments);
+    }
+
+    SatisfactionSurveyTemplate.configure("SatisfactionSurveyTemplate", "questions", "company");
+
+    return SatisfactionSurveyTemplate;
+
+  })(Parse.Model);
 });
 
 angular.module('Scrumble.login').config(function($authProvider) {
@@ -1689,6 +1736,22 @@ angular.module('Scrumble.sprint').service('sprintUtils', function() {
         return speed.toFixed(1);
       }
     },
+    computeSuccess: function(sprint) {
+      var first, last, _ref;
+      if (!_.isArray(sprint != null ? sprint.bdcData : void 0)) {
+        return;
+      }
+      _ref = sprint.bdcData, first = _ref[0], last = _ref[_ref.length - 1];
+      if (_.isNumber(last.done)) {
+        if (last.done > last.standard) {
+          return 'ok';
+        } else {
+          return 'ko';
+        }
+      } else {
+        return 'unknown';
+      }
+    },
     isActivable: function(s) {
       var _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7;
       if ((s.number != null) && (s.doneColumn != null) && (((_ref = s.dates) != null ? _ref.start : void 0) != null) && (((_ref1 = s.dates) != null ? _ref1.end : void 0) != null) && ((_ref2 = s.dates) != null ? (_ref3 = _ref2.days) != null ? _ref3.length : void 0 : void 0) > 0 && ((_ref4 = s.resources) != null ? (_ref5 = _ref4.matrix) != null ? _ref5.length : void 0 : void 0) > 0 && (((_ref6 = s.resources) != null ? _ref6.totalPoints : void 0) != null) && (((_ref7 = s.resources) != null ? _ref7.speed : void 0) != null)) {
@@ -2213,18 +2276,20 @@ angular.module('Scrumble.daily-report').controller('DailyReportCtrl', function($
   };
 });
 
-angular.module('Scrumble.indicators').controller('ClientFormCtrl', function($scope, Sprint, loadingToast, defaultSatisfactionForm) {
+angular.module('Scrumble.indicators').controller('ClientFormCtrl', function($scope, Sprint, loadingToast) {
   var _ref, _ref1, _ref2, _ref3;
-  if (((_ref = $scope.sprint) != null ? (_ref1 = _ref.indicators) != null ? _ref1.satisfactionSurvey : void 0 : void 0) != null) {
-    $scope.survey = (_ref2 = $scope.sprint) != null ? (_ref3 = _ref2.indicators) != null ? _ref3.satisfactionSurvey : void 0 : void 0;
+  if (((_ref = $scope.sprint) != null ? (_ref1 = _ref.indicators) != null ? _ref1.clientSatisfaction : void 0 : void 0) != null) {
+    $scope.survey = (_ref2 = $scope.sprint) != null ? (_ref3 = _ref2.indicators) != null ? _ref3.clientSatisfaction : void 0 : void 0;
   } else {
-    $scope.survey = angular.copy(defaultSatisfactionForm);
+    $scope.survey = _.find($scope.templates, {
+      company: 'Theodo'
+    });
   }
   $scope.save = function() {
     loadingToast.show();
     $scope.saving = true;
     $scope.sprint.indicators = {
-      satisfactionSurvey: $scope.survey
+      clientSatisfaction: $scope.survey
     };
     return Sprint.save($scope.sprint).then(function() {
       loadingToast.hide();
@@ -2236,109 +2301,21 @@ angular.module('Scrumble.indicators').controller('ClientFormCtrl', function($sco
   };
 });
 
-angular.module('Scrumble.indicators').service('defaultSatisfactionForm', function() {
-  return [
-    {
-      label: 'What is your appreciation of the speed of the team?',
-      type: 'radio',
-      items: [
-        {
-          value: 5,
-          label: '5 - Excellent'
-        }, {
-          value: 4,
-          label: '4 - Very good'
-        }, {
-          value: 3,
-          label: '3 - Good'
-        }, {
-          value: 2,
-          label: '2 - Average'
-        }, {
-          value: 1,
-          label: '1 - Insufficient'
-        }, {
-          value: 0,
-          label: '0 - Very insufficient'
-        }
-      ]
-    }, {
-      label: 'What is your appreciation of the quality of the coaching?',
-      type: 'radio',
-      items: [
-        {
-          value: 5,
-          label: '5 - Excellent'
-        }, {
-          value: 4,
-          label: '4 - Very good'
-        }, {
-          value: 3,
-          label: '3 - Good'
-        }, {
-          value: 2,
-          label: '2 - Average'
-        }, {
-          value: 1,
-          label: '1 - Insufficient'
-        }, {
-          value: 0,
-          label: '0 - Very insufficient'
-        }
-      ]
-    }, {
-      label: 'What change/improve would make you to improve your appreciation?',
-      type: 'textarea'
-    }, {
-      label: 'If you had a magic wand, what is "the" thing you would change',
-      type: 'textarea'
-    }, {
-      label: 'Would you recommend us?',
-      type: 'radio',
-      items: [
-        {
-          value: 'yes-of-course',
-          label: 'Yes of course'
-        }, {
-          value: 'yes',
-          label: 'Yes'
-        }, {
-          value: 'not-really',
-          label: 'Not really'
-        }, {
-          value: 'not-at-all',
-          label: 'Not at all'
-        }
-      ]
-    }, {
-      label: 'Would you like to have a sales meeting in the coming week?',
-      type: 'radio',
-      items: [
-        {
-          value: 'yes',
-          label: 'Yes'
-        }, {
-          value: 'no',
-          label: 'No, it is not necessary for now'
-        }
-      ]
-    }
-  ];
-});
-
 angular.module('Scrumble.indicators').directive('clientForm', function() {
   return {
     restrict: 'E',
     templateUrl: 'indicators/directives/client-form/view.html',
     scope: {
-      sprint: '='
+      sprint: '=',
+      templates: '='
     },
     controller: 'ClientFormCtrl'
   };
 });
 
-angular.module('Scrumble.indicators').controller('IndicatorsCtrl', function($scope, currentSprint) {
-  return $scope.currentSprint = currentSprint;
+angular.module('Scrumble.indicators').controller('IndicatorsCtrl', function($scope, currentSprint, satisfactionSurveyTemplates) {
+  $scope.currentSprint = currentSprint;
+  return $scope.satisfactionSurveyTemplates = satisfactionSurveyTemplates;
 });
 
 angular.module('Scrumble.login').controller('ProfilInfoCtrl', function($scope, $timeout, $rootScope, trelloAuth, googleAuth) {
@@ -2690,7 +2667,7 @@ angular.module('Scrumble.sprint').directive('burndown', function() {
   };
 });
 
-angular.module('Scrumble.sprint').controller('SprintDetailsCtrl', function($scope, $mdMedia, $mdDialog, Sprint) {
+angular.module('Scrumble.sprint').controller('SprintDetailsCtrl', function($scope, $state, $mdMedia, $mdDialog, Sprint) {
   var BDCDialogController;
   $scope.showBurndown = function(ev, sprint) {
     var useFullScreen;
@@ -2726,15 +2703,14 @@ angular.module('Scrumble.sprint').controller('SprintDetailsCtrl', function($scop
     var confirm;
     confirm = $mdDialog.confirm().title('Delete sprints').textContent('Are you sure you want to do what you\'re trying to do ?').ariaLabel('Delete sprints dialog').targetEvent(event).ok('Delete').cancel('Cancel');
     return $mdDialog.show(confirm).then(function() {
-      var sprint, _i, _len, _ref;
-      _ref = $scope.selected;
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        sprint = _ref[_i];
-        sprint.destroy().then(function() {
-          return _.remove($scope.sprints, sprint);
-        });
-      }
-      return $scope.selected = [];
+      return sprint.destroy().then(function() {
+        return _.remove($scope.sprints, sprint);
+      });
+    });
+  };
+  $scope.indicators = function() {
+    return $state.go('tab.indicators', {
+      sprintId: sprint.objectId
     });
   };
   return BDCDialogController = function($scope, $mdDialog, sprint) {
@@ -2877,10 +2853,9 @@ angular.module('Scrumble.sprint').controller('EditSprintCtrl', function($scope, 
 });
 
 angular.module('Scrumble.sprint').controller('SprintListCtrl', function($scope, sprintUtils, sprints, project) {
-  sprints.forEach(function(sprint) {
+  _.forEach(sprints, function(sprint) {
     sprint.speed = sprintUtils.computeSpeed(sprint);
-    sprint.dates.start = moment(sprint.dates.start).format("MMMM Do YYYY");
-    return sprint.dates.end = moment(sprint.dates.end).format("MMMM Do YYYY");
+    return sprint.success = sprintUtils.computeSuccess(sprint);
   });
   $scope.sprints = sprints;
   return $scope.project = project;

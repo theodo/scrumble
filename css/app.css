@@ -322,7 +322,7 @@ select-people .member-select label {
 }
 
 .active-sprint {
-  color: #F44336;
+  color: #FFC107;
 }
 
 .clickable {
@@ -333,4 +333,19 @@ md-data-table-container td md-radio-button {
 }
 sprint-details md-card {
   border: 2px solid #607D8B;
+}
+md-grid-list {
+  margin: 8px;
+}
+.gray {
+  background: #9E9E9E;
+}
+.green {
+  background: #8BC34A;
+}
+.red {
+  background: #F44336;
+}
+md-grid-tile {
+  transition: all 400ms ease-out 50ms;
 }
