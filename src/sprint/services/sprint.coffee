@@ -73,6 +73,13 @@ angular.module 'Scrumble.sprint'
     if _.isNumber last.done
       speed = last.done / sprint.resources.totalManDays
       speed.toFixed(1)
+  computeSuccess: (sprint) ->
+    return unless _.isArray sprint?.bdcData
+    [first, ..., last] = sprint.bdcData
+    if _.isNumber last.done
+      return if last.done > last.standard then 'ok' else 'ko'
+    else
+      return 'unknown'
   isActivable: (s) ->
     if (
       s.number? and

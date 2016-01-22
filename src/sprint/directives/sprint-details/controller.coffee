@@ -1,6 +1,7 @@
 angular.module 'Scrumble.sprint'
 .controller 'SprintDetailsCtrl', (
   $scope
+  $state
   $mdMedia
   $mdDialog
   Sprint
@@ -34,10 +35,11 @@ angular.module 'Scrumble.sprint'
     .cancel 'Cancel'
 
     $mdDialog.show(confirm).then ->
-      for sprint in $scope.selected
-        sprint.destroy().then ->
-          _.remove $scope.sprints, sprint
-      $scope.selected = []
+      sprint.destroy().then ->
+        _.remove $scope.sprints, sprint
+
+  $scope.indicators = ->
+    $state.go 'tab.indicators', {sprintId: sprint.objectId}
 
   BDCDialogController = ($scope, $mdDialog, sprint) ->
     $scope.sprint = sprint
