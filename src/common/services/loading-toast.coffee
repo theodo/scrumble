@@ -1,9 +1,21 @@
 angular.module 'Scrumble.common'
 .service 'loadingToast', ($mdToast) ->
-  toast = $mdToast.build(
+  toastLoading = $mdToast.build(
     templateUrl: 'common/views/loading-toast.html'
     position: 'top left'
   )
+  toastSaving = $mdToast.build(
+    templateUrl: 'common/views/saving-toast.html'
+    position: 'top left'
+  )
 
-  show: -> $mdToast.show toast
-  hide: -> $mdToast.hide toast
+  show: (message) ->
+    if message is 'loading'
+      $mdToast.show toastLoading
+    else
+      $mdToast.show toastSaving
+  hide: (message) ->
+    if message is 'loading'
+      $mdToast.hide toastLoading
+    else
+      $mdToast.hide toastSaving
