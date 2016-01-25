@@ -5,6 +5,7 @@ describe 'SprintDetailsCtrl', ->
     @$controller = $controller
     @$mdDialog = $mdDialog
 
+<<<<<<< Updated upstream
   # $scope.delete = (event) ->
   #   confirm = $mdDialog.confirm()
   #   .title 'Delete sprints'
@@ -20,6 +21,8 @@ describe 'SprintDetailsCtrl', ->
   #       _.remove $scope.sprints, $scope.sprint
   #       loadingToast.hide 'deleting'
 
+=======
+>>>>>>> Stashed changes
   it 'should delete a sprint when calling $scope.delete', ->
     sprint =
       destroy: -> return
