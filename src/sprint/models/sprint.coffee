@@ -76,10 +76,17 @@ angular.module 'Scrumble.storage'
         sprints
 
     @closeActiveSprint = (project) ->
+      deferred = $q.defer()
+
       @getActiveSprint project
       .then (sprint) ->
-        sprint.isActive = false
-        sprint.save()
+        if sprint?
+          sprint.isActive = false
+          sprint.save().then ->
+            deferred.resolve()
+        else
+          deferred.resolve()
+      .catch deferred.reject
 
     @save = (sprint) ->
       if sprint.isActive

@@ -8,6 +8,7 @@ angular.module 'Scrumble.sprint'
   Project
   Sprint
   sprint
+  bdc
 ) ->
   $scope.editedSprint = sprint
 
@@ -20,19 +21,18 @@ angular.module 'Scrumble.sprint'
   $scope.saveLabel = if $state.is 'tab.new-sprint' then 'Start the sprint' else 'Save'
   $scope.title = if $state.is 'tab.new-sprint' then 'NEW SPRINT' else 'EDIT SPRINT'
 
-  save = ->
-    if sprintUtils.isActivable($scope.editedSprint)
-      Sprint.closeActiveSprint $scope.project
-      .then ->
-        Sprint.save $scope.editedSprint
-
   $scope.activable = sprintUtils.isActivable($scope.editedSprint)
+
   $scope.activate = ->
     if sprintUtils.isActivable($scope.editedSprint)
       $scope.editedSprint.isActive = true
-      Sprint.save $scope.editedSprint
-      .then (savedSprint) ->
-        $scope.$emit 'sprint:update', nextState: 'tab.board'
+      Sprint.closeActiveSprint $scope.project
+      .then ->
+        svg = d3.select('#bdcgraph')[0][0].firstChild
+        bdc.setPng $scope.editedSprint, svg
+        Sprint.save $scope.editedSprint
+        .then (savedSprint) ->
+          $scope.$emit 'sprint:update', nextState: 'tab.board'
 
   $scope.checkSprint = (source) ->
     $scope.activable = sprintUtils.isActivable($scope.editedSprint)

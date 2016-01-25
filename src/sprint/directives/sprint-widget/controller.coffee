@@ -12,18 +12,6 @@ angular.module 'Scrumble.sprint'
 ) ->
   dynamicFields.project $scope.project
   dynamicFields.sprint $scope.sprint
-  if $scope.sprint.bdcData?
-    # the date is saved as a string so we've to convert it
-    for day in $scope.sprint.bdcData
-      day.date = moment(day.date).toDate()
-  else
-    noteInitialized = true
-  $scope.sprint.bdcData = sprintUtils.generateBDC $scope.sprint.dates.days, $scope.sprint.resources, $scope.sprint.bdcData
-
-  if noteInitialized
-    $timeout ->
-      svg = d3.select('#bdcgraph')[0][0].firstChild
-      bdc.saveImage $scope.sprint, svg
 
   dynamicFields.render $scope.project?.settings?.bdcTitle
   .then (title) ->

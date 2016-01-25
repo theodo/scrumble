@@ -36,6 +36,9 @@ angular.module 'Scrumble.sprint'
       deferred.reject 'doneColumn is not set'
 
     deferred.promise
+  setPng: (sprint, svg) ->
+    sprint.bdcBase64 = getPngBase64 svg
+    sprint
   saveImage: (sprint, svg) ->
     sprint.bdcBase64 = getPngBase64 svg
     Sprint.save(sprint)
