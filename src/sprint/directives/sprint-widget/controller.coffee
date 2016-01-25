@@ -46,6 +46,8 @@ angular.module 'Scrumble.sprint'
     bdc.setDonePointsAndSave($scope.sprint).then ->
       svg = d3.select('#bdcgraph')[0][0].firstChild
       bdc.saveImage $scope.sprint, svg
+      .then ->
+        $scope.$emit 'bdc:update'
 
   $scope.printBDC = ->
     $state.go 'print-bdc', {
