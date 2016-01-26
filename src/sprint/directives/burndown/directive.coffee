@@ -27,8 +27,8 @@ angular.module 'Scrumble.sprint'
           bottom: 60
           left: 50
         colors:
-          standard: '#D93F8E'
-          done: '#5AA6CB'
+          standard: '#FF5253'
+          done: '#1a69cd'
           good: '#97D17A'
           bad: '#FA6E69'
           labels: '#113F59'
