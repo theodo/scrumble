@@ -23,4 +23,4 @@ md-menu.account-menu
         h3.title Gmail Account
         p {{ googleUser.email }}
       md-button.md-warn(ng-click="googleLogout()" ng-if="googleUser.email") Logout
-      md-button(ng-click="googleLogin()" ng-if="!googleUser.email") Login
+      md-button.md-primary(ng-click="googleLogin()" ng-if="!googleUser.email") Login
