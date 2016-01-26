@@ -32,7 +32,7 @@ div(layout="row" flex="100" layout-sm="column" layout-xs="column")
     md-card-content
       md-input-container.md-block
         textarea(ng-model="sections.intro" aria-label="intro")
-div(style="width: 800px; position: absolute; top: 0; height: 0; overflow: hidden;")
+div.hidden-bdc
   sprint-widget(project="project" sprint="sprint" call-to-actions="false")
           
 md-button.md-fab.md-primary.board-call-to-actions(ng-click="preview($event)")
