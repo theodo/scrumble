@@ -20,6 +20,3 @@ angular.module 'Scrumble.sprint'
   $scope.save = ->
     $scope.sprint.bdcData = $scope.tableData
     $scope.selectedIndex = 0
-    $timeout -> # bdc needs to be rendered before getting the png
-      svg = d3.select('#bdcgraph')[0][0].firstChild
-      bdc.saveImage $scope.sprint, svg

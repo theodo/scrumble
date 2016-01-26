@@ -51,7 +51,6 @@ angular.module 'Scrumble.daily-report'
       message
 
   renderBDC = (message, bdcBase64, useCid) ->
-    console.log bdcBase64
     src = if useCid then 'cid:bdc' else bdcBase64
     promise.then ->
       message.body = message.body.replace '{bdc}', "<img src='#{src}' />"

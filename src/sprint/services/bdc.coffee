@@ -9,10 +9,10 @@ angular.module 'Scrumble.sprint'
 
     canvas = document.createElement 'canvas'
     document.body.appendChild canvas
-    width = svg.offsetWidth * 5
-    height = svg.offsetHeight * 5
-    canvas.width = svg.offsetWidth * 5
-    canvas.height = svg.offsetHeight * 5
+    width = 800
+    height = 800 * 0.54
+    canvas.width = 800
+    canvas.height = 800 * 0.54
     ctx = canvas.getContext '2d'
     ctx.fillStyle = 'white'
     ctx.fillRect 0, 0, width, height
@@ -37,6 +37,3 @@ angular.module 'Scrumble.sprint'
 
     deferred.promise
   getPngBase64: getPngBase64
-  saveImage: (sprint, svg) ->
-    sprint.bdcBase64 = getPngBase64 svg
-    Sprint.save(sprint)

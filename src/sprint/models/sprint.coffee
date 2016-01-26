@@ -11,7 +11,6 @@ angular.module 'Scrumble.storage'
       "isActive",
       "doneColumn",
       "sprintColumn",
-      "bdcBase64",
       "goal",
       "indicators"
     )

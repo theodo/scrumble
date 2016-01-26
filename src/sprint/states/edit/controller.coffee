@@ -28,8 +28,6 @@ angular.module 'Scrumble.sprint'
       $scope.editedSprint.isActive = true
       Sprint.closeActiveSprint $scope.project
       .then ->
-        svg = d3.select('#bdcgraph')[0][0].firstChild
-        bdc.setPng $scope.editedSprint, svg
         Sprint.save $scope.editedSprint
         .then (savedSprint) ->
           $scope.$emit 'sprint:update', nextState: 'tab.board'
