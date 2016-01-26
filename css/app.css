@@ -21,6 +21,10 @@
   outline: none;
 }
 
+md-tabs .md-tab.md-active {
+  color: #FF5252;
+  font-weight: bold;
+}
 @media print {
   md-content {
     height: auto;
@@ -168,21 +172,6 @@ md-content.grey-background {
 .container {
   width: 100%;
 }
-footer p {
-  font-size: 13px;
-  font-style: italic;
-  color: #9E9E9E;
-}
-footer p a {
-  color: #9E9E9E;
-  text-decoration: none;
-  border-bottom: 2px solid #ddd;
-  -webkit-transition: color 0.1s, opacity 0.2s, background-color 0.2s, border-color 0.2s;
-  transition: color 0.1s, opacity 0.2s, background-color 0.2s, border-color 0.2s;
-}
-footer p a:hover {
-  border-bottom: 2px solid #2196F3;
-}
 feedback {
   position: fixed;
   bottom: 0px;
@@ -218,15 +207,6 @@ trello-avatar .trello-avatar .member-avatar.initials {
   text-align: center;
   background: #d3d3d3;
   font-weight: bold;
-}
-
-.question {
-  color: #333;
-  font-weight: bold;
-}
-.answer {
-  padding-left: 2em;
-  margin-bottom: 2em;
 }
 
 .profil-button {
@@ -290,6 +270,15 @@ trello-avatar .trello-avatar .member-avatar.initials {
   border-radius: 50%;
 }
 
+.question {
+  color: #333;
+  font-weight: bold;
+}
+.answer {
+  padding-left: 2em;
+  margin-bottom: 2em;
+}
+
 member-form md-input-container {
   margin-bottom: 0;
 }
@@ -321,10 +310,10 @@ select-people .member-select label {
   height: 100%;
 }
 
-.active-sprint {
-  color: #FFC107;
+.check {
+  color: green;
+  padding-right: 4px;
 }
-
 .clickable {
   cursor: pointer;
 }
@@ -336,15 +325,6 @@ sprint-details md-card {
 }
 md-grid-list {
   margin: 8px;
-}
-.gray {
-  background: #9E9E9E;
-}
-.green {
-  background: #8BC34A;
-}
-.red {
-  background: #F44336;
 }
 md-grid-tile {
   transition: all 400ms ease-out 50ms;

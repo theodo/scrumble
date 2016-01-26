@@ -40,9 +40,9 @@ angular.module('Scrumble.feedback', []);
 
 angular.module('Scrumble.gmail-client', []);
 
-angular.module('Scrumble.indicators', []);
-
 angular.module('Scrumble.login', ['LocalStorageModule', 'satellizer', 'ui.router', 'permission', 'trello-api-client']);
+
+angular.module('Scrumble.indicators', []);
 
 angular.module('Scrumble.settings', ['Scrumble.common']);
 
@@ -135,7 +135,7 @@ angular.module('Scrumble.common').config(function($stateProvider) {
 });
 
 angular.module('Scrumble.common').config(function($mdThemingProvider) {
-  var customAccent, customBackground, customPrimary, customWarn;
+  var customPrimary;
   customPrimary = {
     '50': '#4b91e8',
     '100': '#3483e6',
@@ -154,68 +154,11 @@ angular.module('Scrumble.common').config(function($mdThemingProvider) {
     'contrastDefaultColor': 'light'
   };
   $mdThemingProvider.definePalette('customPrimary', customPrimary);
-  customAccent = {
-    '50': '#c2e5d8',
-    '100': '#b0ddcd',
-    '200': '#9ed5c1',
-    '300': '#8dcdb6',
-    '400': '#7bc6aa',
-    '500': '#69be9f',
-    '600': '#57b694',
-    '700': '#4aaa87',
-    '800': '#429879',
-    '900': '#3a876b',
-    'A100': '#d4ece3',
-    'A200': '#e6f4ef',
-    'A400': '#f7fcfa',
-    'A700': '#33755d',
-    'contrastDefaultColor': 'light'
-  };
-  $mdThemingProvider.definePalette('customAccent', customAccent);
-  customWarn = {
-    '50': '#f8c2c1',
-    '100': '#f5abaa',
-    '200': '#f39593',
-    '300': '#f07e7c',
-    '400': '#ee6865',
-    '500': '#EB514E',
-    '600': '#e83a37',
-    '700': '#e62420',
-    '800': '#d41c18',
-    '900': '#be1915',
-    'A100': '#fbd8d7',
-    'A200': '#fdefee',
-    'A400': '#ffffff',
-    'A700': '#a71613',
-    'contrastDefaultColor': 'light'
-  };
-  $mdThemingProvider.definePalette('customWarn', customWarn);
-  customBackground = {
-    '50': '#ffffff',
-    '100': '#ffffff',
-    '200': '#ffffff',
-    '300': '#ffffff',
-    '400': '#fcfcfc',
-    '500': '#EFEFEF',
-    '600': '#e2e2e2',
-    '700': '#d5d5d5',
-    '800': '#c9c9c9',
-    '900': '#bcbcbc',
-    'A100': '#ffffff',
-    'A200': '#ffffff',
-    'A400': '#ffffff',
-    'A700': '#afafaf'
-  };
-  $mdThemingProvider.definePalette('customBackground', customBackground);
   return $mdThemingProvider.theme('default').primaryPalette('customPrimary', {
     'default': '300',
-    'hue-2': '100'
-  }).accentPalette('customAccent', {
-    'default': '700',
-    'hue-2': '900'
-  }).warnPalette('customWarn', {
-    'default': '500'
-  }).backgroundPalette('customBackground');
+    'hue-2': '100',
+    'hue-3': '50'
+  }).accentPalette('red').warnPalette('red').backgroundPalette('grey');
 });
 
 angular.module('Scrumble.common').controller('ModalCtrl', function($scope, $mdDialog) {
@@ -410,7 +353,7 @@ angular.module('Scrumble.common').service('dynamicFields', function($q, trelloUt
 });
 
 angular.module('Scrumble.common').service('loadingToast', function($mdToast) {
-  var toastLoading, toastSaving;
+  var toastDeleting, toastLoading, toastSaving;
   toastLoading = $mdToast.build({
     templateUrl: 'common/views/loading-toast.html',
     position: 'top left'
@@ -419,10 +362,16 @@ angular.module('Scrumble.common').service('loadingToast', function($mdToast) {
     templateUrl: 'common/views/saving-toast.html',
     position: 'top left'
   });
+  toastDeleting = $mdToast.build({
+    templateUrl: 'common/views/delete-toast.html',
+    position: 'top left'
+  });
   return {
     show: function(message) {
       if (message === 'loading') {
         return $mdToast.show(toastLoading);
+      } else if (message === 'deleting') {
+        return $mdToast.show(toastDeleting);
       } else {
         return $mdToast.show(toastSaving);
       }
@@ -430,6 +379,8 @@ angular.module('Scrumble.common').service('loadingToast', function($mdToast) {
     hide: function(message) {
       if (message === 'loading') {
         return $mdToast.hide(toastLoading);
+      } else if (message === 'deleting') {
+        return $mdToast.hide(toastDeleting);
       } else {
         return $mdToast.hide(toastSaving);
       }
@@ -1046,41 +997,6 @@ angular.module('Scrumble.gmail-client').service('mailer', function($state, $root
   };
 });
 
-angular.module('Scrumble.indicators').config(function($stateProvider) {
-  return $stateProvider.state('tab.indicators', {
-    url: '/sprint/:sprintId/indicators',
-    templateUrl: 'indicators/states/base/view.html',
-    controller: 'IndicatorsCtrl',
-    resolve: {
-      currentSprint: function(Sprint, $stateParams) {
-        return Sprint.find($stateParams.sprintId);
-      },
-      satisfactionSurveyTemplates: function(SatisfactionSurveyTemplate) {
-        return SatisfactionSurveyTemplate.query();
-      }
-    }
-  });
-});
-
-var __hasProp = {}.hasOwnProperty,
-  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
-
-angular.module('Scrumble.indicators').factory('SatisfactionSurveyTemplate', function(Parse) {
-  var SatisfactionSurveyTemplate;
-  return SatisfactionSurveyTemplate = (function(_super) {
-    __extends(SatisfactionSurveyTemplate, _super);
-
-    function SatisfactionSurveyTemplate() {
-      return SatisfactionSurveyTemplate.__super__.constructor.apply(this, arguments);
-    }
-
-    SatisfactionSurveyTemplate.configure("SatisfactionSurveyTemplate", "questions", "company");
-
-    return SatisfactionSurveyTemplate;
-
-  })(Parse.Model);
-});
-
 angular.module('Scrumble.login').config(function($authProvider) {
   return $authProvider.google({
     clientId: '605908567890-3bg3dmamghq5gd7i9sqsdhvoflef0qku.apps.googleusercontent.com',
@@ -1185,6 +1101,41 @@ angular.module('Scrumble.login').service('trelloAuth', function(localStorageServ
       return token != null;
     }
   };
+});
+
+angular.module('Scrumble.indicators').config(function($stateProvider) {
+  return $stateProvider.state('tab.indicators', {
+    url: '/sprint/:sprintId/indicators',
+    templateUrl: 'indicators/states/base/view.html',
+    controller: 'IndicatorsCtrl',
+    resolve: {
+      currentSprint: function(Sprint, $stateParams) {
+        return Sprint.find($stateParams.sprintId);
+      },
+      satisfactionSurveyTemplates: function(SatisfactionSurveyTemplate) {
+        return SatisfactionSurveyTemplate.query();
+      }
+    }
+  });
+});
+
+var __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+angular.module('Scrumble.indicators').factory('SatisfactionSurveyTemplate', function(Parse) {
+  var SatisfactionSurveyTemplate;
+  return SatisfactionSurveyTemplate = (function(_super) {
+    __extends(SatisfactionSurveyTemplate, _super);
+
+    function SatisfactionSurveyTemplate() {
+      return SatisfactionSurveyTemplate.__super__.constructor.apply(this, arguments);
+    }
+
+    SatisfactionSurveyTemplate.configure("SatisfactionSurveyTemplate", "questions", "company");
+
+    return SatisfactionSurveyTemplate;
+
+  })(Parse.Model);
 });
 
 angular.module('Scrumble.settings').config(function($stateProvider) {
@@ -2276,48 +2227,6 @@ angular.module('Scrumble.daily-report').controller('DailyReportCtrl', function($
   };
 });
 
-angular.module('Scrumble.indicators').controller('ClientFormCtrl', function($scope, Sprint, loadingToast) {
-  var _ref, _ref1, _ref2, _ref3;
-  if (((_ref = $scope.sprint) != null ? (_ref1 = _ref.indicators) != null ? _ref1.clientSatisfaction : void 0 : void 0) != null) {
-    $scope.survey = (_ref2 = $scope.sprint) != null ? (_ref3 = _ref2.indicators) != null ? _ref3.clientSatisfaction : void 0 : void 0;
-  } else {
-    $scope.survey = _.find($scope.templates, {
-      company: 'Theodo'
-    });
-  }
-  $scope.save = function() {
-    loadingToast.show();
-    $scope.saving = true;
-    $scope.sprint.indicators = {
-      clientSatisfaction: $scope.survey
-    };
-    return Sprint.save($scope.sprint).then(function() {
-      loadingToast.hide();
-      return $scope.saving = false;
-    });
-  };
-  return $scope.print = function() {
-    return window.print();
-  };
-});
-
-angular.module('Scrumble.indicators').directive('clientForm', function() {
-  return {
-    restrict: 'E',
-    templateUrl: 'indicators/directives/client-form/view.html',
-    scope: {
-      sprint: '=',
-      templates: '='
-    },
-    controller: 'ClientFormCtrl'
-  };
-});
-
-angular.module('Scrumble.indicators').controller('IndicatorsCtrl', function($scope, currentSprint, satisfactionSurveyTemplates) {
-  $scope.currentSprint = currentSprint;
-  return $scope.satisfactionSurveyTemplates = satisfactionSurveyTemplates;
-});
-
 angular.module('Scrumble.login').controller('ProfilInfoCtrl', function($scope, $timeout, $rootScope, trelloAuth, googleAuth) {
   var getTrelloInfo;
   $scope.googleUser = {
@@ -2387,6 +2296,48 @@ angular.module('Scrumble.login').controller('TrelloLoginCtrl', function($scope, 
       return $state.go('tab.board');
     });
   };
+});
+
+angular.module('Scrumble.indicators').controller('ClientFormCtrl', function($scope, Sprint, loadingToast) {
+  var _ref, _ref1, _ref2, _ref3;
+  if (((_ref = $scope.sprint) != null ? (_ref1 = _ref.indicators) != null ? _ref1.clientSatisfaction : void 0 : void 0) != null) {
+    $scope.survey = (_ref2 = $scope.sprint) != null ? (_ref3 = _ref2.indicators) != null ? _ref3.clientSatisfaction : void 0 : void 0;
+  } else {
+    $scope.survey = _.find($scope.templates, {
+      company: 'Theodo'
+    });
+  }
+  $scope.save = function() {
+    loadingToast.show();
+    $scope.saving = true;
+    $scope.sprint.indicators = {
+      clientSatisfaction: $scope.survey
+    };
+    return Sprint.save($scope.sprint).then(function() {
+      loadingToast.hide();
+      return $scope.saving = false;
+    });
+  };
+  return $scope.print = function() {
+    return window.print();
+  };
+});
+
+angular.module('Scrumble.indicators').directive('clientForm', function() {
+  return {
+    restrict: 'E',
+    templateUrl: 'indicators/directives/client-form/view.html',
+    scope: {
+      sprint: '=',
+      templates: '='
+    },
+    controller: 'ClientFormCtrl'
+  };
+});
+
+angular.module('Scrumble.indicators').controller('IndicatorsCtrl', function($scope, currentSprint, satisfactionSurveyTemplates) {
+  $scope.currentSprint = currentSprint;
+  return $scope.satisfactionSurveyTemplates = satisfactionSurveyTemplates;
 });
 
 angular.module('Scrumble.settings').controller('MemberFormCtrl', function($scope, projectUtils) {
@@ -2634,8 +2585,8 @@ angular.module('Scrumble.sprint').directive('burndown', function() {
             left: 50
           },
           colors: {
-            standard: '#D93F8E',
-            done: '#5AA6CB',
+            standard: '#FF5253',
+            done: '#1a69cd',
             good: '#97D17A',
             bad: '#FA6E69',
             labels: '#113F59'
@@ -2667,7 +2618,7 @@ angular.module('Scrumble.sprint').directive('burndown', function() {
   };
 });
 
-angular.module('Scrumble.sprint').controller('SprintDetailsCtrl', function($scope, $state, $mdMedia, $mdDialog, Sprint) {
+angular.module('Scrumble.sprint').controller('SprintDetailsCtrl', function($scope, $state, $mdMedia, $mdDialog, Sprint, loadingToast) {
   var BDCDialogController;
   $scope.showBurndown = function(ev, sprint) {
     var useFullScreen;
@@ -2703,8 +2654,10 @@ angular.module('Scrumble.sprint').controller('SprintDetailsCtrl', function($scop
     var confirm;
     confirm = $mdDialog.confirm().title('Delete sprints').textContent('Are you sure you want to do what you\'re trying to do ?').ariaLabel('Delete sprints dialog').targetEvent(event).ok('Delete').cancel('Cancel');
     return $mdDialog.show(confirm).then(function() {
-      return sprint.destroy().then(function() {
-        return _.remove($scope.sprints, sprint);
+      loadingToast.show('deleting');
+      return $scope.sprint.destroy().then(function() {
+        _.remove($scope.sprints, $scope.sprint);
+        return loadingToast.hide('deleting');
       });
     });
   };
