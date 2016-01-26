@@ -5,6 +5,7 @@ angular.module 'Scrumble.sprint'
   $mdMedia
   $mdDialog
   Sprint
+  loadingToast
 ) ->
   $scope.showBurndown = (ev, sprint) ->
     useFullScreen = $mdMedia('sm') or $mdMedia('xs')
@@ -35,8 +36,10 @@ angular.module 'Scrumble.sprint'
     .cancel 'Cancel'
 
     $mdDialog.show(confirm).then ->
-      sprint.destroy().then ->
-        _.remove $scope.sprints, sprint
+      loadingToast.show 'deleting'
+      $scope.sprint.destroy().then ->
+        _.remove $scope.sprints, $scope.sprint
+        loadingToast.hide 'deleting'
 
   $scope.indicators = ->
     $state.go 'tab.indicators', {sprintId: sprint.objectId}
