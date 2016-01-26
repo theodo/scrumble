@@ -1,10 +1,11 @@
+style(type='text/css').
+  @page { size: portrait; }
 md-card-content.md-padding
   h2.md-title Satisfaction survey
     md-button.md-icon-button(ng-click="print()")
       md-icon(md-svg-src="printer", aria-label="Print")
-        md-tooltip(md-direction="bottom") Print
   
-  md-input-container
+  md-input-container.hide-for-print
     label Company
     md-select(ng-model="survey" aria-label="survey")
       md-option(ng-repeat="template in templates" ng-value="template") {{ template.company }}

@@ -60,7 +60,4 @@ angular.module 'Scrumble.sprint'
       bdc.saveImage $scope.sprint, svg
 
   $scope.printBDC = ->
-    $state.go 'print-bdc', {
-      projectId: $scope.project.objectId,
-      sprintId: $scope.sprint.objectId
-    }
+    window.print()

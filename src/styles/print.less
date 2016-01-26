@@ -1,5 +1,5 @@
 @media print {
-  header, md-sidenav, .md-sidenav-left, feedback, button, md-tabs-wrapper {
+  header, md-sidenav, .md-sidenav-left, feedback, button, md-tabs-wrapper, .hide-for-print {
     display: none !important;
   }
   md-card {
@@ -9,5 +9,22 @@
     .md-off {
       border-width: 10px;
     }
+  }
+  md-radio-button {
+    margin-bottom: 8px !important;
+    margin-top: 8px !important;
+  }
+  @page {
+    overflow: hidden;
+    margin: 1%;
+  }
+  .answer {
+    margin-bottom: 0 !important;
+  }
+  .md-title {
+    margin-top: 0 !important;
+  }
+  body {
+    margin-top: 0 !important;
   }
 }
