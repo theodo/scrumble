@@ -32,6 +32,16 @@ div(layout="row" flex="100" layout-sm="column")
     md-card-content
       md-input-container.md-block
         textarea(ng-model="sections.intro" aria-label="intro")
+
+div(layout="row" flex="100" layout-sm="column")
+  md-card(flex="50" flex-sm="100")
+    md-card-title
+      md-card-title-text
+        span.md-headline {intro}
+      div(flex)
+      markdown-helper
+    md-card-content
+      sprint-widget(project="project" sprint="sprint" call-to-actions="false")
           
 md-button.md-fab.md-primary.board-call-to-actions(ng-click="preview($event)")
   md-icon(md-svg-icon='eye') Preview

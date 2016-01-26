@@ -9,10 +9,10 @@ angular.module 'Scrumble.sprint'
 
     canvas = document.createElement 'canvas'
     document.body.appendChild canvas
-    width = svg.offsetWidth
-    height = svg.offsetHeight
-    canvas.width = svg.offsetWidth
-    canvas.height = svg.offsetHeight
+    width = svg.offsetWidth * 5
+    height = svg.offsetHeight * 5
+    canvas.width = svg.offsetWidth * 5
+    canvas.height = svg.offsetHeight * 5
     ctx = canvas.getContext '2d'
     ctx.fillStyle = 'white'
     ctx.fillRect 0, 0, width, height
@@ -36,9 +36,7 @@ angular.module 'Scrumble.sprint'
       deferred.reject 'doneColumn is not set'
 
     deferred.promise
-  setPng: (sprint, svg) ->
-    sprint.bdcBase64 = getPngBase64 svg
-    sprint
+  getPngBase64: getPngBase64
   saveImage: (sprint, svg) ->
     sprint.bdcBase64 = getPngBase64 svg
     Sprint.save(sprint)

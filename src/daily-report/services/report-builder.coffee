@@ -1,5 +1,5 @@
 angular.module 'Scrumble.daily-report'
-.service 'reportBuilder', ($q, ScrumbleUser, Sprint, Project, trelloUtils, dynamicFields)->
+.service 'reportBuilder', ($q, ScrumbleUser, Sprint, Project, trelloUtils, dynamicFields, bdc)->
   converter = new showdown.Converter()
 
   promise = undefined
@@ -51,6 +51,7 @@ angular.module 'Scrumble.daily-report'
       message
 
   renderBDC = (message, bdcBase64, useCid) ->
+    console.log bdcBase64
     src = if useCid then 'cid:bdc' else bdcBase64
     promise.then ->
       message.body = message.body.replace '{bdc}', "<img src='#{src}' />"
@@ -97,7 +98,7 @@ angular.module 'Scrumble.daily-report'
       description: 'If your are behind or late according to the burn down chart'
       icon: 'owl'
     ]
-  render: (message, previousGoals, todaysGoals, sections, useCid) ->
+  render: (message, previousGoals, todaysGoals, sections, svg, useCid) ->
     message = angular.copy message
     message.body = renderTodaysGoals message.body, todaysGoals
     message.body = renderPreviousGoals message.body, previousGoals
@@ -119,7 +120,8 @@ angular.module 'Scrumble.daily-report'
     .then ->
       renderColor message
     .then (message) ->
-      renderBDC message, sprint.bdcBase64, useCid
+      bdcBase64 = bdc.getPngBase64 svg
+      renderBDC message, bdcBase64, useCid
     .then (message) ->
       renderTo message
     .then (message) ->

@@ -42,7 +42,5 @@ div.sprint-body(layout="row" layout-align="center end")
           ng-model="editedSprint.resources.speed"
           ng-change="checkSprint('speed')"
         )
-      div(ng-if="editedSprint.resources.speed && editedSprint.resources.totalPoints")
-        sprint-widget(project="project" sprint="editedSprint" call-to-actions="false")
     section(layout="row" layout-sm="column" layout-align="center center" layout-wrap)
       md-button.md-raised.md-primary(ng-disabled="!activable" ng-click="activate()") {{ saveLabel }}
