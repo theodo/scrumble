@@ -41,11 +41,11 @@ angular.module 'Scrumble.sprint'
     return [] unless days? and resources?
     standard = 0
     bdc = []
-    previous = if previous? then previous else []
+    previous ?= []
     fetchDone = (date, i) ->
       dayFromPrevious = _.find previous, (elt) ->
         moment(elt.date).format() is moment(date).format()
-      if dayFromPrevious? and dayFromPrevious.done?
+      if dayFromPrevious?.done?
         return dayFromPrevious.done
       else if i is 0
         return 0
@@ -68,7 +68,7 @@ angular.module 'Scrumble.sprint'
       bdc.push {
         date: date
         standard: standard
-        done: fetchDone(date)
+        done: fetchDone date
       }
     bdc
   generateBDC: generateBDC
