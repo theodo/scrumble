@@ -3,24 +3,24 @@ md-card(flex="100")
     md-tab(label='Chart')
       sprint-widget(project="project" sprint="sprint" call-to-actions="true" display-title="true")
     md-tab(label='Table')
-      md-data-table-container
-        table.bdc-data(md-data-table)
-          thead
-            tr
-              th(name="Day")
-              th(name="Standard")
-              th(name="Done")
-              th(name="")
-          tbody
-            tr(ng-repeat="day in tableData" ng-class="{'md-selected': currentDayIndex == $index}")
-              td {{ day.date | date : 'EEEE' }}
-              td {{ day.standard.toFixed(1) }}
-              td
+      md-table-container
+        table.bdc-data(md-table)
+          thead(md-head)
+            tr(md-row)
+              th(md-column) Day
+              th(md-column) Standard
+              th(md-column) Done
+              th(md-column)
+          tbody(md-body)
+            tr(md-row ng-repeat="day in tableData" ng-class="{'md-selected': currentDayIndex == $index}")
+              td(md-cell) {{ day.date | date : 'EEEE' }}
+              td(md-cell) {{ day.standard.toFixed(1) }}
+              td(md-cell)
                 section(layout="row" layout-sm="column" layout-wrap)
                   md-input-container(flex="50" md-no-float="true")
                     label Done
                     input(ng-model="day.done" type="number")
-              td
+              td(md-cell)
                 div(layout-align="center center" ng-if="currentDayIndex == $index")
                   md-button.md-raised.md-primary(ng-click="fetchTrelloDonePoints()")
                     md-icon(md-svg-icon='trello')

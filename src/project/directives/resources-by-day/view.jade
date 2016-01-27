@@ -1,28 +1,25 @@
-.toto
-  .resources-by-day(
-    layout="row"
+md-data-table-toolbar
+  button.md-icon-button.md-button.md-default-theme(
+    ng-click='delete($event)' ng-show='selected.length'
   )
-  md-data-table-toolbar
-    button.md-icon-button.md-button.md-default-theme(
-      ng-click='delete($event)' ng-show='selected.length'
-    )
-      md-icon(md-svg-icon='delete')
-  md-data-table-container
-    table(md-data-table md-row-select="selected")
-      thead
-        tr
-          td &nbsp;
-          td(
-            layout-align="center center"
-            ng-repeat="(j, member) in members"
+    md-icon(md-svg-icon='delete')
+md-table-container
+  table(md-table md-row-select ng-model="selected")
+    thead(md-head)
+      tr(md-row)
+        th(md-column) &nbsp;
+        th(
+          md-column
+          layout-align="center center"
+          ng-repeat="(j, member) in members"
+        )
+          trello-avatar(
+            member="member"
           )
-            trello-avatar(
-              member="member"
-            )
-      tbody
-        tr(ng-repeat="day in days")
-          td {{ day.date | date : 'EEEE, MMMM d' }}
-          td(ng-repeat="member in members")
-            md-button.md-primary.row(
-              ng-click="resourceClick($parent.$index,$index)"
-            ) {{ matrix[$parent.$parent.$index][$index] | number : 2 }}
+    tbody(md-body)
+      tr(md-row md-select="day" md-select-id="{{day.date}}" ng-repeat="day in days")
+        td(md-cell) {{ day.date | date : 'EEEE, MMMM d' }}
+        td(md-cell ng-repeat="member in members")
+          md-button.md-primary.row(
+            ng-click="resourceClick($parent.$index,$index)"
+          ) {{ matrix[$parent.$parent.$index][$index] | number : 2 }}
