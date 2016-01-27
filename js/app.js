@@ -18,8 +18,7 @@ app.config(function(TrelloClientProvider) {
     key: '2dcb2ba290c521d2b5c2fd69cc06830e',
     appName: 'Scrumble',
     tokenExpiration: 'never',
-    scope: ['read', 'account'],
-    returnUrl: window.location.origin + window.location.pathname
+    scope: ['read', 'account']
   });
 });
 
@@ -84,7 +83,9 @@ angular.module('Scrumble.board').config(function($stateProvider) {
 angular.module('Scrumble.common').run(function($rootScope, $state, $window, loadingToast) {
   var finish;
   finish = function() {
-    return $window.loading_screen.finish();
+    if (!$window.loading_screen.finishing) {
+      return $window.loading_screen.finish();
+    }
   };
   $rootScope.$on('$stateChangeSuccess', function() {
     loadingToast.hide('loading');
@@ -1903,6 +1904,23 @@ angular.module('Scrumble.common').directive('dynamicFieldsList', function() {
   };
 });
 
+angular.module('Scrumble.common').directive('nssRound', function() {
+  return {
+    require: 'ngModel',
+    link: function(scope, element, attrs, ngModelController) {
+      ngModelController.$parsers.push(function(data) {
+        return parseFloat(data);
+      });
+      ngModelController.$formatters.push(function(data) {
+        if (_.isNumber(data)) {
+          data = data.toFixed(1);
+        }
+        return data;
+      });
+    }
+  };
+});
+
 angular.module('Scrumble.common').factory('Avatar', function(TrelloClient) {
   return {
     getMember: function(memberId) {
@@ -1972,23 +1990,6 @@ angular.module('Scrumble.common').directive('trelloAvatar', function() {
   };
 });
 
-angular.module('Scrumble.common').directive('nssRound', function() {
-  return {
-    require: 'ngModel',
-    link: function(scope, element, attrs, ngModelController) {
-      ngModelController.$parsers.push(function(data) {
-        return parseFloat(data);
-      });
-      ngModelController.$formatters.push(function(data) {
-        if (_.isNumber(data)) {
-          data = data.toFixed(1);
-        }
-        return data;
-      });
-    }
-  };
-});
-
 angular.module('Scrumble.daily-report').directive('markdownHelper', function() {
   return {
     restrict: 'E',
@@ -1999,22 +2000,24 @@ angular.module('Scrumble.daily-report').directive('markdownHelper', function() {
 var __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
 angular.module('Scrumble.daily-report').controller('PreviousGoalsCtrl', function($scope, $q, nssModal, TrelloClient, trelloCards) {
-  var DialogController;
-  trelloCards.getDoneCardIds($scope.sprint.doneColumn).then(function(cardIds) {
-    var card, _i, _len, _ref, _ref1, _results;
-    _ref = $scope.goals;
-    _results = [];
-    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-      card = _ref[_i];
-      card.display = true;
-      if (_ref1 = card.id, __indexOf.call(cardIds, _ref1) >= 0) {
-        _results.push(card.isDone = true);
-      } else {
-        _results.push(card.isDone = false);
+  var DialogController, _ref;
+  if ((((_ref = $scope.sprint) != null ? _ref.doneColumn : void 0) != null) && _.isArray($scope.goals)) {
+    trelloCards.getDoneCardIds($scope.sprint.doneColumn).then(function(cardIds) {
+      var card, _i, _len, _ref1, _ref2, _results;
+      _ref1 = $scope.goals;
+      _results = [];
+      for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
+        card = _ref1[_i];
+        card.display = true;
+        if (_ref2 = card.id, __indexOf.call(cardIds, _ref2) >= 0) {
+          _results.push(card.isDone = true);
+        } else {
+          _results.push(card.isDone = false);
+        }
       }
-    }
-    return _results;
-  });
+      return _results;
+    });
+  }
   DialogController = function($scope, $controller, goal) {
     angular.extend(this, $controller('ModalCtrl', {
       $scope: $scope
