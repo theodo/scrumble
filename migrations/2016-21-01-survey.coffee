@@ -167,6 +167,88 @@ surveys = [
     ]
   ,
   ]
+,
+  company: 'Theodo UK'
+  questions: [
+    label: 'How do you feel about the speed of the team?'
+    type: 'radio'
+    items: [
+      value: 5
+      label: '5 - Excellent'
+    ,
+      value: 4
+      label: '4 - Very good'
+    ,
+      value: 3
+      label: '3 - Good'
+    ,
+      value: 2
+      label: '2 - Average'
+    ,
+      value: 1
+      label: '1 - Insufficient'
+    ,
+      value: 0
+      label: '0 - Very insufficient'
+    ,
+    ]
+  ,
+    label: 'How do you feel about the quality of Theodo’s support?'
+    type: 'radio'
+    items: [
+      value: 5
+      label: '5 - Excellent'
+    ,
+      value: 4
+      label: '4 - Very good'
+    ,
+      value: 3
+      label: '3 - Good'
+    ,
+      value: 2
+      label: '2 - Average'
+    ,
+      value: 1
+      label: '1 - Insufficient'
+    ,
+      value: 0
+      label: '0 - Very insufficient'
+    ,
+    ]
+  ,
+    label: 'What is the main priority the team should concentrate on to improve the score?'
+    type: 'textarea'
+  ,
+    label: 'Should you have a magic wand, what is « the » thing you would change at Theodo?'
+    type: 'textarea'
+  ,
+    label: 'Would you recommend Theodo?'
+    type: 'radio'
+    items: [
+      value: 'yes-of-course'
+      label: 'Oui bien sûr'
+    ,
+      value: 'yes'
+      label: 'Oui'
+    ,
+      value: 'not-really'
+      label: 'Pas vraiment'
+    ,
+      value: 'not-at-all'
+      label: 'Pas du tout'
+    ]
+  ,
+    label: 'Would you like to have an appointment with your sales person this week?'
+    type: 'radio'
+    items: [
+      value: 'yes'
+      label: 'Yes'
+    ,
+      value: 'no'
+      label: 'No, it is not necessary for now'
+    ]
+  ,
+  ]
 ]
 Survey = Parse.Object.extend("SatisfactionSurveyTemplate")
 query = new Parse.Query(Survey)
