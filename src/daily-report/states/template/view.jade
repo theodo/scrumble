@@ -15,7 +15,7 @@ div(layout="row" flex="100" layout-sm="column" layout-xs="column")
       previous-goals(goals="previousGoals" sprint="sprint")
 div(layout="row" flex="100" layout-sm="column" layout-xs="column")
   md-card(flex="50" flex-sm="100" flex-xs="100")
-    md-card-title
+    md-card-title(flex="nogrow")
       md-card-title-text
         span.md-headline {problems}
       div(flex)
@@ -24,7 +24,7 @@ div(layout="row" flex="100" layout-sm="column" layout-xs="column")
       md-input-container.md-block
         textarea(ng-model="sections.problems" aria-label="problems")
   md-card(flex="50" flex-sm="100" flex-xs="100")
-    md-card-title
+    md-card-title(flex="nogrow")
       md-card-title-text
         span.md-headline {intro}
       div(flex)
@@ -35,6 +35,6 @@ div(layout="row" flex="100" layout-sm="column" layout-xs="column")
 div.hidden-bdc
   sprint-widget(project="project" sprint="sprint" call-to-actions="false")
           
-md-button.md-fab.md-primary.board-call-to-actions(ng-click="preview($event)")
+md-button.md-fab.md-accent.board-call-to-actions(ng-click="preview($event)")
   md-icon(md-svg-icon='eye') Preview
   md-tooltip(md-direction='left') Preview
