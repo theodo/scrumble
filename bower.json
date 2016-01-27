@@ -21,27 +21,26 @@
   "dependencies": {
     "angular-parse": "master",
     "angular-ui-router": "0.2.15",
-    "angular": "1.4.8",
+    "angular": "1.4.9",
     "bootstrap": "3.3.6",
     "lodash": "3.10.1",
     "moment": "2.10.6",
-    "angular-resource": "~1.4.8",
-    "angular-local-storage": "~0.2.3",
+    "angular-resource": "1.4.9",
+    "angular-local-storage": "0.2.3",
     "angular-trello": "*",
     "angular-trello-api-client": "2.0.0",
-    "angular-material": "1.0.1",
-    "d3": "~3.5.10",
-    "angular-permission": "~1.1.1",
+    "angular-material": "1.0.3",
+    "d3": "3.5.10",
+    "angular-permission": "1.1.1",
     "d3-bdc": "1.1.2",
-    "angular-material-data-table": "~0.8.14",
-    "mdi": "~1.3.41",
+    "angular-material-data-table": "0.9.9",
+    "mdi": "1.3.41",
     "MimeJS": "mime.js#~1.0.0",
-    "angular-sanitize": "~1.4.8",
-    "showdown": "~1.3.0",
+    "angular-sanitize": "1.4.9",
+    "showdown": "1.3.0",
     "please-wait": "0.0.5"
   },
   "resolutions": {
-    "angular": "1.4.8",
-    "angular-material": "1.0.1"
+    "angular": "1.4.9"
   }
 }
