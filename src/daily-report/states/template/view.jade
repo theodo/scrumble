@@ -15,7 +15,7 @@ div(layout="row" flex="100" layout-sm="column")
       previous-goals(goals="previousGoals" sprint="sprint")
 div(layout="row" flex="100" layout-sm="column")
   md-card(flex="50" flex-sm="100")
-    md-card-title
+    md-card-title(flex="nogrow")
       md-card-title-text
         span.md-headline {problems}
       div(flex)
@@ -24,7 +24,7 @@ div(layout="row" flex="100" layout-sm="column")
       md-input-container.md-block
         textarea(ng-model="sections.problems" aria-label="problems")
   md-card(flex="50" flex-sm="100")
-    md-card-title
+    md-card-title(flex="nogrow")
       md-card-title-text
         span.md-headline {intro}
       div(flex)
