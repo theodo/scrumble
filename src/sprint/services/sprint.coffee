@@ -64,7 +64,7 @@ angular.module 'Scrumble.sprint'
 
     if day?
       # add last point for ceremony
-      date = moment(day.date).add(1, 'days').toDate()
+      date = moment(day.date).add(1, 'day').toDate()
       bdc.push
         date: date
         standard: standard
