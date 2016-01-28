@@ -14,11 +14,19 @@ angular.module 'Scrumble.daily-report'
     promise.then ->
       index = getCurrentDayIndex sprint.bdcData
       diff = sprint.bdcData[index].done - sprint.bdcData[index].standard
-      if diff > 0 then true else false
+      if diff > 0
+        return true
+      if diff < 0
+       return false
 
   renderBehindAhead = (message) ->
     isAhead().then (ahead) ->
-      label = if ahead then message.aheadLabel else message.behindLabel
+      if ahead
+        label = message.aheadLabel
+      else if ahead?
+        label = message.aheadLabel
+      else
+        label = message.behindLabel
       message.body = message.body.replace '{behind/ahead}', label
       message.subject = message.subject.replace '{behind/ahead}', label
       message
@@ -46,7 +54,12 @@ angular.module 'Scrumble.daily-report'
       message.body = message.body.replace />(.*(\{color=(.+?)\}).*)</g, (match, line, toRemove, color) ->
         line = line.replace toRemove, ""
         if color is 'smart'
-          color = if ahead then 'green' else 'red'
+          if ahead
+            color = 'green'
+          else if ahead?
+            color = 'red'
+          else
+            color = 'none'
         "><span style='color: #{color};'>#{line}</span><"
       message
 
