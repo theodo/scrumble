@@ -38,7 +38,7 @@ angular.module 'Scrumble.daily-report'
       previousGoals,
       todaysGoals,
       sections,
-      d3.select('#bdcgraph')[0][0].firstChild
+      d3.select('#bdcgraph')[0][0].firstChild,
       true
     )
     .then (message) ->
