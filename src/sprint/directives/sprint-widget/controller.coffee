@@ -48,7 +48,4 @@ angular.module 'Scrumble.sprint'
       $scope.$emit 'bdc:update'
 
   $scope.printBDC = ->
-    $state.go 'print-bdc', {
-      projectId: $scope.project.objectId,
-      sprintId: $scope.sprint.objectId
-    }
+    window.print()

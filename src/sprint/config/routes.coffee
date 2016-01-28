@@ -44,12 +44,3 @@ angular.module 'Scrumble.sprint'
         Project.find $stateParams.projectId
       sprints: (Sprint, $stateParams) ->
         Sprint.getByProjectId $stateParams.projectId
-  .state 'print-bdc',
-    url: '/project/:projectId/sprint/:sprintId/print'
-    controller: 'PrintBDCCtrl'
-    templateUrl: 'sprint/states/print-bdc/view.html'
-    resolve:
-      project: (Project, $stateParams) ->
-        Project.find $stateParams.projectId
-      sprint: (Sprint, $stateParams) ->
-        Sprint.find $stateParams.sprintId
