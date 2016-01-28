@@ -2496,6 +2496,9 @@ angular.module('Scrumble.settings').controller('ProjectCtrl', function($location
     project = new Project();
   }
   $scope.project = project;
+  $scope.selectedItemChange = function(boardId) {
+    return fetchBoardData(boardId);
+  };
   fetchBoardData = function(boardId) {
     return $q.all([
       TrelloClient.get("/boards/" + boardId + "/lists").then(function(response) {
