@@ -186,10 +186,10 @@ surveys = [
       label: '2 - Average'
     ,
       value: 1
-      label: '1 - Insufficient'
+      label: '1 - Not good'
     ,
       value: 0
-      label: '0 - Very insufficient'
+      label: '0 - Not good at all'
     ,
     ]
   ,
@@ -209,10 +209,10 @@ surveys = [
       label: '2 - Average'
     ,
       value: 1
-      label: '1 - Insufficient'
+      label: '1 - Not good'
     ,
       value: 0
-      label: '0 - Very insufficient'
+      label: '0 - Not good at all'
     ,
     ]
   ,
@@ -226,16 +226,16 @@ surveys = [
     type: 'radio'
     items: [
       value: 'yes-of-course'
-      label: 'Oui bien sûr'
+      label: 'Yes, absolutely'
     ,
       value: 'yes'
-      label: 'Oui'
+      label: 'Yes'
     ,
       value: 'not-really'
-      label: 'Pas vraiment'
+      label: 'Not really'
     ,
       value: 'not-at-all'
-      label: 'Pas du tout'
+      label: 'Not at all'
     ]
   ,
     label: 'Would you like to have an appointment with your sales person this week?'
@@ -245,7 +245,7 @@ surveys = [
       label: 'Yes'
     ,
       value: 'no'
-      label: 'No, it is not necessary for now'
+      label: 'No'
     ]
   ,
   ]
