@@ -18,7 +18,8 @@ app.config(function(TrelloClientProvider) {
     key: '2dcb2ba290c521d2b5c2fd69cc06830e',
     appName: 'Scrumble',
     tokenExpiration: 'never',
-    scope: ['read', 'account']
+    scope: ['read', 'account'],
+    returnUrl: window.location.origin + window.location.pathname
   });
 });
 
@@ -670,7 +671,7 @@ angular.module('Scrumble.daily-report').service('trelloCards', function($q, Trel
   };
 });
 
-angular.module('Scrumble.daily-report').service('reportBuilder', function($q, ScrumbleUser, Sprint, Project, trelloUtils, dynamicFields) {
+angular.module('Scrumble.daily-report').service('reportBuilder', function($q, ScrumbleUser, Sprint, Project, trelloUtils, dynamicFields, bdc) {
   var converter, isAhead, project, promise, renderBDC, renderBehindAhead, renderCc, renderColor, renderPreviousGoals, renderSection, renderTo, renderTodaysGoals, sprint;
   converter = new showdown.Converter();
   promise = void 0;
@@ -838,7 +839,7 @@ angular.module('Scrumble.daily-report').service('reportBuilder', function($q, Sc
         }
       ];
     },
-    render: function(message, previousGoals, todaysGoals, sections, useCid) {
+    render: function(message, previousGoals, todaysGoals, sections, svg, useCid) {
       var key, value;
       message = angular.copy(message);
       message.body = renderTodaysGoals(message.body, todaysGoals);
@@ -860,7 +861,9 @@ angular.module('Scrumble.daily-report').service('reportBuilder', function($q, Sc
       }).then(function() {
         return renderColor(message);
       }).then(function(message) {
-        return renderBDC(message, sprint.bdcBase64, useCid);
+        var bdcBase64;
+        bdcBase64 = bdc.getPngBase64(svg);
+        return renderBDC(message, bdcBase64, useCid);
       }).then(function(message) {
         return renderTo(message);
       }).then(function(message) {
@@ -1377,7 +1380,7 @@ angular.module('Scrumble.storage').factory('Sprint', function(Parse, sprintUtils
       return Sprint.__super__.constructor.apply(this, arguments);
     }
 
-    Sprint.configure("Sprint", "project", "number", "dates", "resources", "bdcData", "isActive", "doneColumn", "sprintColumn", "bdcBase64", "goal", "indicators");
+    Sprint.configure("Sprint", "project", "number", "dates", "resources", "bdcData", "isActive", "doneColumn", "sprintColumn", "goal", "indicators");
 
     find = Sprint.find;
 
@@ -1462,6 +1465,9 @@ angular.module('Scrumble.storage').factory('Sprint', function(Parse, sprintUtils
 
     Sprint.closeActiveSprint = function(project) {
       return this.getActiveSprint(project).then(function(sprint) {
+        if (sprint == null) {
+          return;
+        }
         sprint.isActive = false;
         return sprint.save();
       });
@@ -1517,10 +1523,10 @@ angular.module('Scrumble.sprint').service('bdc', function($q, trelloUtils, Sprin
     img.src = 'data:image/svg+xml;base64,' + window.btoa(svgStr);
     canvas = document.createElement('canvas');
     document.body.appendChild(canvas);
-    width = svg.offsetWidth;
-    height = svg.offsetHeight;
-    canvas.width = svg.offsetWidth;
-    canvas.height = svg.offsetHeight;
+    width = 800;
+    height = 800 * 0.54;
+    canvas.width = 800;
+    canvas.height = 800 * 0.54;
     ctx = canvas.getContext('2d');
     ctx.fillStyle = 'white';
     ctx.fillRect(0, 0, width, height);
@@ -1553,15 +1559,12 @@ angular.module('Scrumble.sprint').service('bdc', function($q, trelloUtils, Sprin
       }
       return deferred.promise;
     },
-    saveImage: function(sprint, svg) {
-      sprint.bdcBase64 = getPngBase64(svg);
-      return Sprint.save(sprint);
-    }
+    getPngBase64: getPngBase64
   };
 });
 
 angular.module('Scrumble.sprint').service('sprintUtils', function() {
-  var calculateSpeed, calculateTotalPoints, generateDayList, generateResources, getTotalManDays;
+  var calculateSpeed, calculateTotalPoints, generateBDC, generateDayList, generateResources, getTotalManDays;
   generateDayList = function(start, end) {
     var current, day, days, endM;
     if (!((start != null) && (end != null))) {
@@ -1639,45 +1642,51 @@ angular.module('Scrumble.sprint').service('sprintUtils', function() {
     }
     return totalPoints / totalManDays;
   };
-  return {
-    generateBDC: function(days, resources, previous) {
-      var bdc, date, day, fetchDone, i, standard, _i, _len;
-      if (previous == null) {
-        previous = [];
+  generateBDC = function(days, resources, previous) {
+    var bdc, date, day, fetchDone, i, standard, _i, _len;
+    if (!((days != null) && (resources != null))) {
+      return [];
+    }
+    standard = 0;
+    bdc = [];
+    if (previous == null) {
+      previous = [];
+    }
+    fetchDone = function(date, i) {
+      var dayFromPrevious;
+      dayFromPrevious = _.find(previous, function(elt) {
+        return moment(elt.date).format() === moment(date).format();
+      });
+      if ((dayFromPrevious != null ? dayFromPrevious.done : void 0) != null) {
+        return dayFromPrevious.done;
+      } else if (i === 0) {
+        return 0;
+      } else {
+        return null;
       }
-      standard = 0;
-      bdc = [];
-      fetchDone = function(date, i) {
-        var dayFromPrevious;
-        dayFromPrevious = _.find(previous, function(elt) {
-          return moment(elt.date).format() === moment(date).format();
-        });
-        if (dayFromPrevious != null) {
-          return dayFromPrevious.done;
-        } else if (i === 0) {
-          return 0;
-        } else {
-          return null;
-        }
-      };
-      for (i = _i = 0, _len = days.length; _i < _len; i = ++_i) {
-        day = days[i];
-        date = moment(day.date).toDate();
-        bdc.push({
-          date: date,
-          standard: standard,
-          done: fetchDone(date, i)
-        });
-        standard += _.sum(resources.matrix[i]) * resources.speed;
-      }
-      date = moment(day.date).add(1, 'days').toDate();
+    };
+    for (i = _i = 0, _len = days.length; _i < _len; i = ++_i) {
+      day = days[i];
+      date = moment(day.date).toDate();
+      bdc.push({
+        date: date,
+        standard: standard,
+        done: fetchDone(date, i)
+      });
+      standard += _.sum(resources.matrix[i]) * resources.speed;
+    }
+    if (day != null) {
+      date = moment(day.date).add(1, 'day').toDate();
       bdc.push({
         date: date,
         standard: standard,
         done: fetchDone(date)
       });
-      return bdc;
-    },
+    }
+    return bdc;
+  };
+  return {
+    generateBDC: generateBDC,
     computeSpeed: function(sprint) {
       var first, last, speed, _ref;
       if (!_.isArray(sprint.bdcData)) {
@@ -1714,7 +1723,7 @@ angular.module('Scrumble.sprint').service('sprintUtils', function() {
       }
     },
     ensureDataConsistency: function(source, sprint, devTeam) {
-      var previous;
+      var previous, _ref, _ref1;
       if (source === 'number' || source === 'done') {
         return;
       }
@@ -1725,6 +1734,7 @@ angular.module('Scrumble.sprint').service('sprintUtils', function() {
         };
         sprint.dates.days = generateDayList(sprint.dates.start, sprint.dates.end);
         sprint.resources.matrix = generateResources(sprint.dates.days, devTeam, previous);
+        sprint.bdcData = generateBDC(sprint.dates.days, sprint.resources, sprint.bdcData);
       }
       if (source === 'team') {
         previous = {
@@ -1732,13 +1742,16 @@ angular.module('Scrumble.sprint').service('sprintUtils', function() {
           matrix: sprint.resources.matrix
         };
         sprint.resources.matrix = generateResources(sprint.dates.days, devTeam, previous);
+        sprint.bdcData = generateBDC(sprint.dates.days, sprint.resources, sprint.bdcData);
       }
       if (source === 'date' || source === 'resource' || source === 'speed') {
         sprint.resources.totalManDays = getTotalManDays(sprint.resources.matrix);
         sprint.resources.totalPoints = calculateTotalPoints(sprint.resources.totalManDays, sprint.resources.speed);
+        sprint.bdcData = generateBDC((_ref = sprint.dates) != null ? _ref.days : void 0, sprint.resources, sprint.bdcData);
       }
       if (source === 'total') {
-        return sprint.resources.speed = calculateSpeed(sprint.resources.totalPoints, sprint.resources.totalManDays);
+        sprint.resources.speed = calculateSpeed(sprint.resources.totalPoints, sprint.resources.totalManDays);
+        return sprint.bdcData = generateBDC((_ref1 = sprint.dates) != null ? _ref1.days : void 0, sprint.resources, sprint.bdcData);
       }
     }
   };
@@ -1857,10 +1870,7 @@ angular.module('Scrumble.storage').service('userService', function(ScrumbleUser)
 });
 
 angular.module('Scrumble.sprint').controller('BoardCtrl', function($scope, $timeout, bdc, trelloUtils, sprintUtils) {
-  var getCurrentDayIndex, _ref;
-  if (!((_ref = $scope.sprint) != null ? _ref.bdcData : void 0)) {
-    $scope.sprint.bdcData = sprintUtils.generateBDC($scope.sprint.dates.days, $scope.sprint.resources, $scope.sprint.bdcData);
-  }
+  var getCurrentDayIndex;
   $scope.tableData = angular.copy($scope.sprint.bdcData);
   $scope.selectedIndex = 0;
   getCurrentDayIndex = function(data) {
@@ -1876,6 +1886,9 @@ angular.module('Scrumble.sprint').controller('BoardCtrl', function($scope, $time
     }
   };
   $scope.currentDayIndex = getCurrentDayIndex($scope.tableData);
+  $scope.$on('bdc:update', function() {
+    return $scope.tableData = angular.copy($scope.sprint.bdcData);
+  });
   $scope.fetchTrelloDonePoints = function() {
     if ($scope.sprint.doneColumn != null) {
       return trelloUtils.getColumnPoints($scope.sprint.doneColumn).then(function(points) {
@@ -1885,12 +1898,7 @@ angular.module('Scrumble.sprint').controller('BoardCtrl', function($scope, $time
   };
   return $scope.save = function() {
     $scope.sprint.bdcData = $scope.tableData;
-    $scope.selectedIndex = 0;
-    return $timeout(function() {
-      var svg;
-      svg = d3.select('#bdcgraph')[0][0].firstChild;
-      return bdc.saveImage($scope.sprint, svg);
-    });
+    return $scope.selectedIndex = 0;
   };
 });
 
@@ -2206,7 +2214,7 @@ angular.module('Scrumble.daily-report').controller('DailyReportCtrl', function($
       fullscreen: $mdMedia('sm'),
       resolve: {
         message: function() {
-          return reportBuilder.render($scope.dailyReport.message, _.filter($scope.previousGoals, 'display'), $scope.todaysGoals, $scope.sections, false);
+          return reportBuilder.render($scope.dailyReport.message, _.filter($scope.previousGoals, 'display'), $scope.todaysGoals, $scope.sections, d3.select('#bdcgraph')[0][0].firstChild, false);
         },
         rawMessage: function() {
           return $scope.dailyReport.message;
@@ -2562,22 +2570,18 @@ angular.module('Scrumble.sprint').directive('burndown', function() {
       data: '='
     },
     templateUrl: 'sprint/directives/burndown/view.html',
-    link: function(scope, elem, attr) {
-      var computeDimensions, config, maxWidth, whRatio;
-      maxWidth = 1000;
+    controller: function($scope, $timeout) {
+      var computeDimensions, whRatio;
       whRatio = 0.54;
       computeDimensions = function() {
-        var config, height, width;
-        if (window.innerWidth > maxWidth) {
-          width = 800;
-        } else {
-          width = window.innerWidth * 0.8;
+        var chart, config, height, width, _ref, _ref1;
+        chart = (_ref = document.getElementsByClassName('chart')) != null ? _ref[0] : void 0;
+        if (chart != null) {
+          chart.parentNode.removeChild(chart);
         }
+        width = ((_ref1 = document.getElementById('bdcgraph')) != null ? _ref1.clientWidth : void 0) - 120;
+        width = Math.min(width, 1000);
         height = whRatio * width;
-        if (height + 128 > window.innerHeight) {
-          height = window.innerHeight * 0.8;
-          width = height / whRatio;
-        }
         config = {
           containerId: '#bdcgraph',
           width: width,
@@ -2607,17 +2611,27 @@ angular.module('Scrumble.sprint').directive('burndown', function() {
         };
         return config;
       };
-      config = computeDimensions();
       window.onresize = function() {
+        var config;
         config = computeDimensions();
-        return renderBDC(scope.data, config);
+        return renderBDC($scope.data, config);
       };
-      return scope.$watch('data', function(data) {
+      $scope.$watch('data', function(data) {
+        var config;
         if (!data) {
           return;
         }
+        config = computeDimensions();
         return renderBDC(data, config);
       }, true);
+      return $timeout(function() {
+        var config;
+        if (!$scope.data) {
+          return;
+        }
+        config = computeDimensions();
+        return renderBDC($scope.data, config);
+      }, 200);
     }
   };
 });
@@ -2689,27 +2703,10 @@ angular.module('Scrumble.sprint').directive('sprintDetails', function() {
 });
 
 angular.module('Scrumble.sprint').controller('SprintWidgetCtrl', function($scope, $timeout, $state, nssModal, sprintUtils, dynamicFields, bdc, Project, Sprint) {
-  var DialogController, day, noteInitialized, _i, _len, _ref, _ref1, _ref2;
+  var DialogController, _ref, _ref1;
   dynamicFields.project($scope.project);
   dynamicFields.sprint($scope.sprint);
-  if ($scope.sprint.bdcData != null) {
-    _ref = $scope.sprint.bdcData;
-    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-      day = _ref[_i];
-      day.date = moment(day.date).toDate();
-    }
-  } else {
-    noteInitialized = true;
-  }
-  $scope.sprint.bdcData = sprintUtils.generateBDC($scope.sprint.dates.days, $scope.sprint.resources, $scope.sprint.bdcData);
-  if (noteInitialized) {
-    $timeout(function() {
-      var svg;
-      svg = d3.select('#bdcgraph')[0][0].firstChild;
-      return bdc.saveImage($scope.sprint, svg);
-    });
-  }
-  dynamicFields.render((_ref1 = $scope.project) != null ? (_ref2 = _ref1.settings) != null ? _ref2.bdcTitle : void 0 : void 0).then(function(title) {
+  dynamicFields.render((_ref = $scope.project) != null ? (_ref1 = _ref.settings) != null ? _ref1.bdcTitle : void 0 : void 0).then(function(title) {
     return $scope.bdcTitle = title;
   });
   $scope.openEditTitle = function(ev) {
@@ -2719,8 +2716,8 @@ angular.module('Scrumble.sprint').controller('SprintWidgetCtrl', function($scope
       targetEvent: ev,
       resolve: {
         title: function() {
-          var _ref3;
-          return (_ref3 = $scope.project.settings) != null ? _ref3.bdcTitle : void 0;
+          var _ref2;
+          return (_ref2 = $scope.project.settings) != null ? _ref2.bdcTitle : void 0;
         },
         availableFields: function() {
           return dynamicFields.getAvailableFields();
@@ -2749,9 +2746,7 @@ angular.module('Scrumble.sprint').controller('SprintWidgetCtrl', function($scope
   };
   $scope.updateBDC = function() {
     return bdc.setDonePointsAndSave($scope.sprint).then(function() {
-      var svg;
-      svg = d3.select('#bdcgraph')[0][0].firstChild;
-      return bdc.saveImage($scope.sprint, svg);
+      return $scope.$emit('bdc:update');
     });
   };
   return $scope.printBDC = function() {
@@ -2769,14 +2764,14 @@ angular.module('Scrumble.sprint').directive('sprintWidget', function() {
     scope: {
       project: '=',
       sprint: '=',
-      callToActions: '='
+      callToActions: '=',
+      displayTitle: '='
     },
     controller: 'SprintWidgetCtrl'
   };
 });
 
-angular.module('Scrumble.sprint').controller('EditSprintCtrl', function($scope, $state, TrelloClient, sprintUtils, projectUtils, Project, Sprint, sprint) {
-  var save;
+angular.module('Scrumble.sprint').controller('EditSprintCtrl', function($scope, $state, TrelloClient, sprintUtils, projectUtils, Project, Sprint, sprint, bdc) {
   $scope.editedSprint = sprint;
   TrelloClient.get("/boards/" + $scope.project.boardId + "/lists").then(function(response) {
     return $scope.boardLists = response.data;
@@ -2784,20 +2779,15 @@ angular.module('Scrumble.sprint').controller('EditSprintCtrl', function($scope, 
   $scope.devTeam = projectUtils.getDevTeam($scope.project.team);
   $scope.saveLabel = $state.is('tab.new-sprint') ? 'Start the sprint' : 'Save';
   $scope.title = $state.is('tab.new-sprint') ? 'NEW SPRINT' : 'EDIT SPRINT';
-  save = function() {
-    if (sprintUtils.isActivable($scope.editedSprint)) {
-      return Sprint.closeActiveSprint($scope.project).then(function() {
-        return Sprint.save($scope.editedSprint);
-      });
-    }
-  };
   $scope.activable = sprintUtils.isActivable($scope.editedSprint);
   $scope.activate = function() {
     if (sprintUtils.isActivable($scope.editedSprint)) {
       $scope.editedSprint.isActive = true;
-      return Sprint.save($scope.editedSprint).then(function(savedSprint) {
-        return $scope.$emit('sprint:update', {
-          nextState: 'tab.board'
+      return Sprint.closeActiveSprint($scope.project).then(function() {
+        return Sprint.save($scope.editedSprint).then(function(savedSprint) {
+          return $scope.$emit('sprint:update', {
+            nextState: 'tab.board'
+          });
         });
       });
     }

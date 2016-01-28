@@ -212,6 +212,14 @@ trello-avatar .trello-avatar .member-avatar.initials {
   font-weight: bold;
 }
 
+.hidden-bdc {
+  width: 800px;
+  position: absolute;
+  top: 0;
+  height: 0;
+  overflow: hidden;
+}
+
 .question {
   color: #333;
   font-weight: bold;
