@@ -37,7 +37,10 @@ angular.module 'Scrumble.daily-report'
       rawMessage,
       previousGoals,
       todaysGoals,
-      sections, true)
+      sections,
+      d3.select('#bdcgraph')[0][0].firstChild
+      true
+    )
     .then (message) ->
       mailer.send message, (response) ->
         if response.code? and response.code > 300
