@@ -1,14 +1,16 @@
 md-card-title
   md-card-title-text
     span
-      md-icon.check(md-svg-icon="check" ng-if='sprint.isActive')
-      span.md-headline Sprint {{ sprint.number }}: {{ sprint.goal }}
+      md-icon.check(md-svg-icon="check" ng-if="sprint.isActive")
+      span.md-title Sprint {{ sprint.number }}: {{ sprint.goal }}
     span.md-subhead {{ sprint.dates.start | date : 'MMMM d' }} to {{ sprint.dates.end | date : 'MMMM d' }}
     span.md-primary.md-subhead(ng-if="sprint.speed") Real Speed: {{ sprint.speed }}
+    span.md-primary.md-subhead(ng-if="!sprint.speed") No Real Speed
   md-card-title-media(layout-align='end')
+    img.md-media-sm.card-media(src='images/in-progress.png' ng-if="sprint.success == 'unknown'")
     img.md-media-sm.card-media(src='images/success.png' ng-if="sprint.success == 'ok'")
     img.md-media-sm.card-media(src='images/fail.png' ng-if="sprint.success == 'ko'")
-md-card-actions(layout='row' layout-align='end center')
+md-card-actions(layout='row' layout-align='end end')
   md-button.md-primary.md-hue-2.md-icon-button(ng-click="activateSprint(sprint)" ng-disabled='sprint.isActive')
     md-icon(md-svg-icon="hexagon")
     md-tooltip(md-direction="top") Activate This Sprint
