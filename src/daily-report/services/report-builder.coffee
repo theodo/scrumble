@@ -15,9 +15,9 @@ angular.module 'Scrumble.daily-report'
       index = getCurrentDayIndex sprint.bdcData
       diff = sprint.bdcData[index].done - sprint.bdcData[index].standard
       if diff > 0
-        true
+        return true
       if diff < 0
-       false
+       return false
 
   renderBehindAhead = (message) ->
     isAhead().then (ahead) ->
