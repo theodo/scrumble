@@ -39,8 +39,8 @@ angular.module 'Scrumble.sprint'
         dotRadius: 4
         standardStrokeWidth: 2
         doneStrokeWidth: 2
-        goodSuffix: ' ☺'
-        badSuffix: ' ☹'
+        goodSuffix: ' :)'
+        badSuffix: ' :('
       config
 
     config = computeDimensions()
