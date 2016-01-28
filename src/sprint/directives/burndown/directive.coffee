@@ -4,19 +4,16 @@ angular.module 'Scrumble.sprint'
   scope:
     data: '='
   templateUrl: 'sprint/directives/burndown/view.html'
-  link: (scope, elem, attr) ->
-    maxWidth = 1000
+  controller: ($scope, $timeout) ->
     whRatio = 0.54
 
     computeDimensions = ->
-      if window.innerWidth > maxWidth
-        width = 800
-      else
-        width = window.innerWidth * 0.8
+      chart = document.getElementsByClassName('chart')?[0]
+      chart?.parentNode.removeChild chart
+      width = document.getElementById('bdcgraph')?.clientWidth - 120
+      width = Math.min width, 1000
       height = whRatio * width
-      if height + 128 > window.innerHeight
-        height = window.innerHeight * 0.8
-        width = height / whRatio
+
       config =
         containerId: '#bdcgraph'
         width: width
@@ -43,13 +40,18 @@ angular.module 'Scrumble.sprint'
         badSuffix: ' :('
       config
 
-    config = computeDimensions()
-
     window.onresize = ->
       config = computeDimensions()
-      renderBDC scope.data, config
+      renderBDC $scope.data, config
 
-    scope.$watch 'data', (data) ->
+    $scope.$watch 'data', (data) ->
       return unless data
+      config = computeDimensions()
       renderBDC data, config
     , true
+
+    $timeout ->
+      return unless $scope.data
+      config = computeDimensions()
+      renderBDC $scope.data, config
+    , 200
