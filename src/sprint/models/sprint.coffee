@@ -11,7 +11,6 @@ angular.module 'Scrumble.storage'
       "isActive",
       "doneColumn",
       "sprintColumn",
-      "bdcBase64",
       "goal",
       "indicators"
     )
@@ -78,6 +77,7 @@ angular.module 'Scrumble.storage'
     @closeActiveSprint = (project) ->
       @getActiveSprint project
       .then (sprint) ->
+        return unless sprint?
         sprint.isActive = false
         sprint.save()
 

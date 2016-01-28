@@ -1,11 +1,19 @@
 div.sprint-body(layout="row" layout-align="center end")
   md-card.layout-padding(flex="100")
     h2.md-title(layout-align="center end") SET YOUR PROJECT
-    md-input-container(layout="column")
-      label Select a board: 
-      md-select(ng-model="project.boardId")
-        md-option(ng-value="board.id" ng-repeat="board in boards") {{ board.name }}
-    
+    label Select a project
+    md-autocomplete(
+      md-selected-item="board.id"
+      md-selected-item-change="selectedItemChange(board.id)"
+      md-search-text="searchText"
+      md-items="board in boards | filter:searchText"
+      md-item-text="board.name"
+      md-min-length="0"
+      placeholder="{{project.name}}"
+      )
+      md-item-template
+        span(md-highlight-text="searchText" md-highlight-flags="g") {{board.name}}
+      md-not-found No project matching {{searchText}} were found.
     div(ng-if="project.boardId" layout="column")
       md-input-container
         md-tooltip(md-direction="left") To be used in daily mail

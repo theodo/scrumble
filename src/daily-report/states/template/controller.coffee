@@ -68,6 +68,7 @@ angular.module 'Scrumble.daily-report'
             _.filter($scope.previousGoals, 'display'),
             $scope.todaysGoals,
             $scope.sections,
+            d3.select('#bdcgraph')[0][0].firstChild
             false
           )
         rawMessage: ->

@@ -6,14 +6,15 @@ angular.module 'Scrumble.daily-report'
   TrelloClient
   trelloCards
 ) ->
-  trelloCards.getDoneCardIds $scope.sprint.doneColumn
-  .then (cardIds) ->
-    for card in $scope.goals
-      card.display = true
-      if card.id in cardIds
-        card.isDone = true
-      else
-        card.isDone = false
+  if $scope.sprint?.doneColumn? and _.isArray $scope.goals
+    trelloCards.getDoneCardIds $scope.sprint.doneColumn
+    .then (cardIds) ->
+      for card in $scope.goals
+        card.display = true
+        if card.id in cardIds
+          card.isDone = true
+        else
+          card.isDone = false
 
   DialogController = ($scope, $controller, goal) ->
     angular.extend @, $controller('ModalCtrl', $scope: $scope)

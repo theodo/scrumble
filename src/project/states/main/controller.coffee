@@ -21,6 +21,9 @@ angular.module 'Scrumble.settings'
     project = new Project()
   $scope.project = project
 
+  $scope.selectedItemChange = (boardId) ->
+    fetchBoardData boardId
+
   fetchBoardData = (boardId) ->
     $q.all [
       # the the list of columns
