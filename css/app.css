@@ -161,7 +161,9 @@ md-toast {
   .md-sidenav-left,
   feedback,
   button,
-  md-tabs-wrapper {
+  md-tabs-wrapper,
+  md-tooltip,
+  .hide-for-print {
     display: none !important;
   }
   md-card {
@@ -169,6 +171,23 @@ md-toast {
   }
   md-radio-button.md-checked .md-off {
     border-width: 10px;
+  }
+  md-radio-button {
+    margin-bottom: 8px !important;
+    margin-top: 8px !important;
+  }
+  @page {
+    overflow: hidden;
+    margin: 1%;
+  }
+  .answer {
+    margin-bottom: 0 !important;
+  }
+  .md-title {
+    margin-top: 0 !important;
+  }
+  body {
+    margin-top: 0 !important;
   }
 }
 
@@ -227,11 +246,11 @@ trello-avatar .trello-avatar .member-avatar.initials {
   overflow: hidden;
 }
 
-.question {
+client-form .question {
   color: #333;
   font-weight: bold;
 }
-.answer {
+client-form .answer {
   padding-left: 2em;
   margin-bottom: 2em;
 }
@@ -327,6 +346,7 @@ select-people .member-select label {
   width: 100%;
   height: 100%;
 }
+
 
 .check {
   color: green;

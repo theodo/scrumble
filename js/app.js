@@ -5,17 +5,7 @@ app = angular.module('Scrumble', ['ng', 'ngResource', 'ngAnimate', 'ngSanitize',
 
 app.config(function($locationProvider, $urlRouterProvider, ParseProvider) {
   $locationProvider.hashPrefix('!');
-  $urlRouterProvider.otherwise(function($injector, $location) {
-    var path, state;
-    state = $injector.get('$state');
-    path = $location.url();
-    if (state.current.abstract) {
-      if (path.indexOf('access_token') === -1) {
-        return state.go('trello-login');
-      }
-    }
-    return state.go('tab.board');
-  });
+  $urlRouterProvider.otherwise('/');
   return ParseProvider.initialize("UTkdR7MH2Wok5lyPEm1VHoxyFKWVcdOKAu6A4BWG", "DGp8edP1LHPJ15GpDE3cp94bBaDq2hiMSqLEzfZB");
 });
 
@@ -705,7 +695,8 @@ angular.module('Scrumble.daily-report').service('reportBuilder', function($q, Sc
       diff = sprint.bdcData[index].done - sprint.bdcData[index].standard;
       if (diff > 0) {
         return true;
-      } else {
+      }
+      if (diff < 0) {
         return false;
       }
     });
@@ -713,7 +704,13 @@ angular.module('Scrumble.daily-report').service('reportBuilder', function($q, Sc
   renderBehindAhead = function(message) {
     return isAhead().then(function(ahead) {
       var label;
-      label = ahead ? message.aheadLabel : message.behindLabel;
+      if (ahead) {
+        label = message.aheadLabel;
+      } else if (ahead != null) {
+        label = message.aheadLabel;
+      } else {
+        label = message.behindLabel;
+      }
       message.body = message.body.replace('{behind/ahead}', label);
       message.subject = message.subject.replace('{behind/ahead}', label);
       return message;
@@ -758,7 +755,13 @@ angular.module('Scrumble.daily-report').service('reportBuilder', function($q, Sc
       message.body = message.body.replace(/>(.*(\{color=(.+?)\}).*)</g, function(match, line, toRemove, color) {
         line = line.replace(toRemove, "");
         if (color === 'smart') {
-          color = ahead ? 'green' : 'red';
+          if (ahead) {
+            color = 'green';
+          } else if (ahead != null) {
+            color = 'red';
+          } else {
+            color = 'none';
+          }
         }
         return "><span style='color: " + color + ";'>" + line + "</span><";
       });
@@ -954,6 +957,22 @@ angular.module('Scrumble.feedback').factory('Feedback', function(Parse) {
   })(Parse.Model);
 });
 
+angular.module('Scrumble.indicators').config(function($stateProvider) {
+  return $stateProvider.state('tab.indicators', {
+    url: '/sprint/:sprintId/indicators',
+    templateUrl: 'indicators/states/base/view.html',
+    controller: 'IndicatorsCtrl',
+    resolve: {
+      currentSprint: function(Sprint, $stateParams) {
+        return Sprint.find($stateParams.sprintId);
+      },
+      satisfactionSurveyTemplates: function(SatisfactionSurveyTemplate) {
+        return SatisfactionSurveyTemplate.query();
+      }
+    }
+  });
+});
+
 angular.module('Scrumble.gmail-client').constant('SEND_EMAIL_ENDPOINT', 'https://content.googleapis.com/gmail/v1/users/me/messages/send').service('gmailClient', function($http, googleAuth, SEND_EMAIL_ENDPOINT) {
   return {
     send: function(raw) {
@@ -1010,22 +1029,6 @@ angular.module('Scrumble.gmail-client').service('mailer', function($state, $root
       });
     }
   };
-});
-
-angular.module('Scrumble.indicators').config(function($stateProvider) {
-  return $stateProvider.state('tab.indicators', {
-    url: '/sprint/:sprintId/indicators',
-    templateUrl: 'indicators/states/base/view.html',
-    controller: 'IndicatorsCtrl',
-    resolve: {
-      currentSprint: function(Sprint, $stateParams) {
-        return Sprint.find($stateParams.sprintId);
-      },
-      satisfactionSurveyTemplates: function(SatisfactionSurveyTemplate) {
-        return SatisfactionSurveyTemplate.query();
-      }
-    }
-  });
 });
 
 var __hasProp = {}.hasOwnProperty,
@@ -1359,18 +1362,6 @@ angular.module('Scrumble.sprint').config(function($stateProvider) {
       },
       sprints: function(Sprint, $stateParams) {
         return Sprint.getByProjectId($stateParams.projectId);
-      }
-    }
-  }).state('print-bdc', {
-    url: '/project/:projectId/sprint/:sprintId/print',
-    controller: 'PrintBDCCtrl',
-    templateUrl: 'sprint/states/print-bdc/view.html',
-    resolve: {
-      project: function(Project, $stateParams) {
-        return Project.find($stateParams.projectId);
-      },
-      sprint: function(Sprint, $stateParams) {
-        return Sprint.find($stateParams.sprintId);
       }
     }
   });
@@ -2763,10 +2754,7 @@ angular.module('Scrumble.sprint').controller('SprintWidgetCtrl', function($scope
     });
   };
   return $scope.printBDC = function() {
-    return $state.go('print-bdc', {
-      projectId: $scope.project.objectId,
-      sprintId: $scope.sprint.objectId
-    });
+    return window.print();
   };
 });
 
@@ -2819,12 +2807,4 @@ angular.module('Scrumble.sprint').controller('SprintListCtrl', function($scope, 
   });
   $scope.sprints = sprints;
   return $scope.project = project;
-});
-
-angular.module('Scrumble.sprint').controller('PrintBDCCtrl', function($scope, $timeout, sprint, project) {
-  $scope.project = project;
-  $scope.sprint = sprint;
-  return $timeout(function() {
-    return window.print();
-  }, 500);
 });
