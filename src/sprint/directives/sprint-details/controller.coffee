@@ -41,7 +41,7 @@ angular.module 'Scrumble.sprint'
         _.remove $scope.sprints, $scope.sprint
         loadingToast.hide 'deleting'
 
-  $scope.indicators = ->
+  $scope.indicators = (sprint) ->
     $state.go 'tab.indicators', {sprintId: sprint.objectId}
 
   BDCDialogController = ($scope, $mdDialog, sprint) ->
