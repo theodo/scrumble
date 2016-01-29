@@ -13,6 +13,7 @@ angular.module 'Scrumble.daily-report'
   todaysGoals
   previousGoals
   sections
+  dailyReportCache
 ) ->
   $scope.message = message
 
@@ -51,9 +52,12 @@ angular.module 'Scrumble.daily-report'
           $mdToast.show errorFeedback
           $mdDialog.cancel()
         else
+          dailyReportCache.todaysGoals = null
+          dailyReportCache.previousGoals = null
+          dailyReportCache.sections = null
           dailyReport.metadata =
             previousGoals: todaysGoals
           dailyReport.save()
-          sentFeedback = $mdToast.simple().content('Email sent')
+          sentFeedback = $mdToast.simple().position('top right').content('Email sent')
           $mdToast.show sentFeedback
           $mdDialog.cancel()
