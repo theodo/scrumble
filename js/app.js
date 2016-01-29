@@ -614,6 +614,14 @@ angular.module('Scrumble.daily-report').factory('DailyReport', function(Parse) {
   })(Parse.Model);
 });
 
+angular.module('Scrumble.daily-report').service('dailyReportCache', function() {
+  return {
+    dailyReport: null,
+    todaysGoals: null,
+    sections: null
+  };
+});
+
 angular.module('Scrumble.daily-report').service('trelloCards', function($q, TrelloClient) {
   return {
     getTodoCards: function(project, sprint) {
@@ -1913,23 +1921,6 @@ angular.module('Scrumble.common').directive('dynamicFieldsList', function() {
   };
 });
 
-angular.module('Scrumble.common').directive('nssRound', function() {
-  return {
-    require: 'ngModel',
-    link: function(scope, element, attrs, ngModelController) {
-      ngModelController.$parsers.push(function(data) {
-        return parseFloat(data);
-      });
-      ngModelController.$formatters.push(function(data) {
-        if (_.isNumber(data)) {
-          data = data.toFixed(1);
-        }
-        return data;
-      });
-    }
-  };
-});
-
 angular.module('Scrumble.common').factory('Avatar', function(TrelloClient) {
   return {
     getMember: function(memberId) {
@@ -1999,6 +1990,23 @@ angular.module('Scrumble.common').directive('trelloAvatar', function() {
   };
 });
 
+angular.module('Scrumble.common').directive('nssRound', function() {
+  return {
+    require: 'ngModel',
+    link: function(scope, element, attrs, ngModelController) {
+      ngModelController.$parsers.push(function(data) {
+        return parseFloat(data);
+      });
+      ngModelController.$formatters.push(function(data) {
+        if (_.isNumber(data)) {
+          data = data.toFixed(1);
+        }
+        return data;
+      });
+    }
+  };
+});
+
 angular.module('Scrumble.daily-report').directive('markdownHelper', function() {
   return {
     restrict: 'E',
@@ -2065,7 +2073,25 @@ angular.module('Scrumble.daily-report').directive('previousGoals', function() {
 angular.module('Scrumble.daily-report').controller('SelectGoalsCtrl', function($scope, $q, nssModal, TrelloClient, trelloCards) {
   var DialogController;
   trelloCards.getTodoCards($scope.project, $scope.sprint).then(function(cards) {
-    return $scope.trelloCards = cards;
+    var card, goal, _i, _len, _ref, _results;
+    $scope.trelloCards = cards;
+    if (_.isArray($scope.goals)) {
+      _ref = $scope.trelloCards;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        card = _ref[_i];
+        goal = _.find($scope.goals, {
+          id: card.id
+        });
+        if (goal) {
+          card.selected = true;
+          _results.push(card.name = goal.name);
+        } else {
+          _results.push(void 0);
+        }
+      }
+      return _results;
+    }
   });
   $scope.updateGoals = function() {
     return $scope.goals = _.filter($scope.trelloCards, 'selected');
@@ -2105,7 +2131,7 @@ angular.module('Scrumble.daily-report').directive('selectGoals', function() {
   };
 });
 
-angular.module('Scrumble.daily-report').controller('EditTemplateCtrl', function($scope, $mdToast, mailer, reportBuilder, dailyReport, dynamicFields) {
+angular.module('Scrumble.daily-report').controller('EditTemplateCtrl', function($scope, $state, $mdToast, mailer, reportBuilder, dailyReport, dynamicFields) {
   var saveFeedback;
   reportBuilder.init();
   saveFeedback = $mdToast.simple().hideDelay(1000).position('top right').content('Saved!');
@@ -2114,12 +2140,12 @@ angular.module('Scrumble.daily-report').controller('EditTemplateCtrl', function(
   $scope.availableFields2 = _.union(dynamicFields.getAvailableFields().slice(7), reportBuilder.getAvailableFields());
   return $scope.save = function() {
     return $scope.dailyReport.save().then(function() {
-      return $mdToast.show(saveFeedback);
+      return $state.go('tab.daily-report');
     });
   };
 });
 
-angular.module('Scrumble.daily-report').controller('PreviewCtrl', function($scope, $sce, $mdDialog, $mdToast, googleAuth, mailer, message, rawMessage, reportBuilder, dailyReport, todaysGoals, previousGoals, sections) {
+angular.module('Scrumble.daily-report').controller('PreviewCtrl', function($scope, $sce, $mdDialog, $mdToast, googleAuth, mailer, message, rawMessage, reportBuilder, dailyReport, todaysGoals, previousGoals, sections, dailyReportCache) {
   $scope.message = message;
   $scope.trustAsHtml = function(string) {
     return $sce.trustAsHtml(string);
@@ -2149,11 +2175,14 @@ angular.module('Scrumble.daily-report').controller('PreviewCtrl', function($scop
           $mdToast.show(errorFeedback);
           return $mdDialog.cancel();
         } else {
+          dailyReportCache.todaysGoals = null;
+          dailyReportCache.previousGoals = null;
+          dailyReportCache.sections = null;
           dailyReport.metadata = {
             previousGoals: todaysGoals
           };
           dailyReport.save();
-          sentFeedback = $mdToast.simple().content('Email sent');
+          sentFeedback = $mdToast.simple().position('top right').content('Email sent');
           $mdToast.show(sentFeedback);
           return $mdDialog.cancel();
         }
@@ -2162,19 +2191,26 @@ angular.module('Scrumble.daily-report').controller('PreviewCtrl', function($scop
   };
 });
 
-angular.module('Scrumble.daily-report').controller('DailyReportCtrl', function($scope, $mdToast, $mdDialog, $mdMedia, mailer, reportBuilder, dailyReport, sprint, project, dynamicFields) {
-  var saveFeedback, _ref;
+angular.module('Scrumble.daily-report').controller('DailyReportCtrl', function($scope, $mdToast, $mdDialog, $mdMedia, mailer, reportBuilder, dailyReport, sprint, project, dynamicFields, dailyReportCache) {
+  var saveFeedback, _base, _base1, _base2, _ref;
   $scope.project = project;
   $scope.sprint = sprint;
   reportBuilder.init();
   saveFeedback = $mdToast.simple().hideDelay(1000).position('top right').content('Saved!');
   $scope.dailyReport = dailyReport;
-  $scope.todaysGoals = [];
-  $scope.previousGoals = (_ref = dailyReport.metadata) != null ? _ref.previousGoals : void 0;
-  $scope.sections = {
-    problems: "## Problems\n",
-    intro: ""
-  };
+  $scope.dailyReportCache = dailyReportCache;
+  if ((_base = $scope.dailyReportCache).todaysGoals == null) {
+    _base.todaysGoals = [];
+  }
+  if ((_base1 = $scope.dailyReportCache).previousGoals == null) {
+    _base1.previousGoals = (_ref = dailyReport.metadata) != null ? _ref.previousGoals : void 0;
+  }
+  if ((_base2 = $scope.dailyReportCache).sections == null) {
+    _base2.sections = {
+      problems: "## Problems\n",
+      intro: ""
+    };
+  }
   $scope.save = function() {
     return $scope.dailyReport.save().then(function() {
       return $mdToast.show(saveFeedback);
@@ -2215,7 +2251,7 @@ angular.module('Scrumble.daily-report').controller('DailyReportCtrl', function($
       fullscreen: $mdMedia('sm'),
       resolve: {
         message: function() {
-          return reportBuilder.render($scope.dailyReport.message, _.filter($scope.previousGoals, 'display'), $scope.todaysGoals, $scope.sections, d3.select('#bdcgraph')[0][0].firstChild, false);
+          return reportBuilder.render($scope.dailyReport.message, _.filter($scope.dailyReportCache.previousGoals, 'display'), $scope.dailyReportCache.todaysGoals, $scope.dailyReportCache.sections, d3.select('#bdcgraph')[0][0].firstChild, false);
         },
         rawMessage: function() {
           return $scope.dailyReport.message;
@@ -2224,13 +2260,13 @@ angular.module('Scrumble.daily-report').controller('DailyReportCtrl', function($
           return $scope.dailyReport;
         },
         todaysGoals: function() {
-          return $scope.todaysGoals;
+          return $scope.dailyReportCache.todaysGoals;
         },
         previousGoals: function() {
-          return _.filter($scope.previousGoals, 'display');
+          return _.filter($scope.dailyReportCache.previousGoals, 'display');
         },
         sections: function() {
-          return $scope.sections;
+          return $scope.dailyReportCache.sections;
         },
         sprint: function() {
           return sprint;
