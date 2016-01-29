@@ -12,8 +12,14 @@ md-card(flex="100")
               th(md-column) Done
               th(md-column)
           tbody(md-body)
-            tr(md-row ng-repeat="day in tableData" ng-class="{'md-selected': currentDayIndex == $index}")
-              td(md-cell) {{ day.date | date : 'EEEE' }}
+            tr(
+              md-row
+              ng-repeat="day in sprint.bdcData"
+              ng-class="{'md-selected': currentDayIndex == $index}"
+            )
+              td(md-cell ng-if='$first == true') Start
+              td(md-cell ng-if='$last == true') Ceremony
+              td(md-cell ng-if='$first == false && $last == false') {{ day.date | date : 'EEEE' }}
               td(md-cell) {{ day.standard.toFixed(1) }}
               td(md-cell)
                 section(layout="row" layout-sm="column" layout-wrap)
