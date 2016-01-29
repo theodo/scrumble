@@ -19,7 +19,7 @@ app.config(function(TrelloClientProvider) {
     appName: 'Scrumble',
     tokenExpiration: 'never',
     scope: ['read', 'account'],
-    returnUrl: window.location.origin + window.location.pathname
+    returnUrl: window.location.origin
   });
 });
 
@@ -957,22 +957,6 @@ angular.module('Scrumble.feedback').factory('Feedback', function(Parse) {
   })(Parse.Model);
 });
 
-angular.module('Scrumble.indicators').config(function($stateProvider) {
-  return $stateProvider.state('tab.indicators', {
-    url: '/sprint/:sprintId/indicators',
-    templateUrl: 'indicators/states/base/view.html',
-    controller: 'IndicatorsCtrl',
-    resolve: {
-      currentSprint: function(Sprint, $stateParams) {
-        return Sprint.find($stateParams.sprintId);
-      },
-      satisfactionSurveyTemplates: function(SatisfactionSurveyTemplate) {
-        return SatisfactionSurveyTemplate.query();
-      }
-    }
-  });
-});
-
 angular.module('Scrumble.gmail-client').constant('SEND_EMAIL_ENDPOINT', 'https://content.googleapis.com/gmail/v1/users/me/messages/send').service('gmailClient', function($http, googleAuth, SEND_EMAIL_ENDPOINT) {
   return {
     send: function(raw) {
@@ -1029,6 +1013,22 @@ angular.module('Scrumble.gmail-client').service('mailer', function($state, $root
       });
     }
   };
+});
+
+angular.module('Scrumble.indicators').config(function($stateProvider) {
+  return $stateProvider.state('tab.indicators', {
+    url: '/sprint/:sprintId/indicators',
+    templateUrl: 'indicators/states/base/view.html',
+    controller: 'IndicatorsCtrl',
+    resolve: {
+      currentSprint: function(Sprint, $stateParams) {
+        return Sprint.find($stateParams.sprintId);
+      },
+      satisfactionSurveyTemplates: function(SatisfactionSurveyTemplate) {
+        return SatisfactionSurveyTemplate.query();
+      }
+    }
+  });
 });
 
 var __hasProp = {}.hasOwnProperty,
