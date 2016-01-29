@@ -10,6 +10,14 @@ angular.module 'Scrumble.daily-report'
   .then (cards) ->
     $scope.trelloCards = cards
 
+    # initialize goals already set (cache)
+    if _.isArray $scope.goals
+      for card in $scope.trelloCards
+        goal = _.find $scope.goals, id: card.id
+        if goal
+          card.selected = true
+          card.name = goal.name
+
   $scope.updateGoals = ->
     $scope.goals = _.filter $scope.trelloCards, 'selected'
 

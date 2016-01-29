@@ -10,6 +10,7 @@ angular.module 'Scrumble.daily-report'
   sprint
   project
   dynamicFields
+  dailyReportCache
 ) ->
   $scope.project = project
   $scope.sprint = sprint
@@ -22,9 +23,10 @@ angular.module 'Scrumble.daily-report'
     .content('Saved!')
 
   $scope.dailyReport = dailyReport
-  $scope.todaysGoals = []
-  $scope.previousGoals = dailyReport.metadata?.previousGoals
-  $scope.sections =
+  $scope.dailyReportCache = dailyReportCache
+  $scope.dailyReportCache.todaysGoals ?= []
+  $scope.dailyReportCache.previousGoals ?= dailyReport.metadata?.previousGoals
+  $scope.dailyReportCache.sections ?=
     problems: "## Problems\n"
     intro: ""
 
@@ -65,18 +67,18 @@ angular.module 'Scrumble.daily-report'
         message: ->
           reportBuilder.render(
             $scope.dailyReport.message,
-            _.filter($scope.previousGoals, 'display'),
-            $scope.todaysGoals,
-            $scope.sections,
+            _.filter($scope.dailyReportCache.previousGoals, 'display'),
+            $scope.dailyReportCache.todaysGoals,
+            $scope.dailyReportCache.sections,
             d3.select('#bdcgraph')[0][0].firstChild
             false
           )
         rawMessage: ->
           $scope.dailyReport.message
         dailyReport: -> $scope.dailyReport
-        todaysGoals: -> $scope.todaysGoals
+        todaysGoals: -> $scope.dailyReportCache.todaysGoals
         previousGoals: ->
-          _.filter $scope.previousGoals, 'display'
-        sections: -> $scope.sections
+          _.filter $scope.dailyReportCache.previousGoals, 'display'
+        sections: -> $scope.dailyReportCache.sections
         sprint: ->
           sprint
