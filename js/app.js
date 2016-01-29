@@ -1921,6 +1921,23 @@ angular.module('Scrumble.common').directive('dynamicFieldsList', function() {
   };
 });
 
+angular.module('Scrumble.common').directive('nssRound', function() {
+  return {
+    require: 'ngModel',
+    link: function(scope, element, attrs, ngModelController) {
+      ngModelController.$parsers.push(function(data) {
+        return parseFloat(data);
+      });
+      ngModelController.$formatters.push(function(data) {
+        if (_.isNumber(data)) {
+          data = data.toFixed(1);
+        }
+        return data;
+      });
+    }
+  };
+});
+
 angular.module('Scrumble.common').factory('Avatar', function(TrelloClient) {
   return {
     getMember: function(memberId) {
@@ -1987,23 +2004,6 @@ angular.module('Scrumble.common').directive('trelloAvatar', function() {
       tooltip: '@'
     },
     controller: 'TrelloAvatarCtrl'
-  };
-});
-
-angular.module('Scrumble.common').directive('nssRound', function() {
-  return {
-    require: 'ngModel',
-    link: function(scope, element, attrs, ngModelController) {
-      ngModelController.$parsers.push(function(data) {
-        return parseFloat(data);
-      });
-      ngModelController.$formatters.push(function(data) {
-        if (_.isNumber(data)) {
-          data = data.toFixed(1);
-        }
-        return data;
-      });
-    }
   };
 });
 
