@@ -1,6 +1,7 @@
 angular.module 'Scrumble.daily-report'
 .controller 'EditTemplateCtrl', (
   $scope
+  $state
   $mdToast
   mailer
   reportBuilder
@@ -23,4 +24,4 @@ angular.module 'Scrumble.daily-report'
 
   $scope.save = ->
     $scope.dailyReport.save().then ->
-      $mdToast.show saveFeedback
+      $state.go 'tab.daily-report'
