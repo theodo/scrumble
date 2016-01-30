@@ -4,7 +4,7 @@ div(layout="column" flex="100")
       md-card-title-text
         span.md-headline Subject
       div(flex)
-      markdown-helper
+      dynamic-fields-call-to-action
       md-button.md-icon-button(
         aria-label="Save"
         ng-click="saveSection('subject', sections.subject)"
@@ -22,6 +22,7 @@ div(layout="column" flex="100")
         span.md-headline Introduction
       div(flex)
       markdown-helper
+      dynamic-fields-call-to-action
       md-button.md-icon-button(
         aria-label="Save"
         ng-click="saveSection('intro', sections.intro)"
@@ -38,6 +39,7 @@ div(layout="column" flex="100")
         span.md-headline Sprint Progress
       div(flex)
       markdown-helper
+      dynamic-fields-call-to-action
       md-button.md-icon-button(
         aria-label="Save"
         ng-click="saveSection('progress', sections.progress)"
@@ -54,6 +56,8 @@ div(layout="column" flex="100")
         span.md-headline Previous Goals
         span.md-subhead The list of goals in the previous email. It's green if the trello ticket is in the "done column"
       div(flex)
+      markdown-helper
+      dynamic-fields-call-to-action
       md-button.md-icon-button(
         aria-label="Save"
         ng-click="saveSection('todaysGoalsIntro', sections.todaysGoalsIntro)"
@@ -72,6 +76,8 @@ div(layout="column" flex="100")
         span.md-headline Today's Goals
         span.md-subhead The list of tickets in "sprint", "doing", "blocked", "toValidate" columns
       div(flex)
+      markdown-helper
+      dynamic-fields-call-to-action
       md-button.md-icon-button(
         aria-label="Save"
         ng-click="saveSection('todaysGoalsIntro', sections.todaysGoalsIntro)"
@@ -90,6 +96,7 @@ div(layout="column" flex="100")
         span.md-headline Problems
       div(flex)
       markdown-helper
+      dynamic-fields-call-to-action
       md-button.md-icon-button(
         aria-label="Save"
         ng-click="saveSection('problems', sections.problems)"
@@ -106,6 +113,7 @@ div(layout="column" flex="100")
         span.md-headline Conclusion
       div(flex)
       markdown-helper
+      dynamic-fields-call-to-action
       md-button.md-icon-button(
         aria-label="Save"
         ng-click="saveSection('conclusion', sections.conclusion)"

@@ -10,8 +10,9 @@ angular.module 'Scrumble.daily-report'
   if $scope.sprint?.doneColumn?
     doneCardIdsPromise = trelloCards.getDoneCardIds $scope.sprint.doneColumn
     .then (cardIds) ->
-      $scope.markdown = $scope.markdown.replace /card-id='(.+?)\'/g, (match, cardId) ->
-        if cardId in cardIds
-          return "style='color: green;'"
-        else
-          return "style='color: red;'"
+      if _.isString $scope.markdown
+        $scope.markdown = $scope.markdown.replace /card-id='(.+?)\'/g, (match, cardId) ->
+          if cardId in cardIds
+            return "style='color: green;'"
+          else
+            return "style='color: red;'"

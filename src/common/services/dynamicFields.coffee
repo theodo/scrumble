@@ -71,6 +71,8 @@ angular.module 'Scrumble.common'
       else
         return aheadColor
 
+  promises = null
+
   getAvailableFields: ->
     result = _.map dict, (value, key) ->
       key: key
@@ -90,7 +92,6 @@ angular.module 'Scrumble.common'
       icon: 'owl'
     result
 
-  promises = null
   ready: (sprint, project) ->
     promises = {}
     for key, elt of dict

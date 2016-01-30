@@ -4,6 +4,7 @@ angular.module 'Scrumble.daily-report'
   $mdToast
   $mdDialog
   $mdMedia
+  $mdBottomSheet
   mailer
   reportBuilder
   dailyReport
@@ -33,19 +34,6 @@ angular.module 'Scrumble.daily-report'
     dailyReport.sections[section] = content
     dailyReport.save().then ->
       $mdToast.hide saveFeedback
-
-  $scope.openDynamicFields = (ev) ->
-    useFullScreen = ($mdMedia 'sm' or $mdMedia 'xs')
-    $mdDialog.show
-      controller: 'DynamicFieldsModalCtrl'
-      templateUrl: 'daily-report/states/template/dynamic-fields.html'
-      parent: angular.element(document.body)
-      targetEvent: ev
-      clickOutsideToClose: true
-      fullscreen: useFullScreen
-      resolve:
-        dailyReport: -> dailyReport
-        availableFields: -> dynamicFields.getAvailableFields()
 
   $scope.preview = (ev) ->
     $mdDialog.show
