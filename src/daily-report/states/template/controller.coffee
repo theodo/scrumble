@@ -12,31 +12,27 @@ angular.module 'Scrumble.daily-report'
   dynamicFields
   dailyReportCache
 ) ->
-  $scope.project = project
-  $scope.sprint = sprint
-
-  reportBuilder.init()
-
   saveFeedback = $mdToast.simple()
     .hideDelay(1000)
     .position('top right')
     .content('Saved!')
 
-  $scope.dailyReport = dailyReport
-  $scope.dailyReportCache = dailyReportCache
-  $scope.dailyReportCache.todaysGoals ?= []
-  $scope.dailyReportCache.previousGoals ?= dailyReport.metadata?.previousGoals
-  $scope.dailyReportCache.sections ?=
-    problems: "## Problems\n"
-    intro: ""
+  $scope.sections =
+    intro: angular.copy dailyReport.sections?.intro
+    progress: angular.copy dailyReport.sections?.progress
+    previousGoalsIntro: angular.copy dailyReport.sections?.previousGoalsIntro
+    previousGoals: angular.copy dailyReport.sections?.previousGoals
+    todaysGoalsIntro: angular.copy dailyReport.sections?.todaysGoalsIntro
+    todaysGoals: null
+    problems: angular.copy dailyReport.sections?.problems
+    conclusion: angular.copy dailyReport.sections?.conclusion
 
-  $scope.save = ->
-    $scope.dailyReport.save().then ->
-      $mdToast.show saveFeedback
-
-  $scope.openMenu = ($mdOpenMenu, ev) ->
-    originatorEv = ev
-    $mdOpenMenu ev
+  $scope.saveSection = (section, content) ->
+    $mdToast.show saveFeedback
+    dailyReport.sections ?= {}
+    dailyReport.sections[section] = content
+    dailyReport.save().then ->
+      $mdToast.hide saveFeedback
 
   $scope.openDynamicFields = (ev) ->
     useFullScreen = ($mdMedia 'sm' or $mdMedia 'xs')
@@ -49,11 +45,7 @@ angular.module 'Scrumble.daily-report'
       fullscreen: useFullScreen
       resolve:
         dailyReport: -> dailyReport
-        availableFields: ->
-          _.union(
-            dynamicFields.getAvailableFields()
-            reportBuilder.getAvailableFields()
-          )
+        availableFields: -> dynamicFields.getAvailableFields()
 
   $scope.preview = (ev) ->
     $mdDialog.show
@@ -66,19 +58,11 @@ angular.module 'Scrumble.daily-report'
       resolve:
         message: ->
           reportBuilder.render(
-            $scope.dailyReport.message,
-            _.filter($scope.dailyReportCache.previousGoals, 'display'),
-            $scope.dailyReportCache.todaysGoals,
-            $scope.dailyReportCache.sections,
+            $scope.sections
+            dailyReport
             d3.select('#bdcgraph')[0][0].firstChild
-            false
+            project
+            sprint
           )
-        rawMessage: ->
-          $scope.dailyReport.message
-        dailyReport: -> $scope.dailyReport
-        todaysGoals: -> $scope.dailyReportCache.todaysGoals
-        previousGoals: ->
-          _.filter $scope.dailyReportCache.previousGoals, 'display'
-        sections: -> $scope.dailyReportCache.sections
-        sprint: ->
-          sprint
+        dailyReport: -> dailyReport
+        todaysGoals: -> $scope.sections.todaysGoals

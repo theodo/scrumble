@@ -1,9 +1,17 @@
 div(layout="column" layout-sm="column")
-  md-list-item(ng-repeat='card in trelloCards')
-    md-checkbox(ng-model='card.selected' ng-change='updateGoals()')
-    p {{ card.name }}
-    md-icon.md-secondary(
-      ng-click='edit($event, card)'
-      aria-label='Edit goal'
-      md-svg-icon='border-color'
+  md-input-container.md-block
+    md-select(
+      multiple="true"
+      placeholder="Select today's goals"
+      ng-model="goals"
+      md-on-open="loadCards()"
+      md-on-close="generateMarkdown(goals)"
     )
+      md-option(ng-repeat="card in trelloCards"  ng-value="card") {{ card.name }}
+    div(ng-messages="errors" role="alert" md-auto-hide="false" ng-messages-multiple)
+      div(ng-message="sprintColumnMissing") There is no sprint column set in the sprint settings
+      div(ng-message="doingColumnMissing") There is no doing column set in the sprint settings
+      div(ng-message="blockedColumnMissing") There is no blocked column set in the sprint settings
+      div(ng-message="toValidateColumnMissing") There is no "to validate" column set in the sprint settings
+  md-input-container.md-block
+    textarea(ng-model="markdown" aria-label="goals")

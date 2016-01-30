@@ -57,13 +57,3 @@ angular.module 'Scrumble.daily-report'
                 behindLabel: 'Behind'
                 aheadLabel: 'Ahead'
             report.save()
-      sprint: (ScrumbleUser, Sprint) ->
-        ScrumbleUser.getCurrentUser()
-        .then (user) ->
-          Sprint.getActiveSprint user.project
-        .catch (err) ->
-          console.log err
-          return null
-      project: (ScrumbleUser) ->
-        ScrumbleUser.getCurrentUser().then (user) ->
-          user.project

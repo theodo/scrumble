@@ -7,13 +7,9 @@ angular.module 'Scrumble.daily-report'
   googleAuth
   mailer
   message
-  rawMessage
   reportBuilder
   dailyReport
   todaysGoals
-  previousGoals
-  sections
-  dailyReportCache
 ) ->
   $scope.message = message
 
@@ -34,14 +30,7 @@ angular.module 'Scrumble.daily-report'
     $scope.isAuthenticated = isAuthenticated
 
   $scope.send = ->
-    reportBuilder.render(
-      rawMessage,
-      previousGoals,
-      todaysGoals,
-      sections,
-      d3.select('#bdcgraph')[0][0].firstChild,
-      true
-    )
+    reportBuilder.buildCid()
     .then (message) ->
       mailer.send message, (response) ->
         if response.code? and response.code > 300
@@ -52,11 +41,7 @@ angular.module 'Scrumble.daily-report'
           $mdToast.show errorFeedback
           $mdDialog.cancel()
         else
-          dailyReportCache.todaysGoals = null
-          dailyReportCache.previousGoals = null
-          dailyReportCache.sections = null
-          dailyReport.metadata =
-            previousGoals: todaysGoals
+          dailyReport.sections.previousGoals = todaysGoals
           dailyReport.save()
           sentFeedback = $mdToast.simple().position('top right').content('Email sent')
           $mdToast.show sentFeedback

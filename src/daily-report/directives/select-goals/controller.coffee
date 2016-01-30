@@ -1,36 +1,29 @@
 angular.module 'Scrumble.daily-report'
 .controller 'SelectGoalsCtrl', (
   $scope
-  $q
-  nssModal
-  TrelloClient
   trelloCards
 ) ->
-  trelloCards.getTodoCards $scope.project, $scope.sprint
+  $scope.goals = []
+  $scope.errors = {}
+  unless $scope.project?.columnMapping?.blocked?
+    $scope.errors.blockedColumnMissing = true
+  unless $scope.project?.columnMapping?.doing?
+    $scope.errors.doingColumnMissing = true
+  unless $scope.project?.columnMapping?.toValidate?
+    $scope.errors.toValidateColumnMissing = true
+  unless $scope.project?.columnMapping?.sprint?
+    $scope.errors.sprintColumnMissing = true
+
+  todoCardPromise = trelloCards.getTodoCards $scope.project, $scope.sprint
   .then (cards) ->
     $scope.trelloCards = cards
 
-    # initialize goals already set (cache)
-    if _.isArray $scope.goals
-      for card in $scope.trelloCards
-        goal = _.find $scope.goals, id: card.id
-        if goal
-          card.selected = true
-          card.name = goal.name
+  $scope.loadCards = ->
+    todoCardPromise
 
-  $scope.updateGoals = ->
-    $scope.goals = _.filter $scope.trelloCards, 'selected'
-
-  DialogController = ($scope, $controller, goal) ->
-    angular.extend @, $controller('ModalCtrl', $scope: $scope)
-    $scope.goal = goal
-
-  $scope.edit = (ev, goal) ->
-    nssModal.show
-      controller: DialogController
-      templateUrl: 'daily-report/directives/select-goals/edit-goal.html'
-      targetEvent: ev
-      resolve:
-        goal: -> angular.copy goal
-    .then (editedGoal) ->
-      goal.name = editedGoal
+  $scope.generateMarkdown = (goals) ->
+    unless _.isArray goals
+      $scope.markdown = ""
+      return
+    goalsNames = ("- <span card-id='#{goal.id}'>" + goal.name + "</span>" for goal in goals)
+    $scope.markdown = goalsNames.join "\n"

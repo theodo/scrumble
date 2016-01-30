@@ -6,6 +6,7 @@ app = angular.module 'Scrumble', [
   'ngAnimate'
   'ngSanitize'
   'ngMaterial'
+  'ngMessages'
   'md.data.table' # soon included in ngMaterial
   'ui.router'
   # 'ui.bootstrap'

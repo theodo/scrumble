@@ -3,6 +3,6 @@ angular.module 'Scrumble.daily-report'
   restrict: 'E'
   templateUrl: 'daily-report/directives/previous-goals/view.html'
   scope:
-    goals: '='
+    markdown: '='
     sprint: '='
   controller: 'PreviousGoalsCtrl'

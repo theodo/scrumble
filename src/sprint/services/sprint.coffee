@@ -37,6 +37,12 @@ angular.module 'Scrumble.sprint'
     return unless totalManDays > 0
     totalPoints / totalManDays
 
+  getCurrentDayIndex = (bdcData) ->
+    return unless _.isArray bdcData
+    for day, i in bdcData
+      return Math.max i-1, 0 unless day.done?
+    return i - 1
+
   generateBDC = (days, resources, previous) ->
     return [] unless days? and resources?
     standard = 0
@@ -84,6 +90,16 @@ angular.module 'Scrumble.sprint'
       return if last.done > last.standard then 'ok' else 'ko'
     else
       return 'unknown'
+  # return true if done > standard, false if done < standard, undefined otherwise
+  isAhead: (sprint) ->
+    return unless _.isArray sprint.bdcData
+    index = getCurrentDayIndex sprint.bdcData
+    diff = sprint.bdcData[index].done - sprint.bdcData[index].standard
+    if diff > 0
+      return true
+    if diff < 0
+     return false
+  getCurrentDayIndex: getCurrentDayIndex
   isActivable: (s) ->
     if (
       s.number? and
