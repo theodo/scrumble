@@ -19,6 +19,7 @@ angular.module 'Scrumble.daily-report'
     .content('Saved!')
 
   $scope.sections =
+    subject: angular.copy dailyReport.sections?.subject
     intro: angular.copy dailyReport.sections?.intro
     progress: angular.copy dailyReport.sections?.progress
     previousGoalsIntro: angular.copy dailyReport.sections?.previousGoalsIntro

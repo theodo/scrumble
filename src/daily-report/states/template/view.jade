@@ -4,6 +4,7 @@ div(layout="column" flex="100")
       md-card-title-text
         span.md-headline Subject
       div(flex)
+      template-call-to-action(sections="sections" section="subject")
       dynamic-fields-call-to-action
       md-button.md-icon-button(
         aria-label="Save"
@@ -13,7 +14,6 @@ div(layout="column" flex="100")
         md-tooltip(md-direction='bottom') Save content as template
     md-card-content(layout="column")
       md-input-container
-        label [MyProject] Daily Mail - Sprint {sprintNumber} - {today#YYYY-MM-DD}
         input(ng-model="sections.subject" aria-label="subject")
 
   md-card(flex="80" flex-sm="100" flex-xs="100")
@@ -22,6 +22,7 @@ div(layout="column" flex="100")
         span.md-headline Introduction
       div(flex)
       markdown-helper
+      template-call-to-action(sections="sections" section="intro")
       dynamic-fields-call-to-action
       md-button.md-icon-button(
         aria-label="Save"
@@ -39,6 +40,7 @@ div(layout="column" flex="100")
         span.md-headline Sprint Progress
       div(flex)
       markdown-helper
+      template-call-to-action(sections="sections" section="progress")
       dynamic-fields-call-to-action
       md-button.md-icon-button(
         aria-label="Save"
@@ -57,33 +59,36 @@ div(layout="column" flex="100")
         span.md-subhead The list of goals in the previous email. It's green if the trello ticket is in the "done column"
       div(flex)
       markdown-helper
+      template-call-to-action(sections="sections" section="previousGoalsIntro")
       dynamic-fields-call-to-action
       md-button.md-icon-button(
         aria-label="Save"
-        ng-click="saveSection('todaysGoalsIntro', sections.todaysGoalsIntro)"
+        ng-click="saveSection('previousGoalsIntro', sections.previousGoalsIntro)"
       )
         md-icon(md-svg-src='content-save' aria-label='save') Save
-        md-tooltip(md-direction='bottom') Save content as template
+        md-tooltip(md-direction='bottom') Save Introduction
     md-card-content(flex layout="column")
       md-input-container
         label Previous goal introduction
-        input(ng-model="sections.previsousGoalsIntro")
+        input(ng-model="sections.previousGoalsIntro")
       previous-goals(markdown="sections.previousGoals" sprint="sprint")
 
   md-card(flex="80" flex-sm="100" flex-xs="100")
     md-card-title(flex="nogrow")
-      md-card-title-text
+      md-card-title-text(flex="grow")
         span.md-headline Today's Goals
         span.md-subhead The list of tickets in "sprint", "doing", "blocked", "toValidate" columns
       div(flex)
+      daily-inspiration
       markdown-helper
+      template-call-to-action(sections="sections" section="todaysGoalsIntro")
       dynamic-fields-call-to-action
       md-button.md-icon-button(
         aria-label="Save"
         ng-click="saveSection('todaysGoalsIntro', sections.todaysGoalsIntro)"
       )
         md-icon(md-svg-src='content-save' aria-label='save') Save
-        md-tooltip(md-direction='bottom') Save content as template
+        md-tooltip(md-direction='bottom') Save Introduction
     md-card-content(flex layout="column")
       md-input-container
         label Today's goal introduction
@@ -96,6 +101,7 @@ div(layout="column" flex="100")
         span.md-headline Problems
       div(flex)
       markdown-helper
+      template-call-to-action(sections="sections" section="problems")
       dynamic-fields-call-to-action
       md-button.md-icon-button(
         aria-label="Save"
@@ -113,6 +119,7 @@ div(layout="column" flex="100")
         span.md-headline Conclusion
       div(flex)
       markdown-helper
+      template-call-to-action(sections="sections" section="conclusion")
       dynamic-fields-call-to-action
       md-button.md-icon-button(
         aria-label="Save"

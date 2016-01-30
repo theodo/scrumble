@@ -61,7 +61,7 @@ angular.module 'Scrumble.common'
     text.replace /\{yesterday#(.+?)\}/g, (match, dateFormat) ->
       moment().subtract(1, 'day').format dateFormat
 
-  replaceBehindAhead = (text) ->
+  replaceBehindAhead = (text, sprint) ->
     text.replace /\{ahead:(.+?) behind:(.+?)\}/g, (match, aheadColor, behindColor) ->
       isAhead = sprintUtils.isAhead sprint
       if isAhead
@@ -72,6 +72,7 @@ angular.module 'Scrumble.common'
         return aheadColor
 
   promises = null
+  _sprint = null
 
   getAvailableFields: ->
     result = _.map dict, (value, key) ->
@@ -93,6 +94,7 @@ angular.module 'Scrumble.common'
     result
 
   ready: (sprint, project) ->
+    _sprint = sprint
     promises = {}
     for key, elt of dict
       promises[key] = elt.value(sprint, project)
@@ -112,6 +114,6 @@ angular.module 'Scrumble.common'
     result = replaceYesterday result
 
     # replace {ahead:value1 behind:value2}
-    result = replaceBehindAhead result
+    result = replaceBehindAhead result, _sprint
 
     result
