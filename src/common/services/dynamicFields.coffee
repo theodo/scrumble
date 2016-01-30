@@ -1,5 +1,5 @@
 angular.module 'Scrumble.common'
-.service 'dynamicFields', ($q, trelloUtils, sprintUtils) ->
+.service 'dynamicFields', ($q, trelloUtils, trelloAuth, sprintUtils) ->
 
   dict =
     '{sprintNumber}':
@@ -52,6 +52,12 @@ angular.module 'Scrumble.common'
           sprint.resources.totalPoints.toFixed(1)
       description: 'The number of points to finish the sprint'
       icon: 'cart'
+    '{me}':
+      value: (sprint, project) ->
+        trelloAuth.getTrelloInfo().then (user) ->
+          user.fullName
+      description: 'Your fullname according to Trello'
+      icon: 'account-circle'
 
   replaceToday = (text) ->
     text.replace /\{today#(.+?)\}/g, (match, dateFormat) ->
