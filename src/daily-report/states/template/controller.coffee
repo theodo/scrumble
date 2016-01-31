@@ -4,15 +4,9 @@ angular.module 'Scrumble.daily-report'
   $mdToast
   $mdDialog
   $mdMedia
-  $mdBottomSheet
   $document
-  mailer
   reportBuilder
   dailyReport
-  sprint
-  project
-  dynamicFields
-  dailyReportCache
 ) ->
   saveFeedback = $mdToast.simple()
     .hideDelay(1000)
@@ -52,8 +46,8 @@ angular.module 'Scrumble.daily-report'
             $scope.sections
             dailyReport
             d3.select('#bdcgraph')[0][0].firstChild
-            project
-            sprint
+            $scope.project
+            $scope.sprint
           )
         dailyReport: -> dailyReport
         todaysGoals: -> $scope.sections.todaysGoals

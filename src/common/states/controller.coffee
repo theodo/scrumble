@@ -77,9 +77,5 @@ angular.module 'Scrumble.common'
       title: 'Write Today\'s Daily'
       icon: 'gmail'
     ,
-      state: 'tab.edit-template'
-      title: 'Edit Template'
-      icon: 'code-braces'
-    ,
     ]
   ]
