@@ -27,6 +27,7 @@ app = angular.module 'Scrumble', [
   'Scrumble.storage'
   'Scrumble.board'
   'Scrumble.indicators'
+  'Scrumble.wait'
 ]
 
 app.config (

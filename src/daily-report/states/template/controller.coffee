@@ -5,6 +5,7 @@ angular.module 'Scrumble.daily-report'
   $mdDialog
   $mdMedia
   $mdBottomSheet
+  $document
   mailer
   reportBuilder
   dailyReport
@@ -15,8 +16,9 @@ angular.module 'Scrumble.daily-report'
 ) ->
   saveFeedback = $mdToast.simple()
     .hideDelay(1000)
-    .position('top right')
+    .position('top left')
     .content('Saved!')
+    .parent($document[0].querySelector('main'))
 
   $scope.sections =
     subject: angular.copy dailyReport.sections?.subject

@@ -78,7 +78,6 @@ angular.module 'Scrumble.common'
         return aheadColor
 
   promises = null
-  _sprint = null
 
   getAvailableFields: ->
     result = _.map dict, (value, key) ->
@@ -100,10 +99,12 @@ angular.module 'Scrumble.common'
     result
 
   ready: (sprint, project) ->
-    _sprint = sprint
     promises = {}
     for key, elt of dict
       promises[key] = elt.value(sprint, project)
+
+    # hack to pass the sprint data to the render function
+    promises.sprint = sprint
 
     $q.all(promises)
 
@@ -120,6 +121,6 @@ angular.module 'Scrumble.common'
     result = replaceYesterday result
 
     # replace {ahead:value1 behind:value2}
-    result = replaceBehindAhead result, _sprint
+    result = replaceBehindAhead result, builtDict.sprint
 
     result

@@ -1,6 +1,9 @@
 describe 'trelloUtils', ->
   beforeEach module 'Scrumble.common'
 
+  beforeEach inject (localStorageService) ->
+    localStorageService.set 'trello_token', 'abc'
+
   beforeEach inject (trelloUtils, TrelloClient, $q, $rootScope) ->
     @trelloUtils = trelloUtils
     @TrelloClient = TrelloClient

@@ -1,16 +1,19 @@
-angular.module 'Scrumble.common'
-.service 'loadingToast', ($mdToast) ->
+angular.module 'Scrumble.wait'
+.service 'loadingToast', ($mdToast, $document) ->
   toastLoading = $mdToast.build(
-    templateUrl: 'common/views/loading-toast.html'
+    templateUrl: 'wait/views/loading-toast.html'
     position: 'top left'
+    parent: $document[0].querySelector 'main'
   )
   toastSaving = $mdToast.build(
-    templateUrl: 'common/views/saving-toast.html'
+    templateUrl: 'wait/views/saving-toast.html'
     position: 'top left'
+    parent: $document[0].querySelector 'main'
   )
   toastDeleting = $mdToast.build(
-    templateUrl: 'common/views/delete-toast.html'
+    templateUrl: 'wait/views/delete-toast.html'
     position: 'top left'
+    parent: $document[0].querySelector 'main'
   )
 
   show: (message) ->
