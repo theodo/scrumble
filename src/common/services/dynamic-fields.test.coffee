@@ -1,10 +1,17 @@
 describe 'dynamicFields', ->
   beforeEach module 'Scrumble.common'
 
-  beforeEach inject (dynamicFields, $rootScope, trelloAuth, sprintUtils) ->
+  beforeEach inject (
+    dynamicFields,
+    $rootScope,
+    trelloAuth,
+    sprintUtils,
+    trelloUtils
+  ) ->
     @dynamicFields = dynamicFields
     @$rootScope = $rootScope
     @sprintUtils = sprintUtils
+    @trelloUtils = trelloUtils
     trelloAuth.getTrelloInfo = ->
       then: (callback) ->
         callback
@@ -14,21 +21,80 @@ describe 'dynamicFields', ->
     it 'should return an object', ->
       expect(@dynamicFields.getAvailableFields()).toEqual jasmine.any(Array)
 
+    it 'should returns an array of objects with uniq icons', ->
+      fields = @dynamicFields.getAvailableFields()
+      expect(_.uniq(fields, 'icon').length).toEqual fields.length
+
   describe 'render', ->
     it 'should replace sprint fields', (done) ->
-      text = '{sprintNumber},{sprintGoal},{speed}'
+      text = '{sprintNumber},{sprintGoal},{speed},{total}'
 
       sprint =
         number: 10
         goal: 'Eat more carrots'
         resources:
           speed: 1.6666667
+          totalPoints: 24.199
 
       @dynamicFields.ready sprint
       .then (builtDict) ->
         expect(builtDict['{sprintNumber}']).toBe sprint.number
         expect(builtDict['{sprintGoal}']).toBe sprint.goal
         expect(builtDict['{speed}']).toBe '1.7'
+        expect(builtDict['{total}']).toBe '24.2'
+        done()
+      @$rootScope.$apply()
+
+    it 'should replace {me}', (done) ->
+      @dynamicFields.ready()
+      .then (builtDict) ->
+        expect(builtDict['{me}']).toBe 'Chuck Norris'
+        done()
+      @$rootScope.$apply()
+
+    it 'should replace {toValidate} and {blocked}', (done) ->
+      project =
+        columnMapping:
+          toValidate: 'A'
+          blocked: 'B'
+      points =
+        'A': 3.5
+        'B': 0
+      spyOn(@trelloUtils, 'getColumnPoints').and.callFake (id) -> points[id]
+      @dynamicFields.ready(null, project)
+      .then (builtDict) ->
+        expect(builtDict['{toValidate}']).toBe 3.5
+        expect(builtDict['{blocked}']).toBe 0
+        done()
+      @$rootScope.$apply()
+
+    it 'should return undefined if {toValidate} and {blocked} are undefined', (done) ->
+      @dynamicFields.ready()
+      .then (builtDict) ->
+        expect(builtDict['{toValidate}']).toBe undefined
+        expect(builtDict['{blocked}']).toBe undefined
+        done()
+      @$rootScope.$apply()
+
+    it 'should replace {done} and {gap}', (done) ->
+      sprint =
+        bdcData: [
+          done: 10
+          standard: 8
+        ,
+          done: 15.89
+          standard: 16
+        ,
+          done: null
+          standard: 24
+        ,
+          done: null
+          standard: 32
+        ]
+      @dynamicFields.ready(sprint)
+      .then (builtDict) ->
+        expect(builtDict['{done}']).toBe '15.9'
+        expect(builtDict['{gap}']).toBe '0.1'
         done()
       @$rootScope.$apply()
 
