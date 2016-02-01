@@ -10,11 +10,12 @@ angular.module 'Scrumble.sprint'
   sprint
   bdc
 ) ->
+
   $scope.editedSprint = sprint
 
   TrelloClient.get "/boards/#{$scope.project.boardId}/lists"
   .then (response) ->
-    $scope.boardLists = response.data
+    $scope.boardColumns = response.data
 
   $scope.devTeam = projectUtils.getDevTeam $scope.project.team
 

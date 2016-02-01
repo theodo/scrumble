@@ -26,15 +26,6 @@ angular.module 'Scrumble.settings'
 
   fetchBoardData = (boardId) ->
     $q.all [
-      # the the list of columns
-      TrelloClient.get("/boards/#{boardId}/lists")
-      .then (response) ->
-        $scope.boardColumns = response.data
-      .catch (err) ->
-        $scope.project.boardId = null
-        console.warn "Could not fetch Trello board with id #{boardId}"
-        console.log err
-
       # get the list of users
       TrelloClient.get("/boards/#{boardId}/members?fields=avatarHash,fullName,initials,username")
       .then (response) ->
