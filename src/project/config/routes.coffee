@@ -11,3 +11,7 @@ angular.module 'Scrumble.settings'
       boards: (TrelloClient) ->
         TrelloClient.get('/members/me/boards').then (response) ->
           return response.data
+  .state 'tab.team',
+    url: '/project/:projectId/team'
+    controller: 'TeamCtrl'
+    templateUrl: 'project/states/team/view.html'

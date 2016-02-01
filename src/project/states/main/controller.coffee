@@ -25,30 +25,18 @@ angular.module 'Scrumble.settings'
     fetchBoardData boardId
 
   fetchBoardData = (boardId) ->
-    $q.all [
-      # get the list of users
-      TrelloClient.get("/boards/#{boardId}/members?fields=avatarHash,fullName,initials,username")
-      .then (response) ->
-        $scope.boardMembers = response.data
-      .catch (err) ->
-        $scope.project.boardId = null
-        console.warn "Could not fetch Trello board members"
-        console.log err
-
-      # find if there is already a project for this board
-      # otherwise create one
-      Project.get boardId
-      .then (response) ->
-        return response if response?
-
-        console.log "No project with boardId #{boardId} found. Creating a new one"
-        project = new Project()
-        project.boardId = boardId
-        project.team = []
-        project.save()
-      .then (project) ->
-        $scope.project = project
-    ]
+    # find if there is already a project for this board
+    # otherwise create one
+    Project.get boardId
+    .then (response) ->
+      return response if response?
+      console.log "No project with boardId #{boardId} found. Creating a new one"
+      project = new Project()
+      project.boardId = boardId
+      project.team = []
+      project.save()
+    .then (project) ->
+      $scope.project = project
 
   if $scope.project.boardId?
     fetchBoardData $scope.project.boardId
@@ -58,8 +46,6 @@ angular.module 'Scrumble.settings'
     return unless next? and next != prev
     fetchBoardData next
 
-  $scope.delete = (member) ->
-    _.remove $scope.project.team, member
 
   $scope.saving = false
   $scope.save = ->
@@ -73,7 +59,12 @@ angular.module 'Scrumble.settings'
     $scope.project.save().then (savedProject) ->
       user.project = savedProject
       user.save().then ->
-        $scope.$emit 'project:update', nextState: 'tab.board'
+        $scope.$emit 'project:update', nextState:
+          if project.team = []
+            console.log project.team
+            'tab.team'
+          else
+            'tab.board'
       .catch ->
         $scope.saving = false
     .catch ->

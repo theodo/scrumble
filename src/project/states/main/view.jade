@@ -1,33 +1,16 @@
-div.sprint-body(layout="row" layout-align="center end")
-  md-card.layout-padding(flex="100")
-    h2.md-title(layout-align="center end") SET YOUR PROJECT
-    label Select a project
-    md-autocomplete(
-      md-selected-item="board.id"
-      md-selected-item-change="selectedItemChange(board.id)"
-      md-search-text="searchText"
-      md-items="board in boards | filter:searchText"
-      md-item-text="board.name"
-      md-min-length="0"
-      placeholder="{{project.name}}"
-      )
-      md-item-template
-        span(md-highlight-text="searchText" md-highlight-flags="g") {{board.name}}
-      md-not-found No project matching {{searchText}} were found.
-
-    h4.md-title The team
-      div Select the team
-      select-people(
-        members="boardMembers"
-        selected-members="project.team"
-      )
-      md-content.md-padding(
-        layout="row" layout-wrap layout-align="center start" layout-xs="column"
-      )
-        div(
-          flex="50" flex-gt-md="33" flex-sm="100" flex-xs="100"
-          ng-repeat="member in project.team"
-        )
-          member-form(member="member" delete="delete(member)")
-    section(layout="row" layout-sm="column" layout-align="center center" layout-wrap)
-      md-button.md-raised.md-primary(ng-click="save()" ng-disabled="saving") Save
+h2.md-title(layout-align="center end") CHOOSE YOUR PROJECT
+md-autocomplete(
+  md-selected-item="board.id"
+  md-selected-item-change="selectedItemChange(board.id)"
+  md-search-text="searchText"
+  md-items="board in boards | filter:searchText"
+  md-item-text="board.name"
+  md-min-length="0"
+  placeholder="{{project.name}}"
+  )
+  md-item-template
+    span(md-highlight-text="searchText" md-highlight-flags="g") {{board.name}}
+  md-not-found No project matching {{searchText}} were found.
+br
+section(layout="row" layout-align="center")
+  md-button.md-raised.md-primary(ng-click="save()" ng-disabled="saving") Save

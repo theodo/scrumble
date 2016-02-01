@@ -35,9 +35,13 @@ angular.module 'Scrumble.common'
   $scope.menu = [
     title: 'Project'
     items: [
-      state: 'tab.new-sprint'
-      title: 'Start New Sprint'
-      icon: 'plus'
+      state: 'tab.project'
+      title: 'Switch project'
+      icon: 'folder-multiple'
+    ,
+      state: 'tab.team'
+      title: 'Team'
+      icon: 'account-multiple'
     ,
       state: 'tab.sprint-list'
       params:
@@ -45,9 +49,9 @@ angular.module 'Scrumble.common'
       title: 'Sprints'
       icon: 'view-list'
     ,
-      state: 'tab.project'
-      title: 'Settings'
-      icon: 'settings'
+      state: 'tab.new-sprint'
+      title: 'Start New Sprint'
+      icon: 'plus'
     ,
     ]
   ,
