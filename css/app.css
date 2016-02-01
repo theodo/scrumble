@@ -238,6 +238,12 @@ trello-avatar .trello-avatar .member-avatar.initials {
   font-weight: bold;
 }
 
+.md-select-value *:first-child {
+  white-space: normal;
+  flex: 1 0;
+  line-height: 24px;
+}
+
 .hidden-bdc {
   width: 800px;
   position: absolute;
