@@ -6,13 +6,12 @@ angular.module 'Scrumble.sprint'
   sprintUtils
   projectUtils
   Project
-  project
   Sprint
   sprint
   bdc
 ) ->
+
   $scope.editedSprint = sprint
-  $scope.project = project
 
   TrelloClient.get "/boards/#{$scope.project.boardId}/lists"
   .then (response) ->
