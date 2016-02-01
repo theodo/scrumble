@@ -1,32 +1,18 @@
 angular.module 'Scrumble.daily-report'
 .controller 'PreviousGoalsCtrl', (
   $scope
-  $q
-  nssModal
-  TrelloClient
   trelloCards
 ) ->
-  if $scope.sprint?.doneColumn? and _.isArray $scope.goals
-    trelloCards.getDoneCardIds $scope.sprint.doneColumn
+  $scope.errors = {}
+  unless $scope.sprint?.doneColumn?
+    $scope.errors.doneColumnMissing = true
+
+  if $scope.sprint?.doneColumn?
+    doneCardIdsPromise = trelloCards.getDoneCardIds $scope.sprint.doneColumn
     .then (cardIds) ->
-      for card in $scope.goals
-        card.display = true
-        if card.id in cardIds
-          card.isDone = true
-        else
-          card.isDone = false
-
-  DialogController = ($scope, $controller, goal) ->
-    angular.extend @, $controller('ModalCtrl', $scope: $scope)
-    $scope.goal = goal
-
-  $scope.edit = (ev, goal) ->
-    nssModal.show
-      controller: DialogController
-      templateUrl: 'daily-report/directives/previous-goals/edit-goal.html'
-      targetEvent: ev
-      resolve:
-        goal: -> angular.copy goal
-    .then (editedGoal) ->
-      goal.isDone = editedGoal.isDone
-      goal.name = editedGoal.name
+      if _.isString $scope.markdown
+        $scope.markdown = $scope.markdown.replace /card-id='(.+?)\'/g, (match, cardId) ->
+          if cardId in cardIds
+            return "style='color: green;'"
+          else
+            return "style='color: red;'"

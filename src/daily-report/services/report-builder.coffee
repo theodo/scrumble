@@ -1,140 +1,81 @@
 angular.module 'Scrumble.daily-report'
-.service 'reportBuilder', ($q, ScrumbleUser, Sprint, Project, trelloUtils, dynamicFields, bdc)->
+.service 'reportBuilder', (
+  $q
+  ScrumbleUser
+  Sprint
+  Project
+  trelloUtils
+  dynamicFields
+  sprintUtils
+  bdc
+)->
   converter = new showdown.Converter()
 
-  promise = undefined
-  project = undefined
-  sprint = undefined
-
-  isAhead = ->
-    getCurrentDayIndex = (bdcData) ->
-      for day, i in bdcData
-        return Math.max i-1, 0 unless day.done?
-      return i - 1
-    promise.then ->
-      index = getCurrentDayIndex sprint.bdcData
-      diff = sprint.bdcData[index].done - sprint.bdcData[index].standard
-      if diff > 0
-        return true
-      if diff < 0
-       return false
-
-  renderBehindAhead = (message) ->
-    isAhead().then (ahead) ->
-      if ahead
-        label = message.aheadLabel
-      else if ahead?
-        label = message.aheadLabel
-      else
-        label = message.behindLabel
-      message.body = message.body.replace '{behind/ahead}', label
-      message.subject = message.subject.replace '{behind/ahead}', label
-      message
-
-  renderTodaysGoals = (body, goals) ->
-    return body unless _.isArray goals
-    goalsNames = ("- " + goal.name for goal in goals)
-    goalsString = goalsNames.join "\n"
-    body.replace '{todaysGoals}', goalsString
-
-  renderPreviousGoals = (body, goals) ->
-    return body unless _.isArray goals
-    goalsNames = []
-    for goal in goals
-      color = if goal.isDone then 'green' else 'red'
-      goalsNames.push "- " + goal.name + " {color=#{color}}"
-    goalsString = goalsNames.join "\n"
-    body.replace '{previousGoals}', goalsString
-
-  renderSection = (body, key, value) ->
-    body.replace "{#{key}}", value
-
-  renderColor = (message) ->
-    isAhead().then (ahead) ->
-      message.body = message.body.replace />(.*(\{color=(.+?)\}).*)</g, (match, line, toRemove, color) ->
-        line = line.replace toRemove, ""
-        if color is 'smart'
-          if ahead
-            color = 'green'
-          else if ahead?
-            color = 'red'
-          else
-            color = 'none'
-        "><span style='color: #{color};'>#{line}</span><"
-      message
-
-  renderBDC = (message, bdcBase64, useCid) ->
+  renderBDC = (message, svg, useCid) ->
+    bdcBase64 = bdc.getPngBase64 svg
     src = if useCid then 'cid:bdc' else bdcBase64
-    promise.then ->
-      message.body = message.body.replace '{bdc}', "<img src='#{src}' />"
-      if useCid
 
-        message.cids = [ {
-          type: 'image/png'
-          name: 'BDC'
-          base64: bdcBase64.split(',')[1]
-          id: 'bdc'
-        } ]
-      message
+    message.body = message.body.replace '{bdc}', "<img src='#{src}' />"
+    if useCid
+      message.cids = [ {
+        type: 'image/png'
+        name: 'BDC'
+        base64: bdcBase64.split(',')[1]
+        id: 'bdc'
+      } ]
+    message
 
-  renderTo = (message) ->
-    promise.then ->
-      emails = (member.email for member in project.team when member.daily is 'to')
-      message.to = _.filter emails
-      message
+  renderTo = (project) ->
+    emails = (member.email for member in project.team when member.daily is 'to')
+    _.filter emails
 
-  renderCc = (message) ->
-    promise.then ->
-      emails = (member.email for member in project.team when member.daily is 'cc')
-      message.cc = _.filter emails
-      message
+  renderCc = (project) ->
+    emails = (member.email for member in project.team when member.daily is 'cc')
+    _.filter emails
 
-  init: ->
-    promise = ScrumbleUser.getCurrentUser().then (user) ->
-      project = user.project
-      project
-    .then (project) ->
-      Sprint.getActiveSprint(new Project project).then (_sprint_) ->
-        sprint = _sprint_
-  getAvailableFields: ->
-    [
-      key: '{bdc}'
-      description: 'The burndown chart image'
-      icon: 'trending-down'
-    ,
-      key: '{color=xxx}'
-      description: 'This field will color the line on which it is. "xxx" can be any css color. The "smart" color is also recognized: green when the team is ahead or red when the team is late'
-      icon: 'format-color-fill'
-    ,
-      key: '{behind/ahead}'
-      description: 'If your are behind or late according to the burn down chart'
-      icon: 'owl'
+  _svg = null
+  dynamicFieldsPromise = null
+  prebuildMessage =
+    to: null
+    cc: null
+    subject: null
+    body: null
+  render: (sections, dailyReport, svg, project, sprint) ->
+    _svg = svg
+
+    markdownMessage = ""
+    for section in [
+      'intro'
+      'progress'
+      'previousGoalsIntro'
+      'previousGoals'
+      'todaysGoalsIntro'
+      'todaysGoals'
+      'problems'
+      'conclusion'
     ]
-  render: (message, previousGoals, todaysGoals, sections, svg, useCid) ->
-    message = angular.copy message
-    message.body = renderTodaysGoals message.body, todaysGoals
-    message.body = renderPreviousGoals message.body, previousGoals
-    for key, value of sections
-      message.body = renderSection message.body, key, value
-    message.body = converter.makeHtml message.body
+      continue unless _.isString sections[section]
+      if _.includes section, 'Intro'
+        if _.isEmpty sections[section.replace('Intro', '')]
+          continue
+      markdownMessage += sections[section] + "\n\n"
+    htmlMessage = converter.makeHtml markdownMessage
 
-    dynamicFields.sprint sprint
-    dynamicFields.project project
+    dynamicFieldsPromise = dynamicFields.ready sprint, project
 
-    dynamicFields.render message.subject
-    .then (subject) ->
-      message.subject = subject
-      dynamicFields.render message.body
-    .then (body) ->
-      message.body = body
-    .then ->
-      renderBehindAhead message
-    .then ->
-      renderColor message
-    .then (message) ->
-      bdcBase64 = bdc.getPngBase64 svg
-      renderBDC message, bdcBase64, useCid
-    .then (message) ->
-      renderTo message
-    .then (message) ->
-      renderCc message
+    dynamicFieldsPromise.then (builtDict) ->
+      prebuildMessage =
+        to: renderTo project
+        cc: renderCc project
+        subject: dynamicFields.render sections.subject, builtDict
+        body: dynamicFields.render htmlMessage, builtDict
+
+      renderBDC
+        to: prebuildMessage.to
+        cc: prebuildMessage.cc
+        subject: prebuildMessage.subject
+        body: prebuildMessage.body
+      , svg, false
+  buildCid: ->
+    dynamicFieldsPromise.then (builtDict) ->
+      renderBDC prebuildMessage, _svg, true

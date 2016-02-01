@@ -1,40 +1,139 @@
-div(layout="row" flex="100" layout-sm="column" layout-xs="column")
-  md-card(flex="50" flex-sm="100" flex-xs="100")
+div(layout="column" flex="100")
+  md-card(flex="80" flex-sm="100" flex-xs="100")
     md-card-title(flex="nogrow")
       md-card-title-text
-        span.md-headline {todaysGoals}
-        span.md-subhead The list of tickets in "sprint", "doing", "blocked", "toValidate" columns
-    md-card-content(flex)
-      select-goals(goals="dailyReportCache.todaysGoals" project="project" sprint="sprint")
-  md-card(flex="50" flex-sm="100" flex-xs="100")
+        span.md-headline Subject
+      div(flex)
+      template-call-to-action(sections="sections" section="subject")
+      dynamic-fields-call-to-action
+      md-button.md-icon-button(
+        aria-label="Save"
+        ng-click="saveSection('subject', sections.subject)"
+      )
+        md-icon(md-svg-src='content-save' aria-label='save') Save
+        md-tooltip(md-direction='bottom') Save content as template
+    md-card-content(layout="column")
+      md-input-container
+        input(ng-model="sections.subject" aria-label="subject")
+
+  md-card(flex="80" flex-sm="100" flex-xs="100")
     md-card-title(flex="nogrow")
       md-card-title-text
-        span.md-headline {previousGoals}
+        span.md-headline Introduction
+      div(flex)
+      markdown-helper
+      template-call-to-action(sections="sections" section="intro")
+      dynamic-fields-call-to-action
+      md-button.md-icon-button(
+        aria-label="Save"
+        ng-click="saveSection('intro', sections.intro)"
+      )
+        md-icon(md-svg-src='content-save' aria-label='save') Save
+        md-tooltip(md-direction='bottom') Save content as template
+    md-card-content
+      md-input-container.md-block
+        textarea(ng-model="sections.intro" aria-label="intro")
+
+  md-card(flex="80" flex-sm="100" flex-xs="100")
+    md-card-title(flex="nogrow")
+      md-card-title-text
+        span.md-headline Sprint Progress
+      div(flex)
+      markdown-helper
+      template-call-to-action(sections="sections" section="progress")
+      dynamic-fields-call-to-action
+      md-button.md-icon-button(
+        aria-label="Save"
+        ng-click="saveSection('progress', sections.progress)"
+      )
+        md-icon(md-svg-src='content-save' aria-label='save') Save
+        md-tooltip(md-direction='bottom') Save content as template
+    md-card-content
+      md-input-container.md-block
+        textarea(ng-model="sections.progress" aria-label="progress")
+
+  md-card(flex="80" flex-sm="100" flex-xs="100")
+    md-card-title(flex="nogrow")
+      md-card-title-text(flex="grow")
+        span.md-headline Previous Goals
         span.md-subhead The list of goals in the previous email. It's green if the trello ticket is in the "done column"
-    md-card-content(flex)
-      previous-goals(goals="dailyReportCache.previousGoals" sprint="sprint")
-div(layout="row" flex="100" layout-sm="column" layout-xs="column")
-  md-card(flex="50" flex-sm="100" flex-xs="100")
-    md-card-title(flex="nogrow")
-      md-card-title-text
-        span.md-headline {problems}
       div(flex)
       markdown-helper
-    md-card-content
-      md-input-container.md-block
-        textarea(ng-model="dailyReportCache.sections.problems" aria-label="problems")
-  md-card(flex="50" flex-sm="100" flex-xs="100")
+      template-call-to-action(sections="sections" section="previousGoalsIntro")
+      dynamic-fields-call-to-action
+      md-button.md-icon-button(
+        aria-label="Save"
+        ng-click="saveSection('previousGoalsIntro', sections.previousGoalsIntro)"
+      )
+        md-icon(md-svg-src='content-save' aria-label='save') Save
+        md-tooltip(md-direction='bottom') Save Introduction
+    md-card-content(flex layout="column")
+      md-input-container
+        label Previous goal introduction
+        input(ng-model="sections.previousGoalsIntro")
+      previous-goals(markdown="sections.previousGoals" sprint="sprint")
+
+  md-card(flex="80" flex-sm="100" flex-xs="100")
+    md-card-title(flex="nogrow")
+      md-card-title-text(flex="grow")
+        span.md-headline Today's Goals
+        span.md-subhead The list of tickets in "sprint", "doing", "blocked", "toValidate" columns
+      div(flex)
+      daily-inspiration
+      markdown-helper
+      template-call-to-action(sections="sections" section="todaysGoalsIntro")
+      dynamic-fields-call-to-action
+      md-button.md-icon-button(
+        aria-label="Save"
+        ng-click="saveSection('todaysGoalsIntro', sections.todaysGoalsIntro)"
+      )
+        md-icon(md-svg-src='content-save' aria-label='save') Save
+        md-tooltip(md-direction='bottom') Save Introduction
+    md-card-content(flex layout="column")
+      md-input-container
+        label Today's goal introduction
+        input(ng-model="sections.todaysGoalsIntro")
+      select-goals(markdown="sections.todaysGoals" project="project" sprint="sprint")
+
+  md-card(flex="80" flex-sm="100" flex-xs="100")
     md-card-title(flex="nogrow")
       md-card-title-text
-        span.md-headline {intro}
+        span.md-headline Problems
       div(flex)
       markdown-helper
+      template-call-to-action(sections="sections" section="problems")
+      dynamic-fields-call-to-action
+      md-button.md-icon-button(
+        aria-label="Save"
+        ng-click="saveSection('problems', sections.problems)"
+      )
+        md-icon(md-svg-src='content-save' aria-label='save') Save
+        md-tooltip(md-direction='bottom') Save content as template
     md-card-content
       md-input-container.md-block
-        textarea(ng-model="dailyReportCache.sections.intro" aria-label="intro")
+        textarea(ng-model="sections.problems" aria-label="problems")
+
+  md-card(flex="80" flex-sm="100" flex-xs="100")
+    md-card-title(flex="nogrow")
+      md-card-title-text
+        span.md-headline Conclusion
+      div(flex)
+      markdown-helper
+      template-call-to-action(sections="sections" section="conclusion")
+      dynamic-fields-call-to-action
+      md-button.md-icon-button(
+        aria-label="Save"
+        ng-click="saveSection('conclusion', sections.conclusion)"
+      )
+        md-icon(md-svg-src='content-save' aria-label='save') Save
+        md-tooltip(md-direction='bottom') Save content as template
+    md-card-content
+      md-input-container.md-block
+        textarea(ng-model="sections.conclusion" aria-label="conclusion")
+
 div.hidden-bdc
   sprint-widget(project="project" sprint="sprint" call-to-actions="false")
-          
+
 md-button.md-fab.md-accent.board-call-to-actions(ng-click="preview($event)")
   md-icon(md-svg-icon='eye') Preview
   md-tooltip(md-direction='left') Preview

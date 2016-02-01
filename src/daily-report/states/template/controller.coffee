@@ -4,56 +4,33 @@ angular.module 'Scrumble.daily-report'
   $mdToast
   $mdDialog
   $mdMedia
-  mailer
+  $document
   reportBuilder
   dailyReport
-  sprint
-  project
-  dynamicFields
-  dailyReportCache
 ) ->
-  $scope.project = project
-  $scope.sprint = sprint
-
-  reportBuilder.init()
-
   saveFeedback = $mdToast.simple()
     .hideDelay(1000)
-    .position('top right')
+    .position('top left')
     .content('Saved!')
+    .parent($document[0].querySelector('main'))
 
-  $scope.dailyReport = dailyReport
-  $scope.dailyReportCache = dailyReportCache
-  $scope.dailyReportCache.todaysGoals ?= []
-  $scope.dailyReportCache.previousGoals ?= dailyReport.metadata?.previousGoals
-  $scope.dailyReportCache.sections ?=
-    problems: "## Problems\n"
-    intro: ""
+  $scope.sections =
+    subject: angular.copy dailyReport.sections?.subject
+    intro: angular.copy dailyReport.sections?.intro
+    progress: angular.copy dailyReport.sections?.progress
+    previousGoalsIntro: angular.copy dailyReport.sections?.previousGoalsIntro
+    previousGoals: angular.copy dailyReport.sections?.previousGoals
+    todaysGoalsIntro: angular.copy dailyReport.sections?.todaysGoalsIntro
+    todaysGoals: null
+    problems: angular.copy dailyReport.sections?.problems
+    conclusion: angular.copy dailyReport.sections?.conclusion
 
-  $scope.save = ->
-    $scope.dailyReport.save().then ->
-      $mdToast.show saveFeedback
-
-  $scope.openMenu = ($mdOpenMenu, ev) ->
-    originatorEv = ev
-    $mdOpenMenu ev
-
-  $scope.openDynamicFields = (ev) ->
-    useFullScreen = ($mdMedia 'sm' or $mdMedia 'xs')
-    $mdDialog.show
-      controller: 'DynamicFieldsModalCtrl'
-      templateUrl: 'daily-report/states/template/dynamic-fields.html'
-      parent: angular.element(document.body)
-      targetEvent: ev
-      clickOutsideToClose: true
-      fullscreen: useFullScreen
-      resolve:
-        dailyReport: -> dailyReport
-        availableFields: ->
-          _.union(
-            dynamicFields.getAvailableFields()
-            reportBuilder.getAvailableFields()
-          )
+  $scope.saveSection = (section, content) ->
+    $mdToast.show saveFeedback
+    dailyReport.sections ?= {}
+    dailyReport.sections[section] = content
+    dailyReport.save().then ->
+      $mdToast.hide saveFeedback
 
   $scope.preview = (ev) ->
     $mdDialog.show
@@ -66,19 +43,11 @@ angular.module 'Scrumble.daily-report'
       resolve:
         message: ->
           reportBuilder.render(
-            $scope.dailyReport.message,
-            _.filter($scope.dailyReportCache.previousGoals, 'display'),
-            $scope.dailyReportCache.todaysGoals,
-            $scope.dailyReportCache.sections,
+            $scope.sections
+            dailyReport
             d3.select('#bdcgraph')[0][0].firstChild
-            false
+            $scope.project
+            $scope.sprint
           )
-        rawMessage: ->
-          $scope.dailyReport.message
-        dailyReport: -> $scope.dailyReport
-        todaysGoals: -> $scope.dailyReportCache.todaysGoals
-        previousGoals: ->
-          _.filter $scope.dailyReportCache.previousGoals, 'display'
-        sections: -> $scope.dailyReportCache.sections
-        sprint: ->
-          sprint
+        dailyReport: -> dailyReport
+        todaysGoals: -> $scope.sections.todaysGoals

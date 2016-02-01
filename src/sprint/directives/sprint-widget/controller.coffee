@@ -10,12 +10,9 @@ angular.module 'Scrumble.sprint'
   Project
   Sprint
 ) ->
-  dynamicFields.project $scope.project
-  dynamicFields.sprint $scope.sprint
-
-  dynamicFields.render $scope.project?.settings?.bdcTitle
-  .then (title) ->
-    $scope.bdcTitle = title
+  dynamicFields.ready $scope.sprint, $scope.project
+  .then (builtDict) ->
+    $scope.bdcTitle = dynamicFields.render $scope.project?.settings?.bdcTitle, builtDict
 
   $scope.openEditTitle = (ev) ->
     nssModal.show

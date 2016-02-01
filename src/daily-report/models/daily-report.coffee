@@ -1,7 +1,7 @@
 angular.module 'Scrumble.daily-report'
 .factory 'DailyReport', (Parse) ->
   class DailyReport extends Parse.Model
-    @configure "DailyReport", "project", "message", "metadata"
+    @configure "DailyReport", "project", "message", "metadata","sections"
 
     @getByProject = (project) ->
       @query(

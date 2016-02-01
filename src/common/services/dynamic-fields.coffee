@@ -1,24 +1,17 @@
 angular.module 'Scrumble.common'
-.service 'dynamicFields', ($q, trelloUtils) ->
-  sprint = null
-  project = null
-
-  getCurrentDayIndex = (bdcData) ->
-    for day, i in bdcData
-      return Math.max i-1, 0 unless day.done?
-    return i - 1
+.service 'dynamicFields', ($q, trelloUtils, trelloAuth, sprintUtils) ->
 
   dict =
     '{sprintNumber}':
-      value: -> sprint?.number
+      value: (sprint, project) -> sprint?.number
       description: 'Current sprint number'
       icon: 'cow'
     '{sprintGoal}':
-      value: -> sprint?.goal
+      value: (sprint, project) -> sprint?.goal
       description: 'The sprint goal (never forget it)'
       icon: 'target'
     '{speed}':
-      value: ->
+      value: (sprint, project) ->
         if _.isNumber sprint?.resources?.speed
           sprint?.resources?.speed.toFixed 1
         else
@@ -26,39 +19,45 @@ angular.module 'Scrumble.common'
       description: 'Estimated number of points per day per person'
       icon: 'run'
     '{toValidate}':
-      value: ->
+      value: (sprint, project) ->
         if project?.columnMapping?.toValidate?
           trelloUtils.getColumnPoints project.columnMapping.toValidate
       description: 'The number of points in the Trello to validate column'
       icon: 'phone'
     '{blocked}':
-      value: ->
+      value: (sprint, project) ->
         if project?.columnMapping?.blocked?
           trelloUtils.getColumnPoints project.columnMapping.blocked
       description: 'The number of points in the Trello blocked column'
       icon: 'radioactive'
     '{done}':
-      value: ->
-        if sprint?.bdcData?
-          index = getCurrentDayIndex sprint.bdcData
+      value: (sprint, project) ->
+        if _.isArray sprint?.bdcData
+          index = sprintUtils.getCurrentDayIndex sprint.bdcData
           done = sprint.bdcData[index]?.done
           if _.isNumber done then done.toFixed(1) else done
       description: 'The number of points in the Trello done column'
       icon: 'check'
     '{gap}':
-      value: ->
-        if sprint?.bdcData?
-          index = getCurrentDayIndex sprint.bdcData
+      value: (sprint, project) ->
+        if _.isArray sprint?.bdcData
+          index = sprintUtils.getCurrentDayIndex sprint.bdcData
           diff = sprint.bdcData[index]?.done - sprint.bdcData[index]?.standard
           Math.abs(diff).toFixed 1
       description: 'The difference between the standard points and the done points'
       icon: 'tshirt-crew'
     '{total}':
-      value: ->
+      value: (sprint, project) ->
         if _.isNumber sprint?.resources?.totalPoints
           sprint.resources.totalPoints.toFixed(1)
       description: 'The number of points to finish the sprint'
       icon: 'cart'
+    '{me}':
+      value: (sprint, project) ->
+        trelloAuth.getTrelloInfo().then (user) ->
+          user.fullName
+      description: 'Your fullname according to Trello'
+      icon: 'account-circle'
 
   replaceToday = (text) ->
     text.replace /\{today#(.+?)\}/g, (match, dateFormat) ->
@@ -66,14 +65,19 @@ angular.module 'Scrumble.common'
 
   replaceYesterday = (text) ->
     text.replace /\{yesterday#(.+?)\}/g, (match, dateFormat) ->
-      moment().subtract(1, 'days').format dateFormat
+      moment().subtract(1, 'day').format dateFormat
 
-  # the service
-  sprint: (_sprint_) ->
-    sprint = _sprint_
+  replaceBehindAhead = (text, sprint) ->
+    text.replace /\{ahead:(.+?) behind:(.+?)\}/g, (match, aheadColor, behindColor) ->
+      isAhead = sprintUtils.isAhead sprint
+      if isAhead
+        return aheadColor
+      else if isAhead?
+        return behindColor
+      else
+        return aheadColor
 
-  project: (_project_) ->
-    project = _project_
+  promises = null
 
   getAvailableFields: ->
     result = _.map dict, (value, key) ->
@@ -88,26 +92,35 @@ angular.module 'Scrumble.common'
       key: '{yesterday#format}'
       description: 'Yesterday\'s date where format is a <a href="http://momentjs.com/docs/#/parsing/string-format/" target="_blank">moment format</a>. examples: EEEE for weekday, YYYY-MM-DD'
       icon: 'calendar-today'
+    result.push
+      key: '{ahead:value1 behind:value2}'
+      description: 'Conditional value whether the team is behind or ahead according to the burndown chart'
+      icon: 'owl'
     result
 
-  render: (text) ->
-    result = text or ''
-
-    deferred = $q.defer()
+  ready: (sprint, project) ->
     promises = {}
     for key, elt of dict
-      promises[key] = elt.value()
+      promises[key] = elt.value(sprint, project)
 
-    $q.all(promises).then (builtDict) ->
-      for key, elt of builtDict
-        result = result.split(key).join(elt)
+    # hack to pass the sprint data to the render function
+    promises.sprint = sprint
 
-      # replace {today#YYYY-MM-DD}
-      result = replaceToday result
+    $q.all(promises)
 
-      # replace {yesterday#YYYY-MM-DD}
-      result = replaceYesterday result
+  render: (text, builtDict) ->
+    result = text or ''
 
-      deferred.resolve result
-    .catch deferred.reject
-    deferred.promise
+    for key, elt of builtDict
+      result = result.split(key).join(elt)
+
+    # replace {today#YYYY-MM-DD}
+    result = replaceToday result
+
+    # replace {yesterday#YYYY-MM-DD}
+    result = replaceYesterday result
+
+    # replace {ahead:value1 behind:value2}
+    result = replaceBehindAhead result, builtDict.sprint
+
+    result
