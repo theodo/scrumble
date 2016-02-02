@@ -1,5 +1,5 @@
 angular.module 'Scrumble.sprint'
-.controller 'BoardCtrl', ($scope, $timeout, bdc, trelloUtils, sprintUtils) ->
+.controller 'BoardCtrl', ($scope, $timeout, bdc, trelloUtils, sprintUtils, Sprint) ->
   $scope.tableData = angular.copy $scope.sprint.bdcData
   $scope.selectedIndex = 0
   getCurrentDayIndex = (data) ->
@@ -20,3 +20,4 @@ angular.module 'Scrumble.sprint'
   $scope.save = ->
     $scope.sprint.bdcData = $scope.tableData
     $scope.selectedIndex = 0
+    Sprint.save $scope.sprint
