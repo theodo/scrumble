@@ -38,3 +38,18 @@ angular.module 'Scrumble.sprint'
     sprintUtils.ensureDataConsistency source, $scope.editedSprint, $scope.devTeam
 
   $scope.checkSprint 'team'
+
+  Sprint.getLastSpeeds($scope.project.objectId)
+  .then (speedsInfo) ->
+    $scope.speedInfo =
+      previousSpeeds: _.map(speedsInfo, (speedInfo) ->
+        "Sprint #{speedInfo.number}: #{speedInfo.speed}"
+      ).join ', '
+
+    sum = _.sum speedsInfo, (speedInfo) ->
+      if _.isNumber parseFloat speedInfo.speed
+        parseFloat speedInfo.speed
+      else
+        0
+    speedAverage = sum / (speedsInfo.length or 1)
+    $scope.speedInfo.average = speedAverage.toFixed(1)

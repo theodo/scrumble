@@ -82,6 +82,21 @@ angular.module 'Scrumble.storage'
         sprint.save()
 
     @save = (sprint) ->
-      if sprint.isActive
-        activeSprint = sprint
       sprint.save()
+
+    @getLastSpeeds = (projectId) ->
+      @query(
+        where:
+          project:
+            __type: "Pointer"
+            className: "Project"
+            objectId: projectId
+      ).then (sprints) ->
+        _.sortByOrder sprints, 'number', false
+      .then (sprints) ->
+        result = []
+        for sprint in sprints[..2]
+          result.push
+            number: sprint.number
+            speed: sprintUtils.computeSpeed(sprint) or '?'
+        result
