@@ -49,9 +49,9 @@ angular.module('Scrumble.settings', ['Scrumble.common']);
 
 angular.module('Scrumble.sprint', ['ui.router', 'Parse', 'ngMaterial']);
 
-angular.module('Scrumble.storage', []);
-
 angular.module('Scrumble.wait', ['ui.router']);
+
+angular.module('Scrumble.storage', []);
 
 angular.module('Scrumble.board').config(function($stateProvider) {
   return $stateProvider.state('tab.board', {
@@ -970,24 +970,6 @@ angular.module('Scrumble.login').service('trelloAuth', function(localStorageServ
   };
 });
 
-angular.module('Scrumble.settings').config(function($stateProvider) {
-  return $stateProvider.state('tab.project', {
-    url: '/project',
-    controller: 'ProjectCtrl',
-    templateUrl: 'project/states/main/view.html',
-    resolve: {
-      user: function(ScrumbleUser, localStorageService, $state) {
-        return ScrumbleUser.getCurrentUser();
-      },
-      boards: function(TrelloClient) {
-        return TrelloClient.get('/members/me/boards').then(function(response) {
-          return response.data;
-        });
-      }
-    }
-  });
-});
-
 var __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
@@ -1176,6 +1158,24 @@ angular.module('Scrumble.sprint').config(function($stateProvider) {
       },
       sprints: function(Sprint, $stateParams) {
         return Sprint.getByProjectId($stateParams.projectId);
+      }
+    }
+  });
+});
+
+angular.module('Scrumble.settings').config(function($stateProvider) {
+  return $stateProvider.state('tab.project', {
+    url: '/project',
+    controller: 'ProjectCtrl',
+    templateUrl: 'project/states/main/view.html',
+    resolve: {
+      user: function(ScrumbleUser, localStorageService, $state) {
+        return ScrumbleUser.getCurrentUser();
+      },
+      boards: function(TrelloClient) {
+        return TrelloClient.get('/members/me/boards').then(function(response) {
+          return response.data;
+        });
       }
     }
   });
@@ -1600,6 +1600,70 @@ angular.module('Scrumble.sprint').service('sprintUtils', function() {
   };
 });
 
+angular.module('Scrumble.wait').run(function($rootScope, $state, $window, loadingToast) {
+  var finish;
+  finish = function() {
+    if (!$window.loading_screen.finishing) {
+      return $window.loading_screen.finish();
+    }
+  };
+  $rootScope.$on('$stateChangeSuccess', function() {
+    loadingToast.hide('loading');
+    return finish();
+  });
+  $rootScope.$on('$stateChangeError', function() {
+    loadingToast.hide('loading');
+    return finish();
+  });
+  $rootScope.$on('$stateNotFound', function() {
+    loadingToast.hide('loading');
+    return finish();
+  });
+  return $rootScope.$on('$stateChangeStart', function() {
+    loadingToast.show('loading');
+    return finish();
+  });
+});
+
+angular.module('Scrumble.wait').service('loadingToast', function($mdToast, $document) {
+  var toastDeleting, toastLoading, toastSaving;
+  toastLoading = $mdToast.build({
+    templateUrl: 'wait/views/loading-toast.html',
+    position: 'top left',
+    parent: $document[0].querySelector('main')
+  });
+  toastSaving = $mdToast.build({
+    templateUrl: 'wait/views/saving-toast.html',
+    position: 'top left',
+    parent: $document[0].querySelector('main')
+  });
+  toastDeleting = $mdToast.build({
+    templateUrl: 'wait/views/delete-toast.html',
+    position: 'top left',
+    parent: $document[0].querySelector('main')
+  });
+  return {
+    show: function(message) {
+      if (message === 'loading') {
+        return $mdToast.show(toastLoading);
+      } else if (message === 'deleting') {
+        return $mdToast.show(toastDeleting);
+      } else {
+        return $mdToast.show(toastSaving);
+      }
+    },
+    hide: function(message) {
+      if (message === 'loading') {
+        return $mdToast.hide(toastLoading);
+      } else if (message === 'deleting') {
+        return $mdToast.hide(toastDeleting);
+      } else {
+        return $mdToast.hide(toastSaving);
+      }
+    }
+  };
+});
+
 var __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
@@ -1712,71 +1776,7 @@ angular.module('Scrumble.storage').service('userService', function(ScrumbleUser)
   };
 });
 
-angular.module('Scrumble.wait').run(function($rootScope, $state, $window, loadingToast) {
-  var finish;
-  finish = function() {
-    if (!$window.loading_screen.finishing) {
-      return $window.loading_screen.finish();
-    }
-  };
-  $rootScope.$on('$stateChangeSuccess', function() {
-    loadingToast.hide('loading');
-    return finish();
-  });
-  $rootScope.$on('$stateChangeError', function() {
-    loadingToast.hide('loading');
-    return finish();
-  });
-  $rootScope.$on('$stateNotFound', function() {
-    loadingToast.hide('loading');
-    return finish();
-  });
-  return $rootScope.$on('$stateChangeStart', function() {
-    loadingToast.show('loading');
-    return finish();
-  });
-});
-
-angular.module('Scrumble.wait').service('loadingToast', function($mdToast, $document) {
-  var toastDeleting, toastLoading, toastSaving;
-  toastLoading = $mdToast.build({
-    templateUrl: 'wait/views/loading-toast.html',
-    position: 'top left',
-    parent: $document[0].querySelector('main')
-  });
-  toastSaving = $mdToast.build({
-    templateUrl: 'wait/views/saving-toast.html',
-    position: 'top left',
-    parent: $document[0].querySelector('main')
-  });
-  toastDeleting = $mdToast.build({
-    templateUrl: 'wait/views/delete-toast.html',
-    position: 'top left',
-    parent: $document[0].querySelector('main')
-  });
-  return {
-    show: function(message) {
-      if (message === 'loading') {
-        return $mdToast.show(toastLoading);
-      } else if (message === 'deleting') {
-        return $mdToast.show(toastDeleting);
-      } else {
-        return $mdToast.show(toastSaving);
-      }
-    },
-    hide: function(message) {
-      if (message === 'loading') {
-        return $mdToast.hide(toastLoading);
-      } else if (message === 'deleting') {
-        return $mdToast.hide(toastDeleting);
-      } else {
-        return $mdToast.hide(toastSaving);
-      }
-    }
-  };
-});
-
-angular.module('Scrumble.sprint').controller('BoardCtrl', function($scope, $timeout, bdc, trelloUtils, sprintUtils) {
+angular.module('Scrumble.sprint').controller('BoardCtrl', function($scope, $timeout, bdc, trelloUtils, sprintUtils, Sprint) {
   var getCurrentDayIndex;
   $scope.tableData = angular.copy($scope.sprint.bdcData);
   $scope.selectedIndex = 0;
@@ -1805,7 +1805,8 @@ angular.module('Scrumble.sprint').controller('BoardCtrl', function($scope, $time
   };
   return $scope.save = function() {
     $scope.sprint.bdcData = $scope.tableData;
-    return $scope.selectedIndex = 0;
+    $scope.selectedIndex = 0;
+    return Sprint.save($scope.sprint);
   };
 });
 
@@ -1905,24 +1906,6 @@ angular.module('Scrumble.common').directive('trelloAvatar', function() {
   };
 });
 
-angular.module('Scrumble.daily-report').controller('DefaultTemplateCtrl', function($scope, defaultTemplates) {
-  return $scope.setDefault = function() {
-    return $scope.sections[$scope.section] = defaultTemplates.getDefaultTemplate($scope.section);
-  };
-});
-
-angular.module('Scrumble.daily-report').directive('templateCallToAction', function() {
-  return {
-    restrict: 'E',
-    templateUrl: 'daily-report/directives/default-template/view.html',
-    controller: 'DefaultTemplateCtrl',
-    scope: {
-      sections: '=',
-      section: '@'
-    }
-  };
-});
-
 angular.module('Scrumble.daily-report').controller('DynamicFieldsCallToActionCtrl', function($scope, $mdDialog, $mdMedia, dynamicFields) {
   return $scope.openModal = function(ev) {
     var useFullScreen;
@@ -1948,6 +1931,24 @@ angular.module('Scrumble.daily-report').directive('dynamicFieldsCallToAction', f
     restrict: 'E',
     templateUrl: 'daily-report/directives/dynamic-fields-call-to-action/view.html',
     controller: 'DynamicFieldsCallToActionCtrl'
+  };
+});
+
+angular.module('Scrumble.daily-report').controller('DefaultTemplateCtrl', function($scope, defaultTemplates) {
+  return $scope.setDefault = function() {
+    return $scope.sections[$scope.section] = defaultTemplates.getDefaultTemplate($scope.section);
+  };
+});
+
+angular.module('Scrumble.daily-report').directive('templateCallToAction', function() {
+  return {
+    restrict: 'E',
+    templateUrl: 'daily-report/directives/default-template/view.html',
+    controller: 'DefaultTemplateCtrl',
+    scope: {
+      sections: '=',
+      section: '@'
+    }
   };
 });
 
@@ -2255,141 +2256,6 @@ angular.module('Scrumble.login').controller('TrelloLoginCtrl', function($scope, 
   };
 });
 
-angular.module('Scrumble.settings').controller('MemberFormCtrl', function($scope, projectUtils) {
-  $scope.daily = projectUtils.getDailyRecipient();
-  return $scope.roles = projectUtils.getRoles();
-});
-
-angular.module('Scrumble.settings').directive('memberForm', function() {
-  return {
-    restrict: 'E',
-    templateUrl: 'project/directives/member-form/view.html',
-    scope: {
-      member: '=',
-      "delete": '&'
-    },
-    controller: 'MemberFormCtrl'
-  };
-});
-
-angular.module('Scrumble.settings').controller('ProjectWidgetCtrl', function($scope, projectUtils) {
-  $scope.openMenu = function($mdOpenMenu, ev) {
-    var originatorEv;
-    originatorEv = ev;
-    return $mdOpenMenu(ev);
-  };
-  return $scope.getRoleLabel = projectUtils.getRoleLabel;
-});
-
-angular.module('Scrumble.settings').directive('projectWidget', function() {
-  return {
-    restrict: 'E',
-    templateUrl: 'project/directives/project-widget/view.html',
-    scope: {
-      project: '='
-    },
-    controller: 'ProjectWidgetCtrl'
-  };
-});
-
-angular.module('Scrumble.settings').controller('ResourcesByDayCtrl', function($scope) {
-  var changeResource;
-  changeResource = function(dayIndex, memberIndex, matrix) {
-    matrix[dayIndex][memberIndex] += 0.25;
-    if (matrix[dayIndex][memberIndex] > 1) {
-      matrix[dayIndex][memberIndex] = 0;
-    }
-    return matrix;
-  };
-  $scope.resourceClick = function(i, j) {
-    $scope.matrix = angular.copy(changeResource(i, j, $scope.matrix));
-    $scope.onUpdate();
-  };
-  $scope.selected = [];
-  return $scope["delete"] = function() {
-    var day, index, _i, _len, _ref;
-    _ref = $scope.selected;
-    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-      day = _ref[_i];
-      index = _.findIndex($scope.days, day);
-      _.remove($scope.days, day);
-      $scope.matrix.splice(index, 1);
-    }
-    $scope.selected = [];
-    return $scope.onUpdate();
-  };
-});
-
-angular.module('Scrumble.settings').directive('resourcesByDay', function() {
-  return {
-    restrict: 'E',
-    templateUrl: 'project/directives/resources-by-day/view.html',
-    scope: {
-      members: '=',
-      matrix: '=',
-      days: '=',
-      onUpdate: '&'
-    },
-    controller: 'ResourcesByDayCtrl'
-  };
-});
-
-var __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
-
-angular.module('Scrumble.settings').controller('SelectPeopleCtrl', function($scope) {
-  if ($scope.teamCheck == null) {
-    $scope.teamCheck = {};
-  }
-  $scope.toggle = function(member) {
-    var m, _ref;
-    if (_ref = member.id, __indexOf.call((function() {
-      var _i, _len, _ref1, _results;
-      _ref1 = $scope.selectedMembers;
-      _results = [];
-      for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
-        m = _ref1[_i];
-        _results.push(m.id);
-      }
-      return _results;
-    })(), _ref) >= 0) {
-      _.remove($scope.selectedMembers, function(m) {
-        return m.id === member.id;
-      });
-      return $scope.teamCheck[member.id] = false;
-    } else {
-      $scope.selectedMembers.push(member);
-      return $scope.teamCheck[member.id] = true;
-    }
-  };
-  return $scope.$watch('selectedMembers', function(newVal) {
-    var member, _i, _len, _results;
-    if (!newVal) {
-      return;
-    }
-    $scope.teamCheck = {};
-    if (newVal.length > 0) {
-      _results = [];
-      for (_i = 0, _len = newVal.length; _i < _len; _i++) {
-        member = newVal[_i];
-        _results.push($scope.teamCheck[member.id] = true);
-      }
-      return _results;
-    }
-  }, true);
-});
-
-angular.module('Scrumble.settings').directive('selectPeople', function() {
-  return {
-    restrict: 'E',
-    templateUrl: 'project/directives/select-people/view.html',
-    scope: {
-      members: '=',
-      selectedMembers: '='
-    },
-    controller: 'SelectPeopleCtrl'
-  };
-});
-
 angular.module('Scrumble.settings').controller('ProjectCtrl', function($location, $mdToast, $scope, $state, $timeout, $q, boards, TrelloClient, localStorageService, Project, Sprint, user, projectUtils) {
   var fetchBoardData, project;
   $scope.boards = boards;
@@ -2664,6 +2530,141 @@ angular.module('Scrumble.sprint').directive('sprintWidget', function() {
       displayTitle: '='
     },
     controller: 'SprintWidgetCtrl'
+  };
+});
+
+angular.module('Scrumble.settings').controller('MemberFormCtrl', function($scope, projectUtils) {
+  $scope.daily = projectUtils.getDailyRecipient();
+  return $scope.roles = projectUtils.getRoles();
+});
+
+angular.module('Scrumble.settings').directive('memberForm', function() {
+  return {
+    restrict: 'E',
+    templateUrl: 'project/directives/member-form/view.html',
+    scope: {
+      member: '=',
+      "delete": '&'
+    },
+    controller: 'MemberFormCtrl'
+  };
+});
+
+angular.module('Scrumble.settings').controller('ProjectWidgetCtrl', function($scope, projectUtils) {
+  $scope.openMenu = function($mdOpenMenu, ev) {
+    var originatorEv;
+    originatorEv = ev;
+    return $mdOpenMenu(ev);
+  };
+  return $scope.getRoleLabel = projectUtils.getRoleLabel;
+});
+
+angular.module('Scrumble.settings').directive('projectWidget', function() {
+  return {
+    restrict: 'E',
+    templateUrl: 'project/directives/project-widget/view.html',
+    scope: {
+      project: '='
+    },
+    controller: 'ProjectWidgetCtrl'
+  };
+});
+
+var __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
+
+angular.module('Scrumble.settings').controller('SelectPeopleCtrl', function($scope) {
+  if ($scope.teamCheck == null) {
+    $scope.teamCheck = {};
+  }
+  $scope.toggle = function(member) {
+    var m, _ref;
+    if (_ref = member.id, __indexOf.call((function() {
+      var _i, _len, _ref1, _results;
+      _ref1 = $scope.selectedMembers;
+      _results = [];
+      for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
+        m = _ref1[_i];
+        _results.push(m.id);
+      }
+      return _results;
+    })(), _ref) >= 0) {
+      _.remove($scope.selectedMembers, function(m) {
+        return m.id === member.id;
+      });
+      return $scope.teamCheck[member.id] = false;
+    } else {
+      $scope.selectedMembers.push(member);
+      return $scope.teamCheck[member.id] = true;
+    }
+  };
+  return $scope.$watch('selectedMembers', function(newVal) {
+    var member, _i, _len, _results;
+    if (!newVal) {
+      return;
+    }
+    $scope.teamCheck = {};
+    if (newVal.length > 0) {
+      _results = [];
+      for (_i = 0, _len = newVal.length; _i < _len; _i++) {
+        member = newVal[_i];
+        _results.push($scope.teamCheck[member.id] = true);
+      }
+      return _results;
+    }
+  }, true);
+});
+
+angular.module('Scrumble.settings').directive('selectPeople', function() {
+  return {
+    restrict: 'E',
+    templateUrl: 'project/directives/select-people/view.html',
+    scope: {
+      members: '=',
+      selectedMembers: '='
+    },
+    controller: 'SelectPeopleCtrl'
+  };
+});
+
+angular.module('Scrumble.settings').controller('ResourcesByDayCtrl', function($scope) {
+  var changeResource;
+  changeResource = function(dayIndex, memberIndex, matrix) {
+    matrix[dayIndex][memberIndex] += 0.25;
+    if (matrix[dayIndex][memberIndex] > 1) {
+      matrix[dayIndex][memberIndex] = 0;
+    }
+    return matrix;
+  };
+  $scope.resourceClick = function(i, j) {
+    $scope.matrix = angular.copy(changeResource(i, j, $scope.matrix));
+    $scope.onUpdate();
+  };
+  $scope.selected = [];
+  return $scope["delete"] = function() {
+    var day, index, _i, _len, _ref;
+    _ref = $scope.selected;
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      day = _ref[_i];
+      index = _.findIndex($scope.days, day);
+      _.remove($scope.days, day);
+      $scope.matrix.splice(index, 1);
+    }
+    $scope.selected = [];
+    return $scope.onUpdate();
+  };
+});
+
+angular.module('Scrumble.settings').directive('resourcesByDay', function() {
+  return {
+    restrict: 'E',
+    templateUrl: 'project/directives/resources-by-day/view.html',
+    scope: {
+      members: '=',
+      matrix: '=',
+      days: '=',
+      onUpdate: '&'
+    },
+    controller: 'ResourcesByDayCtrl'
   };
 });
 
