@@ -42,7 +42,7 @@ angular.module 'Scrumble.sprint'
   Sprint.getLastSpeeds($scope.project.objectId)
   .then (speedsInfo) ->
     $scope.speedInfo =
-      previousSpeeds: _.map(speedsInfo, (speedInfo) ->
+      previousSpeeds: _.map(_.filter(speedsInfo, (speedInfo) -> speedInfo.speed != '?'), (speedInfo) ->
         "Sprint #{speedInfo.number}: #{speedInfo.speed}"
       ).join ', '
 
@@ -52,4 +52,5 @@ angular.module 'Scrumble.sprint'
       else
         0
     speedAverage = sum / (speedsInfo.length or 1)
-    $scope.speedInfo.average = speedAverage.toFixed(1)
+    if speedAverage > 0
+      $scope.speedInfo.average = speedAverage.toFixed(1)
