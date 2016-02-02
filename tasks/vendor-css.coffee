@@ -7,6 +7,7 @@ gulp.task 'vendor-css', (done) ->
     'bower_components/angular-material/angular-material.min.css'
     'bower_components/angular-material-data-table/dist/md-data-table.min.css'
     'bower_components/mdi/css/materialdesignicons.min.css'
+    'bower_components/nvd3/build/nv.d3.min.css'
   ]
   .pipe(concat('vendor.css'))
   .on 'error', gutil.log
