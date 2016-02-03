@@ -82,6 +82,4 @@ angular.module 'Scrumble.storage'
         sprint.save()
 
     @save = (sprint) ->
-      if sprint.isActive
-        activeSprint = sprint
       sprint.save()
