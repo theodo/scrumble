@@ -14,7 +14,7 @@ md-card(flex="100")
           tbody(md-body)
             tr(
               md-row
-              ng-repeat="day in sprint.bdcData"
+              ng-repeat="day in tableData"
               ng-class="{'md-selected': currentDayIndex == $index}"
             )
               td(md-cell ng-if='$first == true') Start
