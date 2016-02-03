@@ -322,12 +322,20 @@ client-form .answer {
   border-radius: 50%;
 }
 
-
 member-form md-input-container {
   margin-bottom: 0;
 }
 member-form md-card {
   border: 2px solid #607D8B;
+}
+
+resources-by-day .row {
+  height: 35px;
+  margin: 0;
+}
+resources-by-day .row-avatar {
+  height: 50px;
+  margin: 0;
 }
 
 select-people .member-select {
@@ -345,14 +353,6 @@ select-people .member-select label {
   height: 100%;
 }
 
-resources-by-day .row {
-  height: 35px;
-  margin: 0;
-}
-resources-by-day .row-avatar {
-  height: 50px;
-  margin: 0;
-}
 
 .check {
   color: green;
