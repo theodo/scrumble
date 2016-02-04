@@ -1,10 +1,10 @@
 angular.module 'Scrumble.indicators'
-.controller 'ClientFormCtrl', (
+.controller 'ChecklistCtrl', (
   $scope
   loadingToast
 ) ->
-  $scope.indicators ?= angular.copy $scope.template
-
+  $scope.indicators ?= angular.copy $scope.company
+  
   $scope.save = ->
     loadingToast.show()
     $scope.saving = true

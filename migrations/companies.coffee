@@ -3,9 +3,60 @@ Parse = require('parse/node').Parse
 Parse.initialize 'UTkdR7MH2Wok5lyPEm1VHoxyFKWVcdOKAu6A4BWG', 'c8v3Y5mg7VEnNN5u1encLS1GKqsqEWC1vZOYLmQb', 'yLM0zIxaICtwlpPtp4YokCQwo1Z3WrESzH44GzN6'
 Parse.Cloud.useMasterKey()
 
-surveys = [
-  company: 'FastIT'
-  questions: [
+companies = [
+  name: 'Fast IT'
+  checklists: [
+    name: 'Checklist Agilité Technique'
+    list: [
+      label: 'Pas de régression dans le sprint passé'
+      value: 1
+    ,
+      label: 'Badge CI vert avant chaque merge'
+      value: 1
+    ,
+      label: 'Code coverage en progression ou > 80%'
+      value: 1
+    ,
+      label: 'Développeurs fiers du code produit durant le sprint passé'
+      value: 1
+    ,
+      label: 'Pas de dépendance extérieure dans le sprint passé'
+      value: 1
+    ]
+    standard: 5
+  ,
+    name: 'Réussir son projet'
+    list: [
+      label: 'Le readme est à jour, le RUN a les informations nécéssaires pour installer le projet, le tester et le mettre en production'
+      value: 1
+    ,
+      label: 'Provisionning à jour, un membre de l\'équipe a détruit sa vagrant cette semaine'
+      value: 1
+    ,
+      label: 'L\'équipe a testé le projet et n\'as pas trouvé de vulnérabilité présente dans la checklist sécurité'
+      value: 1
+    ,
+      label: 'Projet en homologation'
+      value: 1
+    ,
+      label: 'Projet en production'
+      value: 1
+    ,
+      label: 'Feedbacks utilisateurs'
+      value: 1
+    ,
+      label: 'Projet déployé en production durant les deux semaines précédentes'
+      value: 1
+    ,
+      label: 'Moins de 15 minutes pour mettre en production'
+      value: 1
+    ,
+      label: 'L\'équipe connait le succès du projet'
+      value: 1
+    ]
+    standard: [3, 4, 5, 6, 7, 8, 9]
+  ]
+  satisfactionSurvey: [
     label: 'What is your appreciation of the speed of Fast IT\'s team?'
     type: 'radio'
     items: [
@@ -86,8 +137,59 @@ surveys = [
   ,
   ]
 ,
-  company: 'Theodo'
-  questions: [
+  name: 'Theodo'
+  checklists: [
+    name: 'Checklist Agilité Technique'
+    list: [
+      label: 'Pas de régression dans le sprint passé'
+      value: 1
+    ,
+      label: 'Badge CI vert avant chaque merge'
+      value: 1
+    ,
+      label: 'Code coverage en progression ou > 80%'
+      value: 1
+    ,
+      label: 'Développeurs fiers du code produit durant le sprint passé'
+      value: 1
+    ,
+      label: 'Pas de dépendance extérieure dans le sprint passé'
+      value: 1
+    ]
+    standard: 5
+  ,
+    name: 'Réussir son projet'
+    list: [
+      label: 'Le readme est à jour, le RUN a les informations nécéssaires pour installer le projet, le tester et le mettre en production'
+      value: 1
+    ,
+      label: 'Provisionning à jour, un membre de l\'équipe a détruit sa vagrant cette semaine'
+      value: 1
+    ,
+      label: 'L\'équipe a testé le projet et n\'as pas trouvé de vulnérabilité présente dans la checklist sécurité'
+      value: 1
+    ,
+      label: 'Projet en homologation'
+      value: 1
+    ,
+      label: 'Projet en production'
+      value: 1
+    ,
+      label: 'Feedbacks utilisateurs'
+      value: 1
+    ,
+      label: 'Projet déployé en production durant les deux semaines précédentes'
+      value: 1
+    ,
+      label: 'Moins de 15 minutes pour mettre en production'
+      value: 1
+    ,
+      label: 'L\'équipe connait le succès du projet'
+      value: 1
+    ]
+    standard: [3, 4, 5, 6, 7, 8, 9]
+  ]
+  satisfactionSurvey: [
     label: 'Quelle est votre appréciation sur la vitesse de traitement de vos demandes par l\'équipe Theodo ?'
     type: 'radio'
     items: [
@@ -168,8 +270,9 @@ surveys = [
   ,
   ]
 ,
-  company: 'Theodo UK'
-  questions: [
+  name: 'Theodo UK'
+  checklists: []
+  satisfactionSurvey: [
     label: 'How do you feel about the speed of the team?'
     type: 'radio'
     items: [
@@ -250,15 +353,16 @@ surveys = [
   ,
   ]
 ]
-Survey = Parse.Object.extend("SatisfactionSurveyTemplate")
-query = new Parse.Query(Survey)
+Company = Parse.Object.extend("Company")
+query = new Parse.Query(Company)
 query.find
   success: (results) ->
     for result in results
       result.destroy()
 .then ->
-  for survey in surveys
-    s = new Survey();
-    s.set 'company', survey.company
-    s.set 'questions', survey.questions
+  for company in companies
+    s = new Company();
+    s.set 'name', company.name
+    s.set 'checklists', company.checklists
+    s.set 'satisfactionSurvey', company.satisfactionSurvey
     s.save()

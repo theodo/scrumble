@@ -1,4 +1,28 @@
 md-card(flex="100")
-  //- md-tabs(md-border-bottom md-autoselect md-dynamic-height md-stretch-tabs="always")
-  //-   md-tab(label='Client Form')
-  client-form(sprint="currentSprint" templates="satisfactionSurveyTemplates")
+  md-card-title
+    md-card-title-text(layout="row")
+      md-input-container
+        label Company
+        md-select(
+          ng-model="selectedCompanyName"
+          aria-label="company"
+          ng-change="updateCompany(selectedCompanyName)"
+        )
+          md-option(
+            ng-repeat="company in companies"
+            ng-value="company.name"
+          ) {{ company.name }}
+          
+  md-tabs(md-border-bottom md-autoselect md-dynamic-height md-stretch-tabs="always")
+    md-tab(label='Satisfaction Survey')
+      client-form(
+        on-save="saveIndicators($indicators)"
+        template="company"
+        indicators="currentSprint.indicators"
+      )
+    md-tab(label='Checklists')
+      checklist(
+        on-save="saveIndicators($indicators)"
+        template="company"
+        indicators="currentSprint.indicators"
+      )
