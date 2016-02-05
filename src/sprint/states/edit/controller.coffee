@@ -25,6 +25,7 @@ angular.module 'Scrumble.sprint'
   $scope.activable = sprintUtils.isActivable($scope.editedSprint)
 
   $scope.activate = ->
+    $scope.project.save()
     if sprintUtils.isActivable($scope.editedSprint)
       $scope.editedSprint.isActive = true
       Sprint.closeActiveSprint $scope.project
