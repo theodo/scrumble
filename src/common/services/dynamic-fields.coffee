@@ -94,7 +94,7 @@ angular.module 'Scrumble.common'
       icon: 'calendar-today'
     result.push
       key: '{ahead:value1 behind:value2}'
-      description: 'Conditional value whether the team is behind or ahead according to the burndown chart'
+      description: 'Conditional value whether the team is behind or ahead according to the burndown chart. Example: &lt;span style=\'color:{ahead:green behind:red};\'&gt;{ahead:Ahead behind:Behind}: {gap} points&lt;/span&gt;'
       icon: 'owl'
     result
 

@@ -42,6 +42,7 @@ angular.module 'Scrumble.daily-report'
           $mdDialog.cancel()
         else
           dailyReport.sections.previousGoals = todaysGoals
+          dailyReport.sections.todaysGoals = null
           dailyReport.save()
           sentFeedback = $mdToast.simple().position('top right').content('Email sent')
           $mdToast.show sentFeedback
