@@ -3,12 +3,15 @@ angular.module 'Scrumble.indicators'
   $scope
   loadingToast
 ) ->
-  $scope.indicators ?= angular.copy $scope.template
+  if _.isArray $scope.sprint?.indicators?.satisfactionSurvey
+    for question, index in $scope.sprint.indicators.satisfactionSurvey
+      $scope.template[index].answer = question.answer
 
   $scope.save = ->
     loadingToast.show()
     $scope.saving = true
-    $scope.onSave({$indicators: $scope.indicators})
+    $scope.sprint.indicators.satisfactionSurvey = $scope.template
+    $scope.sprint.save()
     .then ->
       loadingToast.hide()
       $scope.saving = false

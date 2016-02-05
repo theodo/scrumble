@@ -5,7 +5,7 @@ md-card-content.md-padding
     md-button.md-icon-button(ng-click="print()")
       md-icon(md-svg-src="printer", aria-label="Print")
   
-  div(ng-repeat="question in indicators.satisfactionSurvey")
+  div(ng-repeat="question in template")
     p.question {{ question.label }}
     .answer
       md-radio-group(ng-if="question.type == 'radio'" ng-model="question.answer")

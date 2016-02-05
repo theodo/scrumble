@@ -5,7 +5,7 @@ md-card-content.md-padding
     md-button.md-icon-button(ng-click="print()")
       md-icon(md-svg-src="printer", aria-label="Print")
   
-  div(ng-repeat="checklist in indicators.checklists")
+  div(ng-repeat="checklist in template")
     h2.md-title {{ checklist.name }}
     div(ng-repeat="item in checklist.list")
       md-checkbox(ng-model="item.selected") {{ item.label }}

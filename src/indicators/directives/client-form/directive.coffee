@@ -3,7 +3,6 @@ angular.module 'Scrumble.indicators'
   restrict: 'E'
   templateUrl: 'indicators/directives/client-form/view.html'
   scope:
-    onSave: '&'
+    sprint: '='
     template: '='
-    indicators: '='
   controller: 'ClientFormCtrl'

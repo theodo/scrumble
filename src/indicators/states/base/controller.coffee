@@ -7,11 +7,18 @@ angular.module 'Scrumble.indicators'
   $scope.companies = companies
   $scope.currentSprint = currentSprint
 
-  $scope.updateCompany = (name) ->
-    $scope.company = _.find companies, name: name
-    console.log $scope.company
+  company = _.find companies, name: $scope.project.settings.company or 'Theodo'
+  if company?
+    $scope.clientSurveyTemplate = company.satisfactionSurvey
+    $scope.checklistsTemplate = company.checklists
 
-  $scope.selectedCompanyName = currentSprint.indicators?.name
+  $scope.updateCompany = (name) ->
+    $scope.project?.save()
+    company = _.find companies, name: name
+    if company?
+      console.log company
+      $scope.clientSurveyTemplate = company.satisfactionSurvey
+      $scope.checklistsTemplate = company.checklists
 
   $scope.saveIndicators = (indicators) ->
     return unless $scope.sprint?

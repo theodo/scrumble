@@ -1,12 +1,12 @@
 md-card(flex="100")
   md-card-title
-    md-card-title-text(layout="row")
+    md-card-title-text(layout="row" layout-align="center").hide-for-print
       md-input-container
         label Company
         md-select(
-          ng-model="selectedCompanyName"
+          ng-model="project.settings.company"
           aria-label="company"
-          ng-change="updateCompany(selectedCompanyName)"
+          ng-change="updateCompany(project.settings.company)"
         )
           md-option(
             ng-repeat="company in companies"
@@ -16,13 +16,11 @@ md-card(flex="100")
   md-tabs(md-border-bottom md-autoselect md-dynamic-height md-stretch-tabs="always")
     md-tab(label='Satisfaction Survey')
       client-form(
-        on-save="saveIndicators($indicators)"
-        template="company"
-        indicators="currentSprint.indicators"
+        template="clientSurveyTemplate"
+        sprint="currentSprint"
       )
     md-tab(label='Checklists')
       checklist(
-        on-save="saveIndicators($indicators)"
-        template="company"
-        indicators="currentSprint.indicators"
+        template="checklistsTemplate"
+        sprint="currentSprint"
       )
