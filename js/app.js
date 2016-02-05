@@ -35,11 +35,11 @@ angular.module('Scrumble.board', ['ui.router', 'ngMaterial']);
 
 angular.module('Scrumble.common', ['trello-api-client', 'ngMaterial', 'ui.router', 'Scrumble.login', 'Scrumble.sprint']);
 
+angular.module('Scrumble.daily-report', ['trello-api-client', 'ui.router']);
+
 angular.module('Scrumble.feedback', []);
 
 angular.module('Scrumble.gmail-client', []);
-
-angular.module('Scrumble.daily-report', ['trello-api-client', 'ui.router']);
 
 angular.module('Scrumble.indicators', []);
 
@@ -459,135 +459,6 @@ angular.module('Scrumble.common').controller('BaseCtrl', function($scope, $mdSid
   ];
 });
 
-angular.module('Scrumble.feedback').controller('feedbackCallToActionCtrl', function($scope, $mdDialog, $mdMedia) {
-  var DialogController;
-  $scope.customFullscreen = $mdMedia('sm');
-  $scope.openFeedbackModal = function(ev) {
-    $mdDialog.show({
-      controller: DialogController,
-      templateUrl: 'feedback/directives/dialog.html',
-      parent: angular.element(document.body),
-      targetEvent: ev,
-      clickOutsideToClose: true,
-      fullscreen: $mdMedia('sm') && $scope.customFullscreen
-    }).then((function(answer) {
-      $scope.status = 'You said the information was "' + answer + '".';
-    }), function() {
-      $scope.status = 'You cancelled the dialog.';
-    });
-    $scope.$watch((function() {
-      return $mdMedia('sm');
-    }), function(sm) {
-      $scope.customFullscreen = sm === true;
-    });
-  };
-  return DialogController = function($scope, $mdDialog, $controller, Feedback, localStorageService) {
-    angular.extend(this, $controller('ModalCtrl', {
-      $scope: $scope
-    }));
-    $scope.message = null;
-    $scope.doing = false;
-    return $scope.send = function() {
-      var feedback;
-      if ($scope.message != null) {
-        $scope.doing = true;
-        feedback = new Feedback();
-        feedback.reporter = localStorageService.get('trello_email');
-        feedback.message = $scope.message;
-        return feedback.save().then(function() {
-          return $mdDialog.hide();
-        });
-      }
-    };
-  };
-});
-
-angular.module('Scrumble.feedback').directive('feedback', function() {
-  return {
-    restrict: 'E',
-    templateUrl: 'feedback/directives/call-to-action.html',
-    scope: {},
-    controller: 'feedbackCallToActionCtrl'
-  };
-});
-
-var __hasProp = {}.hasOwnProperty,
-  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
-
-angular.module('Scrumble.feedback').factory('Feedback', function(Parse) {
-  var Feedback;
-  return Feedback = (function(_super) {
-    __extends(Feedback, _super);
-
-    function Feedback() {
-      return Feedback.__super__.constructor.apply(this, arguments);
-    }
-
-    Feedback.configure("Feedback", "reporter", "message");
-
-    return Feedback;
-
-  })(Parse.Model);
-});
-
-angular.module('Scrumble.gmail-client').constant('SEND_EMAIL_ENDPOINT', 'https://content.googleapis.com/gmail/v1/users/me/messages/send').service('gmailClient', function($http, googleAuth, SEND_EMAIL_ENDPOINT) {
-  return {
-    send: function(raw) {
-      return $http.post(SEND_EMAIL_ENDPOINT, {
-        raw: raw
-      }, {
-        headers: {
-          authorization: googleAuth.getAuthorizationHeader()
-        },
-        params: {
-          alt: "json"
-        }
-      });
-    }
-  };
-});
-
-angular.module('Scrumble.gmail-client').service('mailer', function($state, $rootScope, gmailClient, googleAuth) {
-  return {
-    send: function(message, callback) {
-      if (message.to == null) {
-        return callback({
-          message: "No 'to' field",
-          code: 400
-        });
-      }
-      if (message.subject == null) {
-        return callback({
-          message: "No 'subject' field",
-          code: 400
-        });
-      }
-      if (message.body == null) {
-        return callback({
-          message: "No 'body' field",
-          code: 400
-        });
-      }
-      return googleAuth.getUserInfo().then(function(user) {
-        var base64EncodedEmail, originalMail;
-        originalMail = {
-          to: message.to,
-          cc: message.cc,
-          subject: message.subject,
-          fromName: user.name,
-          from: user.email,
-          body: message.body,
-          cids: message.cids,
-          attaches: []
-        };
-        base64EncodedEmail = btoa(Mime.toMimeTxt(originalMail));
-        base64EncodedEmail = base64EncodedEmail.replace(/\+/g, '-').replace(/\//g, '_');
-        return gmailClient.send(base64EncodedEmail).then(callback);
-      });
-    }
-  };
-});
-
 angular.module('Scrumble.daily-report').config(function($stateProvider) {
   return $stateProvider.state('tab.daily-report', {
     url: '/daily-report',
@@ -824,6 +695,135 @@ angular.module('Scrumble.daily-report').service('reportBuilder', function($q, Sc
     buildCid: function() {
       return dynamicFieldsPromise.then(function(builtDict) {
         return renderBDC(prebuildMessage, _svg, true);
+      });
+    }
+  };
+});
+
+angular.module('Scrumble.feedback').controller('feedbackCallToActionCtrl', function($scope, $mdDialog, $mdMedia) {
+  var DialogController;
+  $scope.customFullscreen = $mdMedia('sm');
+  $scope.openFeedbackModal = function(ev) {
+    $mdDialog.show({
+      controller: DialogController,
+      templateUrl: 'feedback/directives/dialog.html',
+      parent: angular.element(document.body),
+      targetEvent: ev,
+      clickOutsideToClose: true,
+      fullscreen: $mdMedia('sm') && $scope.customFullscreen
+    }).then((function(answer) {
+      $scope.status = 'You said the information was "' + answer + '".';
+    }), function() {
+      $scope.status = 'You cancelled the dialog.';
+    });
+    $scope.$watch((function() {
+      return $mdMedia('sm');
+    }), function(sm) {
+      $scope.customFullscreen = sm === true;
+    });
+  };
+  return DialogController = function($scope, $mdDialog, $controller, Feedback, localStorageService) {
+    angular.extend(this, $controller('ModalCtrl', {
+      $scope: $scope
+    }));
+    $scope.message = null;
+    $scope.doing = false;
+    return $scope.send = function() {
+      var feedback;
+      if ($scope.message != null) {
+        $scope.doing = true;
+        feedback = new Feedback();
+        feedback.reporter = localStorageService.get('trello_email');
+        feedback.message = $scope.message;
+        return feedback.save().then(function() {
+          return $mdDialog.hide();
+        });
+      }
+    };
+  };
+});
+
+angular.module('Scrumble.feedback').directive('feedback', function() {
+  return {
+    restrict: 'E',
+    templateUrl: 'feedback/directives/call-to-action.html',
+    scope: {},
+    controller: 'feedbackCallToActionCtrl'
+  };
+});
+
+var __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+angular.module('Scrumble.feedback').factory('Feedback', function(Parse) {
+  var Feedback;
+  return Feedback = (function(_super) {
+    __extends(Feedback, _super);
+
+    function Feedback() {
+      return Feedback.__super__.constructor.apply(this, arguments);
+    }
+
+    Feedback.configure("Feedback", "reporter", "message");
+
+    return Feedback;
+
+  })(Parse.Model);
+});
+
+angular.module('Scrumble.gmail-client').constant('SEND_EMAIL_ENDPOINT', 'https://content.googleapis.com/gmail/v1/users/me/messages/send').service('gmailClient', function($http, googleAuth, SEND_EMAIL_ENDPOINT) {
+  return {
+    send: function(raw) {
+      return $http.post(SEND_EMAIL_ENDPOINT, {
+        raw: raw
+      }, {
+        headers: {
+          authorization: googleAuth.getAuthorizationHeader()
+        },
+        params: {
+          alt: "json"
+        }
+      });
+    }
+  };
+});
+
+angular.module('Scrumble.gmail-client').service('mailer', function($state, $rootScope, gmailClient, googleAuth) {
+  return {
+    send: function(message, callback) {
+      if (message.to == null) {
+        return callback({
+          message: "No 'to' field",
+          code: 400
+        });
+      }
+      if (message.subject == null) {
+        return callback({
+          message: "No 'subject' field",
+          code: 400
+        });
+      }
+      if (message.body == null) {
+        return callback({
+          message: "No 'body' field",
+          code: 400
+        });
+      }
+      return googleAuth.getUserInfo().then(function(user) {
+        var base64EncodedEmail, originalMail;
+        originalMail = {
+          to: message.to,
+          cc: message.cc,
+          subject: message.subject,
+          fromName: user.name,
+          from: user.email,
+          body: message.body,
+          cids: message.cids,
+          attaches: []
+        };
+        base64EncodedEmail = btoa(Mime.toMimeTxt(originalMail));
+        base64EncodedEmail = base64EncodedEmail.replace(/\+/g, '-').replace(/\//g, '_');
+        return gmailClient.send(base64EncodedEmail).then(callback);
       });
     }
   };
@@ -2674,6 +2674,7 @@ angular.module('Scrumble.sprint').controller('EditSprintCtrl', function($scope, 
   $scope.title = $state.is('tab.new-sprint') ? 'NEW SPRINT' : 'EDIT SPRINT';
   $scope.activable = sprintUtils.isActivable($scope.editedSprint);
   $scope.activate = function() {
+    $scope.project.save();
     if (sprintUtils.isActivable($scope.editedSprint)) {
       $scope.editedSprint.isActive = true;
       return Sprint.closeActiveSprint($scope.project).then(function() {
