@@ -36,4 +36,11 @@ angular.module 'Scrumble.sprint'
       deferred.reject 'doneColumn is not set'
 
     deferred.promise
+  removeLastDoneAndSave: (sprint) ->
+    for i in [sprint.bdcData.length - 1..0] by -1
+      break if i is 0
+      if sprint.bdcData[i].done?
+        sprint.bdcData[i].done = null
+        break
+    Sprint.save(sprint)
   getPngBase64: getPngBase64

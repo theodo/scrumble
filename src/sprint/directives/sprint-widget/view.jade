@@ -4,14 +4,17 @@ style(type='text/css').
   h2.md-title.pointer(
     ng-click="openEditTitle($event)"
     ng-if="displayTitle"
+    flex="grow"
   ) {{ bdcTitle }}
-  span(flex)
-  div(ng-if="callToActions")
-    md-button.md-icon-button(aria-label='Update BDC' ng-click="updateBDC()")
-      md-icon(md-svg-icon="autorenew") Update
-      md-tooltip(md-direction="bottom") Go to next day
+  div(ng-if="callToActions" flex layout="row")
+    md-button.md-icon-button(aria-label='Update BDC' ng-click="backward()")
+      md-icon(md-svg-icon="step-backward") Update
+      md-tooltip(md-direction="bottom") Go backward
     md-button.md-icon-button(ng-click='printBDC()')
       md-icon(md-svg-icon='printer') Print
       md-tooltip(md-direction="bottom") Print
+    md-button.md-icon-button(aria-label='Update BDC' ng-click="forward()")
+      md-icon(md-svg-icon="step-forward") Update
+      md-tooltip(md-direction="bottom") Go forward
 md-card-content
   burndown(data="sprint.bdcData")
