@@ -10,7 +10,9 @@ angular.module 'Scrumble.sprint'
   Project
   Sprint
 ) ->
-  dynamicFields.ready $scope.sprint, $scope.project
+  dynamicFieldsPromise = dynamicFields.ready $scope.sprint, $scope.project
+
+  dynamicFieldsPromise
   .then (builtDict) ->
     $scope.bdcTitle = dynamicFields.render $scope.project?.settings?.bdcTitle, builtDict
 
@@ -24,10 +26,9 @@ angular.module 'Scrumble.sprint'
         availableFields: -> dynamicFields.getAvailableFields()
     .then (title) ->
       Project.saveTitle($scope.project, title)
-      .then (title) ->
-        dynamicFields.render title
-      .then (title) ->
-        $scope.bdcTitle = title
+      dynamicFieldsPromise
+      .then (builtDict) ->
+        $scope.bdcTitle = dynamicFields.render title, builtDict
 
   DialogController = ($scope, $mdDialog, title, availableFields) ->
     $scope.title = title
