@@ -326,7 +326,7 @@ angular.module('Scrumble.common').service('dynamicFields', function($q, trelloUt
         elt = dict[key];
         promises[key] = elt.value(sprint, project);
       }
-      promises.sprint = sprint;
+      promises.__sprint = sprint;
       return $q.all(promises);
     },
     render: function(text, builtDict) {
@@ -338,7 +338,7 @@ angular.module('Scrumble.common').service('dynamicFields', function($q, trelloUt
       }
       result = replaceToday(result);
       result = replaceYesterday(result);
-      result = replaceBehindAhead(result, builtDict.sprint);
+      result = replaceBehindAhead(result, builtDict.__sprint);
       return result;
     }
   };
