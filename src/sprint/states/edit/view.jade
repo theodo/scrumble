@@ -56,5 +56,8 @@ div.sprint-body(layout="row" layout-align="center end")
           ng-model="editedSprint.resources.speed"
           ng-change="checkSprint('speed')"
         )
+        div(ng-messages="speedInfo" role="info" md-auto-hide="false" ng-messages-multiple)
+          ng-message(when="previousSpeeds") {{ speedInfo.previousSpeeds }}
+          ng-message(when="average") - Average: {{ speedInfo.average }}
     section(layout="row" layout-sm="column" layout-align="center center" layout-wrap)
       md-button.md-raised.md-primary(ng-disabled="!activable" ng-click="activate()") {{ saveLabel }}
