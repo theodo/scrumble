@@ -104,7 +104,7 @@ angular.module 'Scrumble.common'
       promises[key] = elt.value(sprint, project)
 
     # hack to pass the sprint data to the render function
-    promises.sprint = sprint
+    promises.__sprint = sprint
 
     $q.all(promises)
 
@@ -121,6 +121,6 @@ angular.module 'Scrumble.common'
     result = replaceYesterday result
 
     # replace {ahead:value1 behind:value2}
-    result = replaceBehindAhead result, builtDict.sprint
+    result = replaceBehindAhead result, builtDict.__sprint
 
     result
