@@ -10,6 +10,8 @@ angular.module 'Scrumble.sprint'
 
   $scope.$on 'bdc:update', ->
     $scope.tableData = angular.copy $scope.sprint.bdcData
+    $scope.currentDayIndex = getCurrentDayIndex $scope.tableData
+    $scope.tableData = angular.copy $scope.sprint.bdcData
 
   $scope.fetchTrelloDonePoints = ->
     if $scope.sprint.doneColumn?

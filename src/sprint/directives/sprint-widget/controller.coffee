@@ -40,8 +40,13 @@ angular.module 'Scrumble.sprint'
     $scope.save = ->
       $mdDialog.hide $scope.title
 
-  $scope.updateBDC = ->
+  $scope.forward = ->
     bdc.setDonePointsAndSave $scope.sprint
+    .then ->
+      $scope.$emit 'bdc:update'
+
+  $scope.backward = ->
+    bdc.removeLastDoneAndSave $scope.sprint
     .then ->
       $scope.$emit 'bdc:update'
 

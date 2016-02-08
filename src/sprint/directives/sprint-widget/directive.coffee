@@ -5,6 +5,4 @@ angular.module 'Scrumble.sprint'
   scope:
     project: '='
     sprint: '='
-    callToActions: '='
-    displayTitle: '='
   controller: 'SprintWidgetCtrl'
