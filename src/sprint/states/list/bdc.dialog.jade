@@ -1,3 +1,5 @@
+div.hidden-bdc
+  sprint-widget(project="project" sprint="sprint")
 md-dialog(aria-label='Burndown dialog', ng-cloak='')
   md-toolbar
     .md-toolbar-tools
@@ -7,4 +9,4 @@ md-dialog(aria-label='Burndown dialog', ng-cloak='')
         md-icon(md-svg-src='close', aria-label='Close dialog')
   md-dialog-content
     .md-dialog-content
-      img(ng-src="{{sprint.bdcBase64}}")
+      img(ng-src="{{pngBase64}}")

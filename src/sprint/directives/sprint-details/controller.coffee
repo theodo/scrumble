@@ -44,6 +44,10 @@ angular.module 'Scrumble.sprint'
   $scope.indicators = (sprint) ->
     $state.go 'tab.indicators', {sprintId: sprint.objectId}
 
-  BDCDialogController = ($scope, $mdDialog, sprint) ->
+  BDCDialogController = ($scope, $mdDialog, sprint, bdc, $timeout) ->
     $scope.sprint = sprint
     $scope.cancel = $mdDialog.cancel
+
+    $timeout ->
+      svg = d3.select('#bdcgraph')[0][0].firstChild
+      $scope.pngBase64 = bdc.getPngBase64 svg
