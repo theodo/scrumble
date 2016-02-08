@@ -1,11 +1,12 @@
 style(type='text/css').
   @page { size: landscape; }
-.md-toolbar-tools(ng-if="displayTitle || callToActions")
-  h2.md-title.pointer(
-    ng-click="openEditTitle($event)"
-    ng-if="displayTitle"
-    flex="grow"
-  ) {{ bdcTitle }}
+md-card-title
+  md-card-title-text(flex="grow")
+    span.md-headline.pointer(
+      ng-click="openEditTitle($event)"
+      ng-if="displayTitle"
+    ) {{ bdcTitle }}
+  div(flex)
   div(ng-if="callToActions" flex layout="row")
     md-button.md-icon-button(aria-label='Update BDC' ng-click="backward()")
       md-icon(md-svg-icon="step-backward") Update
