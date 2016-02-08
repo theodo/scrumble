@@ -314,7 +314,7 @@ angular.module('Scrumble.common').service('dynamicFields', function($q, trelloUt
       });
       result.push({
         key: '{ahead:value1 behind:value2}',
-        description: 'Conditional value whether the team is behind or ahead according to the burndown chart',
+        description: 'Conditional value whether the team is behind or ahead according to the burndown chart. Example: &lt;span style=\'color:{ahead:green behind:red};\'&gt;{ahead:Ahead behind:Behind}: {gap} points&lt;/span&gt;',
         icon: 'owl'
       });
       return result;
@@ -579,11 +579,11 @@ angular.module('Scrumble.daily-report').service('defaultTemplates', function() {
     getDefaultTemplate: function(section) {
       switch (section) {
         case 'subject':
-          return '[MyProject] Daily Mail - Sprint {sprintNumber} - {today#YYYY-MM-DD}';
+          return '[MyProject] Daily Report - Sprint {sprintNumber} - {today#YYYY-MM-DD}';
         case 'intro':
           return 'Hello,\n\nHere is the daily mail:';
         case 'progress':
-          return '### Progress:\n\n- Done: {done} / {total} points\n- To validate: {toValidate} points\n- Blocked: {blocked} points\n- <span style=\'color:{ahead:green behind:red};\'>{ahead:Ahead behind:Behind}: {gap} points</span>\n\n{bdc}';
+          return '### Progress:\n\n**Sprint Goal: {sprintGoal}**\n\n- Done: {done} / {total} points\n- To validate: {toValidate} points\n- Blocked: {blocked} points\n- <span style=\'color:{ahead:green behind:red};\'>{ahead:Ahead behind:Behind}: {gap} points</span>\n\n{bdc}';
         case 'previousGoalsIntro':
           return '### Our previous goals:';
         case 'todaysGoalsIntro':
@@ -591,7 +591,7 @@ angular.module('Scrumble.daily-report').service('defaultTemplates', function() {
         case 'problems':
           return '### Problems:';
         case 'conclusion':
-          return 'Have a nice day.\nBest regards\n\n{me}\n\n*<span style=\'font-size: small;\'>This daily mail has been generated thanks to [Scrumble](http://theodo.github.io/scrumble)</span>*';
+          return '### Useful links:\n\n- Trello: https://trello.com/...\n-Validation platform: ...\n-Production platform: ...\n\nHave a nice day.\nBest regards\n\n{me}\n\n*<span style=\'font-size: small;\'>This daily mail has been generated thanks to [Scrumble](http://theodo.github.io/scrumble)</span>*';
       }
     }
   };
@@ -1292,6 +1292,32 @@ angular.module('Scrumble.storage').factory('Sprint', function(Parse, sprintUtils
       return sprint.save();
     };
 
+    Sprint.getLastSpeeds = function(projectId) {
+      return this.query({
+        where: {
+          project: {
+            __type: "Pointer",
+            className: "Project",
+            objectId: projectId
+          }
+        }
+      }).then(function(sprints) {
+        return _.sortByOrder(sprints, 'number', false);
+      }).then(function(sprints) {
+        var result, sprint, _i, _len, _ref;
+        result = [];
+        _ref = sprints.slice(0, 3);
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          sprint = _ref[_i];
+          result.push({
+            number: sprint.number,
+            speed: sprintUtils.computeSpeed(sprint) || '?'
+          });
+        }
+        return result;
+      });
+    };
+
     return Sprint;
 
   })(Parse.Model);
@@ -1369,6 +1395,19 @@ angular.module('Scrumble.sprint').service('bdc', function($q, trelloUtils, Sprin
         deferred.reject('doneColumn is not set');
       }
       return deferred.promise;
+    },
+    removeLastDoneAndSave: function(sprint) {
+      var i, _i, _ref;
+      for (i = _i = _ref = sprint.bdcData.length - 1; _i >= 0; i = _i += -1) {
+        if (i === 0) {
+          break;
+        }
+        if (sprint.bdcData[i].done != null) {
+          sprint.bdcData[i].done = null;
+          break;
+        }
+      }
+      return Sprint.save(sprint);
     },
     getPngBase64: getPngBase64
   };
@@ -1790,6 +1829,8 @@ angular.module('Scrumble.sprint').controller('BoardCtrl', function($scope, $time
   };
   $scope.currentDayIndex = getCurrentDayIndex($scope.tableData);
   $scope.$on('bdc:update', function() {
+    $scope.tableData = angular.copy($scope.sprint.bdcData);
+    $scope.currentDayIndex = getCurrentDayIndex($scope.tableData);
     return $scope.tableData = angular.copy($scope.sprint.bdcData);
   });
   $scope.fetchTrelloDonePoints = function() {
@@ -2082,6 +2123,7 @@ angular.module('Scrumble.daily-report').controller('PreviewCtrl', function($scop
           return $mdDialog.cancel();
         } else {
           dailyReport.sections.previousGoals = todaysGoals;
+          dailyReport.sections.todaysGoals = null;
           dailyReport.save();
           sentFeedback = $mdToast.simple().position('top right').content('Email sent');
           $mdToast.show(sentFeedback);
@@ -2093,29 +2135,12 @@ angular.module('Scrumble.daily-report').controller('PreviewCtrl', function($scop
 });
 
 angular.module('Scrumble.daily-report').controller('DailyReportCtrl', function($scope, $mdToast, $mdDialog, $mdMedia, $document, reportBuilder, dailyReport) {
-  var saveFeedback, _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7;
+  var saveFeedback;
   saveFeedback = $mdToast.simple().hideDelay(1000).position('top left').content('Saved!').parent($document[0].querySelector('main'));
-  $scope.sections = {
-    subject: angular.copy((_ref = dailyReport.sections) != null ? _ref.subject : void 0),
-    intro: angular.copy((_ref1 = dailyReport.sections) != null ? _ref1.intro : void 0),
-    progress: angular.copy((_ref2 = dailyReport.sections) != null ? _ref2.progress : void 0),
-    previousGoalsIntro: angular.copy((_ref3 = dailyReport.sections) != null ? _ref3.previousGoalsIntro : void 0),
-    previousGoals: angular.copy((_ref4 = dailyReport.sections) != null ? _ref4.previousGoals : void 0),
-    todaysGoalsIntro: angular.copy((_ref5 = dailyReport.sections) != null ? _ref5.todaysGoalsIntro : void 0),
-    todaysGoals: null,
-    problems: angular.copy((_ref6 = dailyReport.sections) != null ? _ref6.problems : void 0),
-    conclusion: angular.copy((_ref7 = dailyReport.sections) != null ? _ref7.conclusion : void 0)
-  };
-  $scope.saveSection = function(section, content) {
-    $mdToast.show(saveFeedback);
-    if (dailyReport.sections == null) {
-      dailyReport.sections = {};
-    }
-    dailyReport.sections[section] = content;
-    return dailyReport.save().then(function() {
-      return $mdToast.hide(saveFeedback);
-    });
-  };
+  if (dailyReport.sections == null) {
+    dailyReport.sections = {};
+  }
+  $scope.sections = dailyReport.sections;
   return $scope.preview = function(ev) {
     return $mdDialog.show({
       controller: 'PreviewCtrl',
@@ -2600,8 +2625,9 @@ angular.module('Scrumble.sprint').directive('sprintDetails', function() {
 });
 
 angular.module('Scrumble.sprint').controller('SprintWidgetCtrl', function($scope, $timeout, $state, nssModal, sprintUtils, dynamicFields, bdc, Project, Sprint) {
-  var DialogController;
-  dynamicFields.ready($scope.sprint, $scope.project).then(function(builtDict) {
+  var DialogController, dynamicFieldsPromise;
+  dynamicFieldsPromise = dynamicFields.ready($scope.sprint, $scope.project);
+  dynamicFieldsPromise.then(function(builtDict) {
     var _ref, _ref1;
     return $scope.bdcTitle = dynamicFields.render((_ref = $scope.project) != null ? (_ref1 = _ref.settings) != null ? _ref1.bdcTitle : void 0 : void 0, builtDict);
   });
@@ -2620,10 +2646,9 @@ angular.module('Scrumble.sprint').controller('SprintWidgetCtrl', function($scope
         }
       }
     }).then(function(title) {
-      return Project.saveTitle($scope.project, title).then(function(title) {
-        return dynamicFields.render(title);
-      }).then(function(title) {
-        return $scope.bdcTitle = title;
+      Project.saveTitle($scope.project, title);
+      return dynamicFieldsPromise.then(function(builtDict) {
+        return $scope.bdcTitle = dynamicFields.render(title, builtDict);
       });
     });
   };
@@ -2640,8 +2665,13 @@ angular.module('Scrumble.sprint').controller('SprintWidgetCtrl', function($scope
       return $mdDialog.hide($scope.title);
     };
   };
-  $scope.updateBDC = function() {
+  $scope.forward = function() {
     return bdc.setDonePointsAndSave($scope.sprint).then(function() {
+      return $scope.$emit('bdc:update');
+    });
+  };
+  $scope.backward = function() {
+    return bdc.removeLastDoneAndSave($scope.sprint).then(function() {
       return $scope.$emit('bdc:update');
     });
   };
@@ -2656,9 +2686,7 @@ angular.module('Scrumble.sprint').directive('sprintWidget', function() {
     templateUrl: 'sprint/directives/sprint-widget/view.html',
     scope: {
       project: '=',
-      sprint: '=',
-      callToActions: '=',
-      displayTitle: '='
+      sprint: '='
     },
     controller: 'SprintWidgetCtrl'
   };
@@ -2690,7 +2718,29 @@ angular.module('Scrumble.sprint').controller('EditSprintCtrl', function($scope, 
     $scope.activable = sprintUtils.isActivable($scope.editedSprint);
     return sprintUtils.ensureDataConsistency(source, $scope.editedSprint, $scope.devTeam);
   };
-  return $scope.checkSprint('team');
+  $scope.checkSprint('team');
+  return Sprint.getLastSpeeds($scope.project.objectId).then(function(speedsInfo) {
+    var formatedSpeedInfo, speedAverage, sum;
+    formatedSpeedInfo = _(speedsInfo).filter(function(speedInfo) {
+      return speedInfo.speed !== '?';
+    }).map(function(speedInfo) {
+      return "Sprint " + speedInfo.number + ": " + speedInfo.speed;
+    }).values();
+    $scope.speedInfo = {
+      previousSpeeds: formatedSpeedInfo.join(', ')
+    };
+    sum = _.sum(speedsInfo, function(speedInfo) {
+      if (_.isNumber(parseFloat(speedInfo.speed))) {
+        return parseFloat(speedInfo.speed);
+      } else {
+        return 0;
+      }
+    });
+    speedAverage = sum / (formatedSpeedInfo.length || 1);
+    if (speedAverage > 0) {
+      return $scope.speedInfo.average = speedAverage.toFixed(1);
+    }
+  });
 });
 
 angular.module('Scrumble.sprint').controller('SprintListCtrl', function($scope, sprintUtils, sprints, project) {
