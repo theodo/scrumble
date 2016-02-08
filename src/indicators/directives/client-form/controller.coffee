@@ -10,6 +10,7 @@ angular.module 'Scrumble.indicators'
   $scope.save = ->
     loadingToast.show()
     $scope.saving = true
+    $scope.sprint.indicators ?= {}
     $scope.sprint.indicators.satisfactionSurvey = $scope.template
     $scope.sprint.save()
     .then ->
