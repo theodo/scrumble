@@ -41,9 +41,9 @@ angular.module('Scrumble.feedback', []);
 
 angular.module('Scrumble.gmail-client', []);
 
-angular.module('Scrumble.indicators', []);
-
 angular.module('Scrumble.login', ['LocalStorageModule', 'satellizer', 'ui.router', 'permission', 'trello-api-client']);
+
+angular.module('Scrumble.indicators', []);
 
 angular.module('Scrumble.settings', ['Scrumble.common']);
 
@@ -829,41 +829,6 @@ angular.module('Scrumble.gmail-client').service('mailer', function($state, $root
   };
 });
 
-angular.module('Scrumble.indicators').config(function($stateProvider) {
-  return $stateProvider.state('tab.indicators', {
-    url: '/sprint/:sprintId/indicators',
-    templateUrl: 'indicators/states/base/view.html',
-    controller: 'IndicatorsCtrl',
-    resolve: {
-      currentSprint: function(Sprint, $stateParams) {
-        return Sprint.find($stateParams.sprintId);
-      },
-      satisfactionSurveyTemplates: function(SatisfactionSurveyTemplate) {
-        return SatisfactionSurveyTemplate.query();
-      }
-    }
-  });
-});
-
-var __hasProp = {}.hasOwnProperty,
-  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
-
-angular.module('Scrumble.indicators').factory('SatisfactionSurveyTemplate', function(Parse) {
-  var SatisfactionSurveyTemplate;
-  return SatisfactionSurveyTemplate = (function(_super) {
-    __extends(SatisfactionSurveyTemplate, _super);
-
-    function SatisfactionSurveyTemplate() {
-      return SatisfactionSurveyTemplate.__super__.constructor.apply(this, arguments);
-    }
-
-    SatisfactionSurveyTemplate.configure("SatisfactionSurveyTemplate", "questions", "company");
-
-    return SatisfactionSurveyTemplate;
-
-  })(Parse.Model);
-});
-
 angular.module('Scrumble.login').config(function($authProvider) {
   return $authProvider.google({
     clientId: '605908567890-3bg3dmamghq5gd7i9sqsdhvoflef0qku.apps.googleusercontent.com',
@@ -968,6 +933,41 @@ angular.module('Scrumble.login').service('trelloAuth', function(localStorageServ
       return token != null;
     }
   };
+});
+
+angular.module('Scrumble.indicators').config(function($stateProvider) {
+  return $stateProvider.state('tab.indicators', {
+    url: '/sprint/:sprintId/indicators',
+    templateUrl: 'indicators/states/base/view.html',
+    controller: 'IndicatorsCtrl',
+    resolve: {
+      currentSprint: function(Sprint, $stateParams) {
+        return Sprint.find($stateParams.sprintId);
+      },
+      companies: function(Company) {
+        return Company.query();
+      }
+    }
+  });
+});
+
+var __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+angular.module('Scrumble.indicators').factory('Company', function(Parse) {
+  var Company;
+  return Company = (function(_super) {
+    __extends(Company, _super);
+
+    function Company() {
+      return Company.__super__.constructor.apply(this, arguments);
+    }
+
+    Company.configure("Company", "company", "checklists", "satisfactionSurvey");
+
+    return Company;
+
+  })(Parse.Model);
 });
 
 angular.module('Scrumble.settings').config(function($stateProvider) {
@@ -2164,48 +2164,6 @@ angular.module('Scrumble.daily-report').controller('DailyReportCtrl', function($
   };
 });
 
-angular.module('Scrumble.indicators').controller('ClientFormCtrl', function($scope, Sprint, loadingToast) {
-  var _ref, _ref1, _ref2, _ref3;
-  if (((_ref = $scope.sprint) != null ? (_ref1 = _ref.indicators) != null ? _ref1.clientSatisfaction : void 0 : void 0) != null) {
-    $scope.survey = (_ref2 = $scope.sprint) != null ? (_ref3 = _ref2.indicators) != null ? _ref3.clientSatisfaction : void 0 : void 0;
-  } else {
-    $scope.survey = _.find($scope.templates, {
-      company: 'Theodo'
-    });
-  }
-  $scope.save = function() {
-    loadingToast.show();
-    $scope.saving = true;
-    $scope.sprint.indicators = {
-      clientSatisfaction: $scope.survey
-    };
-    return Sprint.save($scope.sprint).then(function() {
-      loadingToast.hide();
-      return $scope.saving = false;
-    });
-  };
-  return $scope.print = function() {
-    return window.print();
-  };
-});
-
-angular.module('Scrumble.indicators').directive('clientForm', function() {
-  return {
-    restrict: 'E',
-    templateUrl: 'indicators/directives/client-form/view.html',
-    scope: {
-      sprint: '=',
-      templates: '='
-    },
-    controller: 'ClientFormCtrl'
-  };
-});
-
-angular.module('Scrumble.indicators').controller('IndicatorsCtrl', function($scope, currentSprint, satisfactionSurveyTemplates) {
-  $scope.currentSprint = currentSprint;
-  return $scope.satisfactionSurveyTemplates = satisfactionSurveyTemplates;
-});
-
 angular.module('Scrumble.login').controller('ProfilInfoCtrl', function($scope, $timeout, $rootScope, trelloAuth, googleAuth) {
   var getTrelloInfo;
   $scope.googleUser = {
@@ -2274,6 +2232,122 @@ angular.module('Scrumble.login').controller('TrelloLoginCtrl', function($scope, 
     }).then(function() {
       return $state.go('tab.board');
     });
+  };
+});
+
+angular.module('Scrumble.indicators').controller('ChecklistCtrl', function($scope, loadingToast) {
+  var check, checklist, i, j, _i, _j, _len, _len1, _ref, _ref1, _ref2, _ref3;
+  if (_.isArray((_ref = $scope.sprint) != null ? (_ref1 = _ref.indicators) != null ? _ref1.checklists : void 0 : void 0)) {
+    _ref2 = $scope.sprint.indicators.checklists;
+    for (i = _i = 0, _len = _ref2.length; _i < _len; i = ++_i) {
+      checklist = _ref2[i];
+      _ref3 = checklist.list;
+      for (j = _j = 0, _len1 = _ref3.length; _j < _len1; j = ++_j) {
+        check = _ref3[j];
+        $scope.template[i].list[j].selected = check.selected;
+      }
+    }
+  }
+  $scope.save = function() {
+    var _base;
+    loadingToast.show();
+    $scope.saving = true;
+    if ((_base = $scope.sprint).indicators == null) {
+      _base.indicators = {};
+    }
+    $scope.sprint.indicators.checklists = $scope.template;
+    return $scope.sprint.save().then(function() {
+      loadingToast.hide();
+      return $scope.saving = false;
+    });
+  };
+  return $scope.print = function() {
+    return window.print();
+  };
+});
+
+angular.module('Scrumble.indicators').directive('checklist', function() {
+  return {
+    restrict: 'E',
+    templateUrl: 'indicators/directives/checklist/view.html',
+    scope: {
+      sprint: '=',
+      template: '='
+    },
+    controller: 'ChecklistCtrl'
+  };
+});
+
+angular.module('Scrumble.indicators').controller('ClientFormCtrl', function($scope, loadingToast) {
+  var index, question, _i, _len, _ref, _ref1, _ref2;
+  if (_.isArray((_ref = $scope.sprint) != null ? (_ref1 = _ref.indicators) != null ? _ref1.satisfactionSurvey : void 0 : void 0)) {
+    _ref2 = $scope.sprint.indicators.satisfactionSurvey;
+    for (index = _i = 0, _len = _ref2.length; _i < _len; index = ++_i) {
+      question = _ref2[index];
+      $scope.template[index].answer = question.answer;
+    }
+  }
+  $scope.save = function() {
+    var _base;
+    loadingToast.show();
+    $scope.saving = true;
+    if ((_base = $scope.sprint).indicators == null) {
+      _base.indicators = {};
+    }
+    $scope.sprint.indicators.satisfactionSurvey = $scope.template;
+    return $scope.sprint.save().then(function() {
+      loadingToast.hide();
+      return $scope.saving = false;
+    });
+  };
+  return $scope.print = function() {
+    return window.print();
+  };
+});
+
+angular.module('Scrumble.indicators').directive('clientForm', function() {
+  return {
+    restrict: 'E',
+    templateUrl: 'indicators/directives/client-form/view.html',
+    scope: {
+      sprint: '=',
+      template: '='
+    },
+    controller: 'ClientFormCtrl'
+  };
+});
+
+angular.module('Scrumble.indicators').controller('IndicatorsCtrl', function($scope, currentSprint, companies) {
+  var company;
+  $scope.companies = companies;
+  $scope.currentSprint = currentSprint;
+  company = _.find(companies, {
+    name: $scope.project.settings.company || 'Theodo'
+  });
+  if (company != null) {
+    $scope.clientSurveyTemplate = company.satisfactionSurvey;
+    $scope.checklistsTemplate = company.checklists;
+  }
+  $scope.updateCompany = function(name) {
+    var _ref;
+    if ((_ref = $scope.project) != null) {
+      _ref.save();
+    }
+    company = _.find(companies, {
+      name: name
+    });
+    if (company != null) {
+      console.log(company);
+      $scope.clientSurveyTemplate = company.satisfactionSurvey;
+      return $scope.checklistsTemplate = company.checklists;
+    }
+  };
+  return $scope.saveIndicators = function(indicators) {
+    if ($scope.sprint == null) {
+      return;
+    }
+    $scope.sprint.indicators = indicators;
+    return $scope.sprint.save();
   };
 });
 
@@ -2606,9 +2680,14 @@ angular.module('Scrumble.sprint').controller('SprintDetailsCtrl', function($scop
       sprintId: sprint.objectId
     });
   };
-  return BDCDialogController = function($scope, $mdDialog, sprint) {
+  return BDCDialogController = function($scope, $mdDialog, sprint, bdc, $timeout) {
     $scope.sprint = sprint;
-    return $scope.cancel = $mdDialog.cancel;
+    $scope.cancel = $mdDialog.cancel;
+    return $timeout(function() {
+      var svg;
+      svg = d3.select('#bdcgraph')[0][0].firstChild;
+      return $scope.pngBase64 = bdc.getPngBase64(svg);
+    });
   };
 });
 

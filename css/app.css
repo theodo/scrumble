@@ -252,15 +252,6 @@ trello-avatar .trello-avatar .member-avatar.initials {
   overflow: hidden;
 }
 
-client-form .question {
-  color: #333;
-  font-weight: bold;
-}
-client-form .answer {
-  padding-left: 2em;
-  margin-bottom: 2em;
-}
-
 .profil-button {
   position: absolute;
   right: 5px;
@@ -320,6 +311,24 @@ client-form .answer {
 .account-details .gmail-account .gmail-avatar {
   margin: 5px;
   border-radius: 50%;
+}
+
+client-form .question {
+  color: #333;
+  font-weight: bold;
+}
+client-form .answer {
+  padding-left: 2em;
+  margin-bottom: 2em;
+}
+
+client-form .question {
+  color: #333;
+  font-weight: bold;
+}
+client-form .answer {
+  padding-left: 2em;
+  margin-bottom: 2em;
 }
 
 member-form md-input-container {
