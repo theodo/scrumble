@@ -8,5 +8,5 @@ angular.module 'Scrumble.indicators'
     resolve:
       currentSprint: (Sprint, $stateParams) ->
         Sprint.find $stateParams.sprintId
-      satisfactionSurveyTemplates: (SatisfactionSurveyTemplate) ->
-        SatisfactionSurveyTemplate.query()
+      companies: (Company) ->
+        Company.query()

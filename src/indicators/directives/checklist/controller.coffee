@@ -1,17 +1,18 @@
 angular.module 'Scrumble.indicators'
-.controller 'ClientFormCtrl', (
+.controller 'ChecklistCtrl', (
   $scope
   loadingToast
 ) ->
-  if _.isArray $scope.sprint?.indicators?.satisfactionSurvey
-    for question, index in $scope.sprint.indicators.satisfactionSurvey
-      $scope.template[index].answer = question.answer
+  if _.isArray $scope.sprint?.indicators?.checklists
+    for checklist, i in $scope.sprint.indicators.checklists
+      for check, j in checklist.list
+        $scope.template[i].list[j].selected = check.selected
 
   $scope.save = ->
     loadingToast.show()
     $scope.saving = true
     $scope.sprint.indicators ?= {}
-    $scope.sprint.indicators.satisfactionSurvey = $scope.template
+    $scope.sprint.indicators.checklists = $scope.template
     $scope.sprint.save()
     .then ->
       loadingToast.hide()
