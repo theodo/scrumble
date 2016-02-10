@@ -261,6 +261,15 @@ client-form .answer {
   margin-bottom: 2em;
 }
 
+client-form .question {
+  color: #333;
+  font-weight: bold;
+}
+client-form .answer {
+  padding-left: 2em;
+  margin-bottom: 2em;
+}
+
 .profil-button {
   position: absolute;
   right: 5px;
