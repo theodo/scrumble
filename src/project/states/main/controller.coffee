@@ -68,8 +68,8 @@ angular.module 'Scrumble.settings'
     $scope.project.name = _.find(boards, (board) ->
       board.id == $scope.project.boardId
     ).name
-    $scope.project.settings =
-      bdcTitle: 'Sprint #{sprintNumber} - {sprintGoal} - Speed {speed}'
+    $scope.project.settings ?= {}
+    $scope.project.settings.bdcTitle = 'Sprint #{sprintNumber} - {sprintGoal} - Speed {speed}'
     $scope.project.save().then (savedProject) ->
       user.project = savedProject
       user.save().then ->
