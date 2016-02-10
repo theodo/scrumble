@@ -220,6 +220,24 @@ feedback {
   right: 10px;
 }
 
+trello-avatar {
+  display: inline-block;
+  margin: 5px;
+  width: 50px;
+  height: 50px;
+  line-height: 50px;
+  vertical-align: top;
+  border: solid 2px transparent;
+}
+trello-avatar .trello-avatar .member-avatar {
+  border-radius: 50%;
+}
+trello-avatar .trello-avatar .member-avatar.initials {
+  text-align: center;
+  background: #d3d3d3;
+  font-weight: bold;
+}
+
 .md-select-value *:first-child {
   white-space: normal;
   flex: 1 0;
@@ -232,6 +250,15 @@ feedback {
   top: 0;
   height: 0;
   overflow: hidden;
+}
+
+client-form .question {
+  color: #333;
+  font-weight: bold;
+}
+client-form .answer {
+  padding-left: 2em;
+  margin-bottom: 2em;
 }
 
 .profil-button {
@@ -345,31 +372,4 @@ md-grid-list {
 }
 md-grid-tile {
   transition: all 400ms ease-out 50ms;
-}
-
-client-form .question {
-  color: #333;
-  font-weight: bold;
-}
-client-form .answer {
-  padding-left: 2em;
-  margin-bottom: 2em;
-}
-
-trello-avatar {
-  display: inline-block;
-  margin: 5px;
-  width: 50px;
-  height: 50px;
-  line-height: 50px;
-  vertical-align: top;
-  border: solid 2px transparent;
-}
-trello-avatar .trello-avatar .member-avatar {
-  border-radius: 50%;
-}
-trello-avatar .trello-avatar .member-avatar.initials {
-  text-align: center;
-  background: #d3d3d3;
-  font-weight: bold;
 }
