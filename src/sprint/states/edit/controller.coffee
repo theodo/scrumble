@@ -47,7 +47,7 @@ angular.module 'Scrumble.sprint'
         speedInfo.speed != '?'
       .map (speedInfo) ->
         "Sprint #{speedInfo.number}: #{speedInfo.speed}"
-      .values()
+      .value()
 
     $scope.speedInfo =
       previousSpeeds: formatedSpeedInfo.join ', '
