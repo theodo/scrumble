@@ -33,8 +33,6 @@ app.run(function($rootScope, $state) {
 
 angular.module('Scrumble.board', ['ui.router', 'ngMaterial']);
 
-angular.module('Scrumble.common', ['trello-api-client', 'ngMaterial', 'ui.router', 'Scrumble.login', 'Scrumble.sprint']);
-
 angular.module('Scrumble.daily-report', ['trello-api-client', 'ui.router']);
 
 angular.module('Scrumble.feedback', []);
@@ -43,8 +41,6 @@ angular.module('Scrumble.gmail-client', []);
 
 angular.module('Scrumble.login', ['LocalStorageModule', 'satellizer', 'ui.router', 'permission', 'trello-api-client']);
 
-angular.module('Scrumble.indicators', []);
-
 angular.module('Scrumble.settings', ['Scrumble.common']);
 
 angular.module('Scrumble.sprint', ['ui.router', 'Parse', 'ngMaterial']);
@@ -52,6 +48,10 @@ angular.module('Scrumble.sprint', ['ui.router', 'Parse', 'ngMaterial']);
 angular.module('Scrumble.storage', []);
 
 angular.module('Scrumble.wait', ['ui.router']);
+
+angular.module('Scrumble.indicators', []);
+
+angular.module('Scrumble.common', ['trello-api-client', 'ngMaterial', 'ui.router', 'Scrumble.login', 'Scrumble.sprint']);
 
 angular.module('Scrumble.board').config(function($stateProvider) {
   return $stateProvider.state('tab.board', {
@@ -81,382 +81,6 @@ angular.module('Scrumble.board').config(function($stateProvider) {
       }
     }
   });
-});
-
-angular.module('Scrumble.common').config(function($stateProvider) {
-  return $stateProvider.state('tab', {
-    abstract: true,
-    templateUrl: 'common/states/base.html',
-    controller: 'BaseCtrl',
-    resolve: {
-      sprint: function(ScrumbleUser, Sprint) {
-        return ScrumbleUser.getCurrentUser().then(function(user) {
-          if ((user != null ? user.project : void 0) == null) {
-            return null;
-          }
-          return Sprint.getActiveSprint(user.project);
-        }).then(function(sprint) {
-          if (sprint == null) {
-            return null;
-          }
-          return sprint;
-        });
-      },
-      project: function(ScrumbleUser, Project) {
-        return ScrumbleUser.getCurrentUser().then(function(user) {
-          if ((user != null ? user.project : void 0) == null) {
-            return null;
-          }
-          return Project.find(user.project.objectId);
-        });
-      }
-    }
-  });
-});
-
-angular.module('Scrumble.common').config(function($mdThemingProvider) {
-  var customPrimary;
-  customPrimary = {
-    '50': '#4b91e8',
-    '100': '#3483e6',
-    '200': '#1e75e3',
-    '300': '#1a69cd',
-    '400': '#175eb7',
-    '500': '#1452A0',
-    '600': '#114689',
-    '700': '#0e3b73',
-    '800': '#0c2f5c',
-    '900': '#092445',
-    'A100': '#629feb',
-    'A200': '#78adee',
-    'A400': '#8fbaf1',
-    'A700': '#06182f',
-    'contrastDefaultColor': 'light'
-  };
-  $mdThemingProvider.definePalette('customPrimary', customPrimary);
-  return $mdThemingProvider.theme('default').primaryPalette('customPrimary', {
-    'default': '300',
-    'hue-2': '100',
-    'hue-3': '50'
-  }).accentPalette('red').warnPalette('red').backgroundPalette('grey');
-});
-
-angular.module('Scrumble.common').controller('ModalCtrl', function($scope, $mdDialog) {
-  $scope.hide = function() {
-    return $mdDialog.hide();
-  };
-  $scope.cancel = function() {
-    return $mdDialog.cancel();
-  };
-  return $scope.save = function(response) {
-    return $mdDialog.hide(response);
-  };
-});
-
-angular.module('Scrumble.common').service('nssModal', function($mdDialog, $mdMedia) {
-  return {
-    show: function(options) {
-      var useFullScreen;
-      useFullScreen = $mdMedia('sm') || $mdMedia('xs');
-      return $mdDialog.show({
-        controller: options.controller,
-        templateUrl: options.templateUrl,
-        targetEvent: options.targetEvent,
-        resolve: options.resolve,
-        parent: angular.element(document.body),
-        clickOutsideToClose: true,
-        fullscreen: useFullScreen
-      });
-    }
-  };
-});
-
-angular.module('Scrumble.common').service('dynamicFields', function($q, trelloUtils, trelloAuth, sprintUtils) {
-  var dict, promises, replaceBehindAhead, replaceToday, replaceYesterday;
-  dict = {
-    '{sprintNumber}': {
-      value: function(sprint, project) {
-        return sprint != null ? sprint.number : void 0;
-      },
-      description: 'Current sprint number',
-      icon: 'cow'
-    },
-    '{sprintGoal}': {
-      value: function(sprint, project) {
-        return sprint != null ? sprint.goal : void 0;
-      },
-      description: 'The sprint goal (never forget it)',
-      icon: 'target'
-    },
-    '{speed}': {
-      value: function(sprint, project) {
-        var _ref, _ref1, _ref2;
-        if (_.isNumber(sprint != null ? (_ref = sprint.resources) != null ? _ref.speed : void 0 : void 0)) {
-          return sprint != null ? (_ref1 = sprint.resources) != null ? _ref1.speed.toFixed(1) : void 0 : void 0;
-        } else {
-          return sprint != null ? (_ref2 = sprint.resources) != null ? _ref2.speed : void 0 : void 0;
-        }
-      },
-      description: 'Estimated number of points per day per person',
-      icon: 'run'
-    },
-    '{toValidate}': {
-      value: function(sprint, project) {
-        var _ref;
-        if ((project != null ? (_ref = project.columnMapping) != null ? _ref.toValidate : void 0 : void 0) != null) {
-          return trelloUtils.getColumnPoints(project.columnMapping.toValidate);
-        }
-      },
-      description: 'The number of points in the Trello to validate column',
-      icon: 'phone'
-    },
-    '{blocked}': {
-      value: function(sprint, project) {
-        var _ref;
-        if ((project != null ? (_ref = project.columnMapping) != null ? _ref.blocked : void 0 : void 0) != null) {
-          return trelloUtils.getColumnPoints(project.columnMapping.blocked);
-        }
-      },
-      description: 'The number of points in the Trello blocked column',
-      icon: 'radioactive'
-    },
-    '{done}': {
-      value: function(sprint, project) {
-        var done, index, _ref;
-        if (_.isArray(sprint != null ? sprint.bdcData : void 0)) {
-          index = sprintUtils.getCurrentDayIndex(sprint.bdcData);
-          done = (_ref = sprint.bdcData[index]) != null ? _ref.done : void 0;
-          if (_.isNumber(done)) {
-            return done.toFixed(1);
-          } else {
-            return done;
-          }
-        }
-      },
-      description: 'The number of points in the Trello done column',
-      icon: 'check'
-    },
-    '{gap}': {
-      value: function(sprint, project) {
-        var diff, index, _ref, _ref1;
-        if (_.isArray(sprint != null ? sprint.bdcData : void 0)) {
-          index = sprintUtils.getCurrentDayIndex(sprint.bdcData);
-          diff = ((_ref = sprint.bdcData[index]) != null ? _ref.done : void 0) - ((_ref1 = sprint.bdcData[index]) != null ? _ref1.standard : void 0);
-          return Math.abs(diff).toFixed(1);
-        }
-      },
-      description: 'The difference between the standard points and the done points',
-      icon: 'tshirt-crew'
-    },
-    '{total}': {
-      value: function(sprint, project) {
-        var _ref;
-        if (_.isNumber(sprint != null ? (_ref = sprint.resources) != null ? _ref.totalPoints : void 0 : void 0)) {
-          return sprint.resources.totalPoints.toFixed(1);
-        }
-      },
-      description: 'The number of points to finish the sprint',
-      icon: 'cart'
-    },
-    '{me}': {
-      value: function(sprint, project) {
-        return trelloAuth.getTrelloInfo().then(function(user) {
-          return user.fullName;
-        });
-      },
-      description: 'Your fullname according to Trello',
-      icon: 'account-circle'
-    }
-  };
-  replaceToday = function(text) {
-    return text.replace(/\{today#(.+?)\}/g, function(match, dateFormat) {
-      return moment().format(dateFormat);
-    });
-  };
-  replaceYesterday = function(text) {
-    return text.replace(/\{yesterday#(.+?)\}/g, function(match, dateFormat) {
-      return moment().subtract(1, 'day').format(dateFormat);
-    });
-  };
-  replaceBehindAhead = function(text, sprint) {
-    return text.replace(/\{ahead:(.+?) behind:(.+?)\}/g, function(match, aheadColor, behindColor) {
-      var isAhead;
-      isAhead = sprintUtils.isAhead(sprint);
-      if (isAhead) {
-        return aheadColor;
-      } else if (isAhead != null) {
-        return behindColor;
-      } else {
-        return aheadColor;
-      }
-    });
-  };
-  promises = null;
-  return {
-    getAvailableFields: function() {
-      var result;
-      result = _.map(dict, function(value, key) {
-        return {
-          key: key,
-          description: value.description,
-          icon: value.icon
-        };
-      });
-      result.push({
-        key: '{today#format}',
-        description: 'Today\'s date where format is a <a href="http://momentjs.com/docs/#/parsing/string-format/" target="_blank">moment format</a>',
-        icon: 'clock'
-      });
-      result.push({
-        key: '{yesterday#format}',
-        description: 'Yesterday\'s date where format is a <a href="http://momentjs.com/docs/#/parsing/string-format/" target="_blank">moment format</a>. examples: EEEE for weekday, YYYY-MM-DD',
-        icon: 'calendar-today'
-      });
-      result.push({
-        key: '{ahead:value1 behind:value2}',
-        description: 'Conditional value whether the team is behind or ahead according to the burndown chart. Example: &lt;span style=\'color:{ahead:green behind:red};\'&gt;{ahead:Ahead behind:Behind}: {gap} points&lt;/span&gt;',
-        icon: 'owl'
-      });
-      return result;
-    },
-    ready: function(sprint, project) {
-      var elt, key;
-      promises = {};
-      for (key in dict) {
-        elt = dict[key];
-        promises[key] = elt.value(sprint, project);
-      }
-      promises.__sprint = sprint;
-      return $q.all(promises);
-    },
-    render: function(text, builtDict) {
-      var elt, key, result;
-      result = text || '';
-      for (key in builtDict) {
-        elt = builtDict[key];
-        result = result.split(key).join(elt);
-      }
-      result = replaceToday(result);
-      result = replaceYesterday(result);
-      result = replaceBehindAhead(result, builtDict.__sprint);
-      return result;
-    }
-  };
-});
-
-angular.module('Scrumble.common').service('trelloUtils', function(TrelloClient) {
-  var getCardPoints;
-  getCardPoints = function(card) {
-    var match, matchVal, value, _i, _len;
-    if (!_.isString(card != null ? card.name : void 0)) {
-      return 0;
-    }
-    match = card.name.match(/\(([-+]?[0-9]*\.?[0-9]+)\)/);
-    value = 0;
-    if (match) {
-      for (_i = 0, _len = match.length; _i < _len; _i++) {
-        matchVal = match[_i];
-        if (!isNaN(parseFloat(matchVal, 10))) {
-          value = parseFloat(matchVal, 10);
-        }
-      }
-    }
-    return value;
-  };
-  return {
-    getColumnPoints: function(columnId) {
-      return TrelloClient.get('/lists/' + columnId + '/cards?fields=name').then(function(response) {
-        var cards;
-        cards = response.data;
-        return _.sum(cards, getCardPoints);
-      })["catch"](function(err) {
-        console.warn(err);
-        return 0;
-      });
-    }
-  };
-});
-
-angular.module('Scrumble.common').controller('BaseCtrl', function($scope, $mdSidenav, $state, Sprint, Project, sprint, project) {
-  var _ref, _ref1, _ref2;
-  $scope.project = project;
-  $scope.sprint = sprint;
-  $scope.toggleSidenav = function() {
-    return $mdSidenav('left').toggle();
-  };
-  $scope.goTo = function(item) {
-    $state.go(item.state, item.params);
-    return $mdSidenav('left').close();
-  };
-  $scope.$on('project:update', function(event, data) {
-    return $state.reload('tab').then(function() {
-      if ((data != null ? data.nextState : void 0) != null) {
-        return $state.go(data.nextState);
-      }
-    });
-  });
-  $scope.$on('sprint:update', function(event, data) {
-    return $state.reload('tab').then(function() {
-      if ((data != null ? data.nextState : void 0) != null) {
-        return $state.go(data.nextState);
-      }
-    });
-  });
-  return $scope.menu = [
-    {
-      title: 'Project',
-      items: [
-        {
-          state: 'tab.new-sprint',
-          title: 'Start New Sprint',
-          icon: 'plus'
-        }, {
-          state: 'tab.sprint-list',
-          params: {
-            projectId: (_ref = $scope.project) != null ? _ref.objectId : void 0
-          },
-          title: 'Sprints',
-          icon: 'view-list'
-        }, {
-          state: 'tab.project',
-          title: 'Settings',
-          icon: 'settings'
-        }
-      ]
-    }, {
-      title: 'Current Sprint',
-      items: [
-        {
-          state: 'tab.board',
-          title: 'Burndown Chart',
-          icon: 'trending-down'
-        }, {
-          state: 'tab.indicators',
-          params: {
-            sprintId: (_ref1 = $scope.sprint) != null ? _ref1.objectId : void 0
-          },
-          title: 'Indicators',
-          icon: 'chart-bar'
-        }, {
-          state: 'tab.edit-sprint',
-          params: {
-            sprintId: (_ref2 = $scope.sprint) != null ? _ref2.objectId : void 0
-          },
-          title: 'Settings',
-          icon: 'settings'
-        }
-      ]
-    }, {
-      title: 'Daily Mail',
-      items: [
-        {
-          state: 'tab.daily-report',
-          title: 'Write Today\'s Daily',
-          icon: 'gmail'
-        }
-      ]
-    }
-  ];
 });
 
 angular.module('Scrumble.daily-report').config(function($stateProvider) {
@@ -513,6 +137,25 @@ angular.module('Scrumble.daily-report').factory('DailyReport', function(Parse) {
     };
 
     return DailyReport;
+
+  })(Parse.Model);
+});
+
+var __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+angular.module('Scrumble.daily-report').factory('DailyReportPing', function(Parse) {
+  var DailyReportPing;
+  return DailyReportPing = (function(_super) {
+    __extends(DailyReportPing, _super);
+
+    function DailyReportPing() {
+      return DailyReportPing.__super__.constructor.apply(this, arguments);
+    }
+
+    DailyReportPing.configure("DailyReportPing", "name");
+
+    return DailyReportPing;
 
   })(Parse.Model);
 });
@@ -933,41 +576,6 @@ angular.module('Scrumble.login').service('trelloAuth', function(localStorageServ
       return token != null;
     }
   };
-});
-
-angular.module('Scrumble.indicators').config(function($stateProvider) {
-  return $stateProvider.state('tab.indicators', {
-    url: '/sprint/:sprintId/indicators',
-    templateUrl: 'indicators/states/base/view.html',
-    controller: 'IndicatorsCtrl',
-    resolve: {
-      currentSprint: function(Sprint, $stateParams) {
-        return Sprint.find($stateParams.sprintId);
-      },
-      companies: function(Company) {
-        return Company.query();
-      }
-    }
-  });
-});
-
-var __hasProp = {}.hasOwnProperty,
-  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
-
-angular.module('Scrumble.indicators').factory('Company', function(Parse) {
-  var Company;
-  return Company = (function(_super) {
-    __extends(Company, _super);
-
-    function Company() {
-      return Company.__super__.constructor.apply(this, arguments);
-    }
-
-    Company.configure("Company", "company", "checklists", "satisfactionSurvey");
-
-    return Company;
-
-  })(Parse.Model);
 });
 
 angular.module('Scrumble.settings').config(function($stateProvider) {
@@ -1811,6 +1419,417 @@ angular.module('Scrumble.wait').service('loadingToast', function($mdToast, $docu
   };
 });
 
+angular.module('Scrumble.indicators').config(function($stateProvider) {
+  return $stateProvider.state('tab.indicators', {
+    url: '/sprint/:sprintId/indicators',
+    templateUrl: 'indicators/states/base/view.html',
+    controller: 'IndicatorsCtrl',
+    resolve: {
+      currentSprint: function(Sprint, $stateParams) {
+        return Sprint.find($stateParams.sprintId);
+      },
+      satisfactionSurveyTemplates: function(SatisfactionSurveyTemplate) {
+        return SatisfactionSurveyTemplate.query();
+      }
+    }
+  });
+});
+
+var __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+angular.module('Scrumble.indicators').factory('SatisfactionSurveyTemplate', function(Parse) {
+  var SatisfactionSurveyTemplate;
+  return SatisfactionSurveyTemplate = (function(_super) {
+    __extends(SatisfactionSurveyTemplate, _super);
+
+    function SatisfactionSurveyTemplate() {
+      return SatisfactionSurveyTemplate.__super__.constructor.apply(this, arguments);
+    }
+
+    SatisfactionSurveyTemplate.configure("SatisfactionSurveyTemplate", "questions", "company");
+
+    return SatisfactionSurveyTemplate;
+
+  })(Parse.Model);
+});
+
+angular.module('Scrumble.common').config(function($stateProvider) {
+  return $stateProvider.state('tab', {
+    abstract: true,
+    templateUrl: 'common/states/base.html',
+    controller: 'BaseCtrl',
+    resolve: {
+      sprint: function(ScrumbleUser, Sprint) {
+        return ScrumbleUser.getCurrentUser().then(function(user) {
+          if ((user != null ? user.project : void 0) == null) {
+            return null;
+          }
+          return Sprint.getActiveSprint(user.project);
+        }).then(function(sprint) {
+          if (sprint == null) {
+            return null;
+          }
+          return sprint;
+        });
+      },
+      project: function(ScrumbleUser, Project) {
+        return ScrumbleUser.getCurrentUser().then(function(user) {
+          if ((user != null ? user.project : void 0) == null) {
+            return null;
+          }
+          return Project.find(user.project.objectId);
+        });
+      }
+    }
+  });
+});
+
+angular.module('Scrumble.common').config(function($mdThemingProvider) {
+  var customPrimary;
+  customPrimary = {
+    '50': '#4b91e8',
+    '100': '#3483e6',
+    '200': '#1e75e3',
+    '300': '#1a69cd',
+    '400': '#175eb7',
+    '500': '#1452A0',
+    '600': '#114689',
+    '700': '#0e3b73',
+    '800': '#0c2f5c',
+    '900': '#092445',
+    'A100': '#629feb',
+    'A200': '#78adee',
+    'A400': '#8fbaf1',
+    'A700': '#06182f',
+    'contrastDefaultColor': 'light'
+  };
+  $mdThemingProvider.definePalette('customPrimary', customPrimary);
+  return $mdThemingProvider.theme('default').primaryPalette('customPrimary', {
+    'default': '300',
+    'hue-2': '100',
+    'hue-3': '50'
+  }).accentPalette('red').warnPalette('red').backgroundPalette('grey');
+});
+
+angular.module('Scrumble.common').service('nssModal', function($mdDialog, $mdMedia) {
+  return {
+    show: function(options) {
+      var useFullScreen;
+      useFullScreen = $mdMedia('sm') || $mdMedia('xs');
+      return $mdDialog.show({
+        controller: options.controller,
+        templateUrl: options.templateUrl,
+        targetEvent: options.targetEvent,
+        resolve: options.resolve,
+        parent: angular.element(document.body),
+        clickOutsideToClose: true,
+        fullscreen: useFullScreen
+      });
+    }
+  };
+});
+
+angular.module('Scrumble.common').service('dynamicFields', function($q, trelloUtils, trelloAuth, sprintUtils) {
+  var dict, promises, replaceBehindAhead, replaceToday, replaceYesterday;
+  dict = {
+    '{sprintNumber}': {
+      value: function(sprint, project) {
+        return sprint != null ? sprint.number : void 0;
+      },
+      description: 'Current sprint number',
+      icon: 'cow'
+    },
+    '{sprintGoal}': {
+      value: function(sprint, project) {
+        return sprint != null ? sprint.goal : void 0;
+      },
+      description: 'The sprint goal (never forget it)',
+      icon: 'target'
+    },
+    '{speed}': {
+      value: function(sprint, project) {
+        var _ref, _ref1, _ref2;
+        if (_.isNumber(sprint != null ? (_ref = sprint.resources) != null ? _ref.speed : void 0 : void 0)) {
+          return sprint != null ? (_ref1 = sprint.resources) != null ? _ref1.speed.toFixed(1) : void 0 : void 0;
+        } else {
+          return sprint != null ? (_ref2 = sprint.resources) != null ? _ref2.speed : void 0 : void 0;
+        }
+      },
+      description: 'Estimated number of points per day per person',
+      icon: 'run'
+    },
+    '{toValidate}': {
+      value: function(sprint, project) {
+        var _ref;
+        if ((project != null ? (_ref = project.columnMapping) != null ? _ref.toValidate : void 0 : void 0) != null) {
+          return trelloUtils.getColumnPoints(project.columnMapping.toValidate);
+        }
+      },
+      description: 'The number of points in the Trello to validate column',
+      icon: 'phone'
+    },
+    '{blocked}': {
+      value: function(sprint, project) {
+        var _ref;
+        if ((project != null ? (_ref = project.columnMapping) != null ? _ref.blocked : void 0 : void 0) != null) {
+          return trelloUtils.getColumnPoints(project.columnMapping.blocked);
+        }
+      },
+      description: 'The number of points in the Trello blocked column',
+      icon: 'radioactive'
+    },
+    '{done}': {
+      value: function(sprint, project) {
+        var done, index, _ref;
+        if (_.isArray(sprint != null ? sprint.bdcData : void 0)) {
+          index = sprintUtils.getCurrentDayIndex(sprint.bdcData);
+          done = (_ref = sprint.bdcData[index]) != null ? _ref.done : void 0;
+          if (_.isNumber(done)) {
+            return done.toFixed(1);
+          } else {
+            return done;
+          }
+        }
+      },
+      description: 'The number of points in the Trello done column',
+      icon: 'check'
+    },
+    '{gap}': {
+      value: function(sprint, project) {
+        var diff, index, _ref, _ref1;
+        if (_.isArray(sprint != null ? sprint.bdcData : void 0)) {
+          index = sprintUtils.getCurrentDayIndex(sprint.bdcData);
+          diff = ((_ref = sprint.bdcData[index]) != null ? _ref.done : void 0) - ((_ref1 = sprint.bdcData[index]) != null ? _ref1.standard : void 0);
+          return Math.abs(diff).toFixed(1);
+        }
+      },
+      description: 'The difference between the standard points and the done points',
+      icon: 'tshirt-crew'
+    },
+    '{total}': {
+      value: function(sprint, project) {
+        var _ref;
+        if (_.isNumber(sprint != null ? (_ref = sprint.resources) != null ? _ref.totalPoints : void 0 : void 0)) {
+          return sprint.resources.totalPoints.toFixed(1);
+        }
+      },
+      description: 'The number of points to finish the sprint',
+      icon: 'cart'
+    },
+    '{me}': {
+      value: function(sprint, project) {
+        return trelloAuth.getTrelloInfo().then(function(user) {
+          return user.fullName;
+        });
+      },
+      description: 'Your fullname according to Trello',
+      icon: 'account-circle'
+    }
+  };
+  replaceToday = function(text) {
+    return text.replace(/\{today#(.+?)\}/g, function(match, dateFormat) {
+      return moment().format(dateFormat);
+    });
+  };
+  replaceYesterday = function(text) {
+    return text.replace(/\{yesterday#(.+?)\}/g, function(match, dateFormat) {
+      return moment().subtract(1, 'day').format(dateFormat);
+    });
+  };
+  replaceBehindAhead = function(text, sprint) {
+    return text.replace(/\{ahead:(.+?) behind:(.+?)\}/g, function(match, aheadColor, behindColor) {
+      var isAhead;
+      isAhead = sprintUtils.isAhead(sprint);
+      if (isAhead) {
+        return aheadColor;
+      } else if (isAhead != null) {
+        return behindColor;
+      } else {
+        return aheadColor;
+      }
+    });
+  };
+  promises = null;
+  return {
+    getAvailableFields: function() {
+      var result;
+      result = _.map(dict, function(value, key) {
+        return {
+          key: key,
+          description: value.description,
+          icon: value.icon
+        };
+      });
+      result.push({
+        key: '{today#format}',
+        description: 'Today\'s date where format is a <a href="http://momentjs.com/docs/#/parsing/string-format/" target="_blank">moment format</a>',
+        icon: 'clock'
+      });
+      result.push({
+        key: '{yesterday#format}',
+        description: 'Yesterday\'s date where format is a <a href="http://momentjs.com/docs/#/parsing/string-format/" target="_blank">moment format</a>. examples: EEEE for weekday, YYYY-MM-DD',
+        icon: 'calendar-today'
+      });
+      result.push({
+        key: '{ahead:value1 behind:value2}',
+        description: 'Conditional value whether the team is behind or ahead according to the burndown chart. Example: &lt;span style=\'color:{ahead:green behind:red};\'&gt;{ahead:Ahead behind:Behind}: {gap} points&lt;/span&gt;',
+        icon: 'owl'
+      });
+      return result;
+    },
+    ready: function(sprint, project) {
+      var elt, key;
+      promises = {};
+      for (key in dict) {
+        elt = dict[key];
+        promises[key] = elt.value(sprint, project);
+      }
+      promises.__sprint = sprint;
+      return $q.all(promises);
+    },
+    render: function(text, builtDict) {
+      var elt, key, result;
+      result = text || '';
+      for (key in builtDict) {
+        elt = builtDict[key];
+        result = result.split(key).join(elt);
+      }
+      result = replaceToday(result);
+      result = replaceYesterday(result);
+      result = replaceBehindAhead(result, builtDict.__sprint);
+      return result;
+    }
+  };
+});
+
+angular.module('Scrumble.common').service('trelloUtils', function(TrelloClient) {
+  var getCardPoints;
+  getCardPoints = function(card) {
+    var match, matchVal, value, _i, _len;
+    if (!_.isString(card != null ? card.name : void 0)) {
+      return 0;
+    }
+    match = card.name.match(/\(([-+]?[0-9]*\.?[0-9]+)\)/);
+    value = 0;
+    if (match) {
+      for (_i = 0, _len = match.length; _i < _len; _i++) {
+        matchVal = match[_i];
+        if (!isNaN(parseFloat(matchVal, 10))) {
+          value = parseFloat(matchVal, 10);
+        }
+      }
+    }
+    return value;
+  };
+  return {
+    getColumnPoints: function(columnId) {
+      return TrelloClient.get('/lists/' + columnId + '/cards?fields=name').then(function(response) {
+        var cards;
+        cards = response.data;
+        return _.sum(cards, getCardPoints);
+      })["catch"](function(err) {
+        console.warn(err);
+        return 0;
+      });
+    }
+  };
+});
+
+angular.module('Scrumble.common').controller('BaseCtrl', function($scope, $mdSidenav, $state, Sprint, Project, sprint, project) {
+  var _ref, _ref1, _ref2;
+  $scope.project = project;
+  $scope.sprint = sprint;
+  $scope.toggleSidenav = function() {
+    return $mdSidenav('left').toggle();
+  };
+  $scope.goTo = function(item) {
+    $state.go(item.state, item.params);
+    return $mdSidenav('left').close();
+  };
+  $scope.$on('project:update', function(event, data) {
+    return $state.reload('tab').then(function() {
+      if ((data != null ? data.nextState : void 0) != null) {
+        return $state.go(data.nextState);
+      }
+    });
+  });
+  $scope.$on('sprint:update', function(event, data) {
+    return $state.reload('tab').then(function() {
+      if ((data != null ? data.nextState : void 0) != null) {
+        return $state.go(data.nextState);
+      }
+    });
+  });
+  return $scope.menu = [
+    {
+      title: 'Project',
+      items: [
+        {
+          state: 'tab.new-sprint',
+          title: 'Start New Sprint',
+          icon: 'plus'
+        }, {
+          state: 'tab.sprint-list',
+          params: {
+            projectId: (_ref = $scope.project) != null ? _ref.objectId : void 0
+          },
+          title: 'Sprints',
+          icon: 'view-list'
+        }, {
+          state: 'tab.project',
+          title: 'Settings',
+          icon: 'settings'
+        }
+      ]
+    }, {
+      title: 'Current Sprint',
+      items: [
+        {
+          state: 'tab.board',
+          title: 'Burndown Chart',
+          icon: 'trending-down'
+        }, {
+          state: 'tab.indicators',
+          params: {
+            sprintId: (_ref1 = $scope.sprint) != null ? _ref1.objectId : void 0
+          },
+          title: 'Indicators',
+          icon: 'chart-bar'
+        }, {
+          state: 'tab.edit-sprint',
+          params: {
+            sprintId: (_ref2 = $scope.sprint) != null ? _ref2.objectId : void 0
+          },
+          title: 'Settings',
+          icon: 'settings'
+        }
+      ]
+    }, {
+      title: 'Daily Mail',
+      items: [
+        {
+          state: 'tab.daily-report',
+          title: 'Write Today\'s Daily',
+          icon: 'gmail'
+        }
+      ]
+    }
+  ];
+});
+
+angular.module('Scrumble.common').controller('ModalCtrl', function($scope, $mdDialog) {
+  $scope.hide = function() {
+    return $mdDialog.hide();
+  };
+  $scope.cancel = function() {
+    return $mdDialog.cancel();
+  };
+  return $scope.save = function(response) {
+    return $mdDialog.hide(response);
+  };
+});
+
 angular.module('Scrumble.sprint').controller('BoardCtrl', function($scope, $timeout, bdc, trelloUtils, sprintUtils, Sprint) {
   var getCurrentDayIndex;
   $scope.tableData = angular.copy($scope.sprint.bdcData);
@@ -1847,102 +1866,6 @@ angular.module('Scrumble.sprint').controller('BoardCtrl', function($scope, $time
   };
 });
 
-angular.module('Scrumble.common').directive('dynamicFieldsList', function() {
-  return {
-    restrict: 'E',
-    templateUrl: 'common/directives/dynamic-fields/view.html',
-    scope: {
-      availableFields: '='
-    }
-  };
-});
-
-angular.module('Scrumble.common').directive('nssRound', function() {
-  return {
-    require: 'ngModel',
-    link: function(scope, element, attrs, ngModelController) {
-      ngModelController.$parsers.push(function(data) {
-        return parseFloat(data);
-      });
-      ngModelController.$formatters.push(function(data) {
-        if (_.isNumber(data)) {
-          data = data.toFixed(1);
-        }
-        return data;
-      });
-    }
-  };
-});
-
-angular.module('Scrumble.common').factory('Avatar', function(TrelloClient) {
-  return {
-    getMember: function(memberId) {
-      if (!memberId) {
-        return;
-      }
-      return TrelloClient.get('/members/' + memberId).then(function(response) {
-        var hash;
-        if (response.data.uploadedAvatarHash) {
-          hash = response.data.uploadedAvatarHash;
-        } else if (response.data.avatarHash) {
-          hash = response.data.avatarHash;
-        } else {
-          hash = null;
-        }
-        return {
-          username: response.data.username,
-          fullname: response.data.fullname,
-          hash: hash,
-          initials: response.data.initials
-        };
-      });
-    }
-  };
-});
-
-angular.module('Scrumble.common').controller('TrelloAvatarCtrl', function(Avatar, $scope) {
-  var colors, getColor, _ref;
-  if (!$scope.size) {
-    $scope.size = '50';
-  }
-  $scope.$watch('member', function(member) {
-    if (member == null) {
-      return $scope.hash = null;
-    }
-    if (member.uploadedAvatarHash) {
-      return $scope.hash = member.uploadedAvatarHash;
-    } else if (member.avatarHash) {
-      return $scope.hash = member.avatarHash;
-    } else {
-      return $scope.hash = null;
-    }
-  });
-  $scope.displayTooltip = $scope.tooltip === 'true' ? true : false;
-  colors = ['#fbb4ae', '#b3cde3', '#ccebc5', '#decbe4', '#fed9a6', '#ffffcc', '#e5d8bd', '#fddaec', '#f2f2f2'];
-  getColor = function(initials) {
-    var hash;
-    if (initials == null) {
-      return colors[0];
-    }
-    hash = initials.charCodeAt(0);
-    return colors[hash % 9];
-  };
-  return $scope.color = getColor((_ref = $scope.member) != null ? _ref.initials : void 0);
-});
-
-angular.module('Scrumble.common').directive('trelloAvatar', function() {
-  return {
-    restrict: 'E',
-    templateUrl: 'common/directives/trello-avatar/view.html',
-    scope: {
-      size: '@',
-      member: '=',
-      tooltip: '@'
-    },
-    controller: 'TrelloAvatarCtrl'
-  };
-});
-
 angular.module('Scrumble.daily-report').controller('DefaultTemplateCtrl', function($scope, defaultTemplates) {
   return $scope.setDefault = function() {
     return $scope.sections[$scope.section] = defaultTemplates.getDefaultTemplate($scope.section);
@@ -1961,45 +1884,10 @@ angular.module('Scrumble.daily-report').directive('templateCallToAction', functi
   };
 });
 
-angular.module('Scrumble.daily-report').controller('DynamicFieldsCallToActionCtrl', function($scope, $mdDialog, $mdMedia, dynamicFields) {
-  return $scope.openModal = function(ev) {
-    var useFullScreen;
-    useFullScreen = $mdMedia('sm' || $mdMedia('xs'));
-    return $mdDialog.show({
-      controller: 'DynamicFieldsModalCtrl',
-      templateUrl: 'daily-report/directives/dynamic-fields-dialog/view.html',
-      parent: angular.element(document.body),
-      targetEvent: ev,
-      clickOutsideToClose: true,
-      fullscreen: useFullScreen,
-      resolve: {
-        availableFields: function() {
-          return dynamicFields.getAvailableFields();
-        }
-      }
-    });
-  };
-});
-
-angular.module('Scrumble.daily-report').directive('dynamicFieldsCallToAction', function() {
-  return {
-    restrict: 'E',
-    templateUrl: 'daily-report/directives/dynamic-fields-call-to-action/view.html',
-    controller: 'DynamicFieldsCallToActionCtrl'
-  };
-});
-
 angular.module('Scrumble.daily-report').controller('DynamicFieldsModalCtrl', function($scope, $mdDialog, availableFields) {
   $scope.availableFields = availableFields;
   return $scope.cancel = function() {
     return $mdDialog.cancel();
-  };
-});
-
-angular.module('Scrumble.daily-report').directive('markdownHelper', function() {
-  return {
-    restrict: 'E',
-    templateUrl: 'daily-report/directives/markdown-helper/view.html'
   };
 });
 
@@ -2092,7 +1980,42 @@ angular.module('Scrumble.daily-report').directive('selectGoals', function() {
   };
 });
 
-angular.module('Scrumble.daily-report').controller('PreviewCtrl', function($scope, $sce, $mdDialog, $mdToast, googleAuth, mailer, message, reportBuilder, dailyReport, todaysGoals) {
+angular.module('Scrumble.daily-report').controller('DynamicFieldsCallToActionCtrl', function($scope, $mdDialog, $mdMedia, dynamicFields) {
+  return $scope.openModal = function(ev) {
+    var useFullScreen;
+    useFullScreen = $mdMedia('sm' || $mdMedia('xs'));
+    return $mdDialog.show({
+      controller: 'DynamicFieldsModalCtrl',
+      templateUrl: 'daily-report/directives/dynamic-fields-dialog/view.html',
+      parent: angular.element(document.body),
+      targetEvent: ev,
+      clickOutsideToClose: true,
+      fullscreen: useFullScreen,
+      resolve: {
+        availableFields: function() {
+          return dynamicFields.getAvailableFields();
+        }
+      }
+    });
+  };
+});
+
+angular.module('Scrumble.daily-report').directive('dynamicFieldsCallToAction', function() {
+  return {
+    restrict: 'E',
+    templateUrl: 'daily-report/directives/dynamic-fields-call-to-action/view.html',
+    controller: 'DynamicFieldsCallToActionCtrl'
+  };
+});
+
+angular.module('Scrumble.daily-report').directive('markdownHelper', function() {
+  return {
+    restrict: 'E',
+    templateUrl: 'daily-report/directives/markdown-helper/view.html'
+  };
+});
+
+angular.module('Scrumble.daily-report').controller('PreviewCtrl', function($scope, $sce, $mdDialog, $mdToast, googleAuth, mailer, message, reportBuilder, dailyReport, DailyReportPing, todaysGoals) {
   $scope.message = message;
   $scope.trustAsHtml = function(string) {
     return $sce.trustAsHtml(string);
@@ -2116,7 +2039,7 @@ angular.module('Scrumble.daily-report').controller('PreviewCtrl', function($scop
   return $scope.send = function() {
     return reportBuilder.buildCid().then(function(message) {
       return mailer.send(message, function(response) {
-        var errorFeedback, sentFeedback;
+        var errorFeedback, ping, sentFeedback;
         if ((response.code != null) && response.code > 300) {
           errorFeedback = $mdToast.simple().hideDelay(3000).position('top right').content("Failed to send message: '" + response.message + "'");
           $mdToast.show(errorFeedback);
@@ -2126,6 +2049,9 @@ angular.module('Scrumble.daily-report').controller('PreviewCtrl', function($scop
           dailyReport.sections.todaysGoals = null;
           dailyReport.save();
           sentFeedback = $mdToast.simple().position('top right').content('Email sent');
+          ping = new DailyReportPing();
+          ping.name = dailyReport.sections.subject;
+          ping.save();
           $mdToast.show(sentFeedback);
           return $mdDialog.cancel();
         }
@@ -2232,122 +2158,6 @@ angular.module('Scrumble.login').controller('TrelloLoginCtrl', function($scope, 
     }).then(function() {
       return $state.go('tab.board');
     });
-  };
-});
-
-angular.module('Scrumble.indicators').controller('ChecklistCtrl', function($scope, loadingToast) {
-  var check, checklist, i, j, _i, _j, _len, _len1, _ref, _ref1, _ref2, _ref3;
-  if (_.isArray((_ref = $scope.sprint) != null ? (_ref1 = _ref.indicators) != null ? _ref1.checklists : void 0 : void 0)) {
-    _ref2 = $scope.sprint.indicators.checklists;
-    for (i = _i = 0, _len = _ref2.length; _i < _len; i = ++_i) {
-      checklist = _ref2[i];
-      _ref3 = checklist.list;
-      for (j = _j = 0, _len1 = _ref3.length; _j < _len1; j = ++_j) {
-        check = _ref3[j];
-        $scope.template[i].list[j].selected = check.selected;
-      }
-    }
-  }
-  $scope.save = function() {
-    var _base;
-    loadingToast.show();
-    $scope.saving = true;
-    if ((_base = $scope.sprint).indicators == null) {
-      _base.indicators = {};
-    }
-    $scope.sprint.indicators.checklists = $scope.template;
-    return $scope.sprint.save().then(function() {
-      loadingToast.hide();
-      return $scope.saving = false;
-    });
-  };
-  return $scope.print = function() {
-    return window.print();
-  };
-});
-
-angular.module('Scrumble.indicators').directive('checklist', function() {
-  return {
-    restrict: 'E',
-    templateUrl: 'indicators/directives/checklist/view.html',
-    scope: {
-      sprint: '=',
-      template: '='
-    },
-    controller: 'ChecklistCtrl'
-  };
-});
-
-angular.module('Scrumble.indicators').controller('ClientFormCtrl', function($scope, loadingToast) {
-  var index, question, _i, _len, _ref, _ref1, _ref2;
-  if (_.isArray((_ref = $scope.sprint) != null ? (_ref1 = _ref.indicators) != null ? _ref1.satisfactionSurvey : void 0 : void 0)) {
-    _ref2 = $scope.sprint.indicators.satisfactionSurvey;
-    for (index = _i = 0, _len = _ref2.length; _i < _len; index = ++_i) {
-      question = _ref2[index];
-      $scope.template[index].answer = question.answer;
-    }
-  }
-  $scope.save = function() {
-    var _base;
-    loadingToast.show();
-    $scope.saving = true;
-    if ((_base = $scope.sprint).indicators == null) {
-      _base.indicators = {};
-    }
-    $scope.sprint.indicators.satisfactionSurvey = $scope.template;
-    return $scope.sprint.save().then(function() {
-      loadingToast.hide();
-      return $scope.saving = false;
-    });
-  };
-  return $scope.print = function() {
-    return window.print();
-  };
-});
-
-angular.module('Scrumble.indicators').directive('clientForm', function() {
-  return {
-    restrict: 'E',
-    templateUrl: 'indicators/directives/client-form/view.html',
-    scope: {
-      sprint: '=',
-      template: '='
-    },
-    controller: 'ClientFormCtrl'
-  };
-});
-
-angular.module('Scrumble.indicators').controller('IndicatorsCtrl', function($scope, currentSprint, companies) {
-  var company;
-  $scope.companies = companies;
-  $scope.currentSprint = currentSprint;
-  company = _.find(companies, {
-    name: $scope.project.settings.company || 'Theodo'
-  });
-  if (company != null) {
-    $scope.clientSurveyTemplate = company.satisfactionSurvey;
-    $scope.checklistsTemplate = company.checklists;
-  }
-  $scope.updateCompany = function(name) {
-    var _ref;
-    if ((_ref = $scope.project) != null) {
-      _ref.save();
-    }
-    company = _.find(companies, {
-      name: name
-    });
-    if (company != null) {
-      console.log(company);
-      $scope.clientSurveyTemplate = company.satisfactionSurvey;
-      return $scope.checklistsTemplate = company.checklists;
-    }
-  };
-  return $scope.saveIndicators = function(indicators) {
-    if ($scope.sprint == null) {
-      return;
-    }
-    $scope.sprint.indicators = indicators;
-    return $scope.sprint.save();
   };
 });
 
@@ -2680,14 +2490,9 @@ angular.module('Scrumble.sprint').controller('SprintDetailsCtrl', function($scop
       sprintId: sprint.objectId
     });
   };
-  return BDCDialogController = function($scope, $mdDialog, sprint, bdc, $timeout) {
+  return BDCDialogController = function($scope, $mdDialog, sprint) {
     $scope.sprint = sprint;
-    $scope.cancel = $mdDialog.cancel;
-    return $timeout(function() {
-      var svg;
-      svg = d3.select('#bdcgraph')[0][0].firstChild;
-      return $scope.pngBase64 = bdc.getPngBase64(svg);
-    });
+    return $scope.cancel = $mdDialog.cancel;
   };
 });
 
@@ -2829,4 +2634,142 @@ angular.module('Scrumble.sprint').controller('SprintListCtrl', function($scope, 
   });
   $scope.sprints = sprints;
   return $scope.project = project;
+});
+
+angular.module('Scrumble.indicators').controller('ClientFormCtrl', function($scope, Sprint, loadingToast) {
+  var _ref, _ref1, _ref2, _ref3;
+  if (((_ref = $scope.sprint) != null ? (_ref1 = _ref.indicators) != null ? _ref1.clientSatisfaction : void 0 : void 0) != null) {
+    $scope.survey = (_ref2 = $scope.sprint) != null ? (_ref3 = _ref2.indicators) != null ? _ref3.clientSatisfaction : void 0 : void 0;
+  } else {
+    $scope.survey = _.find($scope.templates, {
+      company: 'Theodo'
+    });
+  }
+  $scope.save = function() {
+    loadingToast.show();
+    $scope.saving = true;
+    $scope.sprint.indicators = {
+      clientSatisfaction: $scope.survey
+    };
+    return Sprint.save($scope.sprint).then(function() {
+      loadingToast.hide();
+      return $scope.saving = false;
+    });
+  };
+  return $scope.print = function() {
+    return window.print();
+  };
+});
+
+angular.module('Scrumble.indicators').directive('clientForm', function() {
+  return {
+    restrict: 'E',
+    templateUrl: 'indicators/directives/client-form/view.html',
+    scope: {
+      sprint: '=',
+      templates: '='
+    },
+    controller: 'ClientFormCtrl'
+  };
+});
+
+angular.module('Scrumble.indicators').controller('IndicatorsCtrl', function($scope, currentSprint, satisfactionSurveyTemplates) {
+  $scope.currentSprint = currentSprint;
+  return $scope.satisfactionSurveyTemplates = satisfactionSurveyTemplates;
+});
+
+angular.module('Scrumble.common').directive('dynamicFieldsList', function() {
+  return {
+    restrict: 'E',
+    templateUrl: 'common/directives/dynamic-fields/view.html',
+    scope: {
+      availableFields: '='
+    }
+  };
+});
+
+angular.module('Scrumble.common').directive('nssRound', function() {
+  return {
+    require: 'ngModel',
+    link: function(scope, element, attrs, ngModelController) {
+      ngModelController.$parsers.push(function(data) {
+        return parseFloat(data);
+      });
+      ngModelController.$formatters.push(function(data) {
+        if (_.isNumber(data)) {
+          data = data.toFixed(1);
+        }
+        return data;
+      });
+    }
+  };
+});
+
+angular.module('Scrumble.common').factory('Avatar', function(TrelloClient) {
+  return {
+    getMember: function(memberId) {
+      if (!memberId) {
+        return;
+      }
+      return TrelloClient.get('/members/' + memberId).then(function(response) {
+        var hash;
+        if (response.data.uploadedAvatarHash) {
+          hash = response.data.uploadedAvatarHash;
+        } else if (response.data.avatarHash) {
+          hash = response.data.avatarHash;
+        } else {
+          hash = null;
+        }
+        return {
+          username: response.data.username,
+          fullname: response.data.fullname,
+          hash: hash,
+          initials: response.data.initials
+        };
+      });
+    }
+  };
+});
+
+angular.module('Scrumble.common').controller('TrelloAvatarCtrl', function(Avatar, $scope) {
+  var colors, getColor, _ref;
+  if (!$scope.size) {
+    $scope.size = '50';
+  }
+  $scope.$watch('member', function(member) {
+    if (member == null) {
+      return $scope.hash = null;
+    }
+    if (member.uploadedAvatarHash) {
+      return $scope.hash = member.uploadedAvatarHash;
+    } else if (member.avatarHash) {
+      return $scope.hash = member.avatarHash;
+    } else {
+      return $scope.hash = null;
+    }
+  });
+  $scope.displayTooltip = $scope.tooltip === 'true' ? true : false;
+  colors = ['#fbb4ae', '#b3cde3', '#ccebc5', '#decbe4', '#fed9a6', '#ffffcc', '#e5d8bd', '#fddaec', '#f2f2f2'];
+  getColor = function(initials) {
+    var hash;
+    if (initials == null) {
+      return colors[0];
+    }
+    hash = initials.charCodeAt(0);
+    return colors[hash % 9];
+  };
+  return $scope.color = getColor((_ref = $scope.member) != null ? _ref.initials : void 0);
+});
+
+angular.module('Scrumble.common').directive('trelloAvatar', function() {
+  return {
+    restrict: 'E',
+    templateUrl: 'common/directives/trello-avatar/view.html',
+    scope: {
+      size: '@',
+      member: '=',
+      tooltip: '@'
+    },
+    controller: 'TrelloAvatarCtrl'
+  };
 });
