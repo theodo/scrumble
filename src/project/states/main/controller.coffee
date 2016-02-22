@@ -21,12 +21,9 @@ angular.module 'Scrumble.settings'
     project = new Project()
   $scope.project = project
 
+  $scope.saving = false
   $scope.selectedItemChange = (boardId) ->
-    fetchBoardData boardId
-
-  fetchBoardData = (boardId) ->
-    # find if there is already a project for this board
-    # otherwise create one
+    $scope.saving = true
     Project.get boardId
     .then (response) ->
       return response if response?
@@ -34,39 +31,23 @@ angular.module 'Scrumble.settings'
       project = new Project()
       project.boardId = boardId
       project.team = []
+      project.settings ?= {}
+      project.settings.bdcTitle = 'Sprint #{sprintNumber} - {sprintGoal} - Speed {speed}'
+      project.name = _.find(boards, (board) ->
+        board.id == project.boardId
+      ).name
       project.save()
     .then (project) ->
       $scope.project = project
-
-  if $scope.project.boardId?
-    fetchBoardData $scope.project.boardId
-
-  # Get board colums and members when board is set
-  $scope.$watch 'project.boardId', (next, prev) ->
-    return unless next? and next != prev
-    fetchBoardData next
-
-
-  $scope.saving = false
-  $scope.save = ->
-    $scope.saving = true
-    return unless $scope.project.boardId?
-    $scope.project.name = _.find(boards, (board) ->
-      board.id == $scope.project.boardId
-    ).name
-    $scope.project.settings ?= {}
-    $scope.project.settings.bdcTitle = 'Sprint #{sprintNumber} - {sprintGoal} - Speed {speed}'
-    $scope.project.save().then (savedProject) ->
-      user.project = savedProject
-      user.save().then ->
-        $scope.$emit 'project:update', nextState:
-          if project.team = []
-            console.log project.team
-            'tab.team'
-          else
-            'tab.board'
-      .catch ->
-        $scope.saving = false
-    .catch ->
       $scope.saving = false
-  return
+      user.project = project
+      user.save().then ->
+        if not $scope.project.team.length > 0
+          $scope.$emit 'project:update', nextState:'tab.team'
+        else
+          $scope.$emit 'project:update', nextState:'tab.board'
+    .catch (err) ->
+      $scope.project.boardId = null
+      console.warn "Could not fetch Trello board members"
+      console.log err
+      $scope.saving = false
