@@ -20,12 +20,6 @@ angular.module 'Scrumble.common'
     $state.go item.state, item.params
     $mdSidenav('left').close()
 
-  $scope.$on 'project:create', (event, data) ->
-    $state.reload 'tab'
-    .then ->
-      if data?.nextState?
-        $state.go data.nextState
-
   $scope.$on 'project:update', (event, data) ->
     $state.reload 'tab'
     .then ->
@@ -44,10 +38,6 @@ angular.module 'Scrumble.common'
       state: 'tab.new-sprint'
       title: 'Start New Sprint'
       icon: 'plus'
-    ,
-      state: 'tab.project'
-      title: 'Switch project'
-      icon: 'folder-multiple'
     ,
       state: 'tab.team'
       title: 'Team'
