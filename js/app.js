@@ -378,7 +378,7 @@ angular.module('Scrumble.common').service('trelloUtils', function(TrelloClient) 
 });
 
 angular.module('Scrumble.common').controller('BaseCtrl', function($scope, $mdSidenav, $state, Sprint, Project, sprint, project) {
-  var _ref, _ref1, _ref2;
+  var _ref, _ref1, _ref2, _ref3;
   $scope.project = project;
   $scope.sprint = sprint;
   $scope.toggleSidenav = function() {
@@ -412,12 +412,15 @@ angular.module('Scrumble.common').controller('BaseCtrl', function($scope, $mdSid
           icon: 'plus'
         }, {
           state: 'tab.team',
+          params: {
+            projectId: (_ref = $scope.project) != null ? _ref.objectId : void 0
+          },
           title: 'Team',
           icon: 'account-multiple'
         }, {
           state: 'tab.sprint-list',
           params: {
-            projectId: (_ref = $scope.project) != null ? _ref.objectId : void 0
+            projectId: (_ref1 = $scope.project) != null ? _ref1.objectId : void 0
           },
           title: 'Sprints',
           icon: 'view-list'
@@ -433,14 +436,14 @@ angular.module('Scrumble.common').controller('BaseCtrl', function($scope, $mdSid
         }, {
           state: 'tab.indicators',
           params: {
-            sprintId: (_ref1 = $scope.sprint) != null ? _ref1.objectId : void 0
+            sprintId: (_ref2 = $scope.sprint) != null ? _ref2.objectId : void 0
           },
           title: 'Indicators',
           icon: 'chart-bar'
         }, {
           state: 'tab.edit-sprint',
           params: {
-            sprintId: (_ref2 = $scope.sprint) != null ? _ref2.objectId : void 0
+            sprintId: (_ref3 = $scope.sprint) != null ? _ref3.objectId : void 0
           },
           title: 'Settings',
           icon: 'settings'
