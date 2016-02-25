@@ -39,15 +39,15 @@ angular.module 'Scrumble.common'
       title: 'Start New Sprint'
       icon: 'plus'
     ,
+      state: 'tab.team'
+      title: 'Team'
+      icon: 'account-multiple'
+    ,
       state: 'tab.sprint-list'
       params:
         projectId: $scope.project?.objectId
       title: 'Sprints'
       icon: 'view-list'
-    ,
-      state: 'tab.project'
-      title: 'Settings'
-      icon: 'settings'
     ,
     ]
   ,
