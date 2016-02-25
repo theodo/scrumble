@@ -40,6 +40,8 @@ angular.module 'Scrumble.common'
       icon: 'plus'
     ,
       state: 'tab.team'
+      params:
+        projectId: $scope.project?.objectId
       title: 'Team'
       icon: 'account-multiple'
     ,
