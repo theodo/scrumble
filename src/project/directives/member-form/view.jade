@@ -1,6 +1,12 @@
 md-card-title
   md-card-title-text
-    span.md-headline {{ member.fullName }}
+    span.md-headline {{ member.fullName }} &nbsp;
+      a.md-icon-button(
+        aria-label="call"
+        ng-href="tel:{{member.phone}}"
+        ng-if="member.phone"
+      )
+        md-icon(md-svg-icon="phone")
   md-card-title-media
     .md-media-sm.card-media
       trello-avatar(
