@@ -1,7 +1,5 @@
-style(type='text/css').
-  @page { size: portrait; }
-md-card-content.md-padding
-  h2.md-title Satisfaction survey
+md-card-content.md-padding.satisfaction-survey
+  h2.md-title Satisfaction survey: {{ project.name }} - Sprint {{ sprint.number }}
     md-button.md-icon-button(ng-click="print()")
       md-icon(md-svg-src="printer", aria-label="Print")
   
