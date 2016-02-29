@@ -2269,6 +2269,7 @@ angular.module('Scrumble.indicators').directive('clientForm', function() {
     templateUrl: 'indicators/directives/client-form/view.html',
     scope: {
       sprint: '=',
+      project: '=',
       template: '='
     },
     controller: 'ClientFormCtrl'

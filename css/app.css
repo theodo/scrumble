@@ -189,6 +189,9 @@ md-toast {
   body {
     margin-top: 0 !important;
   }
+  @page {
+    size: portrait;
+  }
 }
 
 .md-toolbar-tools-bottom {
