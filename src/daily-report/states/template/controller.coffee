@@ -7,6 +7,7 @@ angular.module 'Scrumble.daily-report'
   $document
   reportBuilder
   dailyReport
+  dailyCache
 ) ->
   saveFeedback = $mdToast.simple()
     .hideDelay(1000)
@@ -14,8 +15,15 @@ angular.module 'Scrumble.daily-report'
     .content('Saved!')
     .parent($document[0].querySelector('main'))
 
-  dailyReport.sections ?= {}
-  $scope.sections = dailyReport.sections
+  # If the daily report is in cache, use it
+  sections = dailyCache.get 'sections'
+  if sections?
+    dailyReport.sections = sections
+    $scope.sections = dailyReport.sections
+  else
+    dailyReport.sections ?= {}
+    $scope.sections = dailyReport.sections
+    dailyCache.put 'sections', $scope.sections
 
   $scope.preview = (ev) ->
     $mdDialog.show
