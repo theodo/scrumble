@@ -16,6 +16,7 @@ app = angular.module 'Scrumble', [
   'satellizer'
   'permission'
   'trello-api-client'
+  'angular-async-loader'
 
   'Scrumble.sprint'
   'Scrumble.common'

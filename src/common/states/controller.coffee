@@ -3,6 +3,7 @@ angular.module 'Scrumble.common'
   $scope
   $mdSidenav
   $state
+  $ngLoad
   Sprint
   Project
   sprint
@@ -12,6 +13,11 @@ angular.module 'Scrumble.common'
   # for all child states
   $scope.project = project
   $scope.sprint = sprint
+
+  window.HW_config =
+    selector: '#changelog'
+    account: 'Wyprg7'
+  $ngLoad '//cdn.headwayapp.co/widget.js'
 
   $scope.toggleSidenav = ->
     $mdSidenav('left').toggle()
