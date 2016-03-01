@@ -1,7 +1,7 @@
 'use strict';
 var app;
 
-app = angular.module('Scrumble', ['ng', 'ngResource', 'ngAnimate', 'ngSanitize', 'ngMaterial', 'ngMessages', 'md.data.table', 'ui.router', 'app.templates', 'Parse', 'LocalStorageModule', 'satellizer', 'permission', 'trello-api-client', 'Scrumble.sprint', 'Scrumble.common', 'Scrumble.daily-report', 'Scrumble.gmail-client', 'Scrumble.feedback', 'Scrumble.login', 'Scrumble.settings', 'Scrumble.storage', 'Scrumble.board', 'Scrumble.indicators', 'Scrumble.wait']);
+app = angular.module('Scrumble', ['ng', 'ngResource', 'ngAnimate', 'ngSanitize', 'ngMaterial', 'ngMessages', 'md.data.table', 'ui.router', 'app.templates', 'Parse', 'LocalStorageModule', 'satellizer', 'permission', 'trello-api-client', 'angular-async-loader', 'Scrumble.sprint', 'Scrumble.common', 'Scrumble.daily-report', 'Scrumble.gmail-client', 'Scrumble.feedback', 'Scrumble.login', 'Scrumble.settings', 'Scrumble.storage', 'Scrumble.board', 'Scrumble.indicators', 'Scrumble.wait']);
 
 app.config(function($locationProvider, $urlRouterProvider, ParseProvider) {
   $locationProvider.hashPrefix('!');
@@ -41,9 +41,9 @@ angular.module('Scrumble.feedback', []);
 
 angular.module('Scrumble.gmail-client', []);
 
-angular.module('Scrumble.login', ['LocalStorageModule', 'satellizer', 'ui.router', 'permission', 'trello-api-client']);
-
 angular.module('Scrumble.indicators', []);
+
+angular.module('Scrumble.login', ['LocalStorageModule', 'satellizer', 'ui.router', 'permission', 'trello-api-client']);
 
 angular.module('Scrumble.settings', ['Scrumble.common']);
 
@@ -377,10 +377,15 @@ angular.module('Scrumble.common').service('trelloUtils', function(TrelloClient) 
   };
 });
 
-angular.module('Scrumble.common').controller('BaseCtrl', function($scope, $mdSidenav, $state, Sprint, Project, sprint, project) {
-  var _ref, _ref1, _ref2;
+angular.module('Scrumble.common').controller('BaseCtrl', function($scope, $mdSidenav, $state, $ngLoad, Sprint, Project, sprint, project) {
+  var _ref, _ref1, _ref2, _ref3;
   $scope.project = project;
   $scope.sprint = sprint;
+  window.HW_config = {
+    selector: '#changelog',
+    account: 'Wyprg7'
+  };
+  $ngLoad('//cdn.headwayapp.co/widget.js');
   $scope.toggleSidenav = function() {
     return $mdSidenav('left').toggle();
   };
@@ -412,12 +417,15 @@ angular.module('Scrumble.common').controller('BaseCtrl', function($scope, $mdSid
           icon: 'plus'
         }, {
           state: 'tab.team',
+          params: {
+            projectId: (_ref = $scope.project) != null ? _ref.objectId : void 0
+          },
           title: 'Team',
           icon: 'account-multiple'
         }, {
           state: 'tab.sprint-list',
           params: {
-            projectId: (_ref = $scope.project) != null ? _ref.objectId : void 0
+            projectId: (_ref1 = $scope.project) != null ? _ref1.objectId : void 0
           },
           title: 'Sprints',
           icon: 'view-list'
@@ -433,14 +441,14 @@ angular.module('Scrumble.common').controller('BaseCtrl', function($scope, $mdSid
         }, {
           state: 'tab.indicators',
           params: {
-            sprintId: (_ref1 = $scope.sprint) != null ? _ref1.objectId : void 0
+            sprintId: (_ref2 = $scope.sprint) != null ? _ref2.objectId : void 0
           },
           title: 'Indicators',
           icon: 'chart-bar'
         }, {
           state: 'tab.edit-sprint',
           params: {
-            sprintId: (_ref2 = $scope.sprint) != null ? _ref2.objectId : void 0
+            sprintId: (_ref3 = $scope.sprint) != null ? _ref3.objectId : void 0
           },
           title: 'Settings',
           icon: 'settings'
@@ -852,6 +860,41 @@ angular.module('Scrumble.gmail-client').service('mailer', function($state, $root
   };
 });
 
+angular.module('Scrumble.indicators').config(function($stateProvider) {
+  return $stateProvider.state('tab.indicators', {
+    url: '/sprint/:sprintId/indicators',
+    templateUrl: 'indicators/states/base/view.html',
+    controller: 'IndicatorsCtrl',
+    resolve: {
+      currentSprint: function(Sprint, $stateParams) {
+        return Sprint.find($stateParams.sprintId);
+      },
+      companies: function(Company) {
+        return Company.query();
+      }
+    }
+  });
+});
+
+var __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+angular.module('Scrumble.indicators').factory('Company', function(Parse) {
+  var Company;
+  return Company = (function(_super) {
+    __extends(Company, _super);
+
+    function Company() {
+      return Company.__super__.constructor.apply(this, arguments);
+    }
+
+    Company.configure("Company", "company", "checklists", "satisfactionSurvey");
+
+    return Company;
+
+  })(Parse.Model);
+});
+
 angular.module('Scrumble.login').config(function($authProvider) {
   return $authProvider.google({
     clientId: '605908567890-3bg3dmamghq5gd7i9sqsdhvoflef0qku.apps.googleusercontent.com',
@@ -956,41 +999,6 @@ angular.module('Scrumble.login').service('trelloAuth', function(localStorageServ
       return token != null;
     }
   };
-});
-
-angular.module('Scrumble.indicators').config(function($stateProvider) {
-  return $stateProvider.state('tab.indicators', {
-    url: '/sprint/:sprintId/indicators',
-    templateUrl: 'indicators/states/base/view.html',
-    controller: 'IndicatorsCtrl',
-    resolve: {
-      currentSprint: function(Sprint, $stateParams) {
-        return Sprint.find($stateParams.sprintId);
-      },
-      companies: function(Company) {
-        return Company.query();
-      }
-    }
-  });
-});
-
-var __hasProp = {}.hasOwnProperty,
-  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
-
-angular.module('Scrumble.indicators').factory('Company', function(Parse) {
-  var Company;
-  return Company = (function(_super) {
-    __extends(Company, _super);
-
-    function Company() {
-      return Company.__super__.constructor.apply(this, arguments);
-    }
-
-    Company.configure("Company", "company", "checklists", "satisfactionSurvey");
-
-    return Company;
-
-  })(Parse.Model);
 });
 
 angular.module('Scrumble.settings').config(function($stateProvider) {
@@ -2201,77 +2209,6 @@ angular.module('Scrumble.daily-report').controller('DailyReportCtrl', function($
   };
 });
 
-angular.module('Scrumble.login').controller('ProfilInfoCtrl', function($scope, $timeout, $rootScope, trelloAuth, googleAuth) {
-  var getTrelloInfo;
-  $scope.googleUser = {
-    picture: "images/default-profile.jpg"
-  };
-  $scope.openMenu = function($mdOpenMenu, ev) {
-    var originatorEv;
-    originatorEv = ev;
-    return $mdOpenMenu(ev);
-  };
-  $scope.logout = trelloAuth.logout;
-  getTrelloInfo = function() {
-    return trelloAuth.getTrelloInfo().then(function(user) {
-      return $scope.userInfo = user;
-    });
-  };
-  getTrelloInfo();
-  if (googleAuth.isAuthenticated()) {
-    googleAuth.getUserInfo().then(function(user) {
-      return $scope.googleUser = user;
-    });
-  }
-  $scope.googleLogin = function() {
-    return googleAuth.login().then(function() {
-      return googleAuth.getUserInfo().then(function(user) {
-        return $scope.googleUser = user;
-      });
-    });
-  };
-  return $scope.googleLogout = function() {
-    $scope.googleUser = null;
-    $scope.googleUser = {
-      picture: "images/default-profile.jpg"
-    };
-    return googleAuth.logout();
-  };
-});
-
-angular.module('Scrumble.login').directive('profilInfo', function() {
-  return {
-    restrict: 'E',
-    templateUrl: 'login/directives/profil-info/view.html',
-    scope: {},
-    controller: 'ProfilInfoCtrl'
-  };
-});
-
-angular.module('Scrumble.login').controller('TrelloLoginCtrl', function($scope, $rootScope, TrelloClient, $state, $auth, ScrumbleUser, localStorageService) {
-  $scope.doing = false;
-  return $scope.login = function() {
-    $scope.doing = true;
-    return TrelloClient.authenticate().then(function(response) {
-      return TrelloClient.get('/member/me');
-    }).then(function(response) {
-      return response.data;
-    }).then(function(userInfo) {
-      return localStorageService.set('trello_email', userInfo.email);
-    }).then(function() {
-      return ScrumbleUser.getCurrentUser();
-    }).then(function(user) {
-      if (user == null) {
-        user = new ScrumbleUser();
-        user.email = localStorageService.get('trello_email');
-        return user.save();
-      }
-    }).then(function() {
-      return $state.go('tab.board');
-    });
-  };
-});
-
 angular.module('Scrumble.indicators').controller('ChecklistCtrl', function($scope, loadingToast) {
   var check, checklist, i, j, _i, _j, _len, _len1, _ref, _ref1, _ref2, _ref3;
   if (_.isArray((_ref = $scope.sprint) != null ? (_ref1 = _ref.indicators) != null ? _ref1.checklists : void 0 : void 0)) {
@@ -2348,6 +2285,7 @@ angular.module('Scrumble.indicators').directive('clientForm', function() {
     templateUrl: 'indicators/directives/client-form/view.html',
     scope: {
       sprint: '=',
+      project: '=',
       template: '='
     },
     controller: 'ClientFormCtrl'
@@ -2385,6 +2323,77 @@ angular.module('Scrumble.indicators').controller('IndicatorsCtrl', function($sco
     }
     $scope.sprint.indicators = indicators;
     return $scope.sprint.save();
+  };
+});
+
+angular.module('Scrumble.login').controller('ProfilInfoCtrl', function($scope, $timeout, $rootScope, trelloAuth, googleAuth) {
+  var getTrelloInfo;
+  $scope.googleUser = {
+    picture: "images/default-profile.jpg"
+  };
+  $scope.openMenu = function($mdOpenMenu, ev) {
+    var originatorEv;
+    originatorEv = ev;
+    return $mdOpenMenu(ev);
+  };
+  $scope.logout = trelloAuth.logout;
+  getTrelloInfo = function() {
+    return trelloAuth.getTrelloInfo().then(function(user) {
+      return $scope.userInfo = user;
+    });
+  };
+  getTrelloInfo();
+  if (googleAuth.isAuthenticated()) {
+    googleAuth.getUserInfo().then(function(user) {
+      return $scope.googleUser = user;
+    });
+  }
+  $scope.googleLogin = function() {
+    return googleAuth.login().then(function() {
+      return googleAuth.getUserInfo().then(function(user) {
+        return $scope.googleUser = user;
+      });
+    });
+  };
+  return $scope.googleLogout = function() {
+    $scope.googleUser = null;
+    $scope.googleUser = {
+      picture: "images/default-profile.jpg"
+    };
+    return googleAuth.logout();
+  };
+});
+
+angular.module('Scrumble.login').directive('profilInfo', function() {
+  return {
+    restrict: 'E',
+    templateUrl: 'login/directives/profil-info/view.html',
+    scope: {},
+    controller: 'ProfilInfoCtrl'
+  };
+});
+
+angular.module('Scrumble.login').controller('TrelloLoginCtrl', function($scope, $rootScope, TrelloClient, $state, $auth, ScrumbleUser, localStorageService) {
+  $scope.doing = false;
+  return $scope.login = function() {
+    $scope.doing = true;
+    return TrelloClient.authenticate().then(function(response) {
+      return TrelloClient.get('/member/me');
+    }).then(function(response) {
+      return response.data;
+    }).then(function(userInfo) {
+      return localStorageService.set('trello_email', userInfo.email);
+    }).then(function() {
+      return ScrumbleUser.getCurrentUser();
+    }).then(function(user) {
+      if (user == null) {
+        user = new ScrumbleUser();
+        user.email = localStorageService.get('trello_email');
+        return user.save();
+      }
+    }).then(function() {
+      return $state.go('tab.board');
+    });
   };
 });
 
