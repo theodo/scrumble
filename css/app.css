@@ -25,6 +25,9 @@ md-tabs .md-tab.md-active {
   color: #FF5252;
   font-weight: bold;
 }
+md-dialog[aria-label="default-template"] md-dialog-content p {
+  white-space: pre;
+}
 @media print {
   md-content {
     height: auto;
@@ -220,6 +223,18 @@ feedback {
   z-index: 1000;
 }
 
+.bdc-data md-input-container {
+  margin-bottom: 0;
+}
+.bdc-data md-input-container .md-errors-spacer {
+  display: none;
+}
+.board-call-to-actions {
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+}
+
 trello-avatar {
   display: inline-block;
   margin: 5px;
@@ -236,18 +251,6 @@ trello-avatar .trello-avatar .member-avatar.initials {
   text-align: center;
   background: #d3d3d3;
   font-weight: bold;
-}
-
-.bdc-data md-input-container {
-  margin-bottom: 0;
-}
-.bdc-data md-input-container .md-errors-spacer {
-  display: none;
-}
-.board-call-to-actions {
-  position: fixed;
-  bottom: 10px;
-  right: 10px;
 }
 
 .md-select-value *:first-child {
