@@ -31,7 +31,7 @@ app.run(function($rootScope, $state) {
   return $rootScope.$state = $state;
 });
 
-angular.module('Scrumble.board', ['ui.router', 'ngMaterialgdr']);
+angular.module('Scrumble.board', ['ui.router', 'ngMaterial']);
 
 angular.module('Scrumble.common', ['trello-api-client', 'ngMaterial', 'ui.router', 'Scrumble.login', 'Scrumble.sprint']);
 
@@ -2418,6 +2418,26 @@ angular.module('Scrumble.settings').directive('memberForm', function() {
   };
 });
 
+angular.module('Scrumble.settings').controller('ProjectWidgetCtrl', function($scope, projectUtils) {
+  $scope.openMenu = function($mdOpenMenu, ev) {
+    var originatorEv;
+    originatorEv = ev;
+    return $mdOpenMenu(ev);
+  };
+  return $scope.getRoleLabel = projectUtils.getRoleLabel;
+});
+
+angular.module('Scrumble.settings').directive('projectWidget', function() {
+  return {
+    restrict: 'E',
+    templateUrl: 'project/directives/project-widget/view.html',
+    scope: {
+      project: '='
+    },
+    controller: 'ProjectWidgetCtrl'
+  };
+});
+
 angular.module('Scrumble.settings').controller('ResourcesByDayCtrl', function($scope) {
   var changeResource;
   changeResource = function(dayIndex, memberIndex, matrix) {
@@ -2457,26 +2477,6 @@ angular.module('Scrumble.settings').directive('resourcesByDay', function() {
       onUpdate: '&'
     },
     controller: 'ResourcesByDayCtrl'
-  };
-});
-
-angular.module('Scrumble.settings').controller('ProjectWidgetCtrl', function($scope, projectUtils) {
-  $scope.openMenu = function($mdOpenMenu, ev) {
-    var originatorEv;
-    originatorEv = ev;
-    return $mdOpenMenu(ev);
-  };
-  return $scope.getRoleLabel = projectUtils.getRoleLabel;
-});
-
-angular.module('Scrumble.settings').directive('projectWidget', function() {
-  return {
-    restrict: 'E',
-    templateUrl: 'project/directives/project-widget/view.html',
-    scope: {
-      project: '='
-    },
-    controller: 'ProjectWidgetCtrl'
   };
 });
 
