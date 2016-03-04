@@ -2671,7 +2671,7 @@ angular.module('Scrumble.sprint').directive('burndown', function() {
           },
           startLabel: 'Start',
           endLabel: 'Ceremony',
-          dateFormat: '%A',
+          dateFormat: '%A %d/%m',
           xTitle: '',
           dotRadius: 4,
           standardStrokeWidth: 2,
