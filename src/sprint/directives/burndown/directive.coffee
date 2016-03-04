@@ -31,7 +31,7 @@ angular.module 'Scrumble.sprint'
           labels: '#113F59'
         startLabel: 'Start'
         endLabel: 'Ceremony'
-        dateFormat: '%A'
+        dateFormat: '%A %d/%m'
         xTitle: ''
         dotRadius: 4
         standardStrokeWidth: 2
