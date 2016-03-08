@@ -2,6 +2,7 @@ angular.module 'Scrumble.sprint'
 .controller 'EditSprintCtrl', (
   $scope
   $state
+  $mdToast
   TrelloClient
   sprintUtils
   projectUtils
@@ -13,9 +14,21 @@ angular.module 'Scrumble.sprint'
 
   $scope.editedSprint = sprint
 
-  TrelloClient.get "/boards/#{$scope.project.boardId}/lists"
-  .then (response) ->
-    $scope.boardColumns = response.data
+  getBoardColumns = ->
+    TrelloClient.get "/boards/#{$scope.project.boardId}/lists"
+    .then (response) ->
+      $scope.boardColumns = response.data
+
+  getBoardColumns()
+
+  $scope.refresh = ->
+    toast = $mdToast.simple()
+      .textContent 'Refresh'
+      .position 'bottom right'
+      .hideDelay 10000
+    $mdToast.show toast
+    getBoardColumns().then ->
+      $mdToast.hide()
 
   $scope.editedSprint.resources.team ?= $scope.project.team
   $scope.devTeam = projectUtils.getDevTeam $scope.editedSprint.resources.team
