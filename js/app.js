@@ -2846,11 +2846,15 @@ angular.module('Scrumble.sprint').directive('sprintWidget', function() {
 });
 
 angular.module('Scrumble.sprint').controller('EditSprintCtrl', function($scope, $state, TrelloClient, sprintUtils, projectUtils, Project, Sprint, sprint, bdc) {
+  var _base;
   $scope.editedSprint = sprint;
   TrelloClient.get("/boards/" + $scope.project.boardId + "/lists").then(function(response) {
     return $scope.boardColumns = response.data;
   });
-  $scope.devTeam = projectUtils.getDevTeam($scope.project.team);
+  if ((_base = $scope.editedSprint.resources).team == null) {
+    _base.team = $scope.project.team;
+  }
+  $scope.devTeam = projectUtils.getDevTeam($scope.editedSprint.resources.team);
   $scope.saveLabel = $state.is('tab.new-sprint') ? 'Start the sprint' : 'Save';
   $scope.title = $state.is('tab.new-sprint') ? 'NEW SPRINT' : 'EDIT SPRINT';
   $scope.activable = sprintUtils.isActivable($scope.editedSprint);
