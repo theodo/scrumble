@@ -17,7 +17,8 @@ angular.module 'Scrumble.sprint'
   .then (response) ->
     $scope.boardColumns = response.data
 
-  $scope.devTeam = projectUtils.getDevTeam $scope.project.team
+  $scope.editedSprint.resources.team ?= $scope.project.team
+  $scope.devTeam = projectUtils.getDevTeam $scope.editedSprint.resources.team
 
   $scope.saveLabel = if $state.is 'tab.new-sprint' then 'Start the sprint' else 'Save'
   $scope.title = if $state.is 'tab.new-sprint' then 'NEW SPRINT' else 'EDIT SPRINT'
