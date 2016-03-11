@@ -2028,13 +2028,6 @@ angular.module('Scrumble.daily-report').directive('dynamicFieldsCallToAction', f
   };
 });
 
-angular.module('Scrumble.daily-report').controller('DynamicFieldsModalCtrl', function($scope, $mdDialog, availableFields) {
-  $scope.availableFields = availableFields;
-  return $scope.cancel = function() {
-    return $mdDialog.cancel();
-  };
-});
-
 angular.module('Scrumble.daily-report').directive('markdownHelper', function() {
   return {
     restrict: 'E',
@@ -2074,6 +2067,13 @@ angular.module('Scrumble.daily-report').directive('previousGoals', function() {
       sprint: '='
     },
     controller: 'PreviousGoalsCtrl'
+  };
+});
+
+angular.module('Scrumble.daily-report').controller('DynamicFieldsModalCtrl', function($scope, $mdDialog, availableFields) {
+  $scope.availableFields = availableFields;
+  return $scope.cancel = function() {
+    return $mdDialog.cancel();
   };
 });
 
