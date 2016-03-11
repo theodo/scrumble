@@ -26,7 +26,7 @@ angular.module 'Scrumble.sprint'
     Sprint.setActiveSprint(sprint).then ->
       $scope.$emit 'sprint:update'
 
-  $scope.delete = (event) ->
+  $scope.delete = (sprint, event) ->
     confirm = $mdDialog.confirm()
     .title 'Delete sprints'
     .textContent 'Are you sure you want to do what you\'re trying to do ?'
@@ -38,7 +38,7 @@ angular.module 'Scrumble.sprint'
     $mdDialog.show(confirm).then ->
       loadingToast.show 'deleting'
       $scope.sprint.destroy().then ->
-        _.remove $scope.sprints, $scope.sprint
+        _.remove $scope.sprints, sprint
         loadingToast.hide 'deleting'
 
   $scope.indicators = (sprint) ->
