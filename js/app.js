@@ -1882,16 +1882,6 @@ angular.module('Scrumble.sprint').controller('BoardCtrl', function($scope, $time
   };
 });
 
-angular.module('Scrumble.common').directive('dynamicFieldsList', function() {
-  return {
-    restrict: 'E',
-    templateUrl: 'common/directives/dynamic-fields/view.html',
-    scope: {
-      availableFields: '='
-    }
-  };
-});
-
 angular.module('Scrumble.common').directive('nssRound', function() {
   return {
     require: 'ngModel',
@@ -1978,6 +1968,16 @@ angular.module('Scrumble.common').directive('trelloAvatar', function() {
   };
 });
 
+angular.module('Scrumble.common').directive('dynamicFieldsList', function() {
+  return {
+    restrict: 'E',
+    templateUrl: 'common/directives/dynamic-fields/view.html',
+    scope: {
+      availableFields: '='
+    }
+  };
+});
+
 angular.module('Scrumble.daily-report').controller('DefaultTemplateCtrl', function($scope, $mdDialog, defaultTemplates) {
   return $scope.showDialog = function(ev) {
     var confirm;
@@ -2028,6 +2028,13 @@ angular.module('Scrumble.daily-report').directive('dynamicFieldsCallToAction', f
   };
 });
 
+angular.module('Scrumble.daily-report').controller('DynamicFieldsModalCtrl', function($scope, $mdDialog, availableFields) {
+  $scope.availableFields = availableFields;
+  return $scope.cancel = function() {
+    return $mdDialog.cancel();
+  };
+});
+
 angular.module('Scrumble.daily-report').directive('markdownHelper', function() {
   return {
     restrict: 'E',
@@ -2067,13 +2074,6 @@ angular.module('Scrumble.daily-report').directive('previousGoals', function() {
       sprint: '='
     },
     controller: 'PreviousGoalsCtrl'
-  };
-});
-
-angular.module('Scrumble.daily-report').controller('DynamicFieldsModalCtrl', function($scope, $mdDialog, availableFields) {
-  $scope.availableFields = availableFields;
-  return $scope.cancel = function() {
-    return $mdDialog.cancel();
   };
 });
 
@@ -2738,13 +2738,13 @@ angular.module('Scrumble.sprint').controller('SprintDetailsCtrl', function($scop
       return $scope.$emit('sprint:update');
     });
   };
-  $scope["delete"] = function(event) {
+  $scope["delete"] = function(sprint, event) {
     var confirm;
     confirm = $mdDialog.confirm().title('Delete sprints').textContent('Are you sure you want to do what you\'re trying to do ?').ariaLabel('Delete sprints dialog').targetEvent(event).ok('Delete').cancel('Cancel');
     return $mdDialog.show(confirm).then(function() {
       loadingToast.show('deleting');
       return $scope.sprint.destroy().then(function() {
-        _.remove($scope.sprints, $scope.sprint);
+        _.remove($scope.sprints, sprint);
         return loadingToast.hide('deleting');
       });
     });
