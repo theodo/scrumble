@@ -31,7 +31,7 @@ describe 'SprintDetailsCtrl', ->
       $mdDialog: @$mdDialog
       loadingToast: loadingToastSpy
 
-    $scope.delete()
+    $scope.delete($scope.sprint, null)
 
     expect(loadingToastSpy.show).toHaveBeenCalled()
     expect(loadingToastSpy.hide).toHaveBeenCalled()

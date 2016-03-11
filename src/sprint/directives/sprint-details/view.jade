@@ -23,6 +23,10 @@ md-card-actions(layout='row' layout-align='end end')
   )
     md-icon(md-svg-icon="chart-bar") Indicators
     md-tooltip(md-direction="top") Go to indicators
-  md-button.md-warn.md-hue-2.md-icon-button(aria-label="delete" ng-click="delete()")
+  md-button.md-warn.md-hue-2.md-icon-button(
+    aria-label="delete"
+    ng-click="delete(sprint, $event)"
+    ng-if="sprint.isActive"
+  )
     md-icon(md-svg-icon="delete")
     md-tooltip(md-direction="top") Delete this sprint
