@@ -1899,6 +1899,16 @@ angular.module('Scrumble.common').directive('nssRound', function() {
   };
 });
 
+angular.module('Scrumble.common').directive('dynamicFieldsList', function() {
+  return {
+    restrict: 'E',
+    templateUrl: 'common/directives/dynamic-fields/view.html',
+    scope: {
+      availableFields: '='
+    }
+  };
+});
+
 angular.module('Scrumble.common').factory('Avatar', function(TrelloClient) {
   return {
     getMember: function(memberId) {
@@ -1965,16 +1975,6 @@ angular.module('Scrumble.common').directive('trelloAvatar', function() {
       tooltip: '@'
     },
     controller: 'TrelloAvatarCtrl'
-  };
-});
-
-angular.module('Scrumble.common').directive('dynamicFieldsList', function() {
-  return {
-    restrict: 'E',
-    templateUrl: 'common/directives/dynamic-fields/view.html',
-    scope: {
-      availableFields: '='
-    }
   };
 });
 
