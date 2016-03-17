@@ -2,6 +2,7 @@ md-card-content.md-padding.satisfaction-survey
   h2.md-title Satisfaction survey: {{ project.name }} - Sprint {{ sprint.number }}
     md-button.md-icon-button(ng-click="print()")
       md-icon(md-svg-src="printer", aria-label="Print")
+  md-subheader(style="color: red; text-align: center;") Attention les résultats de ce questionnaire ne sont pas enregistrés dans la Google Spreadsheet du bac rouge
   
   div(ng-repeat="question in template")
     p.question {{ question.label }}
