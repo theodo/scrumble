@@ -1882,6 +1882,16 @@ angular.module('Scrumble.sprint').controller('BoardCtrl', function($scope, $time
   };
 });
 
+angular.module('Scrumble.common').directive('dynamicFieldsList', function() {
+  return {
+    restrict: 'E',
+    templateUrl: 'common/directives/dynamic-fields/view.html',
+    scope: {
+      availableFields: '='
+    }
+  };
+});
+
 angular.module('Scrumble.common').directive('nssRound', function() {
   return {
     require: 'ngModel',
@@ -1895,16 +1905,6 @@ angular.module('Scrumble.common').directive('nssRound', function() {
         }
         return data;
       });
-    }
-  };
-});
-
-angular.module('Scrumble.common').directive('dynamicFieldsList', function() {
-  return {
-    restrict: 'E',
-    templateUrl: 'common/directives/dynamic-fields/view.html',
-    scope: {
-      availableFields: '='
     }
   };
 });
@@ -2146,11 +2146,19 @@ angular.module('Scrumble.daily-report').controller('PreviewCtrl', function($scop
     return googleAuth.login().then(function() {
       return googleAuth.isAuthenticated().then(function(isAuthenticated) {
         return $scope.isAuthenticated = isAuthenticated;
+      })["catch"](function(err) {
+        console.log('****');
+        console.log(err);
+        return console.log('****');
       });
     });
   };
   googleAuth.isAuthenticated().then(function(isAuthenticated) {
     return $scope.isAuthenticated = isAuthenticated;
+  })["catch"](function(err) {
+    console.log('****');
+    console.log(err);
+    return console.log('****');
   });
   return $scope.send = function() {
     return reportBuilder.buildCid().then(function(message) {
