@@ -9,5 +9,7 @@ angular.module 'Scrumble.sprint'
     sprint.speed = sprintUtils.computeSpeed sprint
     sprint.success = sprintUtils.computeSuccess sprint
 
-  $scope.sprints = sprints
+  $scope.sprints = _.sortBy sprints, (sprint) ->
+    parseInt sprint.number
+  .reverse()
   $scope.project = project
