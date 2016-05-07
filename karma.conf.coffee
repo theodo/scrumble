@@ -5,13 +5,13 @@ module.exports = (config) ->
       'public/js/vendor.js'
       'node_modules/angular-mocks/angular-mocks.js'
       'public/js/templates.js'
-      'src/{,**/}module.coffee'
-      'src/{,**/}*.coffee'
+      'client/{,**/}module.coffee'
+      'client/{,**/}*.coffee'
     ]
     exclude: []
     preprocessors:
-      '**/*.coffee': ['coffee']
-      '**/!(*test).coffee': ['coverage']
+      'client/**/*.coffee': ['coffee']
+      'client/**/!(*test).coffee': ['coverage']
     coverageReporter:
       dir: '../coverage'
       reporters: [
