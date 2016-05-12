@@ -49,6 +49,14 @@ describe 'sprintUtils', ->
       expect(dates).toContain '2015-12-22'
       expect(dates).toContain '2015-12-23'
 
+    it 'should handle different timezones', ->
+      sprint =
+        dates:
+          start: '2016-05-09T23:00:00'
+          end: '2016-05-12T22:00:00'
+        resources: {}
+      @sprintUtils.ensureDataConsistency 'date', sprint, []
+
   describe 'generateResources', ->
     it 'should return undefined if an input is undefined', ->
       sprint =
