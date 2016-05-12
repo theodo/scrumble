@@ -1596,6 +1596,17 @@ angular.module('Scrumble.sprint').service('sprintUtils', function() {
         return speed.toFixed(1);
       }
     },
+    computeExpectedSpeed: function(sprint) {
+      var first, last, speed, _ref;
+      if (!_.isArray(sprint.bdcData)) {
+        return;
+      }
+      _ref = sprint.bdcData, first = _ref[0], last = _ref[_ref.length - 1];
+      if (_.isNumber(last.done)) {
+        speed = last.standard / sprint.resources.totalManDays;
+        return speed.toFixed(1);
+      }
+    },
     computeSuccess: function(sprint) {
       var first, last, _ref;
       if (!_.isArray(sprint != null ? sprint.bdcData : void 0)) {
@@ -2210,6 +2221,43 @@ angular.module('Scrumble.daily-report').controller('DailyReportCtrl', function($
         }
       }
     });
+  };
+});
+
+angular.module('Scrumble.indicators').controller('CelerityCtrl', function($scope, Project, Sprint, sprintUtils) {
+  return Sprint.getByProjectId($scope.project.objectId).then(function(sprints) {
+    var actual, chart, expected, sprint, sprintNumbers, _i, _len;
+    sprintNumbers = ['sprint'];
+    expected = ['Expected Celerity'];
+    actual = ['Actual Celerity'];
+    sprints = _.sortBy(sprints, function(sprint) {
+      return Number(sprint.number);
+    });
+    for (_i = 0, _len = sprints.length; _i < _len; _i++) {
+      sprint = sprints[_i];
+      sprintNumbers.push(Number(sprint.number));
+      expected.push(Number(sprintUtils.computeExpectedSpeed(sprint)));
+      actual.push(Number(sprintUtils.computeSpeed(sprint)));
+    }
+    console.log([sprintNumbers, expected, actual]);
+    return chart = c3.generate({
+      bindto: '#celerity-cart',
+      data: {
+        x: 'sprint',
+        columns: [sprintNumbers, expected, actual]
+      }
+    });
+  });
+});
+
+angular.module('Scrumble.indicators').directive('celerityGraph', function() {
+  return {
+    restrict: 'E',
+    templateUrl: 'indicators/directives/celerity/view.html',
+    controller: 'CelerityCtrl',
+    scope: {
+      project: '='
+    }
   };
 });
 

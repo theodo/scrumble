@@ -285,58 +285,6 @@ client-form .answer {
   margin-bottom: 2em;
 }
 
-member-form md-input-container {
-  margin-bottom: 0;
-}
-member-form md-card {
-  border: 2px solid #607D8B;
-}
-
-resources-by-day .row {
-  height: 35px;
-  margin: 0;
-}
-resources-by-day .row-avatar {
-  height: 50px;
-  margin: 0;
-}
-
-select-people .member-select {
-  display: inline-block;
-}
-select-people .member-select input[type="checkbox"] {
-  display: none;
-}
-select-people .member-select.selected img,
-select-people .member-select.selected .initials {
-  border: solid 2px #e57373;
-}
-select-people .member-select label {
-  width: 100%;
-  height: 100%;
-}
-
-
-.check {
-  color: green;
-  padding-right: 4px;
-}
-.clickable {
-  cursor: pointer;
-}
-md-data-table-container td md-radio-button {
-  margin-bottom: 0;
-}
-sprint-details md-card {
-  border: 2px solid #607D8B;
-}
-md-grid-list {
-  margin: 8px;
-}
-md-grid-tile {
-  transition: all 400ms ease-out 50ms;
-}
-
 .profil-button {
   position: absolute;
   right: 5px;
@@ -396,4 +344,56 @@ md-grid-tile {
 .account-details .gmail-account .gmail-avatar {
   margin: 5px;
   border-radius: 50%;
+}
+
+member-form md-input-container {
+  margin-bottom: 0;
+}
+member-form md-card {
+  border: 2px solid #607D8B;
+}
+
+resources-by-day .row {
+  height: 35px;
+  margin: 0;
+}
+resources-by-day .row-avatar {
+  height: 50px;
+  margin: 0;
+}
+
+select-people .member-select {
+  display: inline-block;
+}
+select-people .member-select input[type="checkbox"] {
+  display: none;
+}
+select-people .member-select.selected img,
+select-people .member-select.selected .initials {
+  border: solid 2px #e57373;
+}
+select-people .member-select label {
+  width: 100%;
+  height: 100%;
+}
+
+
+.check {
+  color: green;
+  padding-right: 4px;
+}
+.clickable {
+  cursor: pointer;
+}
+md-data-table-container td md-radio-button {
+  margin-bottom: 0;
+}
+sprint-details md-card {
+  border: 2px solid #607D8B;
+}
+md-grid-list {
+  margin: 8px;
+}
+md-grid-tile {
+  transition: all 400ms ease-out 50ms;
 }
