@@ -15,9 +15,12 @@ angular.module 'Scrumble.indicators'
       sprintNumbers.push Number sprint.number
       expected.push Number sprintUtils.computeExpectedSpeed sprint
       actual.push Number sprintUtils.computeSpeed sprint
-    console.log [sprintNumbers, expected, actual]
+
     chart = c3.generate
       bindto: '#celerity-cart'
       data:
         x: 'sprint'
         columns: [sprintNumbers, expected, actual]
+      axis:
+        y:
+          min: 0
