@@ -83,6 +83,12 @@ angular.module 'Scrumble.sprint'
     if _.isNumber last.done
       speed = last.done / sprint.resources.totalManDays
       speed.toFixed(1)
+  computeExpectedSpeed: (sprint) ->
+    return unless _.isArray sprint.bdcData
+    [first, ..., last] = sprint.bdcData
+    if _.isNumber last.done
+      speed = last.standard / sprint.resources.totalManDays
+      speed.toFixed(1)
   computeSuccess: (sprint) ->
     return unless _.isArray sprint?.bdcData
     [first, ..., last] = sprint.bdcData
