@@ -7,7 +7,7 @@ angular.module 'Scrumble.sprint'
     endM = moment(end).add(1, 'days')
     return unless endM.isAfter current
     days = []
-    while not current.isSame endM
+    while not current.isSame endM, 'day'
       day = current.isoWeekday()
       if day isnt 6 and day isnt 7
         days.push {
