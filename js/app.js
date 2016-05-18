@@ -47,11 +47,11 @@ angular.module('Scrumble.login', ['LocalStorageModule', 'satellizer', 'ui.router
 
 angular.module('Scrumble.settings', ['Scrumble.common']);
 
+angular.module('Scrumble.sprint', ['ui.router', 'Parse', 'ngMaterial']);
+
 angular.module('Scrumble.storage', []);
 
 angular.module('Scrumble.wait', ['ui.router']);
-
-angular.module('Scrumble.sprint', ['ui.router', 'Parse', 'ngMaterial']);
 
 angular.module('Scrumble.board').config(function($stateProvider) {
   return $stateProvider.state('tab.board', {
@@ -1159,182 +1159,6 @@ angular.module('Scrumble.settings').service('projectUtils', function($q, Scrumbl
   };
 });
 
-var __hasProp = {}.hasOwnProperty,
-  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
-
-angular.module('Scrumble.storage').factory('ScrumbleUser', function(Parse, $q, TrelloClient, Project, localStorageService) {
-  var NotSoShittyUser;
-  return NotSoShittyUser = (function(_super) {
-    __extends(NotSoShittyUser, _super);
-
-    function NotSoShittyUser() {
-      return NotSoShittyUser.__super__.constructor.apply(this, arguments);
-    }
-
-    NotSoShittyUser.configure("NotSoShittyUser", "email", "project");
-
-    NotSoShittyUser.getCurrentUser = function() {
-      return this.query({
-        where: {
-          email: localStorageService.get('trello_email')
-        },
-        include: 'project'
-      }).then(function(user) {
-        if (user.length > 0) {
-          return user[0];
-        } else {
-          return null;
-        }
-      });
-    };
-
-    NotSoShittyUser.getBoardId = function() {
-      var deferred, token;
-      deferred = $q.defer();
-      token = localStorageService.get('trello_token');
-      if (token == null) {
-        deferred.reject('No token');
-      }
-      TrelloClient.get('/member/me').then(function(response) {
-        return response.data;
-      }).then(function(userInfo) {
-        return UserBoard.query({
-          where: {
-            email: userInfo.email
-          }
-        });
-      }).then(function(userBoards) {
-        if (userBoards.length > 0) {
-          return deferred.resolve(userBoards[0].boardId);
-        } else {
-          return deferred.resolve(null);
-        }
-      });
-      return deferred.promise;
-    };
-
-    NotSoShittyUser.setBoardId = function(boardId) {
-      var deferred, token;
-      deferred = $q.defer();
-      token = localStorageService.get('trello_token');
-      if (token == null) {
-        deferred.reject('No token');
-      }
-      return TrelloClient.get('/member/me').then(function(response) {
-        return response.data;
-      }).then(function(userInfo) {
-        return this.query({
-          where: {
-            email: userInfo.email
-          }
-        }).then(function(user) {
-          var project;
-          user = user.length > 0 ? user[0] : null;
-          if (typeof board !== "undefined" && board !== null) {
-            board.boardId = boardId;
-            return board.save();
-          } else {
-            project = new Project();
-            project.boardId = boardId;
-            this.project = project;
-            return this.save();
-          }
-        });
-      });
-    };
-
-    return NotSoShittyUser;
-
-  })(Parse.Model);
-});
-
-angular.module('Scrumble.storage').service('userService', function(ScrumbleUser) {
-  return {
-    getOrCreate: function(email) {
-      return ScrumbleUser.query({
-        where: {
-          email: email
-        }
-      }).then(function(users) {
-        var user;
-        if (users.length > 0) {
-          return users[0];
-        } else {
-          user = new User();
-          user.email = email;
-          return user.save().then(function(user) {
-            return user;
-          });
-        }
-      });
-    }
-  };
-});
-
-angular.module('Scrumble.wait').run(function($rootScope, $state, $window, loadingToast) {
-  var finish;
-  finish = function() {
-    if (!$window.loading_screen.finishing) {
-      return $window.loading_screen.finish();
-    }
-  };
-  $rootScope.$on('$stateChangeSuccess', function() {
-    loadingToast.hide('loading');
-    return finish();
-  });
-  $rootScope.$on('$stateChangeError', function() {
-    loadingToast.hide('loading');
-    return finish();
-  });
-  $rootScope.$on('$stateNotFound', function() {
-    loadingToast.hide('loading');
-    return finish();
-  });
-  return $rootScope.$on('$stateChangeStart', function() {
-    loadingToast.show('loading');
-    return finish();
-  });
-});
-
-angular.module('Scrumble.wait').service('loadingToast', function($mdToast, $document) {
-  var toastDeleting, toastLoading, toastSaving;
-  toastLoading = $mdToast.build({
-    templateUrl: 'wait/views/loading-toast.html',
-    position: 'top left',
-    parent: $document[0].querySelector('main')
-  });
-  toastSaving = $mdToast.build({
-    templateUrl: 'wait/views/saving-toast.html',
-    position: 'top left',
-    parent: $document[0].querySelector('main')
-  });
-  toastDeleting = $mdToast.build({
-    templateUrl: 'wait/views/delete-toast.html',
-    position: 'top left',
-    parent: $document[0].querySelector('main')
-  });
-  return {
-    show: function(message) {
-      if (message === 'loading') {
-        return $mdToast.show(toastLoading);
-      } else if (message === 'deleting') {
-        return $mdToast.show(toastDeleting);
-      } else {
-        return $mdToast.show(toastSaving);
-      }
-    },
-    hide: function(message) {
-      if (message === 'loading') {
-        return $mdToast.hide(toastLoading);
-      } else if (message === 'deleting') {
-        return $mdToast.hide(toastDeleting);
-      } else {
-        return $mdToast.hide(toastSaving);
-      }
-    }
-  };
-});
-
 angular.module('Scrumble.sprint').config(function($stateProvider) {
   return $stateProvider.state('tab.new-sprint', {
     url: '/sprint/edit',
@@ -1637,7 +1461,7 @@ angular.module('Scrumble.sprint').service('sprintUtils', function() {
       return;
     }
     days = [];
-    while (!current.isSame(endM)) {
+    while (!current.isSame(endM, 'day')) {
       day = current.isoWeekday();
       if (day !== 6 && day !== 7) {
         days.push({
@@ -1857,6 +1681,182 @@ angular.module('Scrumble.sprint').service('sprintUtils', function() {
   };
 });
 
+var __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+angular.module('Scrumble.storage').factory('ScrumbleUser', function(Parse, $q, TrelloClient, Project, localStorageService) {
+  var NotSoShittyUser;
+  return NotSoShittyUser = (function(_super) {
+    __extends(NotSoShittyUser, _super);
+
+    function NotSoShittyUser() {
+      return NotSoShittyUser.__super__.constructor.apply(this, arguments);
+    }
+
+    NotSoShittyUser.configure("NotSoShittyUser", "email", "project");
+
+    NotSoShittyUser.getCurrentUser = function() {
+      return this.query({
+        where: {
+          email: localStorageService.get('trello_email')
+        },
+        include: 'project'
+      }).then(function(user) {
+        if (user.length > 0) {
+          return user[0];
+        } else {
+          return null;
+        }
+      });
+    };
+
+    NotSoShittyUser.getBoardId = function() {
+      var deferred, token;
+      deferred = $q.defer();
+      token = localStorageService.get('trello_token');
+      if (token == null) {
+        deferred.reject('No token');
+      }
+      TrelloClient.get('/member/me').then(function(response) {
+        return response.data;
+      }).then(function(userInfo) {
+        return UserBoard.query({
+          where: {
+            email: userInfo.email
+          }
+        });
+      }).then(function(userBoards) {
+        if (userBoards.length > 0) {
+          return deferred.resolve(userBoards[0].boardId);
+        } else {
+          return deferred.resolve(null);
+        }
+      });
+      return deferred.promise;
+    };
+
+    NotSoShittyUser.setBoardId = function(boardId) {
+      var deferred, token;
+      deferred = $q.defer();
+      token = localStorageService.get('trello_token');
+      if (token == null) {
+        deferred.reject('No token');
+      }
+      return TrelloClient.get('/member/me').then(function(response) {
+        return response.data;
+      }).then(function(userInfo) {
+        return this.query({
+          where: {
+            email: userInfo.email
+          }
+        }).then(function(user) {
+          var project;
+          user = user.length > 0 ? user[0] : null;
+          if (typeof board !== "undefined" && board !== null) {
+            board.boardId = boardId;
+            return board.save();
+          } else {
+            project = new Project();
+            project.boardId = boardId;
+            this.project = project;
+            return this.save();
+          }
+        });
+      });
+    };
+
+    return NotSoShittyUser;
+
+  })(Parse.Model);
+});
+
+angular.module('Scrumble.storage').service('userService', function(ScrumbleUser) {
+  return {
+    getOrCreate: function(email) {
+      return ScrumbleUser.query({
+        where: {
+          email: email
+        }
+      }).then(function(users) {
+        var user;
+        if (users.length > 0) {
+          return users[0];
+        } else {
+          user = new User();
+          user.email = email;
+          return user.save().then(function(user) {
+            return user;
+          });
+        }
+      });
+    }
+  };
+});
+
+angular.module('Scrumble.wait').run(function($rootScope, $state, $window, loadingToast) {
+  var finish;
+  finish = function() {
+    if (!$window.loading_screen.finishing) {
+      return $window.loading_screen.finish();
+    }
+  };
+  $rootScope.$on('$stateChangeSuccess', function() {
+    loadingToast.hide('loading');
+    return finish();
+  });
+  $rootScope.$on('$stateChangeError', function() {
+    loadingToast.hide('loading');
+    return finish();
+  });
+  $rootScope.$on('$stateNotFound', function() {
+    loadingToast.hide('loading');
+    return finish();
+  });
+  return $rootScope.$on('$stateChangeStart', function() {
+    loadingToast.show('loading');
+    return finish();
+  });
+});
+
+angular.module('Scrumble.wait').service('loadingToast', function($mdToast, $document) {
+  var toastDeleting, toastLoading, toastSaving;
+  toastLoading = $mdToast.build({
+    templateUrl: 'wait/views/loading-toast.html',
+    position: 'top left',
+    parent: $document[0].querySelector('main')
+  });
+  toastSaving = $mdToast.build({
+    templateUrl: 'wait/views/saving-toast.html',
+    position: 'top left',
+    parent: $document[0].querySelector('main')
+  });
+  toastDeleting = $mdToast.build({
+    templateUrl: 'wait/views/delete-toast.html',
+    position: 'top left',
+    parent: $document[0].querySelector('main')
+  });
+  return {
+    show: function(message) {
+      if (message === 'loading') {
+        return $mdToast.show(toastLoading);
+      } else if (message === 'deleting') {
+        return $mdToast.show(toastDeleting);
+      } else {
+        return $mdToast.show(toastSaving);
+      }
+    },
+    hide: function(message) {
+      if (message === 'loading') {
+        return $mdToast.hide(toastLoading);
+      } else if (message === 'deleting') {
+        return $mdToast.hide(toastDeleting);
+      } else {
+        return $mdToast.hide(toastSaving);
+      }
+    }
+  };
+});
+
 angular.module('Scrumble.sprint').controller('BoardCtrl', function($scope, $timeout, bdc, trelloUtils, sprintUtils, Sprint) {
   var getCurrentDayIndex;
   $scope.tableData = angular.copy($scope.sprint.bdcData);
@@ -2011,13 +2011,6 @@ angular.module('Scrumble.daily-report').directive('templateCallToAction', functi
   };
 });
 
-angular.module('Scrumble.daily-report').controller('DynamicFieldsModalCtrl', function($scope, $mdDialog, availableFields) {
-  $scope.availableFields = availableFields;
-  return $scope.cancel = function() {
-    return $mdDialog.cancel();
-  };
-});
-
 angular.module('Scrumble.daily-report').controller('DynamicFieldsCallToActionCtrl', function($scope, $mdDialog, $mdMedia, dynamicFields) {
   return $scope.openModal = function(ev) {
     var useFullScreen;
@@ -2043,6 +2036,13 @@ angular.module('Scrumble.daily-report').directive('dynamicFieldsCallToAction', f
     restrict: 'E',
     templateUrl: 'daily-report/directives/dynamic-fields-call-to-action/view.html',
     controller: 'DynamicFieldsCallToActionCtrl'
+  };
+});
+
+angular.module('Scrumble.daily-report').controller('DynamicFieldsModalCtrl', function($scope, $mdDialog, availableFields) {
+  $scope.availableFields = availableFields;
+  return $scope.cancel = function() {
+    return $mdDialog.cancel();
   };
 });
 
