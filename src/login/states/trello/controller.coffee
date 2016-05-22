@@ -5,7 +5,9 @@ angular.module 'Scrumble.login'
   TrelloClient
   $state
   $auth
-  ScrumbleUser
+  $mdToast
+  $document
+  ScrumbleUser2
   localStorageService
 ) ->
   $scope.doing = false
@@ -13,16 +15,18 @@ angular.module 'Scrumble.login'
   $scope.login = ->
     $scope.doing = true
     TrelloClient.authenticate()
-    .then (response) -> TrelloClient.get('/member/me')
-    .then (response) -> response.data
-    .then (userInfo) ->
-      localStorageService.set 'trello_email', userInfo.email
-    .then ->
-      ScrumbleUser.getCurrentUser()
-    .then (user) ->
-      unless user?
-        user = new ScrumbleUser()
-        user.email = localStorageService.get 'trello_email'
-        user.save()
-    .then ->
+    .then (response) ->
+      ScrumbleUser2.login(trelloToken: response.token).$promise
+    .then (response) ->
+      localStorageService.set 'api_token', response.token
       $state.go 'tab.board'
+    .catch (err) ->
+      if err.status is -1
+        $mdToast.show(
+          $mdToast.simple()
+          .textContent('Could not connect to API...')
+          .position('top left')
+          .hideDelay(3000)
+          .parent($document[0].querySelector 'main')
+        )
+      $scope.doing = false

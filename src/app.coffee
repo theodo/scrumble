@@ -18,6 +18,8 @@ app = angular.module 'Scrumble', [
   'trello-api-client'
   'angular-async-loader'
 
+  'Scrumble.constants'
+  'Scrumble.models'
   'Scrumble.sprint'
   'Scrumble.common'
   'Scrumble.daily-report'
