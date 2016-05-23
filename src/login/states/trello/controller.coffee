@@ -8,7 +8,7 @@ angular.module 'Scrumble.login'
   $mdToast
   $document
   ScrumbleUser2
-  localStorageService
+  ApiAccessToken
 ) ->
   $scope.doing = false
 
@@ -18,7 +18,7 @@ angular.module 'Scrumble.login'
     .then (response) ->
       ScrumbleUser2.login(trelloToken: response.token).$promise
     .then (response) ->
-      localStorageService.set 'api_token', response.token
+      ApiAccessToken.set response.token
       $state.go 'tab.board'
     .catch (err) ->
       if err.status is -1
