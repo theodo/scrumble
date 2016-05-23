@@ -26,3 +26,14 @@ api:
     TRELLO_KEY: 'YOUR TRELLO KEY'
     TRELLO_SECRET: 'YOUR TRELLO SECRET'
   command: npm run server:watch
+
+client:
+  image: nginx
+  volumes:
+    - ./public:/usr/share/nginx/html:ro
+  ports:
+    - "8080:80"
+  environment:
+    - NGINX_HOST=scrumble.io
+    - NGINX_PORT=80
+  command: /bin/bash -c "nginx -g 'daemon off;'"
