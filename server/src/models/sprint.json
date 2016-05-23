@@ -1,0 +1,77 @@
+{
+  "name": "Sprint",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "options": {
+      "promisify": true
+  },
+  "properties": {
+    "number": {
+      "type": "number",
+      "required": true
+    },
+    "objectId": {
+      "type": "string",
+      "required": true
+    },
+    "goal": {
+      "type": "string",
+      "required": false
+    },
+    "isActive": {
+      "type": "boolean",
+      "required": true
+    },
+    "bdcBase64": {
+      "type": "string",
+      "required": false
+    },
+    "bdcData": {
+      "type": "object",
+      "required": false
+    },
+    "resources": {
+      "type": "object",
+      "required": false
+    },
+    "team": {
+      "type": "object",
+      "required": false
+    },
+    "dates": {
+      "type": "object",
+      "required": false
+    },
+    "columnMapping": {
+      "type": "object",
+      "required": false
+    },
+    "createdAt": {
+      "type": "date",
+      "required": false
+    },
+    "updatedAt": {
+      "type": "date",
+      "required": false
+    }
+  },
+  "validations": [],
+  "relations": {
+    "project": {
+      "type": "belongsTo",
+      "foreignKey": "projectId"
+    }
+  },
+  "acls": [
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "DENY"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$authenticated",
+      "permission": "ALLOW"
+    }
+  ]
+}

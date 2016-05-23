@@ -4,3 +4,7 @@ npm-debug.log
 public
 coverage
 client/ngConstants.js
+devops/roles
+devops/hosts/production
+devops/*.retry
+docker-compose.yml

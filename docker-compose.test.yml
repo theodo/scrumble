@@ -1,0 +1,30 @@
+datatest:
+  image: busybox
+  volumes:
+    - /data
+
+dbtest:
+  image: postgres:9.4
+  volumes_from:
+    - datatest
+  ports:
+    - "5432:5432"
+
+apitest:
+  image: node:wheezy
+  volumes:
+    - .:/app
+  working_dir: /app
+  links:
+   - dbtest:db
+  ports:
+    - "8000:8000"
+  environment:
+    HOST: "0.0.0.0"
+    PORT: "8000"
+    DB_DATABASE: postgres
+    DB_USERNAME: postgres
+    GOOGLE_API_SECRET: '***'
+    TRELLO_KEY: '***'
+    TRELLO_SECRET: '***'
+  command: npm run server:watch

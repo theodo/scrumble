@@ -1,0 +1,21 @@
+{
+  "initial": {
+    "cors": {
+      "params": {
+        "origin": true,
+        "credentials": true,
+        "maxAge": 86400
+      }
+    }
+  },
+  "routes": {
+    "loopback#rest": {
+      "paths": [
+        "${restApiRoot}"
+      ]
+    }
+  },
+  "final:after": {
+    "errorhandler": {}
+  }
+}

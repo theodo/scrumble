@@ -1,0 +1,38 @@
+- name: Cinelocal deployment
+  hosts: all
+  sudo: true
+  tasks:
+    - name: data container
+      docker:
+        name: scrumbledata
+        image: busybox
+        state: started
+        volumes:
+        - /data
+
+    - name: postgres container
+      docker:
+        name: scrumbledatabase
+        image: postgres:9.4
+        volumes_from:
+          - scrumbledata
+        ports:
+          - "5431:5432"
+        state: started
+
+    - name: api container
+      docker:
+        name: scrumbleapi
+        image: nicgirault/scrumble-api
+        volumes_from:
+          - scrumbledata
+        ports:
+          - "8082:8000"
+        state: reloaded
+        pull: always
+        links:
+        - scrumbledatabase
+        env:
+          DB_DATABASE: scrumble
+          DB_USERNAME: scrumble
+          DB_PASSWORD: scrumble

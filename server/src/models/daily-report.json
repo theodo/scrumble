@@ -1,0 +1,30 @@
+{
+  "name": "DailyReport",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "options": {
+      "promisify": true
+  },
+  "properties": {
+    "sections": {
+      "type": "object",
+      "required": false
+    },
+    "createdAt": {
+      "type": "date",
+      "required": false
+    },
+    "updatedAt": {
+      "type": "date",
+      "required": false
+    }
+  },
+  "validations": [],
+  "relations": {
+    "project": {
+      "type": "belongsTo",
+      "foreignKey": "projectId"
+    }
+  },
+  "acls": []
+}

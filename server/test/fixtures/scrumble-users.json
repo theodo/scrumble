@@ -1,0 +1,9 @@
+[
+  {
+    "username": "chuck_noris",
+    "email": "noris@gmail.com",
+    "remoteId": "12345",
+    "password": "dummy",
+    "accessTokens": ["chuckDefinesHisOwnTokens"]
+  }
+]

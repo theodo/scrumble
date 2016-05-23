@@ -1,0 +1,2 @@
+[production]
+prod ansible_host=##YOUR_IP## ansible_ssh_user=##YOUR_USER##
