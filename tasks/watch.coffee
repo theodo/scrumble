@@ -12,10 +12,10 @@ gulp.task 'webserver', ['build'], ->
 
 gulp.task 'watch', ->
   runSequence 'webserver', ->
-    gulp.watch 'src/assets/**/*', ['assets']
-    gulp.watch 'src/**/*.coffee', ['coffee-public']
-    gulp.watch 'src/index.jade', ['jade-index']
-    gulp.watch 'src/**/*.jade', ['jade']
-    gulp.watch 'src/**/*.less', ['less']
-    gulp.watch 'src/translations/*.yml', ['translations']
+    gulp.watch 'client/assets/**/*', ['assets']
+    gulp.watch 'client/**/*.coffee', ['coffee-public']
+    gulp.watch 'client/index.jade', ['jade-index']
+    gulp.watch 'client/**/*.jade', ['jade']
+    gulp.watch 'client/**/*.less', ['less']
+    gulp.watch 'client/translations/*.yml', ['translations']
     gulp.watch 'vendor', ['vendor']
