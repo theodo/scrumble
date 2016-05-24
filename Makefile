@@ -27,9 +27,17 @@ run-test:
 	docker-compose -f docker-compose.test.yml run --rm apitest \
 	npm test
 
-build:
+api-build:
 	docker build -t nicgirault/scrumble-api .
-push: build
+api-push: build
 	docker push nicgirault/scrumble-api
-deploy: push
+
+client-build:
+	cd client && \
+	docker build -t nicgirault/scrumble . && \
+	cd ..
+client-push: client-build
+	docker push nicgirault/scrumble
+
+deploy:
 	ansible-playbook -i devops/hosts/production devops/deploy.yml

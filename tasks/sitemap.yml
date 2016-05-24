@@ -1,4 +1,0 @@
-src: client/sitemap.xml
-dest: public
-
-cache: false

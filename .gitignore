@@ -1,7 +1,7 @@
 bower_components
 node_modules
 npm-debug.log
-public
+client/public
 coverage
 client/ngConstants.js
 devops/roles

@@ -1,2 +1,2 @@
 gulp = require('gulp');
-plug = require('gulp-plug')(gulp, __dirname + '/tasks');
+plug = require('gulp-plug')(gulp, __dirname + '/client/tasks');

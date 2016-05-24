@@ -1,14 +1,24 @@
-- name: Cinelocal deployment
+- name: Scrumble deployment
   hosts: all
   sudo: true
   tasks:
+    - name: proxy
+      docker:
+        name: proxy
+        image: jwilder/nginx-proxy
+        state: started
+        volumes:
+          - /var/run/docker.sock:/tmp/docker.sock:ro
+        ports:
+          - "80:80"
+
     - name: data container
       docker:
         name: scrumbledata
         image: busybox
         state: started
         volumes:
-        - /data
+          - /data
 
     - name: postgres container
       docker:
@@ -31,8 +41,18 @@
         state: reloaded
         pull: always
         links:
-        - scrumbledatabase
+          - scrumbledatabase
         env:
-          DB_DATABASE: scrumble
-          DB_USERNAME: scrumble
-          DB_PASSWORD: scrumble
+          DB_DATABASE: postgres
+          DB_USERNAME: postgres
+
+    - name: client container
+      docker:
+        name: scrumbleclient
+        image: nicgirault/scrumble
+        ports:
+          - "8083:80"
+        state: started
+        pull: always
+        env:
+          VIRTUAL_HOST: app.scrumble.io

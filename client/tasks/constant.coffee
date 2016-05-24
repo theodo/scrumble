@@ -7,4 +7,4 @@ gulp.task 'constant', ->
     constants:
       API_URL: process.env.API_URL or 'http://localhost:8000'
     stream: true
-  .pipe gulp.dest './client'
+  .pipe gulp.dest "#{__dirname}/../src"
