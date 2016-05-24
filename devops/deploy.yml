@@ -56,3 +56,14 @@
         pull: always
         env:
           VIRTUAL_HOST: app.scrumble.io
+
+    - name: showcase container
+      docker:
+        name: showcase
+        image: nicgirault/scrumble-showcase
+        ports:
+          - "8080:80"
+        state: started
+        pull: always
+        env:
+          VIRTUAL_HOST: scrumble.io

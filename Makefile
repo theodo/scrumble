@@ -39,5 +39,11 @@ client-build:
 client-push: client-build
 	docker push nicgirault/scrumble
 
+showcase-build:
+	docker build -t nicgirault/scrumble-showcase showcase
+
+showcase-push: client-build
+	docker push nicgirault/scrumble-showcase
+
 deploy:
 	ansible-playbook -i devops/hosts/production devops/deploy.yml
