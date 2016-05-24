@@ -2,29 +2,27 @@ angular.module 'Scrumble.sprint'
 .config ($stateProvider) ->
   $stateProvider
   .state 'tab.new-sprint',
-    url: '/sprint/edit'
+    url: '/project/:projectId/sprint'
     controller: 'EditSprintCtrl'
     templateUrl: 'sprint/states/edit/view.html'
     resolve:
-      sprint: (ScrumbleUser, Project, Sprint) ->
-        ScrumbleUser.getCurrentUser()
-        .then (user) ->
-          new Sprint
-            project: new Project user.project
-            info:
-              bdcTitle: 'Burndown Chart'
-            number: null
-            goal: null
-            doneColumn: null
-            dates:
-              start: null
-              end: null
-              days: []
-            resources:
-              matrix: []
-              speed: null
-              totalPoints: null
-            isActive: false
+      sprint: ($stateParams, Sprint) ->
+        new Sprint
+          projectId: $stateParams.projectId
+          info:
+            bdcTitle: 'Burndown Chart'
+          number: null
+          goal: null
+          doneColumn: null
+          dates:
+            start: null
+            end: null
+            days: []
+          resources:
+            matrix: []
+            speed: null
+            totalPoints: null
+          isActive: false
 
   .state 'tab.edit-sprint',
     url: '/sprint/:sprintId/edit'

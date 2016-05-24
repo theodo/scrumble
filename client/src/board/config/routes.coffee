@@ -8,7 +8,7 @@ angular.module 'Scrumble.board'
     resolve:
       checkProjectAndSprint: (project, sprint, $state) ->
         return $state.go 'tab.project' unless project?
-        return $state.go 'tab.new-sprint' unless sprint?
+        return $state.go('tab.new-sprint', projectId: project.id) unless sprint?
     onEnter: (sprint, $state) ->
       if sprint.bdcData?
         # the date is saved as a string so we've to convert it
