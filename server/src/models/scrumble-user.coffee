@@ -52,18 +52,28 @@ module.exports = (ScrumbleUser) ->
         console.error err
         next err
 
+  ScrumbleUser.setProject = (req, next) ->
+    console.log '************'
+    console.log req.body.projectId
+    unless req.body.projectId?
+      return next new createError.BadRequest('Missing required attribute projectId')
+
+    ScrumbleUser.findById(req.accessToken.userId).then (user) ->
+      user.projectId = req.body.projectId
+      user.save()
+    .catch next
+
   ScrumbleUser.remoteMethod 'trelloLogin',
     accepts: [
-      {
-        arg: 'req'
-        type: 'object'
-        http:
-          source: 'req'
-      }
+      { arg: 'req', type: 'object', http: { source: 'req' } }
     ]
-    returns:
-      type: 'object'
-      root: true
-    http:
-      verb: 'post'
-      path: '/trello-login'
+    returns: { type: 'object', root: true }
+    http: { verb: 'post', path: '/trello-login' }
+
+  ScrumbleUser.remoteMethod 'setProject',
+    description: 'Set user current project'
+    accepts: [
+      { arg: 'req', type: 'object', http: { source: 'req' } }
+    ]
+    returns: { type: 'object', root: true }
+    http: { verb: 'put', path: '/project' }

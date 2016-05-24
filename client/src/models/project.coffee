@@ -7,6 +7,8 @@ angular.module 'Scrumble.models'
       method: 'GET'
       params:
         action: 'current'
+    update:
+      method: 'PUT'
   )
 
 

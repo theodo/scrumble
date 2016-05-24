@@ -26,8 +26,10 @@
     "bluebird": "3.3.5",
     "bower": "1.3.x",
     "coffee-script": "1.10.0",
+    "connect-history-api-fallback": "0.0.4",
     "db-migrate": "0.10.0-beta.11",
     "db-migrate-pg": "0.1.9",
+    "http-error": "0.0.6",
     "jwt-simple": "0.5.0",
     "lodash": "4.11.1",
     "loopback": "2.27.0",
@@ -35,8 +37,7 @@
     "loopback-component-explorer": "2.4.0",
     "loopback-connector-postgresql": "2.4.1",
     "loopback-promisify": "0.2.0",
-    "moment": "2.13.0",
-    "connect-history-api-fallback": "0.0.4"
+    "moment": "2.13.0"
   },
   "devDependencies": {
     "angular-mocks": "1.4.8",

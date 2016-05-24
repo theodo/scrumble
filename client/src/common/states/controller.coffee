@@ -30,7 +30,7 @@ angular.module 'Scrumble.common'
     $state.reload 'tab'
     .then ->
       if data?.nextState?
-        $state.go data.nextState
+        $state.go data.nextState, data.params
 
   $scope.$on 'sprint:update', (event, data) ->
     $state.reload 'tab'

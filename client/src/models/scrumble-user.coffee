@@ -7,4 +7,8 @@ angular.module 'Scrumble.models'
       method: 'POST'
       params:
         action: 'trello-login'
+    setProject:
+      method: 'PUT'
+      params:
+        action: 'project'
   )

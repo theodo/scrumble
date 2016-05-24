@@ -12,7 +12,7 @@
     },
     "objectId": {
       "type": "string",
-      "required": true
+      "required": false
     },
     "name": {
       "type": "string",
@@ -23,6 +23,10 @@
       "required": false
     },
     "settings": {
+      "type": "object",
+      "required": false
+    },
+    "team": {
       "type": "object",
       "required": false
     },

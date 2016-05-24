@@ -6,9 +6,7 @@ angular.module 'Scrumble.common'
     templateUrl: 'common/states/base.html'
     controller: 'BaseCtrl'
     resolve:
-      sprint: (Sprint) ->
-        Sprint.getActiveSprint().$promise
-      project: (Project) ->
-        Project.getUserProject().$promise.then (project) ->
-          console.log project
-          project
+      sprint: ($state, Sprint) ->
+        Sprint.getActiveSprint().$promise.catch (err) -> return
+      project: ($state, Project) ->
+        Project.getUserProject().$promise.catch (err) -> return
