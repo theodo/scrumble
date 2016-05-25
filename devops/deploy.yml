@@ -45,6 +45,7 @@
         env:
           DB_DATABASE: postgres
           DB_USERNAME: postgres
+          VIRTUAL_HOST: api.scrumble.io
 
     - name: client container
       docker:

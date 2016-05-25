@@ -12,4 +12,6 @@ RUN npm install
 COPY server /app
 
 EXPOSE 8000
+# required for jwilder/nginx-proxy to work
+EXPOSE 8082
 CMD [ "npm", "start" ]
