@@ -22,27 +22,27 @@
 
     - name: postgres container
       docker:
-        name: scrumbledatabase
+        name: db
         image: postgres:9.4
         volumes_from:
           - scrumbledata
         ports:
-          - "5431:5432"
+          - "5432:5432"
         state: started
 
     - name: api container
       docker:
         name: scrumbleapi
         image: nicgirault/scrumble-api
-        volumes_from:
-          - scrumbledata
         ports:
           - "8082:8000"
-        state: reloaded
+        state: started
         pull: always
         links:
-          - scrumbledatabase
+          - db
         env:
+          HOST: "0.0.0.0"
+          PORT: "8000"
           DB_DATABASE: postgres
           DB_USERNAME: postgres
           VIRTUAL_HOST: api.scrumble.io

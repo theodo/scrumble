@@ -1,7 +1,7 @@
 angular.module 'Scrumble.models'
 .service 'Project', ($resource, API_URL) ->
   $resource(
-    "#{API_URL}/api/Projects/:projectId:action",
+    "#{API_URL}/Projects/:projectId:action",
     {projectId: '@id'},
     getUserProject:
       method: 'GET'

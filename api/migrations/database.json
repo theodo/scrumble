@@ -3,7 +3,7 @@
     "driver": "pg",
     "user": "postgres",
     "password": "",
-    "host": {"ENV": "DB_PORT_5432_TCP_ADDR"},
+    "host": "db",
     "database": "postgres",
     "schema": "public"
   },
@@ -11,7 +11,7 @@
     "driver": "pg",
     "user": "postgres",
     "password": "",
-    "host": {"ENV": "DB_PORT_5432_TCP_ADDR"},
+    "host": "db",
     "database": "postgres",
     "schema": "public"
   },

@@ -1,5 +1,5 @@
 angular.module("Scrumble.constants", [])
 
-.constant("API_URL", "http://localhost:8000")
+.constant("API_URL", "http://api.scrumble.io/api")
 
 ;

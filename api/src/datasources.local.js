@@ -3,8 +3,8 @@ module.exports = {
   db: {
     name: 'scrumble',
     connector: 'postgresql',
-    host: process.env.DB_PORT_5432_TCP_ADDR || 'localhost',
-    port: process.env.DB_PORT_5432_TCP_PORT || 5432,
+    host: 'db',
+    port: 5432,
     database: process.env.DB_DATABASE || 'postgres',
     username: process.env.DB_USERNAME || 'postgres',
     password: process.env.DB_PASSWORD || ''

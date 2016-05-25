@@ -1,7 +1,7 @@
 angular.module 'Scrumble.models'
 .service 'Sprint', ($resource, API_URL) ->
   $resource(
-    "#{API_URL}/api/Sprints/:sprintId:action",
+    "#{API_URL}/Sprints/:sprintId:action",
     {sprintId: '@id'},
     getActiveSprint:
       method: 'GET'

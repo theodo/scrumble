@@ -1,8 +1,8 @@
 {
   "baseUri": "/",
-  "restApiRoot": "/api",
-  "host": process.env.HOST || "0.0.0.0",
-  "port": process.env.PORT || "8000",
+  "restApiRoot": "/v1",
+  "host": "0.0.0.0",
+  "port": "8000",
   "aclErrorStatus": 403,
   "remoting": {
     "context": {

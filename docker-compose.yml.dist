@@ -27,7 +27,7 @@ api:
     TRELLO_SECRET: 'YOUR TRELLO SECRET'
   command: npm run server:watch
 
-client:
+showcase:
   image: nginx
   volumes:
     - ./public:/usr/share/nginx/html:ro
