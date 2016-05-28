@@ -12,8 +12,8 @@
     "node": "5.0.0"
   },
   "scripts": {
-    "start": "env && sleep 2 && npm run migrate:up && coffee src/server.coffee",
-    "watch": "env && npm run migrate:up && node ./node_modules/nodemon/bin/nodemon.js src/server.coffee",
+    "start": "sleep 2 && npm run migrate:up && coffee src/server.coffee",
+    "watch": "npm run migrate:up && node ./node_modules/nodemon/bin/nodemon.js src/server.coffee",
     "test": "db-migrate --config migrations/database.json reset -e test && db-migrate up --config migrations/database.json -e test;",
     "migrate:up": "db-migrate up --config migrations/database.json"
   },

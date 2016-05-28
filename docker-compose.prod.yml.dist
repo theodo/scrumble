@@ -1,0 +1,78 @@
+proxy:
+  image: jwilder/nginx-proxy
+  container_name: nginx-proxy
+  restart: always
+  volumes:
+    - "/var/run/docker.sock:/tmp/docker.sock:ro"
+    - "/certs:/etc/nginx/certs:rw"
+    - "/etc/nginx/vhost.d"
+    - "/usr/share/nginx/html"
+  ports:
+    - "80:80"
+    - "443:443"
+
+letsencrypt:
+  image: jrcs/letsencrypt-nginx-proxy-companion
+  container_name: nginx-letsencrypt
+  volumes_from:
+    - proxy
+  volumes:
+    - /var/run/docker.sock:/var/run/docker.sock:ro
+
+data:
+  image: busybox
+  container_name: scrumble-db-data
+  volumes:
+    - /data
+
+db:
+  image: postgres:9.4
+  container_name: scrumble-db
+  volumes_from:
+    - data
+  ports:
+    - "5432:5432"
+
+showcase:
+  image: nicgirault/scrumble-showcase
+  container_name: scrumble-showcase
+  ports:
+    - "8080:443"
+  links:
+    - proxy
+  environment:
+    VIRTUAL_HOST: scrumble.io
+    LETSENCRYPT_HOST: scrumble.io
+    LETSENCRYPT_EMAIL: contact@scrumble.io
+  command: /bin/bash -c "nginx -g 'daemon off;'"
+
+app:
+  image: nicgirault/scrumble
+  container_name: scrumble-front
+  ports:
+    - "8083:80"
+  restart: always
+  environment:
+    VIRTUAL_HOST: app.scrumble.io
+    LETSENCRYPT_HOST: app.scrumble.io
+    LETSENCRYPT_EMAIL: contact@scrumble.io
+
+api:
+  image: nicgirault/scrumble-api
+  container_name: scrumble-api
+  links:
+   - db
+  ports:
+    - "8000:8000"
+  environment:
+    HOST: "0.0.0.0"
+    PORT: "8000"
+    DB_DATABASE: postgres
+    DB_USERNAME: postgres
+    GOOGLE_API_SECRET: ***
+    TRELLO_KEY: ***
+    TRELLO_SECRET: ***
+    VIRTUAL_HOST: api.scrumble.io
+    LETSENCRYPT_HOST: api.scrumble.io
+    LETSENCRYPT_EMAIL: contact@scrumble.io
+  command: npm start

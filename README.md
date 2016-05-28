@@ -9,13 +9,12 @@ It is connected to your Trello board and GoogleApps account and helps to:
 
 ## Installation
 
+I use docker, docker-compose for dev environment and docker-machine to deploy.
+All the commands are in the Makefile. You should read this file.
+
 ```
 git clone git@github.com:theodo/scrumble.git
-cd scrumble
-npm install
-npm test
+make install
+make client-start
+make api-start
 ```
-
-## Deploy
-
-`gulp deploy`

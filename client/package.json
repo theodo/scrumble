@@ -15,6 +15,7 @@
     "postinstall": "bower install --allow-root && gulp build",
     "watch": "gulp watch",
     "start": "gulp watch",
+    "build": "gulp build",
     "test": "NODE_ENV=test karma start"
   },
   "dependencies": {

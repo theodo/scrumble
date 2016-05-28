@@ -39,19 +39,27 @@ client-install:
 client-start:
 	docker-compose --file docker-compose.dev.yml up app
 client-build:
-	. devops/env/${env} && \
-	gulp build && \
-	cd client && \
-	docker build -t nicgirault/scrumble client && \
-	cd ..
+	docker-compose --file docker-compose.dev.yml up appbuilder && \
+	docker build -t nicgirault/scrumble client
+
 client-push:
 	docker push nicgirault/scrumble
 
 showcase-build:
 	docker build -t nicgirault/scrumble-showcase showcase
 
-showcase-push: client-build
+showcase-push:
 	docker push nicgirault/scrumble-showcase
 
 deploy:
-	ansible-playbook -i devops/hosts/production devops/deploy.yml
+	eval "$(docker-machine env prod)" && \
+	docker-compose --file docker-compose.prod.yml up -d && \
+	eval "$(docker-machine env -u)"
+
+create-host:
+	docker-machine create \
+	  --driver generic \
+	  --generic-ip-address=${remoteip} \
+		--generic-ssh-user=dockeradmin \
+	  --generic-ssh-key ~/.ssh/id_rsa \
+	  prod
