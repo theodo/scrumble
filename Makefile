@@ -32,6 +32,12 @@ api-build:
 api-push:
 	docker push nicgirault/scrumble-api
 
+client-install:
+	docker-compose --file docker-compose.dev.yml run --rm app npm install --unsafe-perm && \
+	sudo chown -R ${whoami}:${whoami} ./client/node_modules && \
+	sudo chown -R ${whoami}:${whoami} ./client/bower_components
+client-start:
+	docker-compose --file docker-compose.dev.yml up app
 client-build:
 	. devops/env/${env} && \
 	gulp build && \

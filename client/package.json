@@ -12,9 +12,9 @@
     "node": "5.0.0"
   },
   "scripts": {
-    "postinstall": "node_modules/.bin/bower install | xargs echo && gulp build",
-    "watch": "node_modules/.bin/gulp watch",
-    "start": "node_modules/.bin/gulp watch",
+    "postinstall": "bower install --allow-root && gulp build",
+    "watch": "gulp watch",
+    "start": "gulp watch",
     "test": "NODE_ENV=test karma start"
   },
   "dependencies": {
