@@ -1,7 +1,8 @@
 angular.module 'Scrumble.models'
-.service 'Project', ($resource, API_URL) ->
-  $resource(
-    "#{API_URL}/Projects/:projectId:action",
+.service 'Project', ($resource, $http, API_URL) ->
+  endpoint = "#{API_URL}/Projects"
+  Project = $resource(
+    "#{endpoint}/:projectId:action",
     {projectId: '@id'},
     getUserProject:
       method: 'GET'
@@ -11,29 +12,18 @@ angular.module 'Scrumble.models'
       method: 'PUT'
   )
 
-
-# angular.module 'Scrumble.storage'
-# .factory 'Project', (Parse, $q) ->
-#   class Project extends Parse.Model
-#     @configure "Project", "boardId", "name", "columnMapping", "team", "currentSprint", "settings"
-#
-#     @get = (boardId) ->
-#       deferred = $q.defer()
-#
-#       if boardId?
-#         @query(
-#           where:
-#             boardId: boardId
-#         ).then (projectsArray) ->
-#           project = if projectsArray.length > 0 then projectsArray[0] else null
-#           deferred.resolve project
-#         .catch deferred.reject
-#       else
-#         deferred.reject 'No boardId'
-#       deferred.promise
-#
-#     @saveTitle = (project, title) ->
-#       project.settings ?= {}
-#       project.settings.bdcTitle = title
-#       project.save().then ->
-#         title
+  new: ->
+    new Project()
+  find: Project.find
+  query: Project.query
+  get: Project.get
+  getUserProject: ->
+    Project.getUserProject().$promise
+  update: Project.update
+  getLastSpeeds: (projectId) ->
+    $http.get("#{endpoint}/#{projectId}/last-speeds")
+  saveTitle: (project, title) ->
+    project.settings ?= {}
+    project.settings.bdcTitle = title
+    project.save().then ->
+      title

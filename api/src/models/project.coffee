@@ -1,5 +1,6 @@
 loopback = require 'loopback'
 createError = require 'http-errors'
+_ = require 'lodash'
 
 module.exports = (Project) ->
 
@@ -27,13 +28,29 @@ module.exports = (Project) ->
       throw new createError.NotFound()
     .catch next
 
+  Project.getLastSpeeds = (projectId, next) ->
+    Project.app.models.Sprint.find(
+      where:
+        projectId: projectId
+      order: 'number DESC'
+      limit: 3
+    ).then (sprints) ->
+      next(null, _.map(sprints, (sprint) ->
+        speed: sprint.resources?.speed
+        sprintNumber: sprint.number
+      ))
+    .catch next
+
   Project.remoteMethod 'getUserProject',
     accepts: [
       { arg: 'req', type: 'object', http: { source: 'req' } }
     ]
-    returns:
-      type: 'object'
-      root: true
-    http:
-      verb: 'get'
-      path: '/current'
+    returns: { type: 'object', root: true}
+    http: { verb: 'get', path: '/current' }
+
+  Project.remoteMethod 'getLastSpeeds',
+    accepts: [
+      { arg: 'projectId', type: 'number', http: { source: 'path' } }
+    ]
+    returns: { type: 'array', root: true}
+    http: { verb: 'get', path: '/:projectId/last-speeds' }

@@ -23,7 +23,6 @@
     "angular-ui-router": "0.2.15",
     "angular": "1.4.9",
     "bootstrap": "3.3.6",
-    "lodash": "3.10.1",
     "moment": "2.10.6",
     "angular-resource": "1.4.9",
     "angular-local-storage": "0.2.3",
@@ -41,7 +40,8 @@
     "please-wait": "0.0.5",
     "angular-messages": "1.4.9",
     "angular-async-loader": "1.0.1",
-    "c3": "0.4.11"
+    "c3": "0.4.11",
+    "lodash": "4.13.1"
   },
   "resolutions": {
     "angular": "1.4.9"

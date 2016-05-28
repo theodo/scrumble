@@ -40,7 +40,13 @@
     }
   },
   "validations": [],
-  "relations": {},
+  "relations": {
+    "sprints": {
+      "type": "hasMany",
+      "model": "Sprint",
+      "foreignKey": "projectId"
+    }
+  },
   "acls": [
     {
       "principalType": "ROLE",

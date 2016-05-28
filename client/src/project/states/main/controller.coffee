@@ -8,11 +8,10 @@ angular.module 'Scrumble.settings'
   TrelloClient.get('/members/me/boards').then (response) ->
     $scope.boards = response.data
 
-  Project.getUserProject().$promise
-  .then (project) ->
+  Project.getUserProject().then (project) ->
     $scope.project = project
   .catch (err) ->
-    $scope.project = new Project()
+    $scope.project = Project.new()
 
   $scope.saving = false
   $scope.selectedItemChange = (boardId) ->

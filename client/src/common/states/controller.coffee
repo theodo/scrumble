@@ -47,13 +47,13 @@ angular.module 'Scrumble.common'
     ,
       state: 'tab.team'
       params:
-        projectId: $scope.project?.objectId
+        projectId: $scope.project?.id
       title: 'Team'
       icon: 'account-multiple'
     ,
       state: 'tab.sprint-list'
       params:
-        projectId: $scope.project?.objectId
+        projectId: $scope.project?.id
       title: 'Sprints'
       icon: 'view-list'
     ,
@@ -67,13 +67,13 @@ angular.module 'Scrumble.common'
     ,
       state: 'tab.indicators'
       params:
-        sprintId: $scope.sprint?.objectId
+        sprintId: $scope.sprint?.id
       title: 'Indicators'
       icon: 'chart-bar'
     ,
       state: 'tab.edit-sprint'
       params:
-        sprintId: $scope.sprint?.objectId
+        sprintId: $scope.sprint?.id
       title: 'Settings'
       icon: 'settings'
     ,

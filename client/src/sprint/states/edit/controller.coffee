@@ -26,38 +26,13 @@ angular.module 'Scrumble.sprint'
   $scope.activable = sprintUtils.isActivable($scope.editedSprint)
 
   $scope.activate = ->
-    $scope.project.save()
+    $scope.project.$update()
     if sprintUtils.isActivable($scope.editedSprint)
-      $scope.editedSprint.isActive = true
-      Sprint.closeActiveSprint $scope.project
-      .then ->
-        Sprint.save $scope.editedSprint
-        .then (savedSprint) ->
-          $scope.$emit 'sprint:update', nextState: 'tab.board'
+      Sprint.save($scope.editedSprint).then ->
+        $scope.$emit 'sprint:update', nextState: 'tab.board'
 
   $scope.checkSprint = (source) ->
     $scope.activable = sprintUtils.isActivable($scope.editedSprint)
     sprintUtils.ensureDataConsistency source, $scope.editedSprint, $scope.devTeam
 
   $scope.checkSprint 'team'
-
-  Sprint.getLastSpeeds($scope.project.objectId)
-  .then (speedsInfo) ->
-    formatedSpeedInfo = _ speedsInfo
-      .filter (speedInfo) ->
-        speedInfo.speed != '?'
-      .map (speedInfo) ->
-        "Sprint #{speedInfo.number}: #{speedInfo.speed}"
-      .value()
-
-    $scope.speedInfo =
-      previousSpeeds: formatedSpeedInfo.join ', '
-
-    sum = _.sum speedsInfo, (speedInfo) ->
-      if _.isNumber parseFloat speedInfo.speed
-        parseFloat speedInfo.speed
-      else
-        0
-    speedAverage = sum / (formatedSpeedInfo.length or 1)
-    if speedAverage > 0
-      $scope.speedInfo.average = speedAverage.toFixed(1)

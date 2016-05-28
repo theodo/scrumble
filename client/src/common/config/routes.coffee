@@ -9,4 +9,4 @@ angular.module 'Scrumble.common'
       sprint: ($state, Sprint) ->
         Sprint.getActiveSprint().$promise.catch (err) -> return
       project: ($state, Project) ->
-        Project.getUserProject().$promise.catch (err) -> return
+        Project.getUserProject().catch (err) -> return

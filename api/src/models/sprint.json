@@ -12,7 +12,7 @@
     },
     "objectId": {
       "type": "string",
-      "required": true
+      "required": false
     },
     "goal": {
       "type": "string",
@@ -59,6 +59,7 @@
   "relations": {
     "project": {
       "type": "belongsTo",
+      "model": "Project",
       "foreignKey": "projectId"
     }
   },

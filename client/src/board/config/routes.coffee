@@ -8,6 +8,7 @@ angular.module 'Scrumble.board'
     resolve:
       checkProjectAndSprint: (project, sprint, $state) ->
         return $state.go 'tab.project' unless project?
+        console.log 'coucou', project.id
         return $state.go('tab.new-sprint', projectId: project.id) unless sprint?
     onEnter: (sprint, $state) ->
       if sprint.bdcData?

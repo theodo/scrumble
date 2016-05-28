@@ -1,0 +1,8 @@
+appbuilder:
+  image: node:wheezy
+  volumes:
+    - ./client:/app
+  working_dir: /app
+  environment:
+    API_URL: "https://api.scrumble.io/v1"
+  command: "npm run build"

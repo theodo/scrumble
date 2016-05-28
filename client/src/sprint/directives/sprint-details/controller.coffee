@@ -20,10 +20,7 @@ angular.module 'Scrumble.sprint'
       fullscreen: useFullScreen
 
   $scope.activateSprint = (sprint) ->
-    for s in $scope.sprints
-      if s.isActive and s != sprint
-        Sprint.deactivateSprint s
-    Sprint.setActiveSprint(sprint).then ->
+    Sprint.activate(sprint.id).then ->
       $scope.$emit 'sprint:update'
 
   $scope.delete = (sprint, event) ->
