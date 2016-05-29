@@ -8,7 +8,8 @@ angular.module 'Scrumble.settings'
   Project
 ) ->
 
-  Project.get(projectId: $stateParams.projectId).$promise.then (project) ->
+  Project.get(projectId: $stateParams.projectId)
+  .then (project) ->
     $scope.project = project
   .then ->
     TrelloClient.get("/boards/#{$scope.project.boardId}/members?fields=avatarHash,fullName,initials,username")
