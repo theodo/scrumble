@@ -34,7 +34,7 @@ angular.module 'Scrumble.sprint'
 
     $mdDialog.show(confirm).then ->
       loadingToast.show 'deleting'
-      $scope.sprint.destroy().then ->
+      Sprint.delete($scope.sprint.id).then ->
         _.remove $scope.sprints, sprint
         loadingToast.hide 'deleting'
 

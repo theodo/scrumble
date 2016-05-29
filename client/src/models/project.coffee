@@ -16,7 +16,8 @@ angular.module 'Scrumble.models'
     new Project()
   find: Project.find
   query: Project.query
-  get: Project.get
+  get: (parameters, success, error) ->
+    Project.get(parameters, success, error).$promise
   getUserProject: ->
     Project.getUserProject().$promise
   update: Project.update

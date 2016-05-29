@@ -12,35 +12,21 @@ angular.module 'Scrumble.models'
         action: 'active'
   )
 
-  handleDates = (sprint) ->
-    if sprint?.bdcData?
-      # the date is saved as a string so we've to convert it
-      for day in sprint.bdcData
-        day.date = moment(day.date).toDate()
-
-      # check start/end date consistency
-      if _.isArray(sprint?.dates?.days) and sprint?.dates?.days.length > 0
-        [first, ..., last] = sprint.dates.days
-        sprint.dates.start = moment(first.date).toDate()
-        sprint.dates.end = moment(last.date).toDate()
-      else
-        if sprint?
-          sprint.dates.start = null
-          sprint.dates.end = null
-    sprint
-
   get: (parameters, success, error) ->
     resource.get(parameters, success, error).$promise
-    .then handleDates
   query: resource.query
-  getActiveSprint: resource.getActiveSprint
+  getActiveSprint: ->
+    resource.getActiveSprint().$promise
   activate: (sprintId) ->
     return unless sprintId?
-    $http.put("#{endpoint}/#{sprintId}/activate").$promise
+    $http.put("#{endpoint}/#{sprintId}/activate")
     @getLastSpeeds = (projectId) ->
   save: (sprint) ->
     return sprint.$update() if sprint.id?
     return sprint.$save()
+  delete: (sprintId) ->
+    $http.delete("#{endpoint}/#{sprintId}")
+
   new: (projectId) ->
     new resource
       projectId: projectId
@@ -58,19 +44,3 @@ angular.module 'Scrumble.models'
         speed: null
         totalPoints: null
       isActive: false
-
-#
-#     @getByProjectId = (projectId) ->
-#       @query(
-#         where:
-#           project:
-#             __type: "Pointer"
-#             className: "Project"
-#             objectId: projectId
-#       ).then (sprints) ->
-#         _.sortByOrder sprints, 'number', false
-#       .then (sprints) ->
-#         for sprint in sprints
-#           handleDates sprint
-#         sprints
-#

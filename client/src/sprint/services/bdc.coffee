@@ -28,12 +28,13 @@ angular.module 'Scrumble.sprint'
       trelloUtils.getColumnPoints(sprint.doneColumn).then (points) ->
         for day, i in sprint.bdcData
           unless day.done? or day.done == ''
+            console.log points
             day.done = points
             break
         Sprint.save(sprint).then ->
           deferred.resolve()
     else
-      deferred.reject 'doneColumn is not set'
+      deferred.reject 'DONE_COLUMN_MISSING'
 
     deferred.promise
   removeLastDoneAndSave: (sprint) ->

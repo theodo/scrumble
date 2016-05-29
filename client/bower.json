@@ -41,7 +41,8 @@
     "angular-messages": "1.4.9",
     "angular-async-loader": "1.0.1",
     "c3": "0.4.11",
-    "lodash": "4.13.1"
+    "lodash": "4.13.1",
+    "angular-date-interceptor": "~1.0.0"
   },
   "resolutions": {
     "angular": "1.4.9"

@@ -28,6 +28,7 @@ gulp.task 'vendor', (done) ->
     "#{bowerComponentsPath}/MimeJS/dist/mime.js"
     "#{bowerComponentsPath}/showdown/dist/showdown.min.js"
     "#{bowerComponentsPath}/angular-async-loader/dist/angular-async-loader.min.js"
+    "#{bowerComponentsPath}/angular-date-interceptor/dist/angular-date-interceptor.min.js"
   ]
   .pipe(concat('vendor.js'))
   .on 'error', gutil.log

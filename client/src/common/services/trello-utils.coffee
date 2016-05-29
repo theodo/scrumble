@@ -13,7 +13,7 @@ angular.module 'Scrumble.common'
     TrelloClient.get '/lists/' + columnId + '/cards?fields=name'
     .then (response) ->
       cards = response.data
-      _.sum cards, getCardPoints
+      _.sumBy cards, getCardPoints
     .catch (err) ->
       console.warn err
       return 0

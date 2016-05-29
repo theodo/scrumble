@@ -9,7 +9,7 @@ angular.module 'Scrumble.sprint'
         standard: standard
         done: null
       }
-      standard += _.sum(resources.matrix[i]) * resources.speed
+      standard += _.sumBy(resources.matrix[i]) * resources.speed
     bdc.push {
       date: moment(day.date).add(1, 'days').toDate()
       standard: standard

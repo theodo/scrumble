@@ -15,8 +15,8 @@ angular.module 'Scrumble.sprint'
     controller: 'EditSprintCtrl'
     templateUrl: 'sprint/states/edit/view.html'
     resolve:
-      sprint: (Sprint, $stateParams, $state) ->
-        Sprint.find($stateParams.sprintId)
+      sprint: ($stateParams, Sprint, $state) ->
+        Sprint.get(sprintId: $stateParams.sprintId)
         .catch (err) ->
           $state.go('tab.new-sprint')
 

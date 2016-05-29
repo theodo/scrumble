@@ -1,0 +1,1 @@
+ALTER TABLE Sprint DROP COLUMN doneColumn;

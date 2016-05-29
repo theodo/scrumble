@@ -43,7 +43,7 @@ api-push:
 
 client-bower-install:
 	eval "$$(docker-machine env -u)" && \
-	docker-compose --file docker-compose.dev.yml run --rm appbuilder ./node_modules/.bin/bower install --save --allow-root ${package} && \
+	docker-compose --file docker-compose.build.yml run --rm appbuilder ./node_modules/.bin/bower install --save --allow-root ${package} && \
 	sudo chown -R ${whoami}:${whoami} ./client/bower_components
 
 start:

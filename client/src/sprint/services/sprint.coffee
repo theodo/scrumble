@@ -66,7 +66,7 @@ angular.module 'Scrumble.sprint'
         standard: standard
         done: fetchDone(date, i)
       }
-      standard += _.sum(resources.matrix[i]) * resources.speed
+      standard += _.sumBy(resources.matrix[i]) * resources.speed
 
     if day?
       # add last point for ceremony

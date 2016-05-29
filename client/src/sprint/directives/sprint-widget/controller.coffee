@@ -1,10 +1,9 @@
 angular.module 'Scrumble.sprint'
 .controller 'SprintWidgetCtrl', (
   $scope
-  $timeout
-  $state
+  $mdToast
+  $document
   nssModal
-  sprintUtils
   dynamicFields
   bdc
   Project
@@ -44,6 +43,15 @@ angular.module 'Scrumble.sprint'
     bdc.setDonePointsAndSave $scope.sprint
     .then ->
       $scope.$emit 'bdc:update'
+    .catch (err) ->
+      if err is 'DONE_COLUMN_MISSING'
+        $mdToast.show(
+          $mdToast.simple()
+          .textContent('No "done" column select. Edit sprint settings')
+          .position('top left')
+          .hideDelay(3000)
+          .parent($document[0].querySelector 'main')
+        )
 
   $scope.backward = ->
     bdc.removeLastDoneAndSave $scope.sprint

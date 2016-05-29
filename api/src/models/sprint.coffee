@@ -1,7 +1,20 @@
 loopback = require 'loopback'
 createError = require 'http-errors'
+_ = require 'lodash'
 
 module.exports = (Sprint) ->
+  checkDates = (sprint) ->
+    if sprint?.bdcData?
+      # check start/end date consistency
+      if _.isArray(sprint?.dates?.days) and sprint?.dates?.days.length > 0
+        [first, ..., last] = sprint.dates.days
+        sprint.dates.start = first.date
+        sprint.dates.end = last.date
+      else
+        if sprint?
+          sprint.dates.start = null
+          sprint.dates.end = null
+    sprint
 
   Sprint.observe 'before save', (ctx, next) ->
     currentContext = loopback.getCurrentContext()
@@ -10,11 +23,12 @@ module.exports = (Sprint) ->
 
     # update
     if ctx.data?
+      checkDates ctx.data
       # TODO: restrict edition to board people
       return next()
 
-    console.log ctx.instance
     # new
+    checkDates ctx.instance
     Sprint.updateAll({ projectId: ctx.instance.projectId }, { isActive: false })
     .then ->
       ctx.instance.settings =
