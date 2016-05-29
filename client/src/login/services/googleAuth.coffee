@@ -38,7 +38,7 @@ angular.module 'Scrumble.login'
   login: ->
     $auth.authenticate 'google'
     .then (response) ->
-      localStorageService.set 'google_token', response.access_token
+      localStorageService.set 'google_token', response.data.token
 
   getAuthorizationHeader: getAuthorizationHeader
   getUserInfo: getUserInfo

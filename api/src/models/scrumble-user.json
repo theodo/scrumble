@@ -43,6 +43,13 @@
       "principalId": "$everyone",
       "permission": "ALLOW",
       "property": "trelloLogin"
+    },
+    {
+      "accessType": "EXECUTE",
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "ALLOW",
+      "property": "googleAuthorization"
     }
   ],
   "methods": []

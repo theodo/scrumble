@@ -1,10 +1,12 @@
 angular.module 'Scrumble.login'
-.config ($authProvider) ->
+.config ($authProvider, API_URL, GOOGLE_CLIENT_ID) ->
   $authProvider.google
-    clientId: '605908567890-3bg3dmamghq5gd7i9sqsdhvoflef0qku.apps.googleusercontent.com'
+    clientId: GOOGLE_CLIENT_ID
+    url: "#{API_URL}/ScrumbleUsers/auth/google"
     scope: [
       'https://www.googleapis.com/auth/userinfo.email'
       'https://www.googleapis.com/auth/gmail.send'
     ]
     redirectUri: window.location.origin + window.location.pathname
-    responseType: 'token'
+    optionalUrlParams: ['display', 'access_type']
+    accessType: 'offline'

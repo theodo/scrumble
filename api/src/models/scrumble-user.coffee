@@ -1,4 +1,5 @@
 request = require 'request'
+_ = require 'lodash'
 
 module.exports = (ScrumbleUser) ->
   unless process.env.TRELLO_KEY?
@@ -7,6 +8,8 @@ module.exports = (ScrumbleUser) ->
   config =
     TRELLO_KEY: process.env.TRELLO_KEY
     TRELLO_API_ENDPOINT: 'https://api.trello.com/1'
+    GOOGLE_API_TOKEN_ENDPOINT: 'https://accounts.google.com/o/oauth2/token'
+    GOOGLE_API_SECRET: process.env.GOOGLE_API_SECRET
 
   authenticate = (scrumbleUser) ->
     ttl = scrumbleUser.constructor.settings.maxTTL
@@ -52,9 +55,28 @@ module.exports = (ScrumbleUser) ->
         console.error err
         next err
 
+  fetchGoogleToken = (code, clientId, redirectUri, next) ->
+    request.post config.GOOGLE_API_TOKEN_ENDPOINT,
+      form:
+        code: code
+        client_id: clientId
+        client_secret: config.GOOGLE_API_SECRET
+        redirect_uri: redirectUri
+        grant_type: 'authorization_code'
+      json: true
+    , (err, res, accessToken) ->
+      return next(err) if err?
+      if res.statusCode isnt 200
+        console.error 'access error', accessToken
+        return next(accessToken?.error)
+      next(null, accessToken)
+
+  ScrumbleUser.googleAuthorization = (req, next) ->
+    fetchGoogleToken req.body.code, req.body.clientId, req.body.redirectUri, (error, accessToken) ->
+      # TODO: savec accessToken.refresh_token
+      next(null, token: accessToken.access_token)
+
   ScrumbleUser.setProject = (req, next) ->
-    console.log '************'
-    console.log req.body.projectId
     unless req.body.projectId?
       return next new createError.BadRequest('Missing required attribute projectId')
 
@@ -69,6 +91,13 @@ module.exports = (ScrumbleUser) ->
     ]
     returns: { type: 'object', root: true }
     http: { verb: 'post', path: '/trello-login' }
+
+  ScrumbleUser.remoteMethod 'googleAuthorization',
+    accepts: [
+      { arg: 'req', type: 'object', http: { source: 'req' } }
+    ]
+    returns: { type: 'object', root: true }
+    http: { verb: 'post', path: '/auth/google' }
 
   ScrumbleUser.remoteMethod 'setProject',
     description: 'Set user current project'

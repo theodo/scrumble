@@ -6,5 +6,6 @@ gulp.task 'constant', ->
     name: 'Scrumble.constants'
     constants:
       API_URL: process.env.API_URL or 'http://localhost:8000/v1'
+      GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID or 'TO BE DEFINED'
     stream: true
   .pipe gulp.dest "#{__dirname}/../src"

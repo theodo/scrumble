@@ -24,6 +24,7 @@ api:
     PORT: "8000"
     DB_DATABASE: postgres
     DB_USERNAME: postgres
+    GOOGLE_CLIENT_ID: ***
     GOOGLE_API_SECRET: ***
     TRELLO_KEY: ***
     TRELLO_SECRET: ***
