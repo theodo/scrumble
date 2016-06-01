@@ -93,7 +93,7 @@ angular.module 'Scrumble.sprint'
     return unless _.isArray sprint?.bdcData
     [first, ..., last] = sprint.bdcData
     if _.isNumber last.done
-      return if last.done > last.standard then 'ok' else 'ko'
+      return if last.done >= last.standard then 'ok' else 'ko'
     else
       return 'unknown'
   # return true if done > standard, false if done < standard, undefined otherwise
