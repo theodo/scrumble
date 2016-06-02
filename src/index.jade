@@ -8,6 +8,10 @@ html(lang="en", ng-app="Scrumble")
     link(rel="stylesheet" href="css/vendor.css")
     link(rel="stylesheet" href="css/app.css")
     link(rel="icon", type="image/x-icon", href="images/favicon.ico")
+    script.
+      if (window.location.host.match(/^\w+.github.io$/g) && window.location.protocol != "https:"){
+      window.location.protocol = "https";
+      }
   body
     md-content.grey-background(ui-view layout="column")
     script(src='js/please-wait.min.js')
