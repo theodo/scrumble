@@ -50,7 +50,7 @@ angular.module 'Scrumble.storage'
             board.boardId = boardId
             board.save()
           else
-            project = new Project()
+            project = Project.new()
             project.boardId = boardId
 
             @project = project

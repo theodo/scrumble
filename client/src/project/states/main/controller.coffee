@@ -24,7 +24,7 @@ angular.module 'Scrumble.settings'
     .$promise.then (response) ->
       return response[0] if response.length > 0
       console.debug "No project with boardId #{boardId} found. Creating a new one"
-      project = new Project()
+      project = Project.new()
       project.boardId = boardId
       project.name = _.find($scope.boards, (board) ->
         board.id is project.boardId
@@ -34,7 +34,7 @@ angular.module 'Scrumble.settings'
       $scope.project = project
       $scope.saving = false
       ScrumbleUser2.setProject(projectId: project.id).$promise.then ->
-        if not $scope.project.team.length > 0
+        if not $scope.project.team?.length > 0
           $scope.$emit 'project:update', {nextState: 'tab.team', params: projectId: project.id}
         else
           $scope.$emit 'project:update', nextState: 'tab.board'

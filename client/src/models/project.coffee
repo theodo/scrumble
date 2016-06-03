@@ -13,7 +13,8 @@ angular.module 'Scrumble.models'
   )
 
   new: ->
-    new Project()
+    new Project
+      team: []
   find: Project.find
   query: Project.query
   get: (parameters, success, error) ->

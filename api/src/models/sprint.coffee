@@ -1,6 +1,7 @@
 loopback = require 'loopback'
 createError = require 'http-errors'
 _ = require 'lodash'
+moment = require 'moment'
 
 module.exports = (Sprint) ->
   checkDates = (sprint) ->
@@ -8,8 +9,8 @@ module.exports = (Sprint) ->
       # check start/end date consistency
       if _.isArray(sprint?.dates?.days) and sprint?.dates?.days.length > 0
         [first, ..., last] = sprint.dates.days
-        sprint.dates.start = first.date
-        sprint.dates.end = last.date
+        sprint.dates.start = moment(first.date).toISOString()
+        sprint.dates.end = moment(last.date).toISOString()
       else
         if sprint?
           sprint.dates.start = null
