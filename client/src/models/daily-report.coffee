@@ -23,3 +23,7 @@ angular.module 'Scrumble.models'
     return dailyReport.$save()
   new: () ->
     new DailyReport()
+# .service 'DailyReportPing', ($http, API_URL) ->
+#   endpoint = "#{API_URL}/DailyReportPing"
+#   ping: (name) ->
+#     $http.post endpoint, name: name

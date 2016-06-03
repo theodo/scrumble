@@ -9,12 +9,31 @@ It is connected to your Trello board and GoogleApps account and helps to:
 
 ## Installation
 
-I use docker, docker-compose for dev environment and docker-machine to deploy.
-All the commands are in the Makefile. You should read this file.
+The easiest way to develop on Scrumble is to install:
+- [docker](https://docs.docker.com/engine/installation/)
+- [docker-compose](https://docs.docker.com/compose/install/)
+- [docker-machine](https://docs.docker.com/machine/install-machine/)
+
+[Make sure your user is part of the docker group](http://askubuntu.com/questions/477551/how-can-i-use-docker-without-sudo)
+to avoid running all commands as root.
+
 
 ```
-git clone git@github.com:theodo/scrumble.git
+git clone git@github.com:theodo/scrumble.git && cd scrumble
+cp docker-compose.dev.yml.dist docker-compose.dev.yml
+# replace the missing variables
+
 make install
-make client-start
-make api-start
+make start
 ```
+
+## Deploy
+
+Create the docker-machine remote host `make create-host remoteip=xxx.xxx.xxx.xxx`.
+
+Build&push all docker images from local and pull them from remote: `make build-deploy-all`.
+
+## Develop
+
+There are many commands in the makefile that are self comprehensible. Please,
+read the makefile.
