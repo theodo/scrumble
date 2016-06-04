@@ -21,7 +21,6 @@ angular.module 'Scrumble.models'
   activate: (sprintId) ->
     return unless sprintId?
     $http.put("#{endpoint}/#{sprintId}/activate")
-    @getLastSpeeds = (projectId) ->
   save: (sprint) ->
     return sprint.$update() if sprint.id?
     return sprint.$save()

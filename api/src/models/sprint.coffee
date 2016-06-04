@@ -52,18 +52,33 @@ module.exports = (Sprint) ->
       throw new createError.NotFound()
     .catch next
 
+  Sprint.activate = (req, sprintId, next) ->
+    Sprint.app.models.ScrumbleUser.findById(req.accessToken.userId)
+    .then (user) ->
+      throw new createError.NotFound() unless user?.projectId?
+      Sprint.findById(sprintId)
+      .then (sprint) ->
+        throw new createError.Unauthorized() unless user?.projectId is sprint.projectId
+        sprint
+    .then (sprint) ->
+      Sprint.updateAll({ projectId: sprint.projectId }, { isActive: false })
+      .then ->
+        sprint.isActive = true
+        Sprint.upsert sprint, (err) ->
+          next err, 'OK'
+    .catch next
+
   Sprint.remoteMethod 'getActiveSprint',
     accepts: [
-      {
-        arg: 'req'
-        type: 'object'
-        http:
-          source: 'req'
-      }
+      { arg: 'req', type: 'object', http: { source: 'req' } }
     ]
-    returns:
-      type: 'object'
-      root: true
-    http:
-      verb: 'get'
-      path: '/active'
+    returns: { type: 'object', root: true }
+    http: { verb: 'get', path: '/active' }
+
+  Sprint.remoteMethod 'activate',
+    accepts: [
+      { arg: 'req', type: 'object', http: { source: 'req' } }
+      { arg: 'sprintId', type: 'number', http: { source: 'path' } }
+    ]
+    returns: { type: 'string', root: true }
+    http: { verb: 'put', path: '/:sprintId/activate' }
