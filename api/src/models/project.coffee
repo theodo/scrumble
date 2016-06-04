@@ -12,6 +12,7 @@ module.exports = (Project) ->
     # update
     # if ctx.data?
     # TODO: restrict edition to board people
+    return next() if ctx.data?
 
     # new
     ctx.instance?.settings =

@@ -8,6 +8,9 @@ module.exports = (DailyReport) ->
     return next() unless currentContext?
     token = currentContext?.active?.http?.req?.accessToken
 
+    # update
+    return next() if ctx.data?
+
     # new
     DailyReport.app.models.ScrumbleUser.findById(token.userId)
     .then (user) ->

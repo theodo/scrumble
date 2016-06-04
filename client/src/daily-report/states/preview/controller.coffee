@@ -9,6 +9,7 @@ angular.module 'Scrumble.daily-report'
   message
   reportBuilder
   dailyReport
+  DailyReport
   DailyReportPing
   todaysGoals
 ) ->
@@ -44,7 +45,7 @@ angular.module 'Scrumble.daily-report'
         else
           dailyReport.sections.previousGoals = todaysGoals
           dailyReport.sections.todaysGoals = null
-          dailyReport.save()
+          DailyReport.save dailyReport
           sentFeedback = $mdToast.simple().position('top right').content('Email sent')
           ping = new DailyReportPing()
           ping.name = dailyReport.sections.subject
