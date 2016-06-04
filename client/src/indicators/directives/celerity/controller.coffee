@@ -5,7 +5,10 @@ angular.module 'Scrumble.indicators'
   Sprint
   sprintUtils
 ) ->
-  Sprint.getByProjectId $scope.project.objectId
+  Sprint.query
+    filter:
+      where:
+        projectId: $scope.project.id
   .then (sprints) ->
     sprintNumbers = ['sprint']
     expected = [ 'Expected Celerity' ]

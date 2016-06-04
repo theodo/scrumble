@@ -14,7 +14,8 @@ angular.module 'Scrumble.models'
 
   get: (parameters, success, error) ->
     resource.get(parameters, success, error).$promise
-  query: resource.query
+  query: (parameters, success, error) ->
+    resource.query(parameters, success, error).$promise
   getActiveSprint: ->
     resource.getActiveSprint().$promise
   activate: (sprintId) ->

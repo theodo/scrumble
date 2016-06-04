@@ -2,6 +2,7 @@ angular.module 'Scrumble.indicators'
 .controller 'ChecklistCtrl', (
   $scope
   loadingToast
+  Sprint
 ) ->
   if _.isArray $scope.sprint?.indicators?.checklists
     for checklist, i in $scope.sprint.indicators.checklists
@@ -13,7 +14,7 @@ angular.module 'Scrumble.indicators'
     $scope.saving = true
     $scope.sprint.indicators ?= {}
     $scope.sprint.indicators.checklists = $scope.template
-    $scope.sprint.save()
+    Sprint.save $scope.sprint
     .then ->
       loadingToast.hide()
       $scope.saving = false

@@ -7,5 +7,4 @@ angular.module 'Scrumble.settings'
   controller: ($scope, Speed) ->
     Speed.average($scope.projectId)
     .then (averageSpeed) ->
-      console.log averageSpeed
       $scope.average = averageSpeed

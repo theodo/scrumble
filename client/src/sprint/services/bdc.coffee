@@ -28,7 +28,6 @@ angular.module 'Scrumble.sprint'
       trelloUtils.getColumnPoints(sprint.doneColumn).then (points) ->
         for day, i in sprint.bdcData
           unless day.done? or day.done == ''
-            console.log points
             day.done = points
             break
         Sprint.save(sprint).then ->

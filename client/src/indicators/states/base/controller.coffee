@@ -3,6 +3,7 @@ angular.module 'Scrumble.indicators'
   $scope
   currentSprint
   companies
+  Sprint
 ) ->
   $scope.companies = companies
   $scope.currentSprint = currentSprint
@@ -13,14 +14,13 @@ angular.module 'Scrumble.indicators'
     $scope.checklistsTemplate = company.checklists
 
   $scope.updateCompany = (name) ->
-    $scope.project?.save()
+    $scope.project?.$update()
     company = _.find companies, name: name
     if company?
-      console.log company
       $scope.clientSurveyTemplate = company.satisfactionSurvey
       $scope.checklistsTemplate = company.checklists
 
   $scope.saveIndicators = (indicators) ->
     return unless $scope.sprint?
     $scope.sprint.indicators = indicators
-    $scope.sprint.save()
+    Sprint.save $scope.sprint
