@@ -35,7 +35,8 @@ module.exports = (ScrumbleUser) ->
       return next err if err?
 
       ScrumbleUser.findOne
-        remoteId: trelloInfo.id
+        where:
+          remoteId: trelloInfo.id
       .then (user) ->
         if user?
           authenticate(user).then (token) ->
