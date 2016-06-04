@@ -4,22 +4,41 @@ _ = require 'lodash'
 projects = require('./parse-backup/Project').results
 sprints = require('./parse-backup/Sprint').results
 dailyReports = require('./parse-backup/DailyReport').results
+users = require('./parse-backup/NotSoShittyUser').results
 
 module.exports = (server, next) ->
-  return next()
+  # return next()
   Sprint = server.models.Sprint
   Project = server.models.Project
   DailyReport = server.models.DailyReport
   ScrumbleUser = server.models.ScrumbleUser
 
+  generatePassword = (length) ->
+    characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
+    result = (characters[Math.floor(Math.random() * characters.length)] for i in [1..length])
+    result.join()
+
   insertProjects = ->
-    Project.deleteAll().then ->
-      for project in projects
-        project.name = 'NO NAME' unless project.name?
-      projects = _.filter projects, (project) ->
-        project.boardId?
-      inserts = (Project.create(project) for project in projects)
-      Promise.all(inserts)
+    Promise.each projects, (project) ->
+      project.name = 'NO NAME' unless project.name?
+      return unless project.boardId?
+      Project.create(project)
+
+  insertUsers = ->
+    Promise.each users, (user) ->
+      console.log user.email
+      Project.findOne
+        where:
+          objectId: user.project?.objectId
+      .then (project) ->
+        if project? and user.project?.objectId?
+          user.projectId = project.id
+        user.created = user.createdAt
+        user.lastupdated = user.updatedAt
+        user.emailverified = true
+        user.username = user.email
+        user.password = generatePassword 100
+        ScrumbleUser.create(user)
 
   insertSprints = ->
     Promise.each sprints, (sprint) ->
@@ -59,6 +78,9 @@ module.exports = (server, next) ->
   .then ->
     console.log 'projects deleted'
     insertProjects()
+  .then ->
+    console.log 'users deleted'
+    insertUsers()
   .then ->
     console.log 'projects inserted'
     insertSprints()
