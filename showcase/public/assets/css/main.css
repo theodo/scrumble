@@ -1835,10 +1835,33 @@
 	}
 
 	blockquote {
-		border-left: solid 4px rgba(255, 255, 255, 0.125);
+		/*border-left: solid 4px rgba(255, 255, 255, 0.125);*/
 		font-style: italic;
 		margin: 0 0 2em 0;
 		padding: 0.5em 0 0.5em 2em;
+		font-family: 'Noticia Text', Georgia, serif;
+		position: relative;
+	}
+
+	blockquote i {
+		top: -16px;
+		font-size: 26px;
+    display: block;
+		position: absolute;
+    line-height: 1;
+    left: 0;
+	}
+
+	blockquote cite {
+    display: block;
+    font-size: 12px;
+    padding-right: 1em;
+    margin-top: 16px;
+    font-style: normal;
+    font-weight: 400;
+    color: #bbb;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 	}
 
 	code {
@@ -2655,7 +2678,7 @@
 	}
 
 		.features article {
-			padding: 1.75em 1.75em 0.1em 1.75em ;
+			padding: 2.75em 1.75em 0.1em 1.75em ;
 			background-color: #353849;
 			border-radius: 5px;
 			margin: 1.5em 3em 1.5em 0;
