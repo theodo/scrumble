@@ -2,7 +2,7 @@ angular.module 'Scrumble.login'
 .controller 'TrelloLoginCtrl', (
   $scope
   $rootScope
-  TrelloClient
+  TrelloApi
   $state
   $auth
   $mdToast
@@ -14,9 +14,9 @@ angular.module 'Scrumble.login'
 
   $scope.login = ->
     $scope.doing = true
-    TrelloClient.authenticate()
-    .then (response) ->
-      ScrumbleUser2.login(trelloToken: response.token).$promise
+    TrelloApi.Authenticate()
+    .then ->
+      ScrumbleUser2.login(trelloToken: TrelloApi.Token()).$promise
     .then (response) ->
       ApiAccessToken.set response.token
       $state.go 'tab.board'

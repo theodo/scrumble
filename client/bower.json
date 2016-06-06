@@ -45,6 +45,6 @@
     "angular-date-interceptor": "~1.0.0"
   },
   "resolutions": {
-    "angular": "1.4.9"
+    "angular": "1.5.6"
   }
 }

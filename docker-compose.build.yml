@@ -6,4 +6,5 @@ appbuilder:
   environment:
     API_URL: "https://api.scrumble.io/v1"
     GOOGLE_CLIENT_ID: '605908567890-3bg3dmamghq5gd7i9sqsdhvoflef0qku.apps.googleusercontent.com'
+    TRELLO_KEY: 2dcb2ba290c521d2b5c2fd69cc06830e
   command: "npm run build"

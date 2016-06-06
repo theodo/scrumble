@@ -7,7 +7,7 @@ dailyReports = require('./parse-backup/DailyReport').results
 users = require('./parse-backup/NotSoShittyUser').results
 
 module.exports = (server, next) ->
-  # return next()
+  return next()
   Sprint = server.models.Sprint
   Project = server.models.Project
   DailyReport = server.models.DailyReport
