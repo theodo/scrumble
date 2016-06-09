@@ -78,7 +78,7 @@ angular.module 'Scrumble.common'
       state: 'tab.edit-sprint'
       params:
         sprintId: $scope.sprint?.id
-      title: 'Settings'
+      title: 'Edit Sprint'
       icon: 'settings'
     ,
     ]
