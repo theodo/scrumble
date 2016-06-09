@@ -8,4 +8,4 @@ CREATE TABLE organization (
   updatedAt timestamp
 );
 
-ALTER TABLE Project ADD COLUMN organizationId varchar(64);
+ALTER TABLE Project ADD COLUMN organizationId integer references organization(id);

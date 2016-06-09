@@ -7,6 +7,8 @@ angular.module 'Scrumble.indicators'
     controller: 'IndicatorsCtrl'
     resolve:
       currentSprint: (Sprint, $stateParams) ->
-        Sprint.get sprintId: $stateParams.sprintId
-      companies: (Company) ->
-        Company.query()
+        Sprint.get
+          sprintId: $stateParams.sprintId
+          filter:
+            include:
+              project: 'organization'

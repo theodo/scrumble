@@ -31,7 +31,7 @@
       "required": false
     },
     "organizationId": {
-      "type": "string",
+      "type": "number",
       "required": false
     },
     "createdAt": {
@@ -54,6 +54,11 @@
       "type": "hasOne",
       "model": "DailyReport",
       "foreignKey": "projectId"
+    },
+    "organization": {
+      "type": "belongsTo",
+      "model": "Organization",
+      "foreignKey": "organizationId"
     }
   },
   "acls": [
