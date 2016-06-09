@@ -1,0 +1,16 @@
+h2 {{ organization.name }}
+
+form(layout="column")
+  div(ng-repeat="item in organization.satisfactionSurvey")
+    md-input-container.md-block
+      label Question {{ $index + 1 }}
+      input(ng-model="item.label")
+    
+    div(ng-if="item.type == 'radio'" layout="row")
+      div(ng-repeat="choice in item.items")
+        md-input-container
+          label Answer {{ $index + 1 }}
+          input(ng-model="choice.label")
+div(layout="row" layout-align="center center" layout-wrap)
+  section
+    md-button.md-raised.md-primary(ng-click="save(organization)") Save

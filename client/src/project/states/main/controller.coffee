@@ -26,9 +26,11 @@ angular.module 'Scrumble.settings'
       console.debug "No project with boardId #{boardId} found. Creating a new one"
       project = Project.new()
       project.boardId = boardId
-      project.name = _.find($scope.boards, (board) ->
+      board = _.find($scope.boards, (board) ->
         board.id is project.boardId
-      ).name
+      )
+      project.organizationId = board.idOrganization
+      project.name = board?.name
       project.$save()
     .then (project) ->
       $scope.project = project

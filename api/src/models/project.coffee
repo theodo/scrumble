@@ -20,6 +20,7 @@ module.exports = (Project) ->
     return next()
 
   Project.getUserProject = (req, next) ->
+    next('yolo')
     Project.app.models.ScrumbleUser.findById(req.accessToken.userId)
     .then (user) ->
       throw new createError.NotFound() unless user?.projectId?
