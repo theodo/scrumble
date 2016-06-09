@@ -85,7 +85,7 @@ module.exports = (ScrumbleUser) ->
   ScrumbleUser.googleAuthorization = (req, next) ->
     fetchGoogleToken req.body.code, req.body.clientId, req.body.redirectUri, (error, accessToken) ->
       # TODO: savec accessToken.refresh_token
-      next(error, token: accessToken.access_token)
+      next(error, token: accessToken?.access_token)
 
   ScrumbleUser.setProject = (req, next) ->
     unless req.body.projectId?

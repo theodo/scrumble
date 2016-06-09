@@ -12,7 +12,7 @@ app.start = ->
 
 app.use (req, res, next) ->
   # Hereafter, we log all the requests to the functional log stream
-  # logger.log req, res
+  logger.logRequest(req)
   next()
 
 app.use loopback.token
