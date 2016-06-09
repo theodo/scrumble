@@ -4,6 +4,7 @@ angular.module 'Scrumble.settings'
   TrelloClient
   Project
   ScrumbleUser2
+  Organization
 ) ->
   TrelloClient.get('/members/me/boards').then (response) ->
     $scope.boards = response.data
@@ -29,9 +30,11 @@ angular.module 'Scrumble.settings'
       board = _.find($scope.boards, (board) ->
         board.id is project.boardId
       )
-      project.organizationId = board.idOrganization
-      project.name = board?.name
-      project.$save()
+      Organization.findOrCreate(board.idOrganization)
+      .then (id) ->
+        project.organizationId = id
+        project.name = board?.name
+        project.$save()
     .then (project) ->
       $scope.project = project
       $scope.saving = false

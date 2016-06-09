@@ -49,6 +49,11 @@
       "type": "hasMany",
       "model": "Sprint",
       "foreignKey": "projectId"
+    },
+    "dailyReport": {
+      "type": "hasOne",
+      "model": "DailyReport",
+      "foreignKey": "projectId"
     }
   },
   "acls": [

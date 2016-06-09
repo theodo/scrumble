@@ -8,11 +8,13 @@ angular.module 'Scrumble.common'
   Project
   sprint
   project
+  Organization
 ) ->
   # since views are nested, project and sprint objects will be available
   # for all child states
   $scope.project = project
   $scope.sprint = sprint
+  Organization.migration project
 
   window.HW_config =
     selector: '#changelog'
