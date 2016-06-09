@@ -1,37 +1,25 @@
 {
-  "name": "Project",
+  "name": "Organization",
   "base": "PersistedModel",
   "idInjection": true,
   "options": {
       "promisify": true
   },
   "properties": {
-    "boardId": {
-      "type": "string",
-      "required": true
-    },
-    "objectId": {
-      "type": "string",
-      "required": false
-    },
     "name": {
       "type": "string",
       "required": true
     },
-    "columnMapping": {
+    "remoteId": {
+      "type": "string",
+      "required": true
+    },
+    "satisfactionSurvey": {
       "type": "object",
       "required": false
     },
-    "settings": {
+    "checklists": {
       "type": "object",
-      "required": false
-    },
-    "team": {
-      "type": "object",
-      "required": false
-    },
-    "organizationId": {
-      "type": "number",
       "required": false
     },
     "createdAt": {
@@ -44,23 +32,7 @@
     }
   },
   "validations": [],
-  "relations": {
-    "sprints": {
-      "type": "hasMany",
-      "model": "Sprint",
-      "foreignKey": "projectId"
-    },
-    "dailyReport": {
-      "type": "hasOne",
-      "model": "DailyReport",
-      "foreignKey": "projectId"
-    },
-    "organization": {
-      "type": "belongsTo",
-      "model": "Organization",
-      "foreignKey": "organizationId"
-    }
-  },
+  "relations": {},
   "acls": [
     {
       "principalType": "ROLE",

@@ -1,5 +1,6 @@
 Promise = require 'bluebird'
 users = require '../fixtures/scrumble-users'
+organizations = require '../fixtures/organizations'
 
 loadUser = (app, user) ->
   ScrumbleUser = app.models.ScrumbleUser
@@ -12,6 +13,12 @@ loadUser = (app, user) ->
 loadUsers = (app) ->
   Promise.each users, (user) ->
     loadUser(app, user)
+
+loadOrganizations = (app) ->
+  Organization = app.models.Organization
+
+  Promise.each organizations, (organization) ->
+    Organization.create organization
 
 loadProject = (app, project) ->
   Project = app.models.Project
@@ -26,7 +33,9 @@ loadProject = (app, project) ->
 
 module.exports =
   loadAll: (app) ->
-    loadUsers(app)
+    loadUsers(app).then ->
+      loadOrganizations(app)
+
   deleteAll: (app) ->
     app.models.AccessToken.deleteAll().then ->
       app.models.ScrumbleUser.deleteAll()
@@ -34,6 +43,8 @@ module.exports =
       app.models.Sprint.deleteAll()
     .then ->
       app.models.Project.deleteAll()
+    .then ->
+      app.models.Organization.deleteAll()
     .catch (err) ->
       console.error err
   loadUser: loadUser

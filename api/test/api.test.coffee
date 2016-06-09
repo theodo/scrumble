@@ -21,6 +21,24 @@ tests = [
   model: "Sprints/active"
   token: "chuckDefinesHisOwnTokens"
   expect: 200
+
+  method: "GET"
+  model: "Organizations"
+  expect: 401
+,
+  method: "GET"
+  model: "Organizations"
+  token: "chuckDefinesHisOwnTokens"
+  expect: 200
+,
+  method: "POST"
+  model: "Organizations"
+  expect: 401
+,
+  method: "POST"
+  model: "Organizations"
+  token: "chuckDefinesHisOwnTokens"
+  expect: 401
 ]
 
 describe 'Status codes', ->

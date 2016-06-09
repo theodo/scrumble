@@ -4,6 +4,7 @@ angular.module 'Scrumble.settings'
   TrelloClient
   Project
   ScrumbleUser2
+  Organization
 ) ->
   TrelloClient.get('/members/me/boards').then (response) ->
     $scope.boards = response.data
@@ -26,10 +27,14 @@ angular.module 'Scrumble.settings'
       console.debug "No project with boardId #{boardId} found. Creating a new one"
       project = Project.new()
       project.boardId = boardId
-      project.name = _.find($scope.boards, (board) ->
+      board = _.find($scope.boards, (board) ->
         board.id is project.boardId
-      ).name
-      project.$save()
+      )
+      Organization.findOrCreate(board.idOrganization)
+      .then (id) ->
+        project.organizationId = id
+        project.name = board?.name
+        project.$save()
     .then (project) ->
       $scope.project = project
       $scope.saving = false
