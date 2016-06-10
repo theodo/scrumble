@@ -24,9 +24,9 @@ migration-down:
 
 npm-install:
 	eval "$$(docker-machine env -u)" && \
-	docker-compose run --rm api \
+	docker-compose --file docker-compose.dev.yml run --rm api \
 	npm install --save-exact --save $(package) &&\
-	sudo chown ${whoami}:${whoami} package.json &&\
+	sudo chown ${whoami}:${whoami} api/package.json &&\
 	sudo chown -R ${whoami}:${whoami} api/node_modules
 
 run-test:
