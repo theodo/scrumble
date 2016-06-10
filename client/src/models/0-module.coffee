@@ -1,1 +1,4 @@
-angular.module 'Scrumble.models', ['Scrumble.constants']
+angular.module 'Scrumble.models', [
+  'ngResource'
+  'Scrumble.constants'
+]

@@ -1,20 +1,20 @@
 describe 'SprintDetailsCtrl', ->
   beforeEach module 'Scrumble.sprint'
 
-  beforeEach inject ($controller, $mdDialog) ->
+  beforeEach inject ($controller, $mdDialog, Sprint) ->
     @$controller = $controller
     @$mdDialog = $mdDialog
+    @Sprint = Sprint
 
   it 'should delete a sprint when calling $scope.delete', ->
+    spyOn(@Sprint, 'delete').and.returnValue
+      then: (callback) -> callback()
     sprint =
-      destroy: -> return
+      number: 1
 
     $scope =
       sprint: sprint
       sprints: ['A', sprint, 'B']
-
-    spyOn($scope.sprint, 'destroy').and.returnValue
-      then: (callback) -> callback()
 
     loadingToastSpy =
       show: jasmine.createSpy 'show'
@@ -27,7 +27,7 @@ describe 'SprintDetailsCtrl', ->
       $scope: $scope
       $state: null
       $mdMedia: null
-      Sprint: null
+      Sprint: @Sprint
       $mdDialog: @$mdDialog
       loadingToast: loadingToastSpy
 
@@ -35,14 +35,14 @@ describe 'SprintDetailsCtrl', ->
 
     expect(loadingToastSpy.show).toHaveBeenCalled()
     expect(loadingToastSpy.hide).toHaveBeenCalled()
-    expect($scope.sprint.destroy).toHaveBeenCalled()
+    expect(@Sprint.delete).toHaveBeenCalled()
     expect($scope.sprints.length).toBe(2)
     expect($scope.sprints[0]).toBe('A')
     expect($scope.sprints[1]).toBe('B')
 
   it 'should go to sprint indicator state when calling $scope.indicators', ->
     sprint =
-      objectId: 'ABCD'
+      id: 'ABCD'
 
     $scope =
       sprint: sprint

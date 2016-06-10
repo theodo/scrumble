@@ -5,8 +5,9 @@ module.exports = (config) ->
       'public/js/vendor.js'
       'node_modules/angular-mocks/angular-mocks.js'
       'public/js/templates.js'
-      'client/{,**/}module.coffee'
-      'client/{,**/}*.coffee'
+      'src/ngConstants.js'
+      'src/{,**/}module.coffee'
+      'src/{,**/}*.coffee'
     ]
     exclude: []
     preprocessors:

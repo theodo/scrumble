@@ -4,4 +4,6 @@ angular.module 'Scrumble.login', [
   'ui.router'
   'permission'
   'trello-api-client'
+  'trello'
+  'Scrumble.constants'
 ]

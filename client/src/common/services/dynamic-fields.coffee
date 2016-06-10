@@ -1,5 +1,5 @@
 angular.module 'Scrumble.common'
-.service 'dynamicFields', ($q, trelloUtils, trelloAuth, sprintUtils) ->
+.service 'dynamicFields', ($q, trelloUtils, TrelloClient, sprintUtils) ->
 
   dict =
     '{sprintNumber}':
@@ -54,8 +54,8 @@ angular.module 'Scrumble.common'
       icon: 'cart'
     '{me}':
       value: (sprint, project) ->
-        trelloAuth.getTrelloInfo().then (user) ->
-          user.fullName
+        TrelloClient.get('/member/me').then (response) ->
+          response.data.fullName
       description: 'Your fullname according to Trello'
       icon: 'account-circle'
 

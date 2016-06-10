@@ -4,18 +4,18 @@ describe 'dynamicFields', ->
   beforeEach inject (
     dynamicFields,
     $rootScope,
-    trelloAuth,
     sprintUtils,
     trelloUtils
+    TrelloClient
   ) ->
     @dynamicFields = dynamicFields
     @$rootScope = $rootScope
     @sprintUtils = sprintUtils
     @trelloUtils = trelloUtils
-    trelloAuth.getTrelloInfo = ->
+    TrelloClient.get = ->
       then: (callback) ->
         callback
-          fullName: 'Chuck Norris'
+          data: fullName: 'Chuck Norris'
 
   describe 'getDictionary', ->
     it 'should return an object', ->

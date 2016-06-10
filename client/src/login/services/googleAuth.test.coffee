@@ -10,6 +10,7 @@ describe 'dynamicFields', ->
     $rootScope
     localStorageService
     googleAuth
+    API_URL
   ) ->
     @$state = $state
     @$rootScope = $rootScope
@@ -20,6 +21,7 @@ describe 'dynamicFields', ->
     @$q = $q
     @$httpBackend = $injector.get '$httpBackend'
     @localStorageService.set 'trello_token', 'abc'
+    @API_URL = API_URL
 
   afterEach ->
     @localStorageService.clearAll()
@@ -124,7 +126,7 @@ describe 'dynamicFields', ->
 
   describe 'login', ->
     it 'should set local storage', ->
-      spyOn(@$auth, 'authenticate').and.returnValue(then: (callback) -> callback({access_token: 'toto'}))
+      spyOn(@$auth, 'authenticate').and.returnValue(then: (callback) -> callback({data: token: 'toto'}))
       @googleAuth.login()
 
       @$rootScope.$digest()

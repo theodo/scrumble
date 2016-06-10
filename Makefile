@@ -40,6 +40,12 @@ api-push:
 	eval "$$(docker-machine env -u)" && \
 	docker push nicgirault/scrumble-api
 
+client-npm-install:
+	eval "$$(docker-machine env -u)" && \
+	docker-compose --file docker-compose.build.yml run --rm appbuilder npm install --save-dev  ${package} && \
+	sudo chown -R ${whoami}:${whoami} ./client/node_modules && \
+	sudo chown -R ${whoami}:${whoami} ./client/package.json
+
 client-bower-install:
 	eval "$$(docker-machine env -u)" && \
 	docker-compose --file docker-compose.build.yml run --rm appbuilder ./node_modules/.bin/bower install --save --allow-root ${package} && \
@@ -48,6 +54,10 @@ client-bower-install:
 start:
 	eval "$$(docker-machine env -u)" && \
 	docker-compose --file docker-compose.dev.yml up
+
+client-test:
+	eval "$$(docker-machine env -u)" && \
+	docker-compose -f docker-compose.test.yml run --rm apptest
 
 client-build:
 	eval "$$(docker-machine env -u)" && \
