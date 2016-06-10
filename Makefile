@@ -29,10 +29,9 @@ npm-install:
 	sudo chown ${whoami}:${whoami} api/package.json &&\
 	sudo chown -R ${whoami}:${whoami} api/node_modules
 
-run-test:
+api-test:
 	eval "$$(docker-machine env -u)" && \
-	docker-compose -f docker-compose.test.yml run --rm apitest && \
-	npm test
+	docker-compose -f docker-compose.test.yml run --rm apitest
 
 api-build:
 	eval "$$(docker-machine env -u)" && \

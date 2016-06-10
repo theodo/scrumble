@@ -7,7 +7,7 @@ module.exports = {
   run: function(conf, app, url, beforeEachAction, afterEachAction, callback) {
     var server;
     var agent = supertest.agent(url);
-    var baseURL = '/api/';
+    var baseURL = '/v1/';
 
     if (typeof conf !== 'object') {
       return callback('Failed to load test configuration from file');
@@ -42,7 +42,7 @@ module.exports = {
         }
 
         var hasData = (c.hasOwnProperty('withData'));
-        var isWithAuthentication = (c.hasOwnProperty('username') && c.hasOwnProperty('password'));
+        var isWithAuthentication = (c.hasOwnProperty('username') && c.hasOwnProperty('password')) || c.hasOwnProperty('token');
         var authenticationDescription = (isWithAuthentication) ? 'authenticated' : 'unauthenticated';
 
         var description = 'should respond '+c.expect+' on '+authenticationDescription+' '+c.method+' requests to /'+c.model;

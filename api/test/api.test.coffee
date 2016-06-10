@@ -20,8 +20,8 @@ tests = [
   method: "GET"
   model: "Sprints/active"
   token: "chuckDefinesHisOwnTokens"
-  expect: 200
-
+  expect: 404
+,
   method: "GET"
   model: "Organizations"
   expect: 401
@@ -38,7 +38,10 @@ tests = [
   method: "POST"
   model: "Organizations"
   token: "chuckDefinesHisOwnTokens"
-  expect: 401
+  expect: 200
+  withData:
+    name: 'Chuck Academy'
+    remoteId: '-1'
 ]
 
 describe 'Status codes', ->

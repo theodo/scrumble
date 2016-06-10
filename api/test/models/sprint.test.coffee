@@ -8,7 +8,7 @@ describe 'api/Sprint endpoint', ->
 
   describe 'GET /active', ->
 
-    it 'should return null if user has no project set', (done) ->
+    it 'should return a 404 if user has no project set', (done) ->
       user =
         email: 'noris-junior@gmail.com'
         remoteId: '12345'
@@ -20,11 +20,11 @@ describe 'api/Sprint endpoint', ->
         request
           headers:
             Authorization: user.accessTokens[0]
-          uri: "#{app.get('url')}api/Sprints/active"
+          uri: "#{app.get('url')}v1/Sprints/active"
           method: 'GET'
           json: true
         , (err, response, body) ->
-          expect(body).to.eql(null)
+          expect(body.error.status).to.eql(404)
           done()
       .catch done
       return
@@ -61,7 +61,7 @@ describe 'api/Sprint endpoint', ->
             request
               headers:
                 Authorization: user.accessTokens[0]
-              uri: "#{app.get('url')}api/Sprints/active"
+              uri: "#{app.get('url')}v1/Sprints/active"
               method: 'GET'
               json: true
             , (err, response, body) ->
@@ -69,7 +69,7 @@ describe 'api/Sprint endpoint', ->
                 expect(body).to.not.eql(null)
                 expect(body.number).to.eql(test.activeSprint)
               else
-                expect(body).to.eql(null)
+                expect(body.error.status).to.eql(404)
               done()
         .catch done
         return

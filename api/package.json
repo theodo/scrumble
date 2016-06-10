@@ -14,7 +14,7 @@
   "scripts": {
     "start": "sleep 2 && npm run migrate:up && coffee src/server.coffee",
     "watch": "npm run migrate:up && node ./node_modules/nodemon/bin/nodemon.js src/server.coffee",
-    "test": "db-migrate --config migrations/database.json reset -e test && db-migrate up --config migrations/database.json -e test;",
+    "test": "db-migrate --config migrations/database.json reset -e test && db-migrate up --config migrations/database.json -e test; mocha \"test/**/*.test.coffee\"",
     "migrate:up": "db-migrate up --config migrations/database.json"
   },
   "dependencies": {
@@ -30,7 +30,8 @@
     "loopback-component-explorer": "2.4.0",
     "loopback-connector-postgresql": "2.4.1",
     "loopback-promisify": "0.2.0",
-    "moment": "2.13.0"
+    "moment": "2.13.0",
+    "supertest": "1.2.0"
   },
   "devDependencies": {
     "chai": "3.5.0",

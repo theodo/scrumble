@@ -10,10 +10,11 @@ dbtest:
   ports:
     - "5432:5432"
 
+
 apitest:
   image: node:wheezy
   volumes:
-    - .:/app
+    - ./api:/app
   working_dir: /app
   links:
    - dbtest:db
@@ -27,4 +28,4 @@ apitest:
     GOOGLE_API_SECRET: '***'
     TRELLO_KEY: '***'
     TRELLO_SECRET: '***'
-  command: npm run server:watch
+  command: npm test
