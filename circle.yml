@@ -1,0 +1,21 @@
+machine:
+  services:
+    - docker
+  python:
+    version: 2.7.8
+  post:
+    # circle instance already run postgresql
+    - sudo service postgresql stop
+
+dependencies:
+
+  override:
+    - docker info
+    - docker build -t nicgirault/scrumble-api api
+    - docker-compose --file docker-compose.build.yml up appbuilder
+    - docker build -t nicgirault/scrumble client
+
+test:
+  override:
+    - docker-compose -f docker-compose.test.yml run --rm apitest
+    - docker-compose -f docker-compose.test.yml run --rm apptest
