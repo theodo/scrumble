@@ -1,0 +1,40 @@
+datatest:
+  image: busybox
+  volumes:
+    - /data
+
+dbtest:
+  image: postgres:9.4
+  volumes_from:
+    - datatest
+  ports:
+    - "5432:5432"
+
+
+apitest:
+  image: nicgirault/scrumble-api
+  working_dir: /app
+  links:
+   - dbtest:db
+  ports:
+    - "8000:8000"
+  environment:
+    HOST: "0.0.0.0"
+    PORT: "8000"
+    DB_DATABASE: postgres
+    DB_USERNAME: postgres
+    GOOGLE_API_SECRET: '***'
+    TRELLO_KEY: '***'
+    TRELLO_SECRET: '***'
+  command: npm test
+
+apptest:
+  image: nicgirault/scrumble
+  working_dir: /app
+  ports:
+    - "8083:8083"
+  environment:
+    APP_PORT: "8083"
+    GOOGLE_CLIENT_ID: aa
+    TRELLO_KEY: aa
+  command: npm test

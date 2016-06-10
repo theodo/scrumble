@@ -17,5 +17,5 @@ dependencies:
 
 test:
   override:
-    - docker-compose -f docker-compose.test.yml run --rm apitest
-    - docker-compose -f docker-compose.test.yml run --rm apptest
+    - docker-compose -f docker-compose.circle.yml run --rm apitest
+    - docker-compose -f docker-compose.circle.yml run --rm apptest
