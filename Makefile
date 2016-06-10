@@ -4,7 +4,7 @@ install:
 	eval "$$(docker-machine env -u)" && \
 	docker-compose --file docker-compose.dev.yml run --rm api npm install && \
 	sudo chown -R ${whoami}:${whoami} api/node_modules && \
-	docker-compose --file docker-compose.build.yml run --rm appbuilder npm install --unsafe-perm && \
+	docker-compose --file docker-compose.build.yml run --rm app npm install --unsafe-perm && \
 	sudo chown -R ${whoami}:${whoami} client/node_modules && \
 	sudo chown -R ${whoami}:${whoami} client/bower_components
 
@@ -43,7 +43,7 @@ api-push:
 
 client-bower-install:
 	eval "$$(docker-machine env -u)" && \
-	docker-compose --file docker-compose.build.yml run --rm appbuilder ./node_modules/.bin/bower install --save --allow-root ${package} && \
+	docker-compose --file docker-compose.build.yml run --rm app ./node_modules/.bin/bower install --save --allow-root ${package} && \
 	sudo chown -R ${whoami}:${whoami} ./client/bower_components
 
 start:
@@ -52,7 +52,7 @@ start:
 
 client-build:
 	eval "$$(docker-machine env -u)" && \
-	docker-compose --file docker-compose.build.yml up appbuilder && \
+	docker-compose --file docker-compose.build.yml up app && \
 	docker build -t nicgirault/scrumble client
 
 client-push:
