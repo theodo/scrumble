@@ -32,4 +32,4 @@ angular.module 'Scrumble.settings'
 
     $scope.project.$update().then ->
       $scope.saving = false
-      $scope.$emit 'project:update', nextState: 'tab.board'
+      $scope.$emit 'project:update', nextState: 'tab.bdc'
