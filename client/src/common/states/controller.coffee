@@ -63,7 +63,7 @@ angular.module 'Scrumble.common'
   ,
     title: 'Current Sprint'
     items: [
-      state: 'tab.board'
+      state: 'tab.bdc'
       title: 'Burndown Chart'
       icon: 'trending-down'
     ,

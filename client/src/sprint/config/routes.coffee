@@ -34,3 +34,12 @@ angular.module 'Scrumble.sprint'
               scope:
                 order: 'number DESC'
         )
+
+  .state 'tab.bdc',
+    url: '/'
+    controller: 'BoardCtrl'
+    templateUrl: 'sprint/states/bdc/view.html'
+    resolve:
+      checkProjectAndSprint: (project, sprint, $state) ->
+        return $state.go 'tab.project' unless project?
+        return $state.go('tab.new-sprint', projectId: project.id) unless sprint?

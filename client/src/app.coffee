@@ -32,7 +32,6 @@ app = angular.module 'Scrumble', [
   'Scrumble.login'
   'Scrumble.settings'
   'Scrumble.storage'
-  'Scrumble.board'
   'Scrumble.indicators'
   'Scrumble.wait'
 ]

@@ -1,8 +1,6 @@
 machine:
   services:
     - docker
-  python:
-    version: 2.7.8
   post:
     # circle instance already run postgresql
     - sudo service postgresql stop

@@ -42,7 +42,7 @@ angular.module 'Scrumble.settings'
         if not $scope.project.team?.length > 0
           $scope.$emit 'project:update', {nextState: 'tab.team', params: projectId: project.id}
         else
-          $scope.$emit 'project:update', nextState: 'tab.board'
+          $scope.$emit 'project:update', nextState: 'tab.bdc'
     .catch (err) ->
       $scope.project.boardId = null
       console.warn err

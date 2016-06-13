@@ -19,7 +19,7 @@ angular.module 'Scrumble.login'
       ScrumbleUser2.login(trelloToken: TrelloApi.Token()).$promise
     .then (response) ->
       ApiAccessToken.set response.token
-      $state.go 'tab.board'
+      $state.go 'tab.bdc'
     .catch (err) ->
       if err.status is -1
         $mdToast.show(
