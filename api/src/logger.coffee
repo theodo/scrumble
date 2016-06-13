@@ -21,9 +21,10 @@ module.exports =
   logRequest: (req) ->
     console.info "[#{moment().format()}][#{req.method}] #{req.originalUrl}"
   email: (subject, content, next) ->
+    console.log "[#{moment().format()}][POST EMAIL] #{subject}"
     smtpTransport.sendMail
       from: 'alerts@scrumble.io'
-      to: process.env.CONTACT_EMAIL
+      to: process.env.EMAIL_CONTACT
       subject: subject
       text: content
     , (er) ->
