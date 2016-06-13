@@ -37,3 +37,10 @@ Build&push all docker images from local and pull them from remote: `make build-d
 
 There are many commands in the makefile that are self comprehensible. Please,
 read the makefile.
+
+
+Top 3 priorités :
+- Une 500 ne fait pas tomber le serveur
+- Le formulaire est sauvegardé dans une google spreadsheet (feedbacks aussi)
+- Les pings sont fait sur loopback
+- Directive pour bouton en cours d'action

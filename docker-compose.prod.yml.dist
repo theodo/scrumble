@@ -80,4 +80,5 @@ api:
     SMTP_USER: ***
     SMTP_PASS: ***
     EMAIL_CONTACT: ***
+  restart: always
   command: npm start
