@@ -76,4 +76,8 @@ api:
     VIRTUAL_HOST: api.scrumble.io
     LETSENCRYPT_HOST: api.scrumble.io
     LETSENCRYPT_EMAIL: contact@scrumble.io
+    SMTP_HOST: 'smtp.mailgun.org'
+    SMTP_USER: ***
+    SMTP_PASS: ***
+    EMAIL_CONTACT: ***
   command: npm start

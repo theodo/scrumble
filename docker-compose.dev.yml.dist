@@ -28,6 +28,10 @@ api:
     GOOGLE_API_SECRET: ***
     TRELLO_KEY: ***
     TRELLO_SECRET: ***
+    SMTP_HOST: ***
+    SMTP_USER: ***
+    SMTP_PASS: ***
+    EMAIL_CONTACT: ***
   command: npm run watch
 
 app:

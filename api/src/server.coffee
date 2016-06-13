@@ -27,4 +27,8 @@ boot app, __dirname, (err) ->
   app.start() if require.main == module
   return
 
+process.on 'uncaughtException', (er) ->
+  logger.email er.message, er.stack, ->
+    process.exit(1)
+
 module.exports = app

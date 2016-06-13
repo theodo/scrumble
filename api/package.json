@@ -31,6 +31,7 @@
     "loopback-connector-postgresql": "2.4.1",
     "loopback-promisify": "0.2.0",
     "moment": "2.13.0",
+    "nodemailer": "2.4.2",
     "supertest": "1.2.0"
   },
   "devDependencies": {
