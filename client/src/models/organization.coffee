@@ -31,17 +31,3 @@ angular.module 'Scrumble.models'
     Organization.get(parameters, success, error).$promise
   update: Organization.update
   findOrCreate: findOrCreate
-  migration: (project) ->
-    console.debug 'start project organization migration'
-    return if project.organizationId?
-    console.debug 'project has no organization set'
-    TrelloClient.get "/boards/#{project.boardId}"
-    .then (response) ->
-      console.debug 'just got trello board'
-      return unless response.data?.idOrganization?
-      console.debug 'trello board has an organization id'
-      findOrCreate(response.data?.idOrganization).then (id) ->
-        console.debug 'local organization found or create. id is', id
-        project.organizationId = id
-        console.debug 'saving project with organization id'
-        project.$update()
