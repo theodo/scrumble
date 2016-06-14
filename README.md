@@ -14,6 +14,8 @@ The easiest way to develop on Scrumble is to install:
 - [docker-compose](https://docs.docker.com/compose/install/)
 - [docker-machine](https://docs.docker.com/machine/install-machine/)
 
+Make sure your Docker installation is working fine by typing 'docker ps'.
+
 [Make sure your user is part of the docker group](http://askubuntu.com/questions/477551/how-can-i-use-docker-without-sudo)
 to avoid running all commands as root.
 
