@@ -7,7 +7,17 @@ div(layout="column" layout-sm="column")
       md-on-open="loadCards()"
       md-on-close="generateMarkdown(goals)"
     )
-      md-option(ng-repeat="card in trelloCards"  ng-value="card") {{ card.name }}
+      md-option.height-2-line(ng-repeat="card in trelloCards"  ng-value="card")
+        .item-title
+          span.trello-card-number
+            strong {{ '#' + card.idShort }}
+          | {{card.name}}
+        .item-metadata
+          strong {{ card.list }}
+          span(
+            ng-repeat="label in card.labels"
+            class="trello-label label-{{ label.color }}"
+          ) {{ label.name }}
     div(ng-messages="errors" role="alert" md-auto-hide="false" ng-messages-multiple)
       div(ng-message="sprintColumnMissing") There is no sprint column set in the sprint settings
       div(ng-message="doingColumnMissing") There is no doing column set in the sprint settings
