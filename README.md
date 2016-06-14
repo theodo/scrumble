@@ -19,6 +19,7 @@ Make sure your Docker installation is working fine by typing `docker ps`. Under 
 [Make sure your user is part of the docker group](http://askubuntu.com/questions/477551/how-can-i-use-docker-without-sudo)
 to avoid running all commands as root.
 
+For Mac OS X users, the project folder must be in a subfolder of /Users, due to [an issue in docker-machine](https://github.com/docker/machine/issues/13).
 
 ```
 git clone git@github.com:theodo/scrumble.git && cd scrumble
