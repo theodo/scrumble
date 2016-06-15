@@ -18,7 +18,7 @@ angular.module 'Scrumble.settings'
     $scope.project = Project.new()
 
   $scope.saving = false
-  $scope.selectBoard = (boardId) ->
+  $scope.selectedItemChange = (boardId) ->
     return unless boardId?
     $scope.saving = true
     Project.query
