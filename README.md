@@ -24,9 +24,17 @@ For Mac OS X users, the project folder must be in a subfolder of /Users, due to 
 ```
 git clone git@github.com:theodo/scrumble.git && cd scrumble
 cp docker-compose.dev.yml.dist docker-compose.dev.yml
-# replace the missing variables
+Specify missing variables in docker-compose.dev.yml
+- GOOGLE_CLIENT_ID
+- GOOGLE_API_SECRET
+- TRELLO_KEY
+- TRELLO_SECRET
 
 make install
+```
+If you are working with Vagrant there can be errors due to incompatible port use.
+
+```
 make start
 ```
 
