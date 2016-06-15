@@ -6,6 +6,6 @@ div(ng-show='filteredBoards.length')
         md-grid-tile.project-tile.clickable(ng-repeat="board in filteredBoards = (boards | filter:{idOrganization:'!'})" ng-click="selectBoard(board.id)") {{board.name}}
 
 div(ng-repeat='organization in organizations')
-    h3 {{organization.name}}
+    h3 {{organization.displayName}}
     md-grid-list(md-cols="5" md-gutter="1em" md-row-height="4:3")
         md-grid-tile.project-tile.clickable(ng-repeat="board in boards | filter:board.idOrganization=organization.id" ng-click="selectBoard(board.id)") {{board.name}}
