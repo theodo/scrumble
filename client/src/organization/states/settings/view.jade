@@ -3,7 +3,7 @@ h2 {{ organization.name }}
 form(layout="column")
   md-input-container.md-block
     label Enter the ID of the spreadsheet in which data will be saved
-    input(ng-model="spreadsheetId")
+    input(ng-model="organization.spreadsheetId")
   div(ng-repeat="item in organization.satisfactionSurvey")
     md-input-container.md-block
       label Question {{ $index + 1 }}
