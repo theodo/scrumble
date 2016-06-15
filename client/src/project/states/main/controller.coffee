@@ -9,6 +9,9 @@ angular.module 'Scrumble.settings'
   TrelloClient.get('/members/me/boards').then (response) ->
     $scope.boards = response.data
 
+  TrelloClient.get('/members/me/organizations').then (organizationData) ->
+    $scope.organizations = organizationData.data
+
   Project.getUserProject().then (project) ->
     $scope.project = project
   .catch (err) ->
