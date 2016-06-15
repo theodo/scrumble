@@ -8,12 +8,12 @@ div(ng-show='filteredBoards.length')
     h3 Your projects
     md-grid-list(
         ng-cloak
-        md-cols-gt-md="6"
-        md-cols="2"
-        md-cols-md="8"
+        md-cols-xs="2"
+        md-cols-sm="3"
+        md-cols-md="4"
+        md-cols-lg="5"
+        md-cols-xl="8"
         md-row-height="6:3"
-        md-gutter-gt-md="16px"
-        md-gutter-md="8px"
         md-gutter="4px"
     )
         md-grid-tile.project-tile.clickable(
@@ -25,12 +25,12 @@ div(ng-repeat='organization in organizations')
     h3 {{organization.displayName}}
     md-grid-list(
         ng-cloak
-        md-cols-gt-md="6"
-        md-cols="2"
-        md-cols-md="8"
+        md-cols-xs="2"
+        md-cols-sm="3"
+        md-cols-md="4"
+        md-cols-lg="5"
+        md-cols-xl="8"
         md-row-height="6:3"
-        md-gutter-gt-md="16px"
-        md-gutter-md="8px"
         md-gutter="4px"
     )
         md-grid-tile.project-tile.clickable(
