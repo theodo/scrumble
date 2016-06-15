@@ -2,10 +2,12 @@ h2.md-title(layout-align="center end") CHOOSE YOUR PROJECT
 
 div(ng-show='filteredBoards.length')
     h3 Your projects
-    md-grid-list(md-cols="5" md-gutter="1em" md-row-height="4:3")
-        md-grid-tile.project-tile.clickable(ng-repeat="board in filteredBoards = (boards | filter:{idOrganization:'!'})" ng-click="selectBoard(board.id)") {{board.name}}
+    div(ng-cloak)
+        md-grid-list(md-cols-gt-md="6" md-cols="2" md-cols-md="8" md-row-height="4:3" md-gutter-gt-md="16px" md-gutter-md="8px" md-gutter="4px")
+            md-grid-tile.project-tile.clickable(ng-repeat="board in filteredBoards = (boards | filter:{idOrganization:'!'})" ng-click="selectBoard(board.id)") {{board.name}}
 
 div(ng-repeat='organization in organizations')
     h3 {{organization.displayName}}
-    md-grid-list(md-cols="5" md-gutter="1em" md-row-height="4:3")
-        md-grid-tile.project-tile.clickable(ng-repeat="board in boards | filter:board.idOrganization=organization.id" ng-click="selectBoard(board.id)") {{board.name}}
+    div(ng-cloak)
+        md-grid-list(md-cols-gt-md="6" md-cols="2" md-cols-md="8" md-row-height="4:3" md-gutter-gt-md="16px" md-gutter-md="8px" md-gutter="4px")
+            md-grid-tile.project-tile.clickable(ng-repeat="board in boards | filter:board.idOrganization=organization.id" ng-click="selectBoard(board.id)") {{board.name}}
