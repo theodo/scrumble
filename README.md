@@ -46,7 +46,6 @@ read the makefile.
 
 
 Top 3 priorités :
-- Une 500 ne fait pas tomber le serveur
 - Le formulaire est sauvegardé dans une google spreadsheet (feedbacks aussi)
 - Les pings sont fait sur loopback
 - Directive pour bouton en cours d'action
