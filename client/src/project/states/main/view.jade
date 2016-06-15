@@ -1,5 +1,11 @@
 h2.md-title(layout-align="center end") CHOOSE YOUR PROJECT
 
-md-grid-list(md-cols="5" md-gutter="1em" md-row-height="4:3")
-    md-grid-tile(style="background-color:#f5f5f5;cursor:pointer;" ng-repeat="board in boards" ng-click="selectBoard(board.id)") {{board.name}}
-    
+div(ng-show='filteredBoards.length')
+    h3 Your projects
+    md-grid-list(md-cols="5" md-gutter="1em" md-row-height="4:3")
+        md-grid-tile(style="background-color:#f5f5f5;cursor:pointer;" ng-repeat="board in filteredBoards = (boards | filter:{idOrganization:'!'})" ng-click="selectBoard(board.id)") {{board.name}}
+
+div(ng-repeat='organization in organizations')
+    h3 {{organization.name}}
+    md-grid-list(md-cols="5" md-gutter="1em" md-row-height="4:3")
+        md-grid-tile(style="background-color:#f5f5f5;cursor:pointer;" ng-repeat="board in boards | filter:board.idOrganization=organization.id" ng-click="selectBoard(board.id)") {{board.name}}
