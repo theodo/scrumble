@@ -10,11 +10,13 @@ div(ng-show='filteredBoards.length')
         md-row-height="6:3"
         md-gutter-gt-md="16px"
         md-gutter-md="8px"
-        md-gutter="4px")
+        md-gutter="4px"
+    )
         md-grid-tile.project-tile.clickable(
             ng-repeat="board in filteredBoards = (boards | filter:{idOrganization:'!'})"
             ng-click="selectBoard(board.id)"
-            ng-style="{'background-image':'url({{board.prefs.backgroundImageScaled[2].url}})'}") {{board.name}}
+            ng-style="{'background-image':'url({{board.prefs.backgroundImageScaled[2].url}})'}"
+        ) {{board.name}}
 div(ng-repeat='organization in organizations')
     h3 {{organization.displayName}}
     md-grid-list(
@@ -25,8 +27,10 @@ div(ng-repeat='organization in organizations')
         md-row-height="6:3"
         md-gutter-gt-md="16px"
         md-gutter-md="8px"
-        md-gutter="4px")
+        md-gutter="4px"
+    )
         md-grid-tile.project-tile.clickable(
             ng-repeat="board in boards | filter:board.idOrganization=organization.id"
             ng-click="selectBoard(board.id)"
-            ng-style="{'background-image':'url({{board.prefs.backgroundImageScaled[2].url}})'}") {{board.name}}
+            ng-style="{'background-image':'url({{board.prefs.backgroundImageScaled[2].url}})'}"
+        ) {{board.name}}
