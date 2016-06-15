@@ -2,17 +2,31 @@ h2.md-title(layout-align="center end") CHOOSE YOUR PROJECT
 
 div(ng-show='filteredBoards.length')
     h3 Your projects
-    md-grid-list(ng-cloak md-cols-gt-md="6" md-cols="2" md-cols-md="8"
-    | md-row-height="6:3" md-gutter-gt-md="16px" md-gutter-md="8px" md-gutter="4px")
-        md-grid-tile.project-tile.clickable(ng-repeat="board in filteredBoards = (boards | filter:{idOrganization:'!'})"
-        | ng-click="selectBoard(board.id)"
-        | ng-style="{'background-image':'url({{board.prefs.backgroundImageScaled[2].url}})'}")
-        | {{board.name}}
+    md-grid-list(
+        ng-cloak
+        md-cols-gt-md="6"
+        md-cols="2"
+        md-cols-md="8"
+        md-row-height="6:3"
+        md-gutter-gt-md="16px"
+        md-gutter-md="8px"
+        md-gutter="4px")
+        md-grid-tile.project-tile.clickable(
+            ng-repeat="board in filteredBoards = (boards | filter:{idOrganization:'!'})"
+            ng-click="selectBoard(board.id)"
+            ng-style="{'background-image':'url({{board.prefs.backgroundImageScaled[2].url}})'}") {{board.name}}
 div(ng-repeat='organization in organizations')
     h3 {{organization.displayName}}
-    md-grid-list(ng-cloak md-cols-gt-md="6" md-cols="2" md-cols-md="8"
-    | md-row-height="6:3" md-gutter-gt-md="16px" md-gutter-md="8px" md-gutter="4px")
-        md-grid-tile.project-tile.clickable(ng-repeat="board in boards | filter:board.idOrganization=organization.id"
-        | ng-click="selectBoard(board.id)"
-        | ng-style="{'background-image':'url({{board.prefs.backgroundImageScaled[2].url}})'}")
-        | {{board.name}}
+    md-grid-list(
+        ng-cloak
+        md-cols-gt-md="6"
+        md-cols="2"
+        md-cols-md="8"
+        md-row-height="6:3"
+        md-gutter-gt-md="16px"
+        md-gutter-md="8px"
+        md-gutter="4px")
+        md-grid-tile.project-tile.clickable(
+            ng-repeat="board in boards | filter:board.idOrganization=organization.id"
+            ng-click="selectBoard(board.id)"
+            ng-style="{'background-image':'url({{board.prefs.backgroundImageScaled[2].url}})'}") {{board.name}}
