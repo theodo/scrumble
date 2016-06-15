@@ -1,11 +1,14 @@
 h2 {{ organization.name }}
 
 form(layout="column")
+  md-input-container.md-block
+    label Enter the ID of the spreadsheet in which data will be saved
+    input(ng-model="spreadsheetId")
   div(ng-repeat="item in organization.satisfactionSurvey")
     md-input-container.md-block
       label Question {{ $index + 1 }}
       input(ng-model="item.label")
-    
+
     div(ng-if="item.type == 'radio'" layout="row")
       div(ng-repeat="choice in item.items")
         md-input-container
