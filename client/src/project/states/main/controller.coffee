@@ -9,13 +9,16 @@ angular.module 'Scrumble.settings'
   TrelloClient.get('/members/me/boards').then (response) ->
     $scope.boards = response.data
 
+  TrelloClient.get('/members/me/organizations').then (organizationData) ->
+    $scope.organizations = organizationData.data
+
   Project.getUserProject().then (project) ->
     $scope.project = project
   .catch (err) ->
     $scope.project = Project.new()
 
   $scope.saving = false
-  $scope.selectedItemChange = (boardId) ->
+  $scope.selectBoard = (boardId) ->
     return unless boardId?
     $scope.saving = true
     Project.query
