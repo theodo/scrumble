@@ -1,19 +1,23 @@
 h2.md-title(layout-align="center end") CHOOSE YOUR PROJECT
 
+md-input-container.md-block
+  label Search a project
+  input(ng-model="searchInput")
+
 div(ng-show='filteredBoards.length')
     h3 Your projects
     md-grid-list(
         ng-cloak
-        md-cols-gt-md="6"
-        md-cols="2"
-        md-cols-md="8"
+        md-cols-xs="2"
+        md-cols-sm="3"
+        md-cols-md="4"
+        md-cols-lg="5"
+        md-cols-xl="8"
         md-row-height="6:3"
-        md-gutter-gt-md="16px"
-        md-gutter-md="8px"
         md-gutter="4px"
     )
         md-grid-tile.project-tile.clickable(
-            ng-repeat="board in filteredBoards = (boards | filter:{idOrganization:'!'})"
+            ng-repeat="board in filteredBoards = (boards | filter:{idOrganization:'!'} | filter: searchInput)"
             ng-click="selectBoard(board.id)"
             ng-style="{'background-image':'url({{board.prefs.backgroundImageScaled[2].url}})'}"
         ) {{board.name}}
@@ -21,16 +25,16 @@ div(ng-repeat='organization in organizations')
     h3 {{organization.displayName}}
     md-grid-list(
         ng-cloak
-        md-cols-gt-md="6"
-        md-cols="2"
-        md-cols-md="8"
+        md-cols-xs="2"
+        md-cols-sm="3"
+        md-cols-md="4"
+        md-cols-lg="5"
+        md-cols-xl="8"
         md-row-height="6:3"
-        md-gutter-gt-md="16px"
-        md-gutter-md="8px"
         md-gutter="4px"
     )
         md-grid-tile.project-tile.clickable(
-            ng-repeat="board in boards | filter:board.idOrganization=organization.id"
+            ng-repeat="board in boards | filter:board.idOrganization=organization.id | filter: searchInput"
             ng-click="selectBoard(board.id)"
             ng-style="{'background-image':'url({{board.prefs.backgroundImageScaled[2].url}})'}"
         ) {{board.name}}
