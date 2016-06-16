@@ -29,11 +29,14 @@ apitest:
   command: npm test
 
 apptest:
-  image: nicgirault/scrumble
+  image: node:wheezy
+  volumes:
+    - ./client:/app
   working_dir: /app
   ports:
     - "8083:8083"
   environment:
+    API_URL: "aa"
     APP_PORT: "8083"
     GOOGLE_CLIENT_ID: aa
     TRELLO_KEY: aa
