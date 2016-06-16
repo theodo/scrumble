@@ -11,10 +11,10 @@ angular.module 'Scrumble.settings'
       board.idOrganization ?= 'myboards'
       return board
 
-  $scope.organization = [{id: 'myboards', displayName: 'Your boards'}]
+  $scope.organizations = [{id: 'myboards', displayName: 'Your boards'}]
 
   TrelloClient.get('/members/me/organizations').then (organizationData) ->
-    $scope.organizations = $scope.organization.concat(organizationData.data)
+    $scope.organizations = $scope.organizations.concat(organizationData.data)
 
   Project.getUserProject().then (project) ->
     $scope.project = project
