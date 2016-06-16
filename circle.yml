@@ -12,13 +12,9 @@ dependencies:
 
   override:
     - docker info
-    - if [[ -e ~/docker/scrumble-api.tar ]]; then docker load -i ~/docker/scrumble-api.tar; fi
     - docker build -t nicgirault/scrumble-api api
-    - mkdir -p ~/docker; docker save nicgirault/scrumble-api > ~/docker/scrumble-api.tar
     - docker-compose --file docker-compose.build.yml up appbuilder
-    - if [[ -e ~/docker/scrumble.tar ]]; then docker load -i ~/docker/scrumble.tar; fi
     - docker build -t nicgirault/scrumble client
-    - mkdir -p ~/docker; docker save nicgirault/scrumble > ~/docker/scrumble.tar
 
 test:
   override:
