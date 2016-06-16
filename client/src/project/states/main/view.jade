@@ -4,6 +4,9 @@ md-input-container.md-block
   label Search a project
   input(ng-model="searchInput")
 
+{{boards[0].idOrganization}}
+{{boards[1].idOrganization}}
+
 div(ng-repeat='organization in organizations')
   h3 {{organization.displayName}}
   md-grid-list(
