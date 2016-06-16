@@ -4,8 +4,8 @@ md-input-container.md-block
   label Search a project
   input(ng-model="searchInput")
 
-div(ng-repeat='category in categories')
-  h3 {{category.displayName}}
+div(ng-repeat='organization in organizations')
+  h3 {{organization.displayName}}
   md-grid-list(
     ng-cloak
     md-cols-xs="2"
@@ -17,7 +17,7 @@ div(ng-repeat='category in categories')
     md-gutter="4px"
   )
     md-grid-tile.project-tile.clickable(
-      ng-repeat="board in category.boards | filter: searchInput)"
+      ng-repeat="board in boards | filter:board.idOrganization=organization.id | filter: searchInput"
       ng-click="selectBoard(board.id)"
       ng-style="{'background-image':'url({{board.prefs.backgroundImageScaled[2].url}})'}"
     ) {{board.name}}
