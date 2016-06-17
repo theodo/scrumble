@@ -19,6 +19,8 @@ module.exports = (DailyReport) ->
       next()
     .catch next
 
+    return
+
   DailyReport.getUserDailyReport = (req, next) ->
     DailyReport.app.models.ScrumbleUser.findById(req.accessToken.userId)
     .then (user) ->
