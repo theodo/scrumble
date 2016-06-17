@@ -1,78 +1,78 @@
 whoami := $(shell whoami)
 
 install:
-	eval "$$(docker-machine env -u)" && \
+	eval "$$(docker-machine env default)" && \
 	docker-compose --file docker-compose.dev.yml run --rm api npm install && \
-	sudo chown -R ${whoami}:${whoami} api/node_modules && \
+	sudo chown -R ${whoami}:staff api/node_modules && \
 	docker-compose --file docker-compose.build.yml run --rm appbuilder npm install --unsafe-perm && \
-	sudo chown -R ${whoami}:${whoami} client/node_modules && \
-	sudo chown -R ${whoami}:${whoami} client/bower_components
+	sudo chown -R ${whoami}:staff client/node_modules && \
+	sudo chown -R ${whoami}:staff client/bower_components
 
 migration-create:
-	eval "$$(docker-machine env -u)" && \
+	eval "$$(docker-machine env default)" && \
 	docker-compose --file docker-compose.dev.yml run --rm api \
 	./node_modules/db-migrate/bin/db-migrate create --config migrations/database.json $(name)\
-	 && sudo chown -R ${whoami}:${whoami} api/migrations
+	 && sudo chown -R ${whoami}:staff api/migrations
 migration-up:
-	eval "$$(docker-machine env -u)" && \
+	eval "$$(docker-machine env default)" && \
 	docker-compose --file docker-compose.dev.yml run --rm api \
 	./node_modules/db-migrate/bin/db-migrate up --config migrations/database.json
 migration-down:
-	eval "$$(docker-machine env -u)" && \
+	eval "$$(docker-machine env default)" && \
 	docker-compose --file docker-compose.dev.yml run --rm api \
 	./node_modules/db-migrate/bin/db-migrate down --config migrations/database.json
 
 npm-install:
-	eval "$$(docker-machine env -u)" && \
+	eval "$$(docker-machine env default)" && \
 	docker-compose --file docker-compose.dev.yml run --rm api \
 	npm install --save-exact --save $(package) &&\
-	sudo chown ${whoami}:${whoami} api/package.json &&\
-	sudo chown -R ${whoami}:${whoami} api/node_modules
+	sudo chown ${whoami}:staff api/package.json &&\
+	sudo chown -R ${whoami}:staff api/node_modules
 
 api-test:
-	eval "$$(docker-machine env -u)" && \
+	eval "$$(docker-machine env default)" && \
 	docker-compose -f docker-compose.test.yml run --rm apitest
 
 api-build:
-	eval "$$(docker-machine env -u)" && \
+	eval "$$(docker-machine env default)" && \
 	docker build -t nicgirault/scrumble-api api
 api-push:
-	eval "$$(docker-machine env -u)" && \
+	eval "$$(docker-machine env default)" && \
 	docker push nicgirault/scrumble-api
 
 client-npm-install:
-	eval "$$(docker-machine env -u)" && \
+	eval "$$(docker-machine env default)" && \
 	docker-compose --file docker-compose.build.yml run --rm appbuilder npm install --save-dev  ${package} && \
-	sudo chown -R ${whoami}:${whoami} ./client/node_modules && \
-	sudo chown -R ${whoami}:${whoami} ./client/package.json
+	sudo chown -R ${whoami}:staff ./client/node_modules && \
+	sudo chown -R ${whoami}:staff ./client/package.json
 
 client-bower-install:
-	eval "$$(docker-machine env -u)" && \
+	eval "$$(docker-machine env default)" && \
 	docker-compose --file docker-compose.build.yml run --rm appbuilder ./node_modules/.bin/bower install --save --allow-root ${package} && \
-	sudo chown -R ${whoami}:${whoami} ./client/bower_components
+	sudo chown -R ${whoami}:staff ./client/bower_components
 
 start:
-	eval "$$(docker-machine env -u)" && \
+	eval "$$(docker-machine env default)" && \
 	docker-compose --file docker-compose.dev.yml up
 
 client-test:
-	eval "$$(docker-machine env -u)" && \
+	eval "$$(docker-machine env default)" && \
 	docker-compose -f docker-compose.test.yml run --rm apptest
 
 client-build:
-	eval "$$(docker-machine env -u)" && \
+	eval "$$(docker-machine env default)" && \
 	docker-compose --file docker-compose.build.yml up appbuilder && \
 	docker build -t nicgirault/scrumble client
 
 client-push:
-	eval "$$(docker-machine env -u)" && \
+	eval "$$(docker-machine env default)" && \
 	docker push nicgirault/scrumble
 
 showcase-build:
-	eval "$$(docker-machine env -u)" && \
+	eval "$$(docker-machine env default)" && \
 	docker build -t nicgirault/scrumble-showcase showcase
 showcase-push:
-	eval "$$(docker-machine env -u)" && \
+	eval "$$(docker-machine env default)" && \
 	docker push nicgirault/scrumble-showcase
 
 deploy:
@@ -84,7 +84,7 @@ build: client-build showcase-build api-build
 push: client-push showcase-push api-push
 
 build-deploy-all:
-	eval "$$(docker-machine env -u)" && \
+	eval "$$(docker-machine env default)" && \
 	make build && \
 	make push && \
 	make deploy
