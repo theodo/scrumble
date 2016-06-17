@@ -17,7 +17,7 @@ div(ng-repeat='organization in organizations')
     md-gutter="4px"
   )
     md-grid-tile.project-tile.clickable(
-      ng-repeat="board in boards | filter:board.idOrganization=organization.id | filter:{closed: false} | filter: searchInput"
+      ng-repeat="board in boards | filter:board.idOrganization=organization.id | filter: searchInput"
       ng-click="selectBoard(board.id)"
       ng-style="{'background-image':'url({{board.prefs.backgroundImageScaled[2].url}})', 'background-color':'{{board.prefs.backgroundColor}}'}"
     )

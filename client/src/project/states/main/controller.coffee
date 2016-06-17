@@ -6,7 +6,7 @@ angular.module 'Scrumble.settings'
   ScrumbleUser2
   Organization
 ) ->
-  TrelloClient.get('/members/me/boards').then (response) ->
+  TrelloClient.get('/members/me/boards?filter=open&fields=name,idOrganization,prefs').then (response) ->
     $scope.boards = _.map response.data, (board) ->
       board.idOrganization ?= 'myboards'
       return board

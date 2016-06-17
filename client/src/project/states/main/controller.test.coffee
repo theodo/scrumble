@@ -26,7 +26,7 @@ describe 'projectCtrl', ->
 
   it 'should expose the boards in the scope', ->
     spyOn(TrelloClient, 'get').and.callFake((path) ->
-      if (path == '/members/me/boards')
+      if (_.startsWith(path, '/members/me/boards'))
         return $q.when data: [{idOrganization: null, name:'board1'}, {idOrganization: 'abcde1', name:'board2'}]
       else
         return $q.when data: []
@@ -40,7 +40,7 @@ describe 'projectCtrl', ->
 
   it 'should expose the organizations in the scope', ->
     spyOn(TrelloClient, 'get').and.callFake((path) ->
-      if (path == '/members/me/organizations')
+      if (_.startsWith(path, '/members/me/organizations'))
         return $q.when data: [{id: 'id1', displayName:'board1'}]
       else
         return $q.when data: []
