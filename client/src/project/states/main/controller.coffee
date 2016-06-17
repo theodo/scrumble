@@ -6,9 +6,12 @@ angular.module 'Scrumble.settings'
   ScrumbleUser2
   Organization
 ) ->
+
+  $scope.isLoading = true
+
   TrelloClient.get('/members/me/organizations?fields=displayName').then (response) ->
     $scope.organizations = response.data
-    organizationArray = _.uniq _.map $scope.organizations, 'id'
+    organizationArray = _(response.data).map('id').uniq().value()
     TrelloClient.get('/members/me/boards?filter=open&fields=name,idOrganization,prefs').then (response) ->
       $scope.boards = _.map response.data, (board) ->
         if board.idOrganization == null
@@ -16,7 +19,10 @@ angular.module 'Scrumble.settings'
         else if !_.includes(organizationArray, board.idOrganization)
           board.idOrganization = 'otherboards'
         return board
-      $scope.organizations = ([{id: 'myboards', displayName: 'Your boards'}].concat $scope.organizations).concat [{id: 'otherboards', displayName: 'Other organizations'}]
+      $scope.organizations = ([{id: 'myboards', displayName: 'Your boards'}]
+      .concat $scope.organizations)
+      .concat [{id: 'otherboards', displayName: 'Other organizations'}]
+      $scope.isLoading = false
 
   Project.getUserProject().then (project) ->
     $scope.project = project
