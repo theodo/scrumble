@@ -3,10 +3,14 @@ angular.module 'Scrumble.models'
   endpoint = "#{API_URL}/Feedbacks"
   Feedback = $resource(
     "#{endpoint}/:feedbackId",
-    {feedbackId: '@id'}
+    {feedbackId: '@id'},
+    update:
+      method: 'PUT'
   )
 
   new: ->
     new Feedback()
   get: (parameters, success, error) ->
     Feedback.get(parameters, success, error).$promise
+  find: (parameters, success, error) ->
+    Feedback.query(parameters, success, error).$promise
