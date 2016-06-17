@@ -42,6 +42,27 @@ tests = [
   withData:
     name: 'Chuck Academy'
     remoteId: '-1'
+,
+  method: "GET"
+  model: "Feedbacks"
+  expect: 401
+,
+  method: "GET"
+  model: "Feedbacks"
+  token: "chuckDefinesHisOwnTokens"
+  expect: 403
+,
+  method: "GET"
+  model: "Feedbacks"
+  token: "adminToken"
+  expect: 200
+,
+  method: "POST"
+  model: "Feedbacks"
+  token: "chuckDefinesHisOwnTokens"
+  expect: 200
+  withData:
+    message: 'Yolo'
 ]
 
 describe 'Status codes', ->
