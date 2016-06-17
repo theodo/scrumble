@@ -1,6 +1,6 @@
 h2 Feedbacks
 md-list(flex)
-  md-list-item.md-3-line.md-long-text(ng-repeat="feedback in feedbacks | filter : {status: '!done'}")
+  md-list-item.md-3-line.md-long-text(ng-repeat="feedback in feedbacks")
     .md-list-item-text
       h3 {{ feedback.reporter }}
       h4 {{ feedback.status }} - {{ feedback.createdAt | date : 'medium' }}

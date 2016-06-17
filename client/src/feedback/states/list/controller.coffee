@@ -1,7 +1,16 @@
 angular.module 'Scrumble.feedback'
 .controller 'FeedbackListCtrl', ($scope, $mdDialog, Feedback) ->
-  Feedback.find().then (feedbacks) ->
-    $scope.feedbacks = feedbacks
+  fetchFeedbacks = ->
+    Feedback.find
+      filter:
+        where:
+          status:
+            neq: 'done'
+        order: 'createdAt DESC'
+    .then (feedbacks) ->
+      $scope.feedbacks = feedbacks
+
+  fetchFeedbacks()
 
   $scope.openDialog = (feedback, ev) ->
     $mdDialog.show
@@ -21,7 +30,4 @@ angular.module 'Scrumble.feedback'
         feedback: -> angular.copy feedback
     .then (feedback) ->
       feedback.$update()
-    .then ->
-      Feedback.find()
-    .then (feedbacks) ->
-      $scope.feedbacks = feedbacks
+    .then fetchFeedbacks
