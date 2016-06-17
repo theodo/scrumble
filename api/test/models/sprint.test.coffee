@@ -6,6 +6,9 @@ fixtures = require '../utils/fixtures'
 describe 'api/Sprint endpoint', ->
   app = require '../utils/init'
 
+  afterEach = ->
+    fixtures.deleteAll(app)
+
   describe 'GET /active', ->
 
     it 'should return a 404 if user has no project set', (done) ->

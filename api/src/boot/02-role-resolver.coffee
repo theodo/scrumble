@@ -7,7 +7,7 @@ module.exports = (server) ->
     server.models.ScrumbleUser.find
       where:
         email:
-          inq: ['nicolasg@theodo.fr']
+          inq: ['nicolasg@theodo.fr', 'nic.girault@gmail.com']
     .then (admins) ->
       return next(null, token.userId in (admin.id for admin in admins))
     .catch next
