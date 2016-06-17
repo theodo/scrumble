@@ -1,0 +1,9 @@
+md-dialog
+  md-dialog-content
+    .md-dialog-content
+      md-input-container.md-block
+        label Status
+        textarea(ng-model="feedback.status")
+    md-dialog-actions(layout='row')
+      md-button.md-raised(ng-click="cancel()") Cancel
+      md-button.md-raised.md-accent(ng-click="save()") Save
