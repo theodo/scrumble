@@ -93,8 +93,9 @@ module.exports = (ScrumbleUser) ->
 
     ScrumbleUser.findById(req.accessToken.userId).then (user) ->
       user.projectId = req.body.projectId
-      user.save()
+      user.save(next)
     .catch next
+    return
 
   ScrumbleUser.remoteMethod 'trelloLogin',
     accepts: [

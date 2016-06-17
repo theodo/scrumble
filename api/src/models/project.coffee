@@ -28,6 +28,7 @@ module.exports = (Project) ->
       return next(null, project) if project?
       throw new createError.NotFound()
     .catch next
+    return
 
   Project.getLastSpeeds = (projectId, next) ->
     Project.app.models.Sprint.find(
@@ -41,6 +42,7 @@ module.exports = (Project) ->
         sprintNumber: sprint.number
       ))
     .catch next
+    return
 
   Project.remoteMethod 'getUserProject',
     accepts: [

@@ -51,6 +51,7 @@ module.exports = (Sprint) ->
       return next(null, sprint) if sprint
       throw new createError.NotFound()
     .catch next
+    return
 
   Sprint.activate = (req, sprintId, next) ->
     Sprint.app.models.ScrumbleUser.findById(req.accessToken.userId)
@@ -67,6 +68,7 @@ module.exports = (Sprint) ->
         Sprint.upsert sprint, (err) ->
           next err, 'OK'
     .catch next
+    return
 
   Sprint.remoteMethod 'getActiveSprint',
     accepts: [

@@ -32,6 +32,7 @@ module.exports = (DailyReport) ->
       return next(null, dailyReport) if dailyReport?
       throw new createError.NotFound()
     .catch next
+    return
 
   DailyReport.remoteMethod 'getUserDailyReport',
     accepts: [
