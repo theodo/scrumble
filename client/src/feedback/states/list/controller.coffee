@@ -3,14 +3,13 @@ angular.module 'Scrumble.feedback'
   fetchFeedbacks = ->
     Feedback.find
       filter:
-        where:
-          status:
-            neq: 'done'
         order: 'createdAt DESC'
     .then (feedbacks) ->
       $scope.feedbacks = feedbacks
 
   fetchFeedbacks()
+
+  $scope.hideDone = true
 
   $scope.openDialog = (feedback, ev) ->
     $mdDialog.show
