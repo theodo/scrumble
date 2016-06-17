@@ -6,16 +6,17 @@ angular.module 'Scrumble.settings'
   ScrumbleUser2
   Organization
 ) ->
-  TrelloClient.get('/members/me/boards?filter=open&fields=name,idOrganization,prefs').then (response) ->
-    $scope.boards = _.map response.data, (board) ->
-      board.idOrganization ?= 'myboards'
-      return board
-
-  $scope.organizations = [{id: 'myboards', displayName: 'Your boards'}]
-
-  TrelloClient.get('/members/me/organizations').then (organizationData) ->
-    console.log(organizationData)
-    $scope.organizations = $scope.organizations.concat(organizationData.data)
+  TrelloClient.get('/members/me/organizations').then (response) ->
+    $scope.organizations = response.data
+    organizationArray = _.uniq _.map $scope.organizations, 'id'
+    TrelloClient.get('/members/me/boards?filter=open&fields=name,idOrganization,prefs').then (response) ->
+      $scope.boards = _.map response.data, (board) ->
+        if board.idOrganization == null
+          board.idOrganization = 'myboards'
+        else if !_.includes(organizationArray, board.idOrganization)
+          board.idOrganization = 'otherboards'
+        return board
+      $scope.organizations = ([{id: 'myboards', displayName: 'Your boards'}].concat $scope.organizations).concat [{id: 'otherboards', displayName: 'Other organizations'}]
 
   Project.getUserProject().then (project) ->
     $scope.project = project

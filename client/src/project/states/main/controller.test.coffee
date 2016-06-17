@@ -24,30 +24,16 @@ describe 'projectCtrl', ->
     $scope.$digest()
     expect($scope.boards).toEqual []
 
-  it 'should expose the boards in the scope', ->
-    spyOn(TrelloClient, 'get').and.callFake((path) ->
-      if (_.startsWith(path, '/members/me/boards'))
-        return $q.when data: [{idOrganization: null, name:'board1'}, {idOrganization: 'abcde1', name:'board2'}]
+  it 'should expose the boards and the organizations in the scope', ->
+    spyOn(TrelloClient, 'get').and.callFake (path) ->
+      if _.startsWith(path, '/members/me/boards')
+        return $q.when data: [{idOrganization: null, name:'board1'}, {idOrganization: 'abcde1', name:'board2'}, {idOrganization: 'notmyorganization', name:'board3'}]
       else
-        return $q.when data: []
-    )
+        return $q.when data: [{id: 'abcde1', displayName: 'Abcde 1'}]
     $scope = $rootScope.$new()
     controller = $controller 'ProjectCtrl',
       $scope: $scope
       TrelloClient: TrelloClient
     $scope.$digest()
-    expect($scope.boards).toEqual [{idOrganization: 'myboards', name:'board1'}, {idOrganization: 'abcde1', name:'board2'}]
-
-  it 'should expose the organizations in the scope', ->
-    spyOn(TrelloClient, 'get').and.callFake((path) ->
-      if (_.startsWith(path, '/members/me/organizations'))
-        return $q.when data: [{id: 'id1', displayName:'board1'}]
-      else
-        return $q.when data: []
-    )
-    $scope = $rootScope.$new()
-    controller = $controller 'ProjectCtrl',
-      $scope: $scope
-      TrelloClient: TrelloClient
-    $scope.$digest()
-    expect($scope.organizations).toEqual [{id: 'myboards', displayName:'Your boards'}, {id: 'id1', displayName:'board1'}]
+    expect($scope.boards).toEqual [{idOrganization: 'myboards', name:'board1'}, {idOrganization: 'abcde1', name:'board2'}, {idOrganization: 'otherboards', name:'board3'}]
+    expect($scope.organizations).toEqual [{id: 'myboards', displayName:'Your boards'}, {id: 'abcde1', displayName:'Abcde 1'}, {id: 'otherboards', displayName: 'Other organizations'}]
