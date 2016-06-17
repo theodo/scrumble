@@ -18,5 +18,11 @@ angular.module 'Scrumble.indicators'
       loadingToast.hide()
       $scope.saving = false
 
+  $scope.saveInSpreadsheet = ->
+    $scope.savingInSpreadsheet = true
+
+    $scope.savingInSpreadsheet = false
+    return
+
   $scope.print = ->
     window.print()
