@@ -1,0 +1,10 @@
+h2 Feedbacks
+md-list(flex)
+  md-list-item.md-3-line.md-long-text(ng-repeat="feedback in feedbacks | filter : {status: '!done'}")
+    .md-list-item-text
+      h3 {{ feedback.reporter }}
+      h4 {{ feedback.status }} - {{ feedback.createdAt | date : 'medium' }}
+      p{{ feedback.message }}
+    md-button.md-secondary.md-icon-button(ng-click="openDialog(feedback, $event)")
+      md-icon(md-svg-icon='comment-text-outline')
+    md-divider
