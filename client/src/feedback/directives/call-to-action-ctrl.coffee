@@ -30,8 +30,7 @@ angular.module 'Scrumble.feedback'
     $scope.send = ->
       if $scope.message?
         $scope.doing = true
-        feedback = new Feedback()
-        feedback.reporter = localStorageService.get 'trello_email'
+        feedback = Feedback.new()
         feedback.message = $scope.message
-        feedback.save().then ->
+        feedback.$save().then ->
           $mdDialog.hide()

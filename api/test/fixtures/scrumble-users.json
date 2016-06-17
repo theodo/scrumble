@@ -5,5 +5,12 @@
     "remoteId": "12345",
     "password": "dummy",
     "accessTokens": ["chuckDefinesHisOwnTokens"]
+  },
+  {
+    "username": "nicolasg",
+    "email": "nicolasg@theodo.fr",
+    "remoteId": "12346",
+    "password": "dummy",
+    "accessTokens": ["adminToken"]
   }
 ]
