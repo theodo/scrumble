@@ -16,7 +16,6 @@ angular.module 'Scrumble.models'
           remoteId: remoteId
     .$promise.then (organizations) ->
       return organizations[0].id if organizations.length > 0
-
       TrelloClient.get "/organizations/#{remoteId}"
       .then (response) ->
         Organization.save
@@ -24,6 +23,8 @@ angular.module 'Scrumble.models'
           name: response.data?.displayName
         .$promise.then (organization) ->
           organization.id
+      .catch (error) ->
+        return null
 
   new: ->
     new Organization()
