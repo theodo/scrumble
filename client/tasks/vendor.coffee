@@ -15,7 +15,6 @@ gulp.task 'vendor', (done) ->
     "#{bowerComponentsPath}/angular-messages/angular-messages.min.js"
     "#{bowerComponentsPath}/angular-material/angular-material.min.js"
     "#{bowerComponentsPath}/angular-ui-router/release/angular-ui-router.min.js"
-    "#{bowerComponentsPath}/angular-parse/angular-parse.js"
     "#{bowerComponentsPath}/satellizer/satellizer.min.js"
     "#{bowerComponentsPath}/angular-trello-api-client/dist/angular-trello-api-client.js"
     "#{bowerComponentsPath}/angular-local-storage/dist/angular-local-storage.min.js"
