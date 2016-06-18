@@ -63,6 +63,33 @@ tests = [
   expect: 200
   withData:
     message: 'Yolo'
+,
+  method: "GET"
+  model: "DailyReportPings"
+  expect: 401
+,
+  method: "GET"
+  model: "DailyReportPings"
+  token: "chuckDefinesHisOwnTokens"
+  expect: 403
+,
+  method: "GET"
+  model: "DailyReportPings"
+  token: "adminToken"
+  expect: 200
+,
+  method: "POST"
+  model: "DailyReportPings"
+  token: "chuckDefinesHisOwnTokens"
+  expect: 200
+  withData:
+    name: 'Yolo'
+,
+  method: "POST"
+  model: "DailyReportPings"
+  expect: 401
+  withData:
+    name: 'Yolo'
 ]
 
 describe 'Status codes', ->

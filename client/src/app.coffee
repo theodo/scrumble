@@ -11,7 +11,6 @@ app = angular.module 'Scrumble', [
   'ui.router'
   # 'ui.bootstrap'
   'app.templates'
-  'Parse'
   'LocalStorageModule'
   'satellizer'
   'permission'
@@ -39,17 +38,12 @@ app = angular.module 'Scrumble', [
 app.config (
   $locationProvider
   $urlRouterProvider
-  ParseProvider
 ) ->
 
   $locationProvider.hashPrefix '!'
 
   $urlRouterProvider.otherwise '/'
 
-  ParseProvider.initialize(
-    "UTkdR7MH2Wok5lyPEm1VHoxyFKWVcdOKAu6A4BWG", # Application ID
-    "DGp8edP1LHPJ15GpDE3cp94bBaDq2hiMSqLEzfZB"  # REST API Key
-  )
 app.config (localStorageServiceProvider) ->
   localStorageServiceProvider.setPrefix ''
 

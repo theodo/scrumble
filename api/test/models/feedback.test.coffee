@@ -2,14 +2,27 @@ _ = require 'lodash'
 expect = require('chai').expect
 sinon = require 'sinon'
 request = require 'request'
-fixtures = require '../utils/fixtures'
 logger = require '../../src/logger'
+fixtures = require '../utils/fixtures'
+app = require '../../src/server'
 
 describe 'api/Feedback endpoint', ->
-  app = require '../utils/init'
 
+  server = null
 
-  describe.only 'POST /', ->
+  before (done) ->
+    server = app.listen(done)
+
+  after (done) ->
+    server.close(done)
+
+  beforeEach ->
+      fixtures.loadAll(app)
+
+  afterEach ->
+    fixtures.deleteAll(app)
+
+  describe 'POST /', ->
 
     it 'should set time and reporter', (done) ->
 
@@ -26,7 +39,7 @@ describe 'api/Feedback endpoint', ->
         expect(Date.parse(body.createdAt)).not.to.be.NaN
         done()
 
-    it 'send an email', (done) ->
+    it 'should send an email', (done) ->
       sinon.spy(logger, 'email')
       request
         headers:
@@ -38,5 +51,6 @@ describe 'api/Feedback endpoint', ->
           message: 'test'
       , (err, response, body) ->
         expect(logger.email.called).to.be.true
+        expect(Date.parse(body.createdAt)).not.to.be.NaN
         done()
     return
