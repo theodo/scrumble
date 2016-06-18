@@ -84,6 +84,12 @@ tests = [
   expect: 200
   withData:
     name: 'Yolo'
+,
+  method: "POST"
+  model: "DailyReportPings"
+  expect: 401
+  withData:
+    name: 'Yolo'
 ]
 
 describe 'Status codes', ->
