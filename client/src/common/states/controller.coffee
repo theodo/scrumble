@@ -41,6 +41,10 @@ angular.module 'Scrumble.common'
   $scope.menu = [
     title: 'Project'
     items: [
+      state: 'tab.project'
+      title: 'Select a Project'
+      icon: 'view-module'
+    ,
       state: 'tab.new-sprint'
       params:
         projectId: $scope.project?.id
