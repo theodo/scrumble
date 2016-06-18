@@ -1,0 +1,8 @@
+h2 Daily Stats
+h4 {{ pingsLength }} daily sent
+#ping-per-day
+
+h4 Alert daily mail not sent
+md-datepicker(ng-model="selectedDate", md-placeholder="Given date" ng-change="computeDiff(selectedDate)")
+md-list
+  md-list-item(ng-repeat="daily in alertDailies") {{ daily.name }}
