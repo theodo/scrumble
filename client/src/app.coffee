@@ -33,6 +33,7 @@ app = angular.module 'Scrumble', [
   'Scrumble.storage'
   'Scrumble.indicators'
   'Scrumble.wait'
+  'Scrumble.admin'
 ]
 
 app.config (
