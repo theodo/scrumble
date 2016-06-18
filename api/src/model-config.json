@@ -43,6 +43,10 @@
     "dataSource": "db",
     "public": true
   },
+  "DailyReportPing": {
+    "dataSource": "db",
+    "public": true
+  },
   "ScrumbleUser": {
     "dataSource": "db",
     "public": true

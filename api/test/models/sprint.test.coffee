@@ -2,11 +2,22 @@ _ = require 'lodash'
 expect = require('chai').expect
 request = require 'request'
 fixtures = require '../utils/fixtures'
+app = require '../../src/server'
 
 describe 'api/Sprint endpoint', ->
-  app = require '../utils/init'
 
-  afterEach = ->
+  server = null
+
+  before (done) ->
+    server = app.listen(done)
+
+  after (done) ->
+    server.close(done)
+
+  beforeEach ->
+      fixtures.loadAll(app)
+
+  afterEach ->
     fixtures.deleteAll(app)
 
   describe 'GET /active', ->
