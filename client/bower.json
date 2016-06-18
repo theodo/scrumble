@@ -19,7 +19,6 @@
     "tests"
   ],
   "dependencies": {
-    "angular-parse": "master",
     "angular-ui-router": "0.2.15",
     "angular": "1.4.9",
     "bootstrap": "3.3.6",

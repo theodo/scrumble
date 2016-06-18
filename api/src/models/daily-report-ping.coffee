@@ -1,5 +1,4 @@
 loopback = require 'loopback'
-createError = require 'http-errors'
 
 module.exports = (DailyReportPing) ->
 

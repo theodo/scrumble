@@ -1,7 +1,6 @@
 angular.module 'Scrumble.daily-report'
 .service 'reportBuilder', (
   $q
-  ScrumbleUser
   Sprint
   Project
   trelloUtils
