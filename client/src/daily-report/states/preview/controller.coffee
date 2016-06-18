@@ -47,8 +47,8 @@ angular.module 'Scrumble.daily-report'
           dailyReport.sections.todaysGoals = null
           DailyReport.save dailyReport
           sentFeedback = $mdToast.simple().position('top right').content('Email sent')
-          ping = new DailyReportPing()
+          ping = DailyReportPing.new()
           ping.name = dailyReport.sections.subject
-          ping.save()
+          ping.$save()
           $mdToast.show sentFeedback
           $mdDialog.cancel()
