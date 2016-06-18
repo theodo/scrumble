@@ -6,6 +6,16 @@ angular.module 'Scrumble.admin'
     pings = _pings_
     $scope.pingsLength = pings.length
 
+    pingsPerHour = _(pings)
+    .filter (ping) ->
+      moment().diff(ping.createdAt, 'days') < 15
+    .countBy (ping) -> moment(ping.createdAt).hours()
+    .map (value, key) ->
+      hour: parseInt key
+      count: value
+    .orderBy 'hour'
+    .value()
+
     pingsPerDay = _(pings)
     .countBy (ping) -> moment(ping.createdAt).format('YYYY-MM-DD')
     .map (value, key) ->
@@ -26,6 +36,18 @@ angular.module 'Scrumble.admin'
           type: 'timeseries'
           tick:
             format: '%Y-%m-%d'
+
+    chart = c3.generate
+      bindto: '#ping-hour'
+      data:
+        json: pingsPerHour
+        keys:
+          x: 'hour'
+          value: ['count']
+        type: 'bar'
+      axis:
+        x:
+          type: 'category'
 
   $scope.alertTeams = []
   # return the pings that sent a daily the day before the date but not at the date
