@@ -3,7 +3,6 @@ angular.module 'Scrumble.indicators'
   $scope
   loadingToast
   Sprint
-  GoogleSpreadsheetUtils
 ) ->
   if _.isArray $scope.sprint?.indicators?.satisfactionSurvey
     for question, index in $scope.sprint.indicators.satisfactionSurvey
@@ -20,9 +19,6 @@ angular.module 'Scrumble.indicators'
       $scope.saving = false
 
   $scope.saveInSpreadsheet = ->
-    $scope.savingInSpreadsheet = true
-    GoogleSpreadsheetUtils.handleAuthClick()
-    $scope.savingInSpreadsheet = false
     return
 
   $scope.print = ->
