@@ -19,9 +19,6 @@ angular.module 'Scrumble.indicators'
       $scope.saving = false
 
   $scope.saveInSpreadsheet = ->
-    $scope.savingInSpreadsheet = true
-
-    $scope.savingInSpreadsheet = false
     return
 
   $scope.print = ->
