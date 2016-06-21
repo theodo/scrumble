@@ -1,20 +1,22 @@
 angular.module 'Scrumble.indicators'
 .controller 'ClientFormCtrl', (
   $scope
+  $stateParams
   loadingToast
   Sprint
   GAuth
   GApi
   GData
+  GOOGLE_CLIENT_ID
 ) ->
   _.forEach $scope.sprint?.indicators?.satisfactionSurvey, (question, index) ->
     $scope.template[index].answer = question.answer
 
   # Google API Authentify information
-  GAuth.setClient('947504094757-i7k95sfqlq1jk6vq9iijmp78kcm0u00g.apps.googleusercontent.com')
+  GAuth.setClient(GOOGLE_CLIENT_ID)
   GAuth.setScope('https://www.googleapis.com/auth/spreadsheets')
   GApi.load('sheets','v4','').catch (api, version) ->
-    console.log('an error occured during loading api: ' + api + ', version: ' + version)
+    console.error('an error occured during loading api: ' + api + ', version: ' + version)
 
   $scope.SPREADSHEET_ID = '1qeRBk1TMi9zoaQUz9Zqlasb_w0w2_ehcYk5zApdzefU'
 
