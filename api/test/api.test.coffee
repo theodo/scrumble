@@ -90,6 +90,15 @@ tests = [
   expect: 401
   withData:
     name: 'Yolo'
+,
+  method: "GET"
+  model: "Problems"
+  token: "chuckDefinesHisOwnTokens"
+  expect: 200
+,
+  method: "GET"
+  model: "Problems"
+  expect: 401
 ]
 
 describe 'Status codes', ->

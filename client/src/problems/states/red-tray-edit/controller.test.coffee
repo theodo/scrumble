@@ -1,0 +1,65 @@
+describe '[Controller] AddRedTrayPieceCtrl', ->
+  beforeEach module 'Scrumble.problems'
+
+  $mdDialog = null
+  problem = null
+  Problem = null
+  $rootScope = null
+  $stateParams = null
+  $controller = null
+  $q = null
+
+  beforeEach inject (_$mdDialog_, _Problem_, _$rootScope_, _$controller_, _$q_) ->
+    Problem = _Problem_
+    $mdDialog = _$mdDialog_
+    $rootScope = _$rootScope_
+    $controller = _$controller_
+    $q = _$q_
+
+  it 'should expose the resolved problem', ->
+    $scope = $rootScope.$new()
+    problem = {}
+    controller = $controller 'AddRedTrayPieceCtrl',
+      $scope: $scope
+      problem: problem
+    expect($scope.problem).toEqual problem
+    expect($scope.problem.happenedDate).toEqual jasmine.any Date
+
+  describe 'cancel', ->
+
+    it 'should call $mdDialog.cancel', ->
+      $scope = $rootScope.$new()
+      spyOn($mdDialog, 'cancel')
+      controller = $controller 'AddRedTrayPieceCtrl',
+        $scope: $scope
+        problem: {}
+        $mdDialog: $mdDialog
+      $scope.cancel()
+      expect($mdDialog.cancel).toHaveBeenCalled()
+
+  describe 'save', ->
+
+    it 'should set computable problem attributes', ->
+      $scope = $rootScope.$new()
+      spyOn(Problem, 'save').and.returnValue $q.when(null)
+      controller = $controller 'AddRedTrayPieceCtrl',
+        $scope: $scope
+        problem: {}
+        Problem: Problem
+        $stateParams:
+          projectId: 1
+      $scope.save({})
+      expect(Problem.save).toHaveBeenCalledWith({projectId: 1, type: 'red-tray'})
+
+    it 'should call $mdDialog.hide', ->
+      $scope = $rootScope.$new()
+      spyOn(Problem, 'save').and.returnValue $q.when(null)
+      spyOn($mdDialog, 'hide')
+      controller = $controller 'AddRedTrayPieceCtrl',
+        $scope: $scope
+        problem: {}
+        Problem: Problem
+        $mdDialog: $mdDialog
+      $scope.save({})
+      $scope.$apply()
+      expect($mdDialog.hide).toHaveBeenCalled()

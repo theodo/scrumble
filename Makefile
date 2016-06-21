@@ -59,6 +59,10 @@ client-test:
 	eval "$$(docker-machine env -u)" && \
 	docker-compose -f docker-compose.test.yml run --rm apptest
 
+client-test-tdd:
+	eval "$$(docker-machine env -u)" && \
+	docker-compose -f docker-compose.test.yml run --rm apptest npm run tdd
+
 client-build:
 	eval "$$(docker-machine env -u)" && \
 	docker-compose --file docker-compose.build.yml up appbuilder && \
