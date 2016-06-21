@@ -1,0 +1,62 @@
+{
+  "name": "Problem",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "options": {
+      "promisify": true
+  },
+  "properties": {
+    "hypothesis": {
+      "type": "string",
+      "required": false
+    },
+    "link": {
+      "type": "string",
+      "required": false
+    },
+    "description": {
+      "type": "string",
+      "required": false
+    },
+    "action": {
+      "type": "string",
+      "required": false
+    },
+    "happenedDate": {
+      "type": "date",
+      "required": false
+    },
+    "type": {
+      "type": "string",
+      "required": false
+    },
+    "createdAt": {
+      "type": "date",
+      "required": false
+    },
+    "updatedAt": {
+      "type": "date",
+      "required": false
+    }
+  },
+  "validations": [],
+  "relations": {
+    "project": {
+      "type": "belongsTo",
+      "model": "Project",
+      "foreignKey": "projectId"
+    }
+  },
+  "acls": [
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "DENY"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$authenticated",
+      "permission": "ALLOW"
+    }
+  ]
+}

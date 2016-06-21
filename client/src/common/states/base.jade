@@ -27,7 +27,7 @@ div(flex layout="row")
         )
           md-item-content( layout='row' layout-align='start center')
             .inset
-              md-icon(md-svg-icon='{{item.icon}}')
+              md-icon(md-svg-icon='{{item.icon}}' ng-class='item.classes')
             .inset
               | {{item.title}}
         md-divider

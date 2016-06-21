@@ -1,0 +1,36 @@
+md-card
+  h2.md-title.red(layout-align="center end") RED TRAY
+  
+  div(layout="row" layout-sm="column" layout-align="space-around" ng-if="loading")
+    md-progress-circular(md-mode="indeterminate")
+      
+  div.md-padding(ng-if="pieces.length === 0" layout="column" layout-align="center")
+    p.description Here is the place to track the red tray pieces of your project.
+    section(layout="row" layout-sm="column" layout-align="center center" layout-wrap)
+      md-button(ng-click="addPiece($event)") Create the first red tray piece
+
+  md-list
+    div(ng-repeat-start="piece in pieces")
+      md-list-item.md-3-line.md-long-text
+        .md-list-item-text
+          h3 {{ piece.description }}
+            span(ng-if="piece.link")  (
+              a(href="{{ piece.link }}" target="_blank" ) link
+              | )
+          h4 {{ piece.happenedDate | date : 'longDate' }}
+          p
+            strong Cause Hypothesis:
+            |  {{ piece.hypothesis }}
+          p
+            strong Action:
+            |  {{ piece.action }}
+          md-icon.md-secondary.md-hue-3(
+            md-svg-icon="pencil-box"
+            ng-click="editPiece(piece, $event)"
+            aria-label="Edit"
+          )
+    md-divider(ng-repeat-end ng-if="!$last")
+      
+  md-button.md-fab.md-accent.board-call-to-actions(ng-click="addPiece($event)")
+    md-icon(md-svg-icon='plus') Add
+    md-tooltip(md-direction='left') Add a piece
