@@ -18,6 +18,7 @@ app = angular.module 'Scrumble', [
   'trello-api-client'
   'angular-async-loader'
   'angularDateInterceptor'
+  'angular-google-gapi'
   'trello'
 
   'Scrumble.constants'
