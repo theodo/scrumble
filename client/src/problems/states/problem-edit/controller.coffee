@@ -1,5 +1,5 @@
 angular.module 'Scrumble.problems'
-.controller 'AddRedTrayPieceCtrl', (
+.controller 'AddProblemCtrl', (
   $scope,
   $mdDialog,
   problem,

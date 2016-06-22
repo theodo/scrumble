@@ -63,12 +63,11 @@ angular.module 'Scrumble.common'
       title: 'Sprints'
       icon: 'view-list'
     ,
-      state: 'tab.red-tray'
+      state: 'tab.problems'
       params:
         projectId: $scope.project?.id
-      title: 'Red Tray'
-      icon: 'basket'
-      classes: ['red']
+      title: 'Problem Tracking'
+      icon: 'bell-ring'
     ,
     ]
   ,

@@ -6,7 +6,7 @@
       "promisify": true
   },
   "properties": {
-    "hypothesis": {
+    "causeHypothesis": {
       "type": "string",
       "required": false
     },
