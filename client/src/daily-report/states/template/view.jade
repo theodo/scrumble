@@ -92,6 +92,15 @@ div(layout="column" flex="100")
 div.hidden-bdc
   sprint-widget(project="project" sprint="sprint")
 
-md-button.md-fab.md-accent.board-call-to-actions(ng-click="preview($event)")
-  md-icon(md-svg-icon='eye') Preview
-  md-tooltip(md-direction='left') Preview
+md-fab-speed-dial.md-scale.board-call-to-actions(
+  md-direction='up'
+  md-open='isOpen'
+  ng-mouseenter='isOpen=true' ng-mouseleave='isOpen=false'
+)
+  md-fab-trigger
+    md-button.md-fab.md-accent(ng-click="preview($event)" aria-label="menu")
+      md-icon(md-svg-icon='eye') Preview
+      md-tooltip(md-direction='left') Preview
+  md-fab-actions
+    md-button.md-fab.md-raised.md-mini(aria-label='save', ng-click='save()')
+      md-icon(md-svg-src='content-save', aria-label='save')
