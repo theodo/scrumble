@@ -1,15 +1,15 @@
 md-dialog(flex="80")
   md-toolbar
     .md-toolbar-tools
-      h2 New Red Tray Piece
+      h2 Edit Problem
       span(flex)
       md-button.md-icon-button(ng-click='cancel()')
-        md-icon(md-svg-src='close', aria-label='Close dialog')
+        md-icon(md-svg-src='close' aria-label='Close dialog')
   md-dialog-content
     .md-padding
       md-content(layout="column")
         div(layout="row" layout-align="center center")
-          md-datepicker(ng-model="problem.happenedDate", md-placeholder="Date")
+          md-datepicker(ng-model="problem.happenedDate" md-placeholder="Date")
         md-input-container
           label Description
           md-icon(md-svg-src="clipboard-text")
@@ -21,12 +21,10 @@ md-dialog(flex="80")
         md-input-container
           label Cause hypothesis
           md-icon(md-svg-src="flask-outline")
-          textarea(ng-model="problem.hypothesis" rows="2")
+          textarea(ng-model="problem.causeHypothesis" rows="2")
         md-input-container
           label Action
           md-icon(md-svg-src="hand-pointing-right")
           textarea(ng-model="problem.action" rows="2")
-        //- h3 Tags
-        //- md-chips(ng-model="problem.tags")
   md-dialog-actions(layout='row')
     md-button.md-raised.md-primary(ng-click="save(problem)") Save

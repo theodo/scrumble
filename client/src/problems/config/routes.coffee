@@ -1,7 +1,7 @@
 angular.module 'Scrumble.problems'
 .config ($stateProvider) ->
   $stateProvider
-  .state 'tab.red-tray',
-    url: '/project/:projectId/red-tray'
-    controller: 'RedTrayListCtrl'
-    templateUrl: 'problems/states/red-tray-list/view.html'
+  .state 'tab.problems',
+    url: '/project/:projectId/problems'
+    controller: 'ProblemListCtrl'
+    templateUrl: 'problems/states/problem-list/view.html'

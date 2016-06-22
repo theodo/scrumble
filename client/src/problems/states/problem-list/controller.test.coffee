@@ -1,4 +1,4 @@
-describe '[Controller] RedTrayListCtrl', ->
+describe '[Controller] ProblemListCtrl', ->
   beforeEach module 'Scrumble.problems'
 
   $mdDialog = null
@@ -16,28 +16,28 @@ describe '[Controller] RedTrayListCtrl', ->
     $controller = _$controller_
     $q = _$q_
 
-  it 'should expose the found pieces', ->
+  it 'should expose found problems', ->
     spyOn(Problem, 'query').and.returnValue $q.when([])
     $scope = $rootScope.$new()
-    controller = $controller 'RedTrayListCtrl',
+    controller = $controller 'ProblemListCtrl',
       $scope: $scope
       Problem: Problem
     $scope.$digest()
-    expect($scope.pieces).toEqual []
+    expect($scope.problems).toEqual []
 
   it 'should eventually set loading to false', ->
     spyOn(Problem, 'query').and.returnValue $q.when([])
     $scope = $rootScope.$new()
-    controller = $controller 'RedTrayListCtrl',
+    controller = $controller 'ProblemListCtrl',
       $scope: $scope
       Problem: Problem
     $scope.$digest()
     expect($scope.loading).toEqual false
 
-  it 'should search pieces of current project', ->
+  it 'should search problems of current project', ->
     spyOn(Problem, 'query').and.returnValue $q.when([])
     $scope = $rootScope.$new()
-    controller = $controller 'RedTrayListCtrl',
+    controller = $controller 'ProblemListCtrl',
       $scope: $scope
       Problem: Problem
       $stateParams:
@@ -47,16 +47,16 @@ describe '[Controller] RedTrayListCtrl', ->
     query = Problem.query.calls.argsFor(0)[0]
     expect(query.filter.where.projectId).toEqual 1
 
-  describe 'editPiece and addPiece', ->
+  describe 'editProblem and addProblem', ->
 
     it 'should call $mdDialog.show with an existing controller', ->
       spyOn($mdDialog, 'show').and.returnValue $q.when(null)
       $scope = $rootScope.$new()
-      controller = $controller 'RedTrayListCtrl',
+      controller = $controller 'ProblemListCtrl',
         $scope: $scope
         Problem: Problem
         $mdDialog: $mdDialog
-      $scope.editPiece()
+      $scope.editProblem()
       expect($mdDialog.show).toHaveBeenCalled()
       dialog = $mdDialog.show.calls.argsFor(0)[0]
 

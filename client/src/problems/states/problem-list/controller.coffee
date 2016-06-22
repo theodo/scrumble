@@ -1,39 +1,38 @@
 angular.module 'Scrumble.problems'
-.controller 'RedTrayListCtrl', (
+.controller 'ProblemListCtrl', (
   $scope,
   $mdDialog,
   $mdMedia,
   $stateParams,
   Problem
 ) ->
-  fetchPieces = ->
+  fetchProblems = ->
     $scope.loading = true
     Problem.query(
       filter:
         where:
-          type: 'red-tray'
           projectId: $stateParams.projectId
         order: 'happenedDate DESC'
-    ).then (pieces) ->
-      $scope.pieces = pieces
+    ).then (problems) ->
+      $scope.problems = problems
       $scope.loading = false
 
-  $scope.editPiece = (piece, ev) ->
-    open(piece, ev)
+  $scope.editProblem = (problem, ev) ->
+    open(problem, ev)
 
-  $scope.addPiece = (ev) ->
+  $scope.addProblem = (ev) ->
     open(null, ev)
 
-  open = (piece, ev) ->
+  open = (problem, ev) ->
     $mdDialog.show
-      controller: 'AddRedTrayPieceCtrl'
-      templateUrl: 'problems/states/red-tray-edit/view.html'
+      controller: 'AddProblemCtrl'
+      templateUrl: 'problems/states/problem-edit/view.html'
       parent: angular.element document.body
       targetEvent: ev
       clickOutsideToClose: true
       fullscreen: $mdMedia 'sm'
       resolve:
-        problem: (Problem) -> angular.copy(piece) or Problem.new()
-    .then fetchPieces
+        problem: (Problem) -> angular.copy(problem) or Problem.new()
+    .then fetchProblems
 
-  fetchPieces()
+  fetchProblems()

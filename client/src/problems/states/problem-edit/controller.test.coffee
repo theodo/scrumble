@@ -1,4 +1,4 @@
-describe '[Controller] AddRedTrayPieceCtrl', ->
+describe '[Controller] AddProblemCtrl', ->
   beforeEach module 'Scrumble.problems'
 
   $mdDialog = null
@@ -19,7 +19,7 @@ describe '[Controller] AddRedTrayPieceCtrl', ->
   it 'should expose the resolved problem', ->
     $scope = $rootScope.$new()
     problem = {}
-    controller = $controller 'AddRedTrayPieceCtrl',
+    controller = $controller 'AddProblemCtrl',
       $scope: $scope
       problem: problem
     expect($scope.problem).toEqual problem
@@ -30,7 +30,7 @@ describe '[Controller] AddRedTrayPieceCtrl', ->
     it 'should call $mdDialog.cancel', ->
       $scope = $rootScope.$new()
       spyOn($mdDialog, 'cancel')
-      controller = $controller 'AddRedTrayPieceCtrl',
+      controller = $controller 'AddProblemCtrl',
         $scope: $scope
         problem: {}
         $mdDialog: $mdDialog
@@ -42,7 +42,7 @@ describe '[Controller] AddRedTrayPieceCtrl', ->
     it 'should set computable problem attributes', ->
       $scope = $rootScope.$new()
       spyOn(Problem, 'save').and.returnValue $q.when(null)
-      controller = $controller 'AddRedTrayPieceCtrl',
+      controller = $controller 'AddProblemCtrl',
         $scope: $scope
         problem: {}
         Problem: Problem
@@ -55,7 +55,7 @@ describe '[Controller] AddRedTrayPieceCtrl', ->
       $scope = $rootScope.$new()
       spyOn(Problem, 'save').and.returnValue $q.when(null)
       spyOn($mdDialog, 'hide')
-      controller = $controller 'AddRedTrayPieceCtrl',
+      controller = $controller 'AddProblemCtrl',
         $scope: $scope
         problem: {}
         Problem: Problem
