@@ -63,6 +63,12 @@ angular.module 'Scrumble.common'
       title: 'Sprints'
       icon: 'view-list'
     ,
+      state: 'tab.problems'
+      params:
+        projectId: $scope.project?.id
+      title: 'Problem Tracking'
+      icon: 'bell-ring'
+    ,
     ]
   ,
     title: 'Current Sprint'

@@ -32,6 +32,7 @@ app = angular.module 'Scrumble', [
   'Scrumble.indicators'
   'Scrumble.wait'
   'Scrumble.admin'
+  'Scrumble.problems'
 ]
 
 app.config (
