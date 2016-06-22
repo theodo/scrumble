@@ -6,6 +6,7 @@ angular.module 'Scrumble.daily-report'
   $mdMedia
   $document
   reportBuilder
+  DailyReport
   dailyReport
   dailyCache
 ) ->
@@ -24,6 +25,10 @@ angular.module 'Scrumble.daily-report'
     dailyReport.sections ?= {}
     $scope.sections = dailyReport.sections
     dailyCache.put 'sections', $scope.sections
+
+  $scope.save = (ev) ->
+    DailyReport.save(dailyReport).then ->
+      $mdToast.show saveFeedback
 
   $scope.preview = (ev) ->
     $mdDialog.show
