@@ -13,6 +13,10 @@ angular.module 'Scrumble.indicators'
   # Google API Authentify information
   GAuth.setClient('947504094757-i7k95sfqlq1jk6vq9iijmp78kcm0u00g.apps.googleusercontent.com')
   GAuth.setScope('https://www.googleapis.com/auth/spreadsheets')
+  GApi.load('sheets','v4','').catch (api, version) ->
+    console.log('an error occured during loading api: ' + api + ', version: ' + version)
+
+  $scope.SPREADSHEET_ID = '1qeRBk1TMi9zoaQUz9Zqlasb_w0w2_ehcYk5zApdzefU'
 
   $scope.save = ->
     loadingToast.show()
@@ -48,8 +52,24 @@ angular.module 'Scrumble.indicators'
       console.log 'login fail'
       return
 
-  $scope.saveInSpreadsheet = ->
-    $scope.googleAuthentify()
+  $scope.helloWorldInSpreadsheet = ->
+    $scope.savingInSpreadsheet = true
+    $scope.queryParams = {
+      spreadsheetId: '1qeRBk1TMi9zoaQUz9Zqlasb_w0w2_ehcYk5zApdzefU'
+      range: 'Sheet1!A1:A1'
+      majorDimension: 'ROWS'
+      valueInputOption: 'RAW'
+      values: [['Bonjour le monde']]
+    }
+    console.log 'test1'
+    GApi.executeAuth('sheets', 'spreadsheets.values.update', $scope.queryParams).then ((resp) ->
+      console.log 'test2'
+      $scope.savingInSpreadsheet = false
+      return
+    ), ->
+      console.log 'test3'
+      $scope.savingInSpreadsheet = false
+      return
     return
 
   $scope.print = ->
