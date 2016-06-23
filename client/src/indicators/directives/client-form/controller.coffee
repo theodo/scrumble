@@ -7,7 +7,7 @@ angular.module 'Scrumble.indicators'
   GApi
   GData
 ) ->
-  _.forEach $scope.sprint?.indicators?.satisfactionSurvey, (question, index) ->
+  _.forEach $scope.sprint.indicators.satisfactionSurvey, (question, index) ->
     $scope.template[index].answer = question.answer
 
   # Google API Authentify information
