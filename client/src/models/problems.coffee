@@ -6,6 +6,8 @@ angular.module 'Scrumble.models'
     {problemId: '@id'},
     update:
       method: 'PUT'
+    delete:
+      method: 'DELETE'
   )
 
   new: ->
@@ -14,6 +16,8 @@ angular.module 'Scrumble.models'
     Organization.get(parameters, success, error).$promise
   query: (parameters, success, error) ->
     Problem.query(parameters, success, error).$promise
+  delete: (parameters, success, error) ->
+    Problem.delete(parameters, success, error).$promise
   save: (problem) ->
     if problem.id
       problem.$update()

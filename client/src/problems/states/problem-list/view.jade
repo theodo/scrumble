@@ -25,10 +25,15 @@ md-card
           p
             strong Action:
             |  {{ problem.action }}
-          md-icon.md-secondary.md-hue-3(
+          md-icon.md-secondary(
             md-svg-icon="pencil-box"
             ng-click="editProblem(problem, $event)"
             aria-label="Edit"
+          )
+          md-icon.md-secondary.md-accent(
+            md-svg-icon="delete"
+            ng-click="deleteProblem(problem, $event)"
+            aria-label="Delete"
           )
     md-divider(ng-repeat-end ng-if="!$last")
       
