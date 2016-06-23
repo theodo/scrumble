@@ -43,14 +43,12 @@ angular.module 'Scrumble.indicators'
   $scope.googleAuthentify = ->
     $scope.googleAuthentifying = true
     GAuth.login().then ((user) ->
-      console.log user.name + 'is login'
       $scope.googleAuthentified = true
       $scope.googleAuthentifying = false
       return
     ), ->
       $scope.googleAuthentified = false
       $scope.googleAuthentifying = false
-      console.log 'login fail'
       return
 
   $scope.helloWorldInSpreadsheet = ->
@@ -62,13 +60,10 @@ angular.module 'Scrumble.indicators'
       valueInputOption: 'RAW'
       values: [['Bonjour le monde']]
     }
-    console.log 'test1'
     GApi.executeAuth('sheets', 'spreadsheets.values.update', $scope.queryParams).then ((resp) ->
-      console.log 'test2'
       $scope.savingInSpreadsheet = false
       return
     ), ->
-      console.log 'test3'
       $scope.savingInSpreadsheet = false
       return
     return
