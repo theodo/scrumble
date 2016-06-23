@@ -27,7 +27,7 @@
     "angular-local-storage": "0.2.3",
     "angular-trello": "*",
     "angular-trello-api-client": "2.1.1",
-    "angular-material": "1.0.9",
+    "angular-material": "1.1.0-rc.5",
     "d3": "3.5.10",
     "angular-permission": "1.1.1",
     "d3-bdc": "1.1.2",

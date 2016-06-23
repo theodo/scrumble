@@ -64,3 +64,24 @@ describe '[Controller] ProblemListCtrl', ->
         $scope: {}
         problem: {}
       expect(dialogController).toBeDefined()
+
+  describe 'deleteProblem', ->
+
+    it 'should ask a confirmation before deleting', ->
+      spyOn($mdDialog, 'show').and.returnValue $q.when(null)
+      spyOn($mdDialog, 'confirm').and.callThrough()
+      spyOn(Problem, 'query').and.returnValue $q.when([])
+      $scope = $rootScope.$new()
+      controller = $controller 'ProblemListCtrl',
+        $scope: $scope
+        Problem: Problem
+        $mdDialog: $mdDialog
+      problem =
+        $delete: ->
+      spyOn(problem, '$delete').and.returnValue $q.when(null)
+      $scope.deleteProblem(problem)
+      expect($mdDialog.show).toHaveBeenCalled()
+      expect($mdDialog.confirm).toHaveBeenCalled()
+      expect(problem.$delete).not.toHaveBeenCalled()
+      $scope.$digest()
+      expect(problem.$delete).toHaveBeenCalled()

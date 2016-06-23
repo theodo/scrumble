@@ -23,6 +23,16 @@ angular.module 'Scrumble.problems'
   $scope.addProblem = (ev) ->
     open(null, ev)
 
+  $scope.deleteProblem = (problem, ev) ->
+    $mdDialog.show($mdDialog.confirm()
+      .title('Are you sure you want to do what you\'re trying to do?')
+      .ariaLabel('delete confirm')
+      .targetEvent(ev)
+      .ok('Yes')
+      .cancel('No')
+    ).then ->
+      problem.$delete().then fetchProblems
+
   open = (problem, ev) ->
     $mdDialog.show
       controller: 'AddProblemCtrl'
