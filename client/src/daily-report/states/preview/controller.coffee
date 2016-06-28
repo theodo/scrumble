@@ -31,7 +31,9 @@ angular.module 'Scrumble.daily-report'
   googleAuth.isAuthenticated().then (isAuthenticated) ->
     $scope.isAuthenticated = isAuthenticated
 
+  $scope.sending = false
   $scope.send = ->
+    $scope.sending = true
     reportBuilder.buildCid()
     .then (message) ->
       mailer.send message, (response) ->
@@ -52,3 +54,4 @@ angular.module 'Scrumble.daily-report'
           ping.$save()
           $mdToast.show sentFeedback
           $mdDialog.cancel()
+        $scope.sending = false
