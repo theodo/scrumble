@@ -72,6 +72,14 @@ client-push:
 	eval "$$(docker-machine env -u)" && \
 	docker push nicgirault/scrumble
 
+client-deploy: client-build
+	eval "$$(docker-machine env -u)" && \
+	docker push nicgirault/scrumble && \
+	eval "$$(docker-machine env prod)" && \
+	docker-compose --file docker-compose.prod.yml pull && \
+	docker-compose --file docker-compose.prod.yml up -d && \
+	eval "$$(docker-machine env -u)"
+
 showcase-build:
 	eval "$$(docker-machine env -u)" && \
 	docker build -t nicgirault/scrumble-showcase showcase
