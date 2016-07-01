@@ -1,5 +1,5 @@
 appbuilder:
-  image: node:wheezy
+  image: node:6.2
   volumes:
     - ./client:/app
   working_dir: /app

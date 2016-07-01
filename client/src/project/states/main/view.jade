@@ -23,7 +23,10 @@ div(ng-hide='isLoading')
       md-grid-tile.project-tile.clickable(
         ng-repeat="board in filteredBoards = (boards | filter:board.idOrganization=organization.id | filter: searchInput)"
         ng-click="selectBoard(board.id)"
-        ng-style="{'background-image':'url({{board.prefs.backgroundImageScaled[2].url}})', 'background-color':'{{board.prefs.backgroundColor}}'}"
+        ng-style="{\
+          'background-image':'url({{board.prefs.backgroundImageScaled[2].url || board.prefs.backgroundImage}})',\
+          'background-color':'{{board.prefs.backgroundColor}}'\
+        }"
       )
         md-grid-tile-footer
           h5 {{board.name}}
