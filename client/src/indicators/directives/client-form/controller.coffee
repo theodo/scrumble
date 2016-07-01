@@ -4,7 +4,7 @@ angular.module 'Scrumble.indicators'
   loadingToast
   Sprint
 ) ->
-  _.forEach $scope.sprint.indicators.satisfactionSurvey, (question, index) ->
+  _.forEach $scope.sprint?.indicators?.satisfactionSurvey, (question, index) ->
     $scope.template[index].answer = question.answer
 
   $scope.save = ->
