@@ -4,25 +4,45 @@ angular.module 'Scrumble.sprint'
   scope:
     data: '='
   templateUrl: 'sprint/directives/burndown/view.html'
-  controller: ($scope, $timeout) ->
+  controller: ($scope, $timeout, $mdMedia) ->
     whRatio = 0.54
 
     computeDimensions = ->
       chart = document.getElementsByClassName('chart')?[0]
       chart?.parentNode.removeChild chart
-      width = document.getElementById('bdcgraph')?.clientWidth - 120
-      width = Math.min width, 1000
-      height = whRatio * width
 
-      config =
-        containerId: '#bdcgraph'
-        width: width
-        height: height
-        margins:
+      if $mdMedia('sm') or $mdMedia('xs')
+        width = document.getElementById('bdcgraph')?.clientWidth
+        width = Math.min width, 1000
+        height = whRatio * width
+        margins =
+          top: 30
+          right: 0
+          bottom: 60
+          left: 0
+        yScaleOrient = 'right'
+        dotRadius = 2
+        standardStrokeWidth = 1
+        doneStrokeWidth = 1
+      else
+        width = document.getElementById('bdcgraph')?.clientWidth - 120
+        width = Math.min width, 1000
+        height = whRatio * width
+        margins =
           top: 30
           right: 70
           bottom: 60
           left: 50
+        yScaleOrient = 'left'
+        dotRadius = 4
+        standardStrokeWidth = 2
+        doneStrokeWidth = 2
+      config =
+        containerId: '#bdcgraph'
+        width: width
+        height: height
+        margins: margins
+        yScaleOrient: yScaleOrient
         colors:
           standard: '#FF5253'
           done: '#1a69cd'
@@ -32,10 +52,11 @@ angular.module 'Scrumble.sprint'
         startLabel: 'Start'
         endLabel: 'Ceremony'
         dateFormat: '%A %d/%m'
+        shortDateFormat: '%d/%m'
         xTitle: ''
-        dotRadius: 4
-        standardStrokeWidth: 2
-        doneStrokeWidth: 2
+        dotRadius: dotRadius
+        standardStrokeWidth: standardStrokeWidth
+        doneStrokeWidth: doneStrokeWidth
         goodSuffix: ' :)'
         badSuffix: ' :('
       config
