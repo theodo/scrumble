@@ -1,6 +1,6 @@
 md-card
   h2.md-title(layout-align="center end") PROBLEM TRACKING
-  md-subheader(style="color: red; text-align: center;") This is an experimental feature. You should continue using your resolution problem sheet on your board
+  md-subheader(style="color: red; text-align: center;") Problems must be visible. Continue using the problem sheet on your board!
   
   div(layout="row" layout-sm="column" layout-align="space-around" ng-if="loading")
     md-progress-circular(md-mode="indeterminate")
@@ -25,6 +25,8 @@ md-card
           p
             strong Action:
             |  {{ problem.action }}
+          md-chips(ng-model="problem.tags" readonly="true")
+            md-chip-template {{ $chip.label }}
           md-icon.md-secondary(
             md-svg-icon="pencil-box"
             ng-click="editProblem(problem, $event)"
