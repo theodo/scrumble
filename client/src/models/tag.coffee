@@ -13,4 +13,4 @@ angular.module 'Scrumble.models'
   findOrCreate: (tag) ->
     tag.$findOrCreate()
   query: (parameters, success, error) ->
-    Problem.query(parameters, success, error).$promise
+    Tag.query(parameters, success, error).$promise

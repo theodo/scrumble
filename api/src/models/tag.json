@@ -10,6 +10,10 @@
       "type": "string",
       "required": true
     },
+    "counter": {
+      "type": "number",
+      "required": false
+    },
     "createdAt": {
       "type": "date",
       "required": false
