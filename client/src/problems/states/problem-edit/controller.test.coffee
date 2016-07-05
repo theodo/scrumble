@@ -49,7 +49,7 @@ describe '[Controller] AddProblemCtrl', ->
         $stateParams:
           projectId: 1
       $scope.save({})
-      expect(Problem.save).toHaveBeenCalledWith({projectId: 1, type: 'red-tray'})
+      expect(Problem.save).toHaveBeenCalledWith({projectId: 1, type: 'null'})
 
     it 'should call $mdDialog.hide', ->
       $scope = $rootScope.$new()

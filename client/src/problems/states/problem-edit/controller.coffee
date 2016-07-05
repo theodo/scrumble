@@ -4,9 +4,13 @@ angular.module 'Scrumble.problems'
   $mdDialog,
   problem,
   Problem,
+  TagRepository
   $stateParams
 ) ->
   $scope.problem = problem
+  $scope.problem.tagLabels ?= []
+
+  $scope.formatTag = TagRepository.format
 
   unless $scope.problem.happenedDate?
     $scope.problem.happenedDate = new Date
@@ -15,6 +19,6 @@ angular.module 'Scrumble.problems'
     $mdDialog.cancel()
 
   $scope.save = (problem) ->
-    problem.type = 'red-tray'
+    problem.type = 'null'
     problem.projectId = $stateParams.projectId
     Problem.save(problem).then $mdDialog.hide

@@ -1,0 +1,36 @@
+{
+  "name": "Tag",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "options": {
+      "promisify": true
+  },
+  "properties": {
+    "label": {
+      "type": "string",
+      "required": true
+    },
+    "createdAt": {
+      "type": "date",
+      "required": false
+    },
+    "updatedAt": {
+      "type": "date",
+      "required": false
+    }
+  },
+  "validations": [],
+  "relations": {},
+  "acls": [
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "DENY"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$authenticated",
+      "permission": "ALLOW"
+    }
+  ]
+}

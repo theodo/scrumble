@@ -7,7 +7,7 @@ md-dialog(flex="80")
         md-icon(md-svg-src='close' aria-label='Close dialog')
   md-dialog-content
     .md-padding
-      md-content(layout="column")
+      md-content.fix-tags-input(layout="column")
         div(layout="row" layout-align="center center")
           md-datepicker(ng-model="problem.happenedDate" md-placeholder="Date")
         md-input-container
@@ -26,5 +26,8 @@ md-dialog(flex="80")
           label Action
           md-icon(md-svg-src="hand-pointing-right")
           textarea(ng-model="problem.action" rows="2")
+        div(layout="row")
+          md-icon(md-svg-src="tag-multiple" flex="initial")
+          tag-input(problem="problem" flex)
   md-dialog-actions(layout='row')
     md-button.md-raised.md-primary(ng-click="save(problem)") Save
