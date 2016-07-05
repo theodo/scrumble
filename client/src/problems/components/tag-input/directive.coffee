@@ -5,8 +5,11 @@ angular.module 'Scrumble.problems'
   scope:
     problem: '='
   controller: ($scope, TagRepository, Tag) ->
-    $scope.newTag = (label) ->
-      label: TagRepository.format(label)
+    $scope.newTag = (input) ->
+      if _.isString input
+        label: TagRepository.format(input)
+      else
+        input
 
     TagRepository.getByPopularity().then (tags) ->
       $scope.tags = tags
