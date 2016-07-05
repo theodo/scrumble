@@ -62,5 +62,13 @@
   "Problem": {
     "dataSource": "db",
     "public": true
+  },
+  "Tag": {
+    "dataSource": "db",
+    "public": true
+  },
+  "TagInstance": {
+    "dataSource": "db",
+    "public": true
   }
 }

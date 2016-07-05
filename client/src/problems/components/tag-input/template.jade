@@ -1,0 +1,7 @@
+md-chips(
+  ng-model="problem.inputTags"
+  md-transform-chip="newTag($chip)"
+  md-on-add="createTag($chip)"
+  placeholder="Enter a tag"
+)
+  md-chip-template {{ $chip.label }}

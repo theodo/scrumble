@@ -1,0 +1,34 @@
+{
+  "name": "TagInstance",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "options": {
+    "promisify": true
+  },
+  "properties": {},
+  "validations": [],
+  "relations": {
+    "problem": {
+      "type": "belongsTo",
+      "model": "Problem",
+      "foreignKey": "problemId"
+    },
+    "tag": {
+      "type": "belongsTo",
+      "model": "Tag",
+      "foreignKey": "tagId"
+    }
+  },
+  "acls": [
+    {
+      "principalType": "ROLE",
+      "principalId": "$everyone",
+      "permission": "DENY"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$authenticated",
+      "permission": "ALLOW"
+    }
+  ]
+}

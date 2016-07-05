@@ -45,6 +45,13 @@
       "type": "belongsTo",
       "model": "Project",
       "foreignKey": "projectId"
+    },
+    "tags": {
+      "type": "hasMany",
+      "model": "Tag",
+      "through": "TagInstance",
+      "foreignKey": "problemId",
+      "keyThrough": "tagId"
     }
   },
   "acls": [

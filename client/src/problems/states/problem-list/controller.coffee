@@ -13,6 +13,7 @@ angular.module 'Scrumble.problems'
         where:
           projectId: $stateParams.projectId
         order: 'happenedDate DESC'
+        include: 'tags'
     ).then (problems) ->
       $scope.problems = problems
       $scope.loading = false
