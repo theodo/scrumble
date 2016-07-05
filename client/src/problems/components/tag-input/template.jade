@@ -2,6 +2,14 @@ md-chips(
   ng-model="problem.inputTags"
   md-transform-chip="newTag($chip)"
   md-on-add="createTag($chip)"
-  placeholder="Enter a tag"
 )
+  md-autocomplete(
+    md-selected-item="selectedItem"
+    md-search-text="searchText"
+    md-items="tag in tags | filter : searchText"
+    md-item-text="tag.label"
+    md-min-length="0"
+    placeholder="Enter a tag"
+  )
+    span(md-highlight-text="searchText") {{tag.label}}
   md-chip-template {{ $chip.label }}

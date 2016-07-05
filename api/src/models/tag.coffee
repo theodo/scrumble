@@ -13,8 +13,10 @@ module.exports = (Tag) ->
       where:
         label: Tag.format(req.body.label)
     ,
-      label: Tag.format(req.body.label)
-    )
+      label: Tag.format(req.body.label), counter: 0, createdAt: new Date
+    ).then (tag) ->
+      tag.counter = if tag.counter? then tag.counter + 1 else 1
+      tag.save()
 
   Tag.setProblemTags = (tags, problemId) ->
     Tag.app.models.TagInstance.destroyAll(problemId: problemId).then ->
