@@ -4,11 +4,12 @@ angular.module 'Scrumble.settings'
 
   lastSpeeds = (projectId) ->
     unless promise?
-      promise = Project.getLastSpeeds(projectId)
+      promise = Project.getLastSpeeds(projectId).then (response) ->
+        response.data
     return promise
 
   formattedSpeedInfo = (projectId) ->
-    format = (speedInfo) -> "Sprint #{speedInfo.number}: #{speedInfo.speed}"
+    format = (speedInfo) -> "Sprint #{speedInfo.sprintNumber}: #{speedInfo.speed}"
     lastSpeeds(projectId).then (speedsInfo) ->
       _(speedsInfo)
         .filter((speedInfo) -> speedInfo.speed?)
@@ -20,10 +21,10 @@ angular.module 'Scrumble.settings'
     lastSpeeds(projectId).then (speedsInfo) ->
       average = _(speedsInfo)
         .filter((speedInfo) -> speedInfo.speed?)
-        .meanBy(speedsInfo, 'speed')
+        .meanBy('speed')
         .toFixed(1)
       return null unless average?
-
+      average
   {
     lastSpeeds
     formattedSpeedInfo

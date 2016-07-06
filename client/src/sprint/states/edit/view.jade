@@ -56,7 +56,9 @@ div.sprint-body(layout="row" layout-align="center end")
           ng-model="editedSprint.resources.speed"
           ng-change="checkSprint('speed')"
         )
-        speed-info(project-id="{{ editedSprint.projectId }}")
-        speed-average(project-id="{{ editedSprint.projectId }}")
+        .speed-messages
+          speed-info(project-id="{{ editedSprint.projectId }}")
+          |  / 
+          speed-average(project-id="{{ editedSprint.projectId }}")
     section(layout="row" layout-sm="column" layout-align="center center" layout-wrap)
       md-button.md-raised.md-primary(ng-disabled="!activable" ng-click="activate()") {{ saveLabel }}
