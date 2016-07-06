@@ -5,7 +5,6 @@ angular.module 'Scrumble.settings'
   scope:
     projectId: '@'
   controller: ($scope, Speed) ->
-
     Speed.formattedSpeedInfo($scope.projectId)
     .then (formattedSpeedInfo) ->
       $scope.info = formattedSpeedInfo
