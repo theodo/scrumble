@@ -3,36 +3,16 @@ angular.module 'Scrumble.problems'
   $scope,
   $mdDialog,
   $mdMedia,
-  $stateParams,
-  Problem
+  $stateParams
 ) ->
-  fetchProblems = ->
-    $scope.loading = true
-    Problem.query(
-      filter:
-        where:
-          projectId: $stateParams.projectId
-        order: 'happenedDate DESC'
-        include: 'tags'
-    ).then (problems) ->
-      $scope.problems = problems
-      $scope.loading = false
 
-  $scope.editProblem = (problem, ev) ->
+  $scope.projectId = $stateParams.projectId
+
+  $scope.$on 'problem:clicked', (e, problem, ev) ->
     open(problem, ev)
 
   $scope.addProblem = (ev) ->
     open(null, ev)
-
-  $scope.deleteProblem = (problem, ev) ->
-    $mdDialog.show($mdDialog.confirm()
-      .title('Are you sure you want to do what you\'re trying to do?')
-      .ariaLabel('delete confirm')
-      .targetEvent(ev)
-      .ok('Yes')
-      .cancel('No')
-    ).then ->
-      problem.$delete().then fetchProblems
 
   open = (problem, ev) ->
     $mdDialog.show
@@ -44,6 +24,5 @@ angular.module 'Scrumble.problems'
       fullscreen: $mdMedia 'sm'
       resolve:
         problem: (Problem) -> angular.copy(problem) or Problem.new()
-    .then fetchProblems
-
-  fetchProblems()
+    .then ->
+      $scope.$broadcast('problem:saved')

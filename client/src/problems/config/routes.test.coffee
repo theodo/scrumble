@@ -1,10 +1,9 @@
-describe '[Controller] ProblemListCtrl', ->
+describe '[Config] Problem routes', ->
   beforeEach module 'Scrumble.problems'
 
-  it 'should define state with existing controllers', (done) ->
-    inject ($state, $controller) ->
+  it 'should define state with existing controllers', ->
+    inject ($state, $controller, $rootScope) ->
       state = $state.get('tab.problems')
       controller = $controller state.controller,
-        $scope: {}
+        $scope: $rootScope.$new()
       expect(controller).toBeDefined()
-      done()
