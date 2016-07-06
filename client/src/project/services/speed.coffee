@@ -9,7 +9,7 @@ angular.module 'Scrumble.settings'
     return promise
 
   formattedSpeedInfo = (projectId) ->
-    format = (speedInfo) -> "Sprint #{speedInfo.sprintNumber}: #{speedInfo.speed}"
+    format = (speedInfo) -> "Sprint #{speedInfo.sprintNumber}: #{speedInfo.speed?.toFixed(1)}"
     lastSpeeds(projectId).then (speedsInfo) ->
       _(speedsInfo)
         .filter((speedInfo) -> speedInfo.speed?)
