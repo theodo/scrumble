@@ -50,6 +50,11 @@
       "model": "Sprint",
       "foreignKey": "projectId"
     },
+    "problems": {
+      "type": "hasMany",
+      "model": "Problem",
+      "foreignKey": "projectId"
+    },
     "dailyReport": {
       "type": "hasOne",
       "model": "DailyReport",

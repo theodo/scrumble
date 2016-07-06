@@ -9,36 +9,8 @@ md-card
     p.description Here is the place to track the problems of your project.
     section(layout="row" layout-sm="column" layout-align="center center" layout-wrap)
       md-button(ng-click="addProblem($event)") Create the first problem
-  div(layout="row" layout-align="center")
-    md-input-container
-      label Search a problem
-      input(ng-model="searchText")
-  md-list
-    div(ng-repeat-start="problem in problems | filter : searchText")
-      md-list-item.md-3-line.md-long-text
-        .md-list-item-text
-          h3(md-highlight-text="searchText") {{ problem.description }}
-          a(ng-if="problem.link" href="{{ problem.link }}" target="_blank" ) problem.link
-          h4(md-highlight-text="searchText") {{ problem.happenedDate | date : 'longDate' }}
-          p
-            strong Cause Hypothesis:
-            span(md-highlight-text="searchText")  {{ problem.causeHypothesis }}
-          p
-            strong Action:
-            span(md-highlight-text="searchText")  {{ problem.action }}
-          md-chips(ng-model="problem.tags" readonly="true")
-            md-chip-template(md-highlight-text="searchText") {{ $chip.label }}
-          md-icon.md-secondary(
-            md-svg-icon="pencil-box"
-            ng-click="editProblem(problem, $event)"
-            aria-label="Edit"
-          )
-          md-icon.md-secondary.md-accent(
-            md-svg-icon="delete"
-            ng-click="deleteProblem(problem, $event)"
-            aria-label="Delete"
-          )
-    md-divider(ng-repeat-end ng-if="!$last")
+  
+  problems-list(project-id="{{ projectId }}")
       
   md-button.md-fab.md-accent.board-call-to-actions(ng-click="addProblem($event)")
     md-icon(md-svg-icon='plus') Add

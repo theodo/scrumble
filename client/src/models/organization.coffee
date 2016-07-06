@@ -30,5 +30,7 @@ angular.module 'Scrumble.models'
     new Organization()
   get: (parameters, success, error) ->
     Organization.get(parameters, success, error).$promise
+  query: (parameters, success, error) ->
+    Organization.query(parameters, success, error).$promise
   update: Organization.update
   findOrCreate: findOrCreate

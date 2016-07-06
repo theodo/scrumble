@@ -99,3 +99,15 @@ angular.module 'Scrumble.common'
     ,
     ]
   ]
+
+  if $scope.project?.organizationId
+    $scope.menu.push
+      title: 'Organization'
+      items: [
+        state: 'tab.organization-problems'
+        params:
+          organizationId: $scope.project?.organizationId
+        title: 'Problem Tracking'
+        icon: 'bell-ring'
+      ,
+      ]
