@@ -9,3 +9,16 @@ h4 Alert daily mail not sent
 md-datepicker(ng-model="selectedDate", md-placeholder="Given date" ng-change="computeDiff(selectedDate)")
 md-list
   md-list-item(ng-repeat="daily in alertDailies") {{ daily.name }}
+
+div(ng-repeat="(organization, projects) in organizations")
+  h3 {{ organization }}
+  table
+    tr
+      th
+      th(ng-repeat="day in days") {{ day }}
+    tr(ng-repeat="(project, pings) in projects")
+      td {{ project }}
+      td(
+        ng-repeat="day in days"
+        ng-style="{'background-color': pings[day] ? '#4caf50' : '#f44336'}"
+      ) &nbsp;
