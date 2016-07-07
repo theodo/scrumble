@@ -6,14 +6,7 @@ div
       
   md-list
     div(ng-repeat-start="problem in problems | filter : searchText")
-      md-list-item.md-3-line.md-long-text(
-        ng-if="editable"
-        ng-click="problemClicked(problem, $event)"
-      )
-        include ./item.jade
-      md-list-item.md-3-line.md-long-text(
-        ng-if="!editable"
-      )
+      md-list-item.md-3-line.md-long-text
         include ./item.jade
         
     md-divider(ng-repeat-end ng-if="!$last")
