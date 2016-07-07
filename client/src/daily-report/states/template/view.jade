@@ -1,8 +1,9 @@
 div(layout="column" flex="100")
   md-card(flex="80" flex-sm="100" flex-xs="100")
     md-card-title(flex="nogrow")
-      md-card-title-text
+      md-card-title-text(flex="grow")
         span.md-headline Subject
+        span.md-subhead The subject is very important. It will determine if your customer will read your report. Change it every day with the main point of your report
       div(flex)
       template-call-to-action(sections="sections" section="subject")
       dynamic-fields-call-to-action

@@ -1,6 +1,6 @@
 .md-list-item-text
   h3(md-highlight-text="searchText") {{ problem.projectName }} {{ problem.description }}
-  a(ng-if="problem.link" href="{{ problem.link }}" target="_blank" ) problem.link
+  a(ng-if="problem.link" href="{{ problem.link }}" target="_blank" ) {{ problem.link }}
   h4(md-highlight-text="searchText") {{ problem.happenedDate | date : 'longDate' }}
   p
     strong Cause Hypothesis:
@@ -10,6 +10,14 @@
     span(md-highlight-text="searchText")  {{ problem.action }}
   md-chips(ng-model="problem.tags" readonly="true")
     md-chip-template(md-highlight-text="searchText") {{ $chip.label }}
+    
+  md-icon.md-secondary(
+    ng-if="editable"
+    md-svg-icon="pencil"
+    ng-click="problemClicked(problem, $event)"
+    aria-label="pencil"
+  )
+
   md-icon.md-secondary.md-accent(
     ng-if="editable"
     md-svg-icon="delete"
