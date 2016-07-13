@@ -20,7 +20,12 @@
     }
   },
   "validations": [],
-  "relations": {},
+  "relations": {
+    "project": {
+      "type": "belongsTo",
+      "foreignKey": "projectId"
+    }
+  },
   "acls": [
     {
       "principalType": "ROLE",
