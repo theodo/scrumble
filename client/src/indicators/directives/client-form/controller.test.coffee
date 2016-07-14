@@ -8,6 +8,7 @@ describe 'ClientFormCtrl', ->
   GApi = null
   loadingToast = null
   Sprint = null
+  Organization = null
 
   beforeEach inject (_$q_, _$controller_, _$rootScope_, _GAuth_, _GApi_, _Sprint_, _loadingToast_) ->
     $q = _$q_
@@ -25,6 +26,7 @@ describe 'ClientFormCtrl', ->
       controller = $controller 'ClientFormCtrl',
         $scope: $scope
         GAuth: GAuth
+        GApi: GApi
       $scope.googleCheckAuthentified()
       $scope.$digest()
       expect($scope.googleAuthentified).toBe true
@@ -36,6 +38,7 @@ describe 'ClientFormCtrl', ->
       controller = $controller 'ClientFormCtrl',
         $scope: $scope
         GAuth: GAuth
+        GApi: GApi
       $scope.googleCheckAuthentified()
       $scope.$digest()
       expect($scope.googleAuthentified).toBe false
