@@ -42,13 +42,13 @@ angular.module 'Scrumble.common'
     title: 'Project'
     items: [
       state: 'tab.project'
-      title: 'Select a Project'
+      title: 'Select your Project'
       icon: 'view-module'
     ,
       state: 'tab.new-sprint'
       params:
         projectId: $scope.project?.id
-      title: 'Start New Sprint'
+      title: 'Start A New Sprint'
       icon: 'plus'
     ,
       state: 'tab.team'
