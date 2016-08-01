@@ -5,6 +5,7 @@ angular.module 'Scrumble.settings'
   Project
   ScrumbleUser2
   Organization
+  dailyCache
 ) ->
 
   $scope.isLoading = true
@@ -33,6 +34,7 @@ angular.module 'Scrumble.settings'
   $scope.selectBoard = (boardId) ->
     return unless boardId?
     $scope.saving = true
+    dailyCache.put 'sections', null
     Project.query
       filter:
         where:
