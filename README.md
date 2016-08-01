@@ -10,14 +10,12 @@ It is connected to your Trello board and GoogleApps account and helps to:
 ## Installation
 
 The easiest way to develop on Scrumble is to install:
-- [docker](https://docs.docker.com/engine/installation/)
+- [docker](https://docs.docker.com/engine/installation/) (read the optional configuration to [make sure your user is part of the docker group](http://askubuntu.com/questions/477551/how-can-i-use-docker-without-sudo)
+to avoid running all commands as root.
 - [docker-compose](https://docs.docker.com/compose/install/)
 - [docker-machine](https://docs.docker.com/machine/install-machine/)
 
-Make sure your Docker installation is working fine by typing `docker ps`. Under Mac OS X you may have to [run some commands](https://docs.docker.com/engine/installation/mac/) after installing to get Docker working in your shell.
-
-[Make sure your user is part of the docker group](http://askubuntu.com/questions/477551/how-can-i-use-docker-without-sudo)
-to avoid running all commands as root.
+Make sure your Docker installation is working fine by typing `docker ps`. Under Mac OS X you may have to [run some commands](https://docs.docker.com/engine/installation/linux/ubuntulinux/#create-a-docker-group) after installing to get Docker working in your shell.
 
 For Mac OS X users, the project folder must be in a subfolder of /Users, due to [an issue in docker-machine](https://github.com/docker/machine/issues/13).
 
