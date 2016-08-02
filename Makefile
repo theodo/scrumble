@@ -2,9 +2,9 @@ whoami := $(shell whoami)
 
 install:
 	eval "$$(docker-machine env -u)" && \
-	docker-compose --file docker-compose.dev.yml run --rm api npm install && \
+	docker-compose --file docker-compose.dev.yml run --rm api npm install --quiet && \
 	sudo chown -R ${whoami}:${whoami} api/node_modules && \
-	docker-compose --file docker-compose.build.yml run --rm appbuilder npm install --unsafe-perm && \
+	docker-compose --file docker-compose.build.yml run --rm appbuilder npm install --quiet --unsafe-perm && \
 	sudo chown -R ${whoami}:${whoami} client/node_modules && \
 	sudo chown -R ${whoami}:${whoami} client/bower_components
 

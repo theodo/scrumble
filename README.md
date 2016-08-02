@@ -42,8 +42,21 @@ Build&push all docker images from local and pull them from remote: `make build-d
 There are many commands in the makefile that are self comprehensible. Please,
 read the makefile.
 
+## Setup database backup on server
 
-Top 3 priorités :
-- Le formulaire est sauvegardé dans une google spreadsheet (feedbacks aussi)
-- Les pings sont fait sur loopback
-- Directive pour bouton en cours d'action
+The email will probably arrive in the spam folder.
+
+```
+apt install mutt
+DB_USER=xxx
+DB_NAME=xxx
+DB_CONTAINER=xxx
+TO=xxx
+echo "FILENAME=dump_\`date +%d-%m-%Y"_"%H_%M_%S\`.sql
+docker exec $DB_CONTAINER pg_dump --username=$DB_USER $DB_NAME > \$FILENAME
+echo \"You'll find attached the Scrumble backup\" | mutt -a \$FILENAME -s \"Scrumble Backup\" -- $TO
+rm \$FILENAME" >> backup.sh
+chmod +x backup.sh
+
+echo "0 0 * * * ~/backup.sh" >> /var/spool/cron/crontabs/root
+```
