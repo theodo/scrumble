@@ -45,6 +45,6 @@
     "angular-google-gapi": "1.0.0-beta.2"
   },
   "resolutions": {
-    "angular": "1.5.7"
+    "angular": "1.5.8"
   }
 }
