@@ -45,6 +45,11 @@
   },
   "validations": [],
   "relations": {
+    "DailyReportPings": {
+      "type": "hasMany",
+      "model": "DailyReportPing",
+      "foreignKey": "projectId"
+    },
     "sprints": {
       "type": "hasMany",
       "model": "Sprint",

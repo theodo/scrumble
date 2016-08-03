@@ -10,15 +10,15 @@ md-datepicker(ng-model="selectedDate", md-placeholder="Given date" ng-change="co
 md-list
   md-list-item(ng-repeat="daily in alertDailies") {{ daily.name }}
 
-div(ng-repeat="(organization, projects) in organizations")
+div(ng-repeat="(organization, projects) in projectsByOrganization")
   h3 {{ organization }}
   table
     tr
       th
       th(ng-repeat="day in days") {{ day }}
-    tr(ng-repeat="(project, pings) in projects")
-      td {{ project }}
+    tr(ng-repeat="project in projects")
+      td {{ project.name }}
       td(
         ng-repeat="day in days"
-        ng-style="{'background-color': pings[day] ? '#4caf50' : '#f44336'}"
+        ng-style="{'background-color': project.pings[day] ? '#4caf50' : '#f44336'}"
       ) &nbsp;
