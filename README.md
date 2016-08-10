@@ -60,3 +60,7 @@ chmod +x backup.sh
 
 echo "0 0 * * * ~/backup.sh" >> /var/spool/cron/crontabs/root
 ```
+
+## Space issue on server
+
+`docker rmi $(docker images -f "dangling=true" -q)`
