@@ -18,6 +18,7 @@ app = angular.module 'Scrumble', [
   'angular-async-loader'
   'angularDateInterceptor'
   'trello'
+  'highcharts-ng'
 
   'Scrumble.constants'
   'Scrumble.models'
@@ -33,6 +34,7 @@ app = angular.module 'Scrumble', [
   'Scrumble.wait'
   'Scrumble.admin'
   'Scrumble.problems'
+  'Scrumble.lab'
 ]
 
 app.config (

@@ -24,10 +24,10 @@ api:
     PORT: "8000"
     DB_DATABASE: postgres
     DB_USERNAME: postgres
-    GOOGLE_CLIENT_ID: '***'
     GOOGLE_API_SECRET: '***'
-    TRELLO_KEY: '***'
     TRELLO_SECRET: '***'
+    GOOGLE_CLIENT_ID: 605908567890-3bg3dmamghq5gd7i9sqsdhvoflef0qku.apps.googleusercontent.com
+    TRELLO_KEY: 2dcb2ba290c521d2b5c2fd69cc06830e
     SMTP_HOST: '***'
     SMTP_USER: '***'
     SMTP_PASS: '***'
@@ -47,6 +47,8 @@ app:
     - api
   environment:
     APP_PORT: "8083"
+    GOOGLE_CLIENT_ID: 605908567890-3bg3dmamghq5gd7i9sqsdhvoflef0qku.apps.googleusercontent.com
+    TRELLO_KEY: 2dcb2ba290c521d2b5c2fd69cc06830e
   command: npm run watch
 
 showcase:
