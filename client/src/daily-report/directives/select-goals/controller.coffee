@@ -1,6 +1,7 @@
 angular.module 'Scrumble.daily-report'
 .controller 'SelectGoalsCtrl', (
   $scope
+  $mdToast
   trelloCards
 ) ->
   $scope.goals = []
@@ -14,16 +15,19 @@ angular.module 'Scrumble.daily-report'
   unless $scope.project?.columnMapping?.sprint?
     $scope.errors.sprintColumnMissing = true
 
-  todoCardPromise = trelloCards.getTodoCards $scope.project, $scope.sprint
-  .then (cards) ->
-    $scope.trelloCards = cards
+  loadCards = ->
+    trelloCards.getTodoCards $scope.project, $scope.sprint
+    .then (cards) ->
+      $scope.trelloCards = cards
+  loadCards()
 
-  $scope.loadCards = ->
-    todoCardPromise
-
-  $scope.generateMarkdown = (goals) ->
+  generateMarkdown = (goals) ->
     unless _.isArray goals
       $scope.markdown = ""
       return
     goalsNames = ("- <span card-id='#{goal.id}'>" + goal.name + "</span>" for goal in goals)
     $scope.markdown = goalsNames.join "\n"
+
+  $scope.update = (goals) ->
+    loadCards()
+    generateMarkdown(goals)
