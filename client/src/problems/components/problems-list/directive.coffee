@@ -5,6 +5,7 @@ angular.module 'Scrumble.problems'
   scope:
     projectId: '@'
     organizationId: '@'
+    compact: '@'
   controller: ($scope, $mdDialog, Problem, Organization) ->
     $scope.editable = $scope.projectId?
 

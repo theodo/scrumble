@@ -7,6 +7,7 @@ angular.module 'Scrumble.problems'
 ) ->
 
   $scope.projectId = $stateParams.projectId
+  $scope.selectedIndex = 0
 
   $scope.$on 'problem:clicked', (e, problem, ev) ->
     open(problem, ev)
@@ -26,3 +27,6 @@ angular.module 'Scrumble.problems'
         problem: (Problem) -> angular.copy(problem) or Problem.new()
     .then ->
       $scope.$broadcast('problem:saved')
+
+  $scope.printProblems = ->
+    window.print()
