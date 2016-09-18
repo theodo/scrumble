@@ -9,6 +9,22 @@ angular.module 'Scrumble.common'
         value = parseFloat(matchVal, 10) unless isNaN(parseFloat(matchVal, 10))
     value
 
+  isTrelloCardUrl: (url) ->
+    return /trello.com\/c/.test url
+
+  getCardInfoFromUrl: (cardUrl) ->
+    shortCode = cardUrl?.match(/\/c\/(.*)\//)?[1]
+    return unless shortCode
+
+    TrelloClient.get '/cards/' + shortCode + '?fields=name,idShort'
+    .then ({data}) ->
+      card =
+        number: data?.idShort
+        name: data?.name
+    .catch (err) ->
+      console.warn err
+      return
+
   getColumnPoints: (columnId) ->
     TrelloClient.get '/lists/' + columnId + '/cards?fields=name'
     .then (response) ->

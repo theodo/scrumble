@@ -6,7 +6,7 @@ angular.module 'Scrumble.problems'
     projectId: '@'
     organizationId: '@'
     compact: '@'
-  controller: ($scope, $mdDialog, Problem, Organization) ->
+  controller: ($scope, $mdDialog, Problem, Organization, trelloUtils) ->
     $scope.editable = $scope.projectId?
 
     $scope.problemClicked = (problem, ev) ->
@@ -21,7 +21,12 @@ angular.module 'Scrumble.problems'
           order: 'happenedDate DESC'
           include: 'tags'
       ).then (problems) ->
-        $scope.problems = problems
+        $scope.problems = _.map problems, (problem) ->
+          if trelloUtils.isTrelloCardUrl problem.link
+            trelloUtils.getCardInfoFromUrl problem.link
+            .then (info) ->
+              problem.card = info
+          problem
         $scope.loading = false
 
     fetchOrganizationProblems = ->
