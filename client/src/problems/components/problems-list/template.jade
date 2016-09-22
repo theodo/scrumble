@@ -1,4 +1,4 @@
-div
+div(ng-if="!compact")
   div(layout="row" layout-align="center")
     md-input-container
       label Search a problem
@@ -10,3 +10,8 @@ div
         include ./item.jade
         
     md-divider(ng-repeat-end ng-if="!$last")
+
+div(ng-if="compact")
+  ul
+    li(ng-repeat="problem in problems" ng-if="problem.action")
+      {{ problem.action }} ({{ problem.happenedDate | date : 'shortDate' }})
