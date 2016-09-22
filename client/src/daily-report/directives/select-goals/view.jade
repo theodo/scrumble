@@ -4,8 +4,7 @@ div(layout="column" layout-sm="column")
       multiple="true"
       placeholder="Select today's goals"
       ng-model="goals"
-      md-on-open="loadCards()"
-      md-on-close="generateMarkdown(goals)"
+      md-on-close="update(goals)"
     )
       md-option.height-2-line(ng-repeat="card in trelloCards"  ng-value="card")
         .item-title

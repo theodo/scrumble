@@ -36,6 +36,7 @@ api-test:
 api-build:
 	eval "$$(docker-machine env -u)" && \
 	docker build -t nicgirault/scrumble-api api
+
 api-push:
 	eval "$$(docker-machine env -u)" && \
 	docker push nicgirault/scrumble-api
