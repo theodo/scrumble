@@ -26,6 +26,12 @@ md-dialog(flex="80")
           label Action
           md-icon(md-svg-src="hand-pointing-right")
           textarea(ng-model="problem.action" rows="2")
+        md-input-container
+          label Expected Result
+          md-icon(md-svg-src="checkbox-multiple-marked-outline")
+          textarea(ng-model="problem.expectedResult" rows="2")
+        div(layout="row" layout-align="center center")
+          md-datepicker(ng-model="problem.checkDate" md-placeholder="Check")
         div(layout="row")
           md-icon(md-svg-src="tag-multiple" flex="initial")
           tag-input(problem="problem" flex)
