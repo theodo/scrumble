@@ -1,6 +1,11 @@
 .md-list-item-text
   h3(md-highlight-text="searchText") {{ problem.projectName }} {{ problem.description }}
-  a(ng-if="problem.link" href="{{ problem.link }}" target="_blank" ) {{ problem.link }}
+  a(ng-if="problem.link" href="{{ problem.link }}" target="_blank" )
+    span(ng-if='problem.card')
+      md-icon(md-svg-src='trello' aria-label='trello')
+      | \#{{ problem.card.number }} {{ problem.card.name }}
+    span(ng-if='!problem.card')
+      | {{ problem.link }}
   h4(md-highlight-text="searchText") {{ problem.happenedDate | date : 'longDate' }}
   p
     strong Cause Hypothesis:
