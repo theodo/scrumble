@@ -26,6 +26,14 @@
       "type": "date",
       "required": false
     },
+    "checkDate": {
+      "type": "date",
+      "required": false
+    },
+    "expectedResult": {
+      "type": "string",
+      "required": false
+    },
     "type": {
       "type": "string",
       "required": false

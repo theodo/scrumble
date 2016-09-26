@@ -13,6 +13,9 @@
   p
     strong Action:
     span(md-highlight-text="searchText")  {{ problem.action }}
+  p
+    strong Expected Result {{ problem.checkDate | date : 'shortDate' }}:
+    span(md-highlight-text="searchText")  {{ problem.expectedResult }}
   md-chips(ng-model="problem.tags" readonly="true")
     md-chip-template(md-highlight-text="searchText") {{ $chip.label }}
     
