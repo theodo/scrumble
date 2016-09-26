@@ -42,14 +42,14 @@ describe '[Controller] SelectProblemsCtrl', ->
 
   it 'should expose a list of problems', ->
     deferred.resolve ['problems']
-    spyOn(Problem, 'query').and.returnValue deferred.promise
+    spyOn(Problem, 'getWithOwnerAndCard').and.returnValue deferred.promise
     controller = $controller 'SelectProblemsCtrl',
       $scope: $scope
       $mdToast: $mdToast
       Problem: Problem
       markdownGenerator: markdownGenerator
     $rootScope.$apply()
-    expect(Problem.query).toHaveBeenCalled()
+    expect(Problem.getWithOwnerAndCard).toHaveBeenCalled()
     expect($scope.problems).toEqual ['problems']
 
   it 'should generate markdown when updated', ->

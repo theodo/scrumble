@@ -4,11 +4,16 @@ angular.module 'Scrumble.problems'
   $mdDialog,
   problem,
   Problem,
+  Project,
   TagRepository
   $stateParams
 ) ->
   $scope.problem = problem
   $scope.problem.tagLabels ?= []
+
+  Project.get(projectId: $stateParams.projectId)
+  .then (project) ->
+    $scope.project = project
 
   $scope.formatTag = TagRepository.format
 

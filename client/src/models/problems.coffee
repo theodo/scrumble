@@ -1,5 +1,5 @@
 angular.module 'Scrumble.models'
-.service 'Problem', ($resource, $q, $http, API_URL) ->
+.service 'Problem', ($resource, $q, $http, Project, API_URL, trelloUtils) ->
   endpoint = "#{API_URL}/Problems"
   Problem = $resource(
     "#{endpoint}/:problemId",
@@ -23,3 +23,24 @@ angular.module 'Scrumble.models'
       problem.$update()
     else
       problem.$save()
+  getWithOwnerAndCard: ({projectId}) ->
+    $q.all [
+      Project.get
+        projectId: projectId
+      Problem.query(
+        filter:
+          where:
+            projectId: projectId
+          order: 'happenedDate DESC'
+          include: 'tags'
+      ).$promise
+    ]
+    .then ([project, problems]) ->
+      _.map problems, (problem) ->
+        problem.owner = _.find project.team, (member) ->
+          member.id is problem.ownerId
+        if trelloUtils.isTrelloCardUrl problem.link
+          trelloUtils.getCardInfoFromUrl problem.link
+          .then (info) ->
+            problem.card = info
+        problem

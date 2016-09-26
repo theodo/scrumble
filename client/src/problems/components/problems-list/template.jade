@@ -14,4 +14,5 @@ div(ng-if="!compact")
 div(ng-if="compact")
   ul
     li(ng-repeat="problem in problems" ng-if="problem.action")
-      {{ problem.action }} ({{ problem.happenedDate | date : 'shortDate' }})
+      strong {{ problem.owner | userShortName }}
+      | ({{ problem.happenedDate | date : 'shortDate' }}) : {{ problem.action }}

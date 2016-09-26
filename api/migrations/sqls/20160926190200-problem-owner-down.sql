@@ -1,0 +1,1 @@
+ALTER TABLE Problem DROP COLUMN ownerId;

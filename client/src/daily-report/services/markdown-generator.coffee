@@ -1,5 +1,5 @@
 angular.module 'Scrumble.daily-report'
-.service 'markdownGenerator', () ->
+.service 'markdownGenerator', (trelloUser) ->
   problems: (problems) ->
     unless _.isArray problems
       return ""
@@ -9,7 +9,7 @@ angular.module 'Scrumble.daily-report'
         "#{problem.description}\n" +
         (if problem.link then "- Link: #{problem.link}\n" else "") +
         "- **Cause hypothesis** : #{problem.causeHypothesis}\n" +
-        "- **Action** : #{problem.action}\n" +
+        "- **Action #{trelloUser.shortName(problem.owner)}** : #{problem.action}\n" +
         "- **Expected result #{check}** : #{problem.expectedResult}"
       .join "\n"
       .value()

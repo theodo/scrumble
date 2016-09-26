@@ -22,6 +22,10 @@
       "type": "string",
       "required": false
     },
+    "ownerId": {
+      "type": "string",
+      "required": false
+    },
     "happenedDate": {
       "type": "date",
       "required": false
