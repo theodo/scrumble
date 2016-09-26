@@ -50,6 +50,7 @@ angular.module 'Scrumble.daily-report'
       'previousGoals'
       'todaysGoalsIntro'
       'todaysGoals'
+      'problemsIntro'
       'problems'
       'conclusion'
     ]

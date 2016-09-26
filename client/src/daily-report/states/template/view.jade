@@ -72,11 +72,13 @@ div(layout="column" flex="100")
         span.md-headline Problems
       div(flex)
       markdown-helper
-      template-call-to-action(sections="sections" section="problems")
+      template-call-to-action(sections="sections" section="problemsIntro")
       dynamic-fields-call-to-action
-    md-card-content
-      md-input-container.md-block
-        textarea(ng-model="sections.problems" aria-label="problems")
+    md-card-content(flex layout="column")
+      md-input-container
+        label Todat's problems introduction
+        input(ng-model="sections.problemsIntro")
+      select-problems(markdown="sections.problems" project="project")
 
   md-card(flex="80" flex-sm="100" flex-xs="100")
     md-card-title(flex="nogrow")

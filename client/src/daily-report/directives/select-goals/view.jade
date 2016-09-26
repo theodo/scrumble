@@ -6,7 +6,7 @@ div(layout="column" layout-sm="column")
       ng-model="goals"
       md-on-close="update(goals)"
     )
-      md-option.height-2-line(ng-repeat="card in trelloCards"  ng-value="card")
+      md-option.height-2-line(ng-repeat="card in trelloCards" ng-value="card")
         .item-title
           span.trello-card-number
             strong {{ '#' + card.idShort }}
