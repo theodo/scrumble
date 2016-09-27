@@ -1,15 +1,17 @@
-md-chips(
-  ng-model="problem.inputTags"
-  md-transform-chip="newTag($chip)"
-  md-on-add="createTag($chip)"
-)
-  md-autocomplete(
-    md-selected-item="selectedItem"
-    md-search-text="searchText"
-    md-items="tag in tags | filter : searchText"
-    md-item-text="tag.label"
-    md-min-length="0"
-    placeholder="Enter a tag"
+div(layout="column")
+  md-chips(
+    ng-model="problem.inputTags"
+    md-transform-chip="newTag($chip)"
+    md-on-add="createTag($chip)"
   )
-    span(md-highlight-text="searchText") {{tag.label}}
-  md-chip-template {{ $chip.label }}
+    md-autocomplete(
+      md-selected-item="selectedItem"
+      md-search-text="searchText"
+      md-items="tag in tags | filter : searchText"
+      md-item-text="tag.label"
+      md-min-length="0"
+      placeholder="Enter a tag"
+    )
+      span(md-highlight-text="searchText") {{tag.label}}
+    md-chip-template {{ $chip.label }}
+  .input-help [Enter] to create a new tag
