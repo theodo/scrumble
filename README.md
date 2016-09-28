@@ -31,6 +31,13 @@ make install
 make start
 ```
 
+## Provisioning
+
+```
+sudo adduser dockeradmin && sudo groupadd docker && sudo gpasswd -a dockeradmin docker
+sudo cp -R ~/.ssh /home/dockeradmin && sudo chown -R dockeradmin:dockeradmin /home/dockeradmin/.ssh
+```
+
 ## Deploy
 
 Create the docker-machine remote host `make create-host remoteip=xxx.xxx.xxx.xxx`.
