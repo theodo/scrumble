@@ -30,8 +30,6 @@ db:
   container_name: scrumble-db
   volumes_from:
     - data
-  ports:
-    - "5432:5432"
 
 showcase:
   image: nicgirault/scrumble-showcase
@@ -63,22 +61,22 @@ api:
   links:
    - db
   ports:
-    - "8000:8000"
+    - 8000
   environment:
     HOST: "0.0.0.0"
     PORT: "8000"
     DB_DATABASE: postgres
     DB_USERNAME: postgres
-    GOOGLE_CLIENT_ID: '***'
-    GOOGLE_API_SECRET: '***'
-    TRELLO_KEY: '***'
-    TRELLO_SECRET: '***'
+    GOOGLE_CLIENT_ID: 'tocomplete'
+    GOOGLE_API_SECRET: 'tocomplete'
+    TRELLO_KEY: 'tocomplete'
+    TRELLO_SECRET: 'tocomplete'
     VIRTUAL_HOST: api.scrumble.io
     LETSENCRYPT_HOST: api.scrumble.io
     LETSENCRYPT_EMAIL: contact@scrumble.io
     SMTP_HOST: 'smtp.mailgun.org'
-    SMTP_USER: '***'
-    SMTP_PASS: '***'
-    EMAIL_CONTACT: '***'
+    SMTP_USER: 'tocomplete'
+    SMTP_PASS: 'tocomplete'
+    EMAIL_CONTACT: 'tocomplete'
   restart: always
   command: npm start
