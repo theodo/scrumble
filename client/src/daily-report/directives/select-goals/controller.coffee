@@ -3,6 +3,7 @@ angular.module 'Scrumble.daily-report'
   $scope
   $mdToast
   trelloCards
+  markdownGenerator
 ) ->
   $scope.goals = []
   $scope.errors = {}
@@ -22,11 +23,7 @@ angular.module 'Scrumble.daily-report'
   loadCards()
 
   generateMarkdown = (goals) ->
-    unless _.isArray goals
-      $scope.markdown = ""
-      return
-    goalsNames = ("- <span card-id='#{goal.id}'>" + goal.name + "</span>" for goal in goals)
-    $scope.markdown = goalsNames.join "\n"
+    $scope.markdown = markdownGenerator.goals(goals)
 
   $scope.update = (goals) ->
     loadCards()

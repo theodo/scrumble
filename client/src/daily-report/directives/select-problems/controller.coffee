@@ -3,6 +3,7 @@ angular.module 'Scrumble.daily-report'
   $scope
   $mdToast
   Problem
+  markdownGenerator
 ) ->
   $scope.problems = []
   $scope.todaysProblems = []
@@ -19,19 +20,7 @@ angular.module 'Scrumble.daily-report'
   loadProblems()
 
   generateMarkdown = (problems) ->
-    unless _.isArray problems
-      $scope.markdown = ""
-      return
-    $scope.markdown = _.chain problems
-      .map (problem) ->
-        check = problem.checkDate.toLocaleDateString('fr-FR').match(/(.+)\/.*/)[1]
-        "#{problem.description}\n" +
-        (if problem.link then "- Link: #{problem.link}\n" else "") +
-        "- **Cause hypothesis** : #{problem.causeHypothesis}\n" +
-        "- **Action** : #{problem.action}\n" +
-        "- **Expected result #{check}** : #{problem.expectedResult}"
-      .join "\n"
-      .value()
+    $scope.markdown = markdownGenerator.problems(problems)
 
   $scope.update = (problems) ->
     loadProblems()
