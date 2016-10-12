@@ -5,3 +5,8 @@ angular.module 'Scrumble.problems'
     url: '/project/:projectId/problems'
     controller: 'ProblemListCtrl'
     templateUrl: 'problems/states/problem-list/view.html'
+
+  .state 'tab.board-groups',
+    url: '/board-groups'
+    controller: 'BoardGroupCtrl'
+    templateUrl: 'problems/states/board-groups/view.html'

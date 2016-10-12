@@ -1,0 +1,27 @@
+md-dialog
+  md-toolbar
+    .md-toolbar-tools
+      h2 Add Board Group
+      span(flex)
+      md-button.md-icon-button(ng-click='cancel()')
+        md-icon(md-svg-src='close' aria-label='Close dialog')
+  md-dialog-content
+    md-chips(
+      ng-model='selectedBoards'
+      md-autocomplete-snap
+      md-require-match='true')
+      md-autocomplete(
+        md-selected-item='selectedItem'
+        md-search-text='searchText'
+        md-items='board in boards | filter : searchText'
+        md-item-text='board.name'
+        placeholder='Search for a board'
+      )
+        span(md-highlight-text='searchText' md-highlight-flags='i') {{board.name}}
+      md-chip-template
+        span {{$chip.name}}
+    md-input-container
+      label Save this group
+      input(ng-model="group.name")
+  md-dialog-actions(layout='row')
+    md-button.md-raised.md-primary(ng-click="saveGroup(groupName)") Save

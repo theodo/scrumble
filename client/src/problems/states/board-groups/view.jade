@@ -1,0 +1,19 @@
+md-list
+  md-list-item.secondary-button-padding(
+    ng-repeat="group in groups"
+  )
+    p {{ group.name }}
+    md-chips(
+      ng-model='group.boards', name='boards', readonly='true'
+    )
+      md-chip-template {{ boardsMap[$chip].name }}
+
+    md-button.md-icon-button.md-secondary(ng-click="edit($event, group)")
+      md-icon(md-svg-icon="pencil")
+    md-button.md-icon-button.md-secondary.md-warn(ng-click="delete(group, $event)")
+      md-icon(md-svg-icon="delete")
+    md-divider
+
+md-button.md-fab.md-accent.board-call-to-actions(ng-click="edit($event)")
+  md-icon(md-svg-icon='plus') Add
+  md-tooltip(md-direction='left') Add a board group
