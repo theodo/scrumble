@@ -1,65 +1,80 @@
-describe '[Controller] BoardGroupCtrl', ->
+fdescribe '[Controller] BoardGroupCtrl', ->
   beforeEach module 'Scrumble.problems'
+  beforeEach module 'app.templates'
 
   $mdDialog = null
-  problem = null
-  Problem = null
   $rootScope = null
-  $stateParams = null
   $controller = null
   $q = null
+  $scope = null
+  TrelloClient = null
+  BoardGroup = null
+  $templateCache = null
 
-  beforeEach inject (_$mdDialog_, _Problem_, _$rootScope_, _$controller_, _$q_) ->
-    Problem = _Problem_
+  beforeEach inject (_$mdDialog_, _$rootScope_, _$controller_, _$q_, _TrelloClient_, _BoardGroup_, _$templateCache_) ->
     $mdDialog = _$mdDialog_
     $rootScope = _$rootScope_
     $controller = _$controller_
     $q = _$q_
+    $templateCache = _$templateCache_
+    TrelloClient = _TrelloClient_
+    BoardGroup = _BoardGroup_
+    $scope = $rootScope.$new()
 
-  # it 'should expose the resolved problem', ->
-  #   $scope = $rootScope.$new()
-  #   problem = {}
-  #   controller = $controller 'AddProblemCtrl',
-  #     $scope: $scope
-  #     problem: problem
-  #   expect($scope.problem).toEqual problem
-  #   expect($scope.problem.happenedDate).toEqual jasmine.any Date
-  #
-  # describe 'cancel', ->
-  #
-  #   it 'should call $mdDialog.cancel', ->
-  #     $scope = $rootScope.$new()
-  #     spyOn($mdDialog, 'cancel')
-  #     controller = $controller 'AddProblemCtrl',
-  #       $scope: $scope
-  #       problem: {}
-  #       $mdDialog: $mdDialog
-  #     $scope.cancel()
-  #     expect($mdDialog.cancel).toHaveBeenCalled()
-  #
-  # describe 'save', ->
-  #
-  #   it 'should set computable problem attributes', ->
-  #     $scope = $rootScope.$new()
-  #     spyOn(Problem, 'save').and.returnValue $q.when(null)
-  #     controller = $controller 'AddProblemCtrl',
-  #       $scope: $scope
-  #       problem: {}
-  #       Problem: Problem
-  #       $stateParams:
-  #         projectId: 1
-  #     $scope.save({})
-  #     expect(Problem.save).toHaveBeenCalledWith({projectId: 1, type: 'null'})
-  #
-  #   it 'should call $mdDialog.hide', ->
-  #     $scope = $rootScope.$new()
-  #     spyOn(Problem, 'save').and.returnValue $q.when(null)
-  #     spyOn($mdDialog, 'hide')
-  #     controller = $controller 'AddProblemCtrl',
-  #       $scope: $scope
-  #       problem: {}
-  #       Problem: Problem
-  #       $mdDialog: $mdDialog
-  #     $scope.save({})
-  #     $scope.$apply()
-  #     expect($mdDialog.hide).toHaveBeenCalled()
+  it 'should fetch boards from Trello', ->
+    boards = []
+    spyOn(TrelloClient, 'get').and.returnValue $q.when(data: boards)
+    spyOn(BoardGroup, 'mine').and.returnValue $q.when(null)
+
+    controller = $controller 'BoardGroupCtrl',
+      $scope: $scope
+      TrelloClient: TrelloClient
+
+    expect(TrelloClient.get).toHaveBeenCalled()
+    endpoint = TrelloClient.get.calls.argsFor(0)[0]
+    expect(_.startsWith(endpoint, '/members/me/boards')).toEqual(true)
+    $scope.$digest()
+    expect($scope.boards).toEqual(boards)
+
+  describe 'edit', ->
+    it 'should open a dialog with an existing template and controller', ->
+      boards = []
+      spyOn(TrelloClient, 'get').and.returnValue $q.when(data: boards)
+      spyOn($mdDialog, 'show').and.returnValue $q.when(null)
+
+      controller = $controller 'BoardGroupCtrl',
+        $scope: $scope
+        TrelloClient: TrelloClient
+        $mdDialog: $mdDialog
+
+      $scope.edit(null)
+      expect($mdDialog.show).toHaveBeenCalled()
+      config = $mdDialog.show.calls.argsFor(0)[0]
+      controller = $controller(config.controller, {
+        group: BoardGroup.new()
+        boards: boards
+        $scope: {}
+      })
+      expect(controller).toBeDefined()
+      expect($templateCache.get(config.templateUrl)).toBeDefined()
+
+  describe 'delete', ->
+
+    it 'should call BoardGroup.delete with the given group id', ->
+      boards = []
+      spyOn(TrelloClient, 'get').and.returnValue $q.when(data: boards)
+      spyOn(BoardGroup, 'mine').and.returnValue $q.when(null)
+      spyOn(BoardGroup, 'delete').and.returnValue $q.when(null)
+      spyOn($mdDialog, 'show').and.returnValue $q.when(null)
+
+      controller = $controller 'BoardGroupCtrl',
+        $scope: $scope
+        TrelloClient: TrelloClient
+        $mdDialog: $mdDialog
+        BoardGroup: BoardGroup
+
+      group =
+        id: 1
+      $scope.delete(group, null)
+      $scope.$digest()
+      expect(BoardGroup.delete).toHaveBeenCalledWith(id: group.id)
