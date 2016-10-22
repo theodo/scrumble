@@ -4,6 +4,7 @@ angular.module 'Scrumble.problems'
   $mdDialog,
   $mdMedia,
   $stateParams
+  $state
 ) ->
 
   $scope.projectId = $stateParams.projectId
@@ -30,3 +31,9 @@ angular.module 'Scrumble.problems'
 
   $scope.printProblems = ->
     window.print()
+
+  $scope.$on 'boardGroup:selected', (ev, boardGroupId) ->
+    if boardGroupId?
+      $state.go('tab.board-group-problems', boardGroupId: boardGroupId)
+    else
+      $state.go('tab.problems', projectId: project.id)

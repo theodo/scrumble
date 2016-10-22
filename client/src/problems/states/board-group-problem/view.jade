@@ -1,0 +1,9 @@
+group-selector
+  
+div(layout="row" layout-sm="column" layout-align="space-around" ng-if="loading")
+  md-progress-circular(md-mode="indeterminate")
+
+div.md-padding(ng-if="problems.length === 0" layout="column" layout-align="center")
+  p.description There is no problem in the boards you grouped.
+
+problems-list2(problems="problems")

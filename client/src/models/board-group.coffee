@@ -30,3 +30,8 @@ angular.module 'Scrumble.models'
       group.$update()
     else
       group.$save()
+  getProblems: (groupId) ->
+    trelloToken = localStorage.getItem('trello_token')
+    $http.get("#{API_URL}/BoardGroups/#{groupId}/problems?trelloToken=#{trelloToken}")
+    .then (response) ->
+      response.data

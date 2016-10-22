@@ -1,0 +1,34 @@
+.md-list-item-text
+  h3(md-highlight-text="searchText") {{ problem.projectName }} {{ problem.description }}
+  a(ng-if="problem.link" href="{{ problem.link }}" target="_blank" )
+    span(ng-if='problem.card')
+      md-icon(md-svg-src='trello' aria-label='trello')
+      | \#{{ problem.card.number }} {{ problem.card.name }}
+    span(ng-if='!problem.card')
+      | {{ problem.link }}
+  h4(md-highlight-text="searchText") {{ problem.happenedDate | date : 'longDate' }}
+  p
+    strong Cause Hypothesis:
+    span(md-highlight-text="searchText")  {{ problem.causeHypothesis }}
+  p
+    strong Action:
+    span(md-highlight-text="searchText")  {{ problem.action }}
+  p
+    strong Expected Result {{ problem.checkDate | date : 'shortDate' }}:
+    span(md-highlight-text="searchText")  {{ problem.expectedResult }}
+  md-chips(ng-model="problem.tags" readonly="true")
+    md-chip-template(md-highlight-text="searchText") {{ $chip.label }}
+    
+  md-icon.md-secondary(
+    ng-if="editable"
+    md-svg-icon="pencil"
+    ng-click="problemClicked(problem, $event)"
+    aria-label="pencil"
+  )
+
+  md-icon.md-secondary.md-accent(
+    ng-if="editable"
+    md-svg-icon="delete"
+    ng-click="deleteProblem(problem, $event)"
+    aria-label="Delete"
+  )
