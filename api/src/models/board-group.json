@@ -56,6 +56,13 @@
       "permission": "ALLOW",
       "accessType": "EXECUTE",
       "property": "getUserGroups"
+    },
+    {
+      "principalType": "ROLE",
+      "principalId": "$authenticated",
+      "permission": "ALLOW",
+      "accessType": "EXECUTE",
+      "property": "getProblems"
     }
   ]
 }
