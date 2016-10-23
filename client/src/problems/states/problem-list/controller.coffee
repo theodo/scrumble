@@ -3,8 +3,14 @@ angular.module 'Scrumble.problems'
   $scope,
   $mdDialog,
   $mdMedia,
+  $state
   $stateParams
 ) ->
+  window.onbeforeunload = (event) ->
+    if $state.current.controller is 'ProblemListCtrl'
+      return 'Are you sure you want to reload?'
+    else
+      event.preventDefault()
 
   $scope.projectId = $stateParams.projectId
   $scope.selectedIndex = 0
