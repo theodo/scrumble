@@ -1,6 +1,7 @@
 angular.module 'Scrumble.daily-report'
 .controller 'DailyReportCtrl', (
   $scope
+  $state
   $mdToast
   $mdDialog
   $mdMedia
@@ -10,6 +11,12 @@ angular.module 'Scrumble.daily-report'
   dailyReport
   dailyCache
 ) ->
+  window.onbeforeunload = (event) ->
+    if $state.current.controller is 'DailyReportCtrl'
+      return 'Are you sure you want to reload?'
+    else
+      event.preventDefault()
+
   saveFeedback = $mdToast.simple()
     .hideDelay(1000)
     .position('top left')
