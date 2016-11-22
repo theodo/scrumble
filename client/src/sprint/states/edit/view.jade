@@ -4,7 +4,7 @@ div.sprint-body(layout="row" layout-align="center end")
     div(layout="row")
       md-input-container(flex="20")
         label Sprint Number
-        input(ng-model="editedSprint.number" ng-change="checkSprint('number')")
+        input(ng-model="editedSprint.number" ng-change="checkSprint('number')" type="number")
       md-input-container(flex="80")
         label Sprint Goal
         input(ng-model="editedSprint.goal")
