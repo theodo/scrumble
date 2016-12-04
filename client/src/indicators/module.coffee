@@ -1,1 +1,1 @@
-angular.module 'Scrumble.indicators', []
+angular.module 'Scrumble.indicators', ['ui.router',   'angular-google-gapi', 'Scrumble.sprint', 'Scrumble.wait']
