@@ -1,5 +1,5 @@
 angular.module 'Scrumble.common'
-.service 'trelloUtils', (TrelloClient) ->
+.service 'trelloUtils', (TrelloClient, $q) ->
   getCardPoints = (card) ->
     return 0 unless _.isString card?.name
     match = card.name.match /\(([-+]?[0-9]*\.?[0-9]+)\)/
@@ -8,6 +8,19 @@ angular.module 'Scrumble.common'
       for matchVal in match
         value = parseFloat(matchVal, 10) unless isNaN(parseFloat(matchVal, 10))
     value
+
+  getColorCode = (labelColor) ->
+    colors =
+      red: '#f44336'
+      green: '#8bc34a'
+      orange: '#ff9800'
+      yellow: '#ffeb3b'
+      purple: '#9c27b0'
+      blue: '#3f51b5'
+      sky: '#03a9f4'
+      pink: '#e91e63'
+      black: '#607d8b'
+    return colors[labelColor]
 
   isTrelloCardUrl: (url) ->
     return /trello.com\/c/.test url
@@ -33,3 +46,32 @@ angular.module 'Scrumble.common'
     .catch (err) ->
       console.warn err
       return 0
+
+  getColumnPointsByLabel: (columnId) ->
+    return $q.when(null) unless columnId?
+    TrelloClient.get '/lists/' + columnId + '/cards?fields=name,labels'
+    .then (response) ->
+      cards = response.data
+      labels = _.reduce cards, (accumulator, card) ->
+        _.concat accumulator, card.labels
+      , []
+
+      labels = _.uniqBy(labels, 'name')
+      sums = {}
+      _.each labels, (label) ->
+        sums[label.name] =
+          color: getColorCode(label.color)
+          y: _.sumBy cards, (card) ->
+            if label.name in _.map card.labels, 'name'
+              getCardPoints(card)
+            else
+              0
+      sums
+    .catch (err) ->
+      console.warn err
+      return 0
+
+  getListIdsAndNames: (boardId) ->
+    TrelloClient.get "/boards/#{boardId}/lists?fields=id,name"
+    .then (response) ->
+      response.data

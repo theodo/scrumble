@@ -30,6 +30,7 @@ gulp.task 'vendor', (done) ->
     "#{bowerComponentsPath}/angular-date-interceptor/dist/angular-date-interceptor.min.js"
     "#{bowerComponentsPath}/jquery/dist/jquery.min.js"
     "#{bowerComponentsPath}/angular-trello/dist/angular-trello.min.js"
+    "#{bowerComponentsPath}/highcharts/highcharts.js"
   ]
   .pipe(concat('vendor.js'))
   .on 'error', gutil.log

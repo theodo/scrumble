@@ -12,7 +12,7 @@
     "node": "5.0.0"
   },
   "scripts": {
-    "start": "sleep 2 && npm run migrate:up && coffee src/server.coffee",
+    "start": "sleep 5 && npm run migrate:up && coffee src/server.coffee",
     "watch": "npm run migrate:up && node ./node_modules/nodemon/bin/nodemon.js src/server.coffee",
     "test": "sleep 30 && db-migrate --config migrations/database.json reset -e test && db-migrate up --config migrations/database.json -e test; mocha \"test/**/*.test.coffee\"",
     "migrate:up": "db-migrate up --config migrations/database.json"

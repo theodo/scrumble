@@ -12,3 +12,7 @@ angular.module 'Scrumble.indicators'
           filter:
             include:
               project: 'organization'
+  .state 'tab.labels',
+    url: '/project/:projectId/labels'
+    templateUrl: 'indicators/states/labels/view.html'
+    controller: 'LabelsCtrl'

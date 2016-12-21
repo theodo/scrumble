@@ -1,0 +1,10 @@
+md-card(flex="100")
+  md-input-container
+    label Board Lists
+    md-select(
+      ng-model="selectedBoardList"
+      ng-change="getColumnPointsByLabel(selectedBoardList)"
+    )
+      md-option(ng-value="elt.id" ng-repeat="elt in boardLists") {{elt.name}}
+      
+    hc-chart(options="chartOptions" ng-if="chartOptions") No Column selected for now
