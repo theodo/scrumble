@@ -9,7 +9,6 @@ angular.module 'Scrumble.indicators'
   .then (project) ->
     trelloUtils.getListIdsAndNames(project.boardId)
     .then (boardLists) ->
-      console.log boardLists.length
       $scope.allBoardLists = boardLists
 
   $scope.selectedBoardLists = []
