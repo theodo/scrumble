@@ -47,15 +47,20 @@ angular.module 'Scrumble.common'
       console.warn err
       return 0
 
-  getColumnPointsByLabel: (columnId) ->
+  getColumnPointsByLabel: (columns) ->
     [
       name: 'cardId'
       data: [0, 0, 3, 0]
     ]
-    return $q.when(null) unless columnId?
-    TrelloClient.get '/lists/' + columnId + '/cards?fields=idShort,name,labels'
-    .then (response) ->
-      cards = response.data
+    return $q.when(null) unless columns?
+    promises = (TrelloClient.get('/lists/' + column.id + '/cards?fields=idShort,name,labels') for column in columns)
+    $q.all(promises)
+    .then (responses) ->
+      cards = []
+      angular.forEach responses, (response, index) ->
+        _.forEach response.data, (card) ->
+          card.column = columns[index].name
+        cards = cards.concat(response.data)
 
       labels = _.reduce cards, (accumulator, card) ->
         _.concat accumulator, card.labels
@@ -71,6 +76,7 @@ angular.module 'Scrumble.common'
             y: points
             name: card.idShort
             description: card.name
+            list: card.column
           else
             null
       labels: _.map labels, 'name'

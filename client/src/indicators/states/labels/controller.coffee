@@ -9,13 +9,26 @@ angular.module 'Scrumble.indicators'
   .then (project) ->
     trelloUtils.getListIdsAndNames(project.boardId)
     .then (boardLists) ->
-      $scope.boardLists = boardLists
+      console.log boardLists.length
+      $scope.allBoardLists = boardLists
 
+  $scope.selectedBoardLists = []
 
-  $scope.getColumnPointsByLabel = (columnId) ->
+  createFilterFor = (query) ->
+    lowercaseQuery = angular.lowercase(query)
+    (list) ->
+      list.name.toLowerCase().indexOf(lowercaseQuery) != -1
+
+  $scope.querySearch = (query) ->
+    $scope.allBoardLists.filter(createFilterFor(query))
+
+  $scope.filterSelected = true
+
+  getColumnPointsByLabel = (columns) ->
     $scope.chartOptions = null
-    trelloUtils.getColumnPointsByLabel(columnId)
+    trelloUtils.getColumnPointsByLabel(columns)
     .then (result) ->
+      return unless result?
       $scope.chartOptions =
         chart:
           type: 'column'
@@ -31,7 +44,7 @@ angular.module 'Scrumble.indicators'
           enabled: false
         tooltip:
           headerFormat: ''
-          pointFormat: '{point.description}'
+          pointFormat: '<b>{point.list}</b><br /><br />{point.description}'
         plotOptions:
           column:
             stacking: 'normal'
@@ -40,3 +53,6 @@ angular.module 'Scrumble.indicators'
               format: '#{point.name}'
               color: 'white'
         series: result.data
+
+  $scope.$watch 'selectedBoardLists.length', (lists) ->
+    getColumnPointsByLabel($scope.selectedBoardLists)
