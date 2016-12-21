@@ -48,25 +48,34 @@ angular.module 'Scrumble.common'
       return 0
 
   getColumnPointsByLabel: (columnId) ->
+    [
+      name: 'cardId'
+      data: [0, 0, 3, 0]
+    ]
     return $q.when(null) unless columnId?
-    TrelloClient.get '/lists/' + columnId + '/cards?fields=name,labels'
+    TrelloClient.get '/lists/' + columnId + '/cards?fields=idShort,name,labels'
     .then (response) ->
       cards = response.data
+
       labels = _.reduce cards, (accumulator, card) ->
         _.concat accumulator, card.labels
       , []
+      labels = _.uniqBy(labels, 'id')
 
-      labels = _.uniqBy(labels, 'name')
-      sums = {}
-      _.each labels, (label) ->
-        sums[label.name] =
-          color: getColorCode(label.color)
-          y: _.sumBy cards, (card) ->
-            if label.name in _.map card.labels, 'name'
-              getCardPoints(card)
-            else
-              0
-      sums
+      data = _.map cards, (card) ->
+        points = getCardPoints(card)
+        name: card.idShort
+        data: _.map labels, (label) ->
+          if label.name in _.map card.labels, 'name'
+            color: getColorCode(label.color)
+            y: points
+            name: card.idShort
+            description: card.name
+          else
+            null
+      labels: _.map labels, 'name'
+      data: data
+
     .catch (err) ->
       console.warn err
       return 0

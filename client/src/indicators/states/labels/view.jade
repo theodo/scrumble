@@ -6,5 +6,5 @@ md-card(flex="100")
       ng-change="getColumnPointsByLabel(selectedBoardList)"
     )
       md-option(ng-value="elt.id" ng-repeat="elt in boardLists") {{elt.name}}
-      
-    hc-chart(options="chartOptions" ng-if="chartOptions") No Column selected for now
+    
+  hc-chart(options="chartOptions" ng-if="chartOptions") No Column selected for now

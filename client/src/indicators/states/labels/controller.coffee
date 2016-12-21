@@ -13,18 +13,30 @@ angular.module 'Scrumble.indicators'
 
 
   $scope.getColumnPointsByLabel = (columnId) ->
+    $scope.chartOptions = null
     trelloUtils.getColumnPointsByLabel(columnId)
-    .then (sumsByLabel) ->
-      console.log sumsByLabel
-      console.log _.keys sumsByLabel
-      console.log _.values sumsByLabel
+    .then (result) ->
       $scope.chartOptions =
         chart:
           type: 'column'
         title:
           text: 'Points per labels'
         xAxis:
-          categories: _.keys sumsByLabel
-        series: [{
-          data: _.values sumsByLabel
-        }]
+          categories: result.labels
+        yAxis:
+          min: 0
+          title:
+            text: 'Complexity points'
+        legend:
+          enabled: false
+        tooltip:
+          headerFormat: ''
+          pointFormat: '{point.description}'
+        plotOptions:
+          column:
+            stacking: 'normal'
+            dataLabels:
+              enabled: true
+              format: '#{point.name}'
+              color: 'white'
+        series: result.data
