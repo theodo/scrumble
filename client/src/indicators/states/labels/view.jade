@@ -1,17 +1,9 @@
 md-card(flex="100")
-  md-content.md-padding.autocomplete(layout='column')
-    md-contact-chips(
-      ng-model='selectedBoardLists'
-      md-contacts='querySearch($query)'
-      md-contact-name='name'
-      md-require-match='true'
-      md-highlight-flags='i'
-      filter-selected='filterSelected'
-      placeholder='Select a Trello list'
-    )
-    md-list
-      md-subheader.md-no-sticky Lists
-      md-chips
-        md-chip(ng-repeat='(index, list) in allBoardLists', ng-if='selectedBoardLists.indexOf(list) < 0') {{list.name}}
+  md-chips
+    md-chip(
+      ng-repeat='list in boardLists'
+      ng-click='toggleList(list)'
+      ng-class='{"md-focused": list.selected}'
+    ) {{ list.name }}
   
   hc-chart(options="chartOptions" ng-if="chartOptions" style="height: 600px") No Column selected for now

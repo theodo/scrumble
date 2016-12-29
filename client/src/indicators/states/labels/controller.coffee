@@ -9,19 +9,15 @@ angular.module 'Scrumble.indicators'
   .then (project) ->
     trelloUtils.getListIdsAndNames(project.boardId)
     .then (boardLists) ->
-      $scope.allBoardLists = boardLists
+      $scope.boardLists = boardLists
 
-  $scope.selectedBoardLists = []
+  $scope.toggleList = (list) ->
+    if list.selected
+      list.selected = false
+    else
+      list.selected = true
 
-  createFilterFor = (query) ->
-    lowercaseQuery = angular.lowercase(query)
-    (list) ->
-      list.name.toLowerCase().indexOf(lowercaseQuery) != -1
-
-  $scope.querySearch = (query) ->
-    $scope.allBoardLists.filter(createFilterFor(query))
-
-  $scope.filterSelected = true
+    getColumnPointsByLabel(_.filter($scope.boardLists, 'selected'))
 
   getColumnPointsByLabel = (columns) ->
     $scope.chartOptions = null
@@ -53,6 +49,3 @@ angular.module 'Scrumble.indicators'
               format: '#{point.name}'
               color: 'white'
         series: result.data
-
-  $scope.$watch 'selectedBoardLists.length', (lists) ->
-    getColumnPointsByLabel($scope.selectedBoardLists)
