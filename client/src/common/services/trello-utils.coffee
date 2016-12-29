@@ -12,14 +12,15 @@ angular.module 'Scrumble.common'
   getColorCode = (labelColor) ->
     colors =
       red: '#f44336'
-      green: '#8bc34a'
+      green: '#61bd4f'
       orange: '#ff9800'
       yellow: '#ffeb3b'
       purple: '#9c27b0'
-      blue: '#3f51b5'
-      sky: '#03a9f4'
-      pink: '#e91e63'
-      black: '#607d8b'
+      blue: '#0079bf'
+      sky: '#00c2e0'
+      pink: '#ff80ce'
+      black: '#4d4d4d'
+      lime: '#51e898'
     return colors[labelColor]
 
   isTrelloCardUrl: (url) ->
@@ -72,6 +73,7 @@ angular.module 'Scrumble.common'
         name: card.idShort
         data: _.map labels, (label) ->
           if label.name in _.map card.labels, 'name'
+            console.log label.name, label.color, getColorCode(label.color)
             color: getColorCode(label.color)
             y: points
             name: card.idShort

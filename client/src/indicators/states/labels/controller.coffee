@@ -46,6 +46,7 @@ angular.module 'Scrumble.indicators'
           pointFormat: '<b>{point.list}</b><br /><br />{point.description}'
         plotOptions:
           column:
+            groupPadding: 0
             stacking: 'normal'
             dataLabels:
               enabled: true
