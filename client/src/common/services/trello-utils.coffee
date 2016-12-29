@@ -73,7 +73,6 @@ angular.module 'Scrumble.common'
         name: card.idShort
         data: _.map labels, (label) ->
           if label.name in _.map card.labels, 'name'
-            console.log label.name, label.color, getColorCode(label.color)
             color: getColorCode(label.color)
             y: points
             name: card.idShort
