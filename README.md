@@ -49,6 +49,10 @@ Build&push all docker images from local and pull them from remote: `make build-d
 There are many commands in the makefile that are self comprehensible. Please,
 read the makefile.
 
+In order to connect to the app on your machine, you'll need to have a Trello key.
+Go to the [https://trello.com/app-key](Trello developer key generator) and get your public key (top of the page) and Secret (bottom of the page).
+Enter them in the `docker-compose.dev.yml` file **and** the key in `client/src/app.coffee` in the `TrelloClientProvider.init` parameters.
+
 ## Setup database backup on server
 
 The email will probably arrive in the spam folder.
