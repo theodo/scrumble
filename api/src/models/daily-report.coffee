@@ -28,6 +28,8 @@ module.exports = (DailyReport) ->
       DailyReport.findOne
         where:
           projectId: user.projectId
+        order: 'date DESC'
+        limit: 1
     .then (dailyReport) ->
       return next(null, dailyReport) if dailyReport?
       throw new createError.NotFound()
