@@ -47,4 +47,6 @@ angular.module 'Scrumble.sprint'
 
     $timeout ->
       svg = d3.select('#bdcgraph')[0][0].firstChild
-      $scope.pngBase64 = bdc.getPngBase64 svg
+      bdc.getPngBase64(svg)
+      .then (pngBase64) ->
+        $scope.pngBase64 = pngBase64

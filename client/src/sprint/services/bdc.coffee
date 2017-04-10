@@ -2,25 +2,26 @@ angular.module 'Scrumble.sprint'
 .service 'bdc', ($q, trelloUtils, Sprint) ->
 
   getPngBase64 = (svg) ->
-    img = new Image()
-    serializer = new XMLSerializer()
-    svgStr = serializer.serializeToString(svg)
-    img.src = 'data:image/svg+xml;base64,' + window.btoa(svgStr)
+    $q (resolve) ->
+      serializer = new XMLSerializer()
+      svgStr = serializer.serializeToString(svg)
 
-    canvas = document.createElement 'canvas'
-    document.body.appendChild canvas
-    width = 800
-    height = 800 * 0.54
-    canvas.width = 800
-    canvas.height = 800 * 0.54
-    ctx = canvas.getContext '2d'
-    ctx.fillStyle = 'white'
-    ctx.fillRect 0, 0, width, height
-    ctx.drawImage img, 0, 0, width, height
-    result = canvas.toDataURL 'image/png'
-    document.body.removeChild canvas
-
-    result
+      img = new Image()
+      img.onload = ->
+        canvas = document.createElement('canvas')
+        document.body.appendChild(canvas)
+        width = 800
+        height = 800 * 0.54
+        canvas.width = width
+        canvas.height = height
+        ctx = canvas.getContext('2d')
+        ctx.fillStyle =('white')
+        ctx.fillRect(0, 0, width, height)
+        ctx.drawImage(img, 0, 0, width, height)
+        result = canvas.toDataURL('image/png')
+        resolve(result)
+        document.body.removeChild canvas
+      img.src = 'data:image/svg+xml;base64,' + window.btoa(svgStr)
 
   setDonePointsAndSave: (sprint) ->
     deferred = $q.defer()

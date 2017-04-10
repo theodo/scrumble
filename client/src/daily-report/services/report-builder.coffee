@@ -11,18 +11,19 @@ angular.module 'Scrumble.daily-report'
   converter = new showdown.Converter()
 
   renderBDC = (message, svg, useCid) ->
-    bdcBase64 = bdc.getPngBase64 svg
-    src = if useCid then 'cid:bdc' else bdcBase64
+    bdc.getPngBase64(svg)
+    .then (bdcBase64) ->
+      src = if useCid then 'cid:bdc' else bdcBase64
 
-    message.body = message.body.replace '{bdc}', "<img src='#{src}' />"
-    if useCid
-      message.cids = [ {
-        type: 'image/png'
-        name: 'BDC'
-        base64: bdcBase64.split(',')[1]
-        id: 'bdc'
-      } ]
-    message
+      message.body = message.body.replace '{bdc}', "<img src='#{src}' />"
+      if useCid
+        message.cids = [ {
+          type: 'image/png'
+          name: 'BDC'
+          base64: bdcBase64.split(',')[1]
+          id: 'bdc'
+        } ]
+      message
 
   renderTo = (project) ->
     emails = (member.email for member in project.team when member.daily is 'to')
