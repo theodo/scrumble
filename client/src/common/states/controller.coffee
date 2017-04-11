@@ -48,7 +48,7 @@ angular.module 'Scrumble.common'
       state: 'tab.new-sprint'
       params:
         projectId: $scope.project?.id
-      title: 'Start New Sprint'
+      title: 'Start A New Sprint'
       icon: 'plus'
     ,
       state: 'tab.team'
