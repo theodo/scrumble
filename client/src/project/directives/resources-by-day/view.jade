@@ -9,7 +9,6 @@ md-table-container
       tr(md-row)
         th(md-column) &nbsp;
         th(
-          md-column
           layout-align="center center"
           ng-repeat="(j, member) in members"
         )
@@ -19,7 +18,11 @@ md-table-container
     tbody(md-body)
       tr(md-row md-select="day" md-select-id="{{day.date}}" ng-repeat="day in days")
         td(md-cell) {{ day.date | date : 'EEEE, MMMM d' }}
-        td(md-cell ng-repeat="member in members")
-          md-button.md-primary.row(
-            ng-click="resourceClick($parent.$index,$index)"
-          ) {{ matrix[$parent.$parent.$index][$index] | number : 2 }}
+        td.cell-align(md-cell ng-repeat="member in members")
+          md-slider.md-primary(
+            min="0"
+            max="1"
+            step="0.1"
+            ng-model="matrix[$parent.$index][$index]"
+            ng-change="onUpdate()"
+          )
