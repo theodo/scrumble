@@ -38,7 +38,12 @@ module.exports = (Project) ->
       limit: 3
     ).then (sprints) ->
       next(null, _.map(sprints, (sprint) ->
-        speed: sprint.resources?.speed
+        return unless _.isArray sprint.bdcData
+        [first, ..., last] = sprint.bdcData
+        if _.isNumber last.done
+          speed = last.done / sprint.resources.totalManDays
+          speed.toFixed(1)
+        speed: speed
         sprintNumber: sprint.number
       ))
     .catch next
