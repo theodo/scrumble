@@ -4,13 +4,15 @@ describe '[Controller] AddProblemCtrl', ->
   $mdDialog = null
   problem = null
   Problem = null
+  Project = null
   $rootScope = null
   $stateParams = null
   $controller = null
   $q = null
 
-  beforeEach inject (_$mdDialog_, _Problem_, _$rootScope_, _$controller_, _$q_) ->
+  beforeEach inject (_$mdDialog_, _Problem_, _Project_, _$rootScope_, _$controller_, _$q_) ->
     Problem = _Problem_
+    Project = _Project_
     $mdDialog = _$mdDialog_
     $rootScope = _$rootScope_
     $controller = _$controller_
@@ -55,6 +57,7 @@ describe '[Controller] AddProblemCtrl', ->
       $scope = $rootScope.$new()
       spyOn(Problem, 'save').and.returnValue $q.when(null)
       spyOn($mdDialog, 'hide')
+      spyOn(Project, 'get').and.returnValue $q.when(null)
       controller = $controller 'AddProblemCtrl',
         $scope: $scope
         problem: {}

@@ -8,10 +8,11 @@
       | {{ problem.link }}
   h4(md-highlight-text="searchText") {{ problem.happenedDate | date : 'longDate' }}
   p
-    strong Cause Hypothesis:
+    em Cause Hypothesis:
     span(md-highlight-text="searchText")  {{ problem.causeHypothesis }}
   p
-    strong Action:
+    strong Action
+      em {{ problem.owner | userShortName }}:
     span(md-highlight-text="searchText")  {{ problem.action }}
   p
     strong Expected Result {{ problem.checkDate | date : 'shortDate' }}:

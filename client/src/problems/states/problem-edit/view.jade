@@ -19,6 +19,11 @@ md-dialog(flex="80")
           md-icon(md-svg-src="link")
           input(ng-model="problem.link")
         md-input-container
+          label Owner
+          md-icon(md-svg-src="account-settings-variant" flex="initial")
+          md-select(ng-model="problem.ownerId")
+            md-option(ng-repeat="user in project.team" ng-value="user.id") {{user.fullName}}
+        md-input-container
           label Cause hypothesis
           md-icon(md-svg-src="flask-outline")
           textarea(ng-model="problem.causeHypothesis" rows="2")

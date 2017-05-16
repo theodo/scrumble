@@ -5,17 +5,13 @@ angular.module 'Scrumble.daily-report'
   Problem
   markdownGenerator
 ) ->
+  $scope.markdown = ''
   $scope.problems = []
   $scope.todaysProblems = []
 
   loadProblems = ->
-    Problem.query(
-      filter:
-        where:
-          projectId: $scope.project.id
-        order: 'happenedDate DESC'
-        include: 'tags'
-    ).then (problems) ->
+    Problem.getWithOwnerAndCard projectId: $scope.project.id
+    .then (problems) ->
       $scope.problems = problems
   loadProblems()
 
