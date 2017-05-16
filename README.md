@@ -1,6 +1,6 @@
 # Scrumble [![Circle CI](https://circleci.com/gh/theodo/scrumble.svg?style=svg)](https://circleci.com/gh/theodo/scrumble)
 
-[Scrumble](https://theodo.github.io/scrumble/) is an app we use at Theodo Academy to perform faster daily Scrum tasks:
+[Scrumble](https://theodo.github.io/scrumble/) is an app we use at M33 to perform faster daily Scrum tasks:
 
 It is connected to your Trello board and GoogleApps account and helps to:
 - Update your burndown chart
