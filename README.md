@@ -31,7 +31,7 @@ For Mac OS X users, the project folder must be in a subfolder of /Users, due to 
 **Specify environment variables in docker-compose.dev.yml**
 
 ```
-git clone git@github.com:theodo/scrumble.git && cd scrumble
+ cp docker-compose.dev.yml.dist docker-compose.dev.yml
 ```
 **Launch the installation**
 
