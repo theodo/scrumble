@@ -8,6 +8,7 @@ It is connected to your Trello board and GoogleApps account and helps to:
 - Fill Satisfaction survey
 - Track your problems and actions
 
+
 ## Installation
 
 **Requisites**
@@ -37,15 +38,36 @@ For Mac OS X users, the project folder must be in a subfolder of /Users, due to 
 
 ```
 make install
+```
+
+**Launch the project**
+
+```
 make start
 ```
+
 
 ## Provisioning
 
 ```
 sudo adduser dockeradmin && sudo groupadd docker && sudo gpasswd -a dockeradmin docker
+
 sudo cp -R ~/.ssh /home/dockeradmin && sudo chown -R dockeradmin:dockeradmin /home/dockeradmin/.ssh
 ```
+
+## Develop
+
+There are many commands in the makefile that are self comprehensible. Please,
+read the makefile.
+
+In order to connect to the app on your machine, you'll need to have a Trello key:
+- Go to the [Trello developer key generator](https://trello.com/app-key)
+- Get your public key (top of the page) and:
+  - copy it in `docker-compose.dev.yml`
+  - copy it in `client/src/app.coffee` in the `TrelloClientProvider.init` parameters
+  - copy it in `client/src/login/config/trello.coffee`
+- Get your secret key (bottom of the page) and copy it in `docker-compose.dev.yml`
+
 
 ## Deploy
 
@@ -53,14 +75,6 @@ Create the docker-machine remote host `make create-host remoteip=xxx.xxx.xxx.xxx
 
 Build&push all docker images from local and pull them from remote: `make build-deploy-all`.
 
-## Develop
-
-There are many commands in the makefile that are self comprehensible. Please,
-read the makefile.
-
-In order to connect to the app on your machine, you'll need to have a Trello key.
-Go to the [https://trello.com/app-key](Trello developer key generator) and get your public key (top of the page) and Secret (bottom of the page).
-Enter them in the `docker-compose.dev.yml` file **and** the key in `client/src/app.coffee` in the `TrelloClientProvider.init` parameters.
 
 ## Setup database backup on server
 
