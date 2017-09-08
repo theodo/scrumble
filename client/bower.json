@@ -46,6 +46,7 @@
     "highcharts": "~5.0.6"
   },
   "resolutions": {
-    "angular": "1.5.8"
+    "angular": "1.6.5",
+    "angular-animate": "1.6.5"
   }
 }
