@@ -58,7 +58,6 @@ angular.module 'Scrumble.sprint'
         standardStrokeWidth: standardStrokeWidth
         doneStrokeWidth: doneStrokeWidth
         goodSuffix: ' :)'
-        badSuffix: ' :('
       config
 
     window.onresize = ->
