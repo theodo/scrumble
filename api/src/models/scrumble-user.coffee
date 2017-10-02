@@ -36,32 +36,37 @@ module.exports = (ScrumbleUser) ->
 
       ScrumbleUser.findOne
         where:
-          email: trelloInfo.email
+          remoteId: trelloInfo.id
       .then (user) ->
-        if user? and user.remoteId? # user already connected via loopback
+        if user? # user already connected via loopback
           authenticate(user).then (token) ->
             return next null, token: token
-        else if user? # user connected via parse but first time on loopback
-          user.remoteId = trelloInfo.id
-          user.email = trelloInfo.email
-          user.emailverified = trelloInfo.emailverified
-          user.username = trelloInfo.username
-          user.password = trelloInfo.password
-          user.save()
+        else
+          ScrumbleUser.findOne
+            where:
+              email: trelloInfo.email
           .then (user) ->
-            authenticate(user).then (token) ->
-              return next null, token: token
-        else # first time for user
-          user = new ScrumbleUser
-            remoteId: trelloInfo.id
-            email: trelloInfo.email
-            emailverified: trelloInfo.confirmed
-            username: trelloInfo.username
-            password: generatePassword 100
-          user.save()
-          .then (user) ->
-            authenticate(user).then (token) ->
-              return next null, token: token
+            if user? # user connected via parse but first time on loopback
+              user.remoteId = trelloInfo.id
+              user.email = trelloInfo.email
+              user.emailverified = trelloInfo.confirmed
+              user.username = trelloInfo.username
+              user.password = trelloInfo.password
+              user.save()
+              .then (user) ->
+                authenticate(user).then (token) ->
+                  return next null, token: token
+            else # first time for user
+              user = new ScrumbleUser
+                remoteId: trelloInfo.id
+                email: trelloInfo.email
+                emailverified: trelloInfo.confirmed
+                username: trelloInfo.username
+                password: generatePassword 100
+              user.save()
+              .then (user) ->
+              authenticate(user).then (token) ->
+                return next null, token: token
       .catch (err) ->
         console.error err
         next err
