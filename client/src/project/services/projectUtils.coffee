@@ -19,6 +19,9 @@ angular.module 'Scrumble.settings'
   ,
     label: 'Commercial'
     value: 'com'
+  ,
+    label: 'UX/UI Designer'
+    value: 'UX'
   ]
   getDailyRecipient: ->
     [
