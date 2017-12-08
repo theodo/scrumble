@@ -49,7 +49,7 @@ app.config (localStorageServiceProvider) ->
 
 app.config (TrelloClientProvider) ->
   TrelloClientProvider.init {
-    key: '2dcb2ba290c521d2b5c2fd69cc06830e'
+    key: '502ec3543cb5e557eb49a41cf286f97a'
     appName: 'Scrumble'
     tokenExpiration: 'never'
     scope: ['read', 'account'] #, 'write']
