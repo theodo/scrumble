@@ -7,9 +7,12 @@ md-card-title
     span.md-primary.md-subhead(ng-if="sprint.speed") Real Speed: {{ sprint.speed }}
     span.md-primary.md-subhead(ng-if="!sprint.speed") No Real Speed
   md-card-title-media(layout-align='end')
-    img.md-media-sm.card-media(src='images/in-progress.png' ng-if="sprint.success == 'unknown'")
-    img.md-media-sm.card-media(src='images/success.png' ng-if="sprint.success == 'ok'")
-    img.md-media-sm.card-media(src='images/fail.png' ng-if="sprint.success == 'ko'")
+    md-card-content.md-media-sm(ng-if="sprint.success == 'unknown'")
+      img.card-media(src='images/in-progress.png')
+    md-card-content.md-media-sm(ng-if="sprint.success == 'ok'")
+      img.card-media(src='images/success.png')
+    md-card-content.md-media-sm(ng-if="sprint.success == 'ko'")
+      img.card-media(src='images/fail.png')
 md-card-actions(layout='row' layout-align='end end')
   md-button.md-primary.md-hue-2.md-icon-button(ng-click="activateSprint(sprint)" ng-disabled='sprint.isActive')
     md-icon(md-svg-icon="hexagon")
