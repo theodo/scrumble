@@ -6,5 +6,5 @@ appbuilder:
   environment:
     API_URL: "https://api.scrumble.io/v1"
     GOOGLE_CLIENT_ID: '605908567890-3bg3dmamghq5gd7i9sqsdhvoflef0qku.apps.googleusercontent.com'
-    TRELLO_KEY: 502ec3543cb5e557eb49a41cf286f97a
+    TRELLO_KEY: '502ec3543cb5e557eb49a41cf286f97a'
   command: "npm install --unsafe-perm"
