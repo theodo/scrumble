@@ -66,7 +66,7 @@ angular.module 'Scrumble.common'
       state: 'tab.problems'
       params:
         projectId: $scope.project?.id
-      title: 'Problem Tracking'
+      title: 'Problems Tracking'
       icon: 'bell-ring'
     ,
       state: 'tab.labels'
