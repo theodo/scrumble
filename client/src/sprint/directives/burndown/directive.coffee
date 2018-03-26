@@ -46,8 +46,8 @@ angular.module 'Scrumble.sprint'
         colors:
           standard: '#FF5253'
           done: '#1a69cd'
-          good: '#97D17A'
-          bad: '#FA6E69'
+          good: '#1a69cd'
+          bad: '#1a69cd'
           labels: '#113F59'
         startLabel: 'Start'
         endLabel: 'Ceremony'
@@ -57,8 +57,8 @@ angular.module 'Scrumble.sprint'
         dotRadius: dotRadius
         standardStrokeWidth: standardStrokeWidth
         doneStrokeWidth: doneStrokeWidth
-        goodSuffix: ' :)'
-        badSuffix: ' :('
+        goodSuffix: ''
+        badSuffix: ''
       config
 
     window.onresize = ->

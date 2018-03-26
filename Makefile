@@ -35,11 +35,11 @@ api-test:
 
 api-build:
 	eval "$$(docker-machine env -u)" && \
-	docker build -t nicgirault/scrumble-api api
+	docker build -t bjan/scrumble-api api
 
 api-push:
 	eval "$$(docker-machine env -u)" && \
-	docker push nicgirault/scrumble-api
+	docker push bjan/scrumble-api
 
 client-npm-install:
 	eval "$$(docker-machine env -u)" && \
@@ -67,15 +67,15 @@ client-test-tdd:
 client-build:
 	eval "$$(docker-machine env -u)" && \
 	docker-compose --file docker-compose.build.yml up appbuilder && \
-	docker build -t nicgirault/scrumble client
+	docker build -t bjan/scrumble client
 
 client-push:
 	eval "$$(docker-machine env -u)" && \
-	docker push nicgirault/scrumble
+	docker push bjan/scrumble
 
 client-deploy: client-build
 	eval "$$(docker-machine env -u)" && \
-	docker push nicgirault/scrumble && \
+	docker push bjan/scrumble && \
 	eval "$$(docker-machine env prod)" && \
 	docker-compose --file docker-compose.prod.yml pull && \
 	docker-compose --file docker-compose.prod.yml up -d && \
@@ -83,10 +83,10 @@ client-deploy: client-build
 
 showcase-build:
 	eval "$$(docker-machine env -u)" && \
-	docker build -t nicgirault/scrumble-showcase showcase
+	docker build -t bjan/scrumble-showcase showcase
 showcase-push:
 	eval "$$(docker-machine env -u)" && \
-	docker push nicgirault/scrumble-showcase
+	docker push bjan/scrumble-showcase
 
 deploy:
 	eval "$$(docker-machine env prod)" && \
