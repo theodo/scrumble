@@ -9,9 +9,9 @@ dependencies:
 
   override:
     - docker info
-    - docker build -t nicgirault/scrumble-api api
+    - docker build -t bjan/scrumble-api api
     - docker-compose --file docker-compose.build.yml up appbuilder
-    - docker build -t nicgirault/scrumble client
+    - docker build -t bjan/scrumble client
 
 test:
   override:
