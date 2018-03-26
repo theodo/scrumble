@@ -12,7 +12,7 @@ dbtest:
 
 
 apitest:
-  image: nicgirault/scrumble-api
+  image: bjan/scrumble-api
   working_dir: /app
   links:
    - dbtest:db
