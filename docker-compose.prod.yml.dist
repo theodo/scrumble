@@ -41,7 +41,7 @@ showcase:
   environment:
     VIRTUAL_HOST: scrumble.io
     LETSENCRYPT_HOST: scrumble.io
-    LETSENCRYPT_EMAIL: contact@scrumble.io
+    LETSENCRYPT_EMAIL: baptistej@theodo.fr
   command: /bin/bash -c "nginx -g 'daemon off;'"
 
 app:
@@ -53,7 +53,7 @@ app:
   environment:
     VIRTUAL_HOST: app.scrumble.io
     LETSENCRYPT_HOST: app.scrumble.io
-    LETSENCRYPT_EMAIL: contact@scrumble.io
+    LETSENCRYPT_EMAIL: baptistej@theodo.fr
 
 api:
   image: bjan/scrumble-api
@@ -73,7 +73,7 @@ api:
     TRELLO_SECRET: 'tocomplete'
     VIRTUAL_HOST: api.scrumble.io
     LETSENCRYPT_HOST: api.scrumble.io
-    LETSENCRYPT_EMAIL: contact@scrumble.io
+    LETSENCRYPT_EMAIL: baptistej@theodo.fr
     SMTP_HOST: 'smtp.mailgun.org'
     SMTP_USER: 'tocomplete'
     SMTP_PASS: 'tocomplete'
