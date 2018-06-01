@@ -22,7 +22,7 @@
     "angular-ui-router": "0.2.15",
     "angular": "1.4.9",
     "bootstrap": "3.3.6",
-    "moment": "2.10.6",
+    "moment": "2.22.2",
     "angular-resource": "1.4.9",
     "angular-local-storage": "0.2.3",
     "angular-trello": "*",
