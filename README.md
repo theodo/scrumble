@@ -95,6 +95,14 @@ chmod +x backup.sh
 echo "0 0 * * * ~/backup.sh" >> /var/spool/cron/crontabs/root
 ```
 
+## Renew Let's Encrypt certificates
+
+If the HTTPS certificates expire, follow these steps:
+- Deploy the application again
+- See the [docker-letsencrypt-nginx-proxy-companion doc](https://github.com/JrCs/docker-letsencrypt-nginx-proxy-companion).
+- Check the status (it should be renewed)
+- if not force renewal
+
 ## Space issue on server
 
 `docker rmi $(docker images -f "dangling=true" -q)`
