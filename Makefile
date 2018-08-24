@@ -1,18 +1,19 @@
 whoami := $(shell whoami)
+myGroup := $(shell id -gn)
 
 install:
 	eval "$$(docker-machine env -u)" && \
 	docker-compose --file docker-compose.dev.yml run --rm api npm install --quiet && \
-	sudo chown -R ${whoami}:${whoami} api/node_modules && \
+	sudo chown -R ${whoami}:${myGroup} api/node_modules && \
 	docker-compose --file docker-compose.build.yml run --rm appbuilder npm install --quiet --unsafe-perm && \
-	sudo chown -R ${whoami}:${whoami} client/node_modules && \
-	sudo chown -R ${whoami}:${whoami} client/bower_components
+	sudo chown -R ${whoami}:${myGroup} client/node_modules && \
+	sudo chown -R ${whoami}:${myGroup} client/bower_components
 
 migration-create:
 	eval "$$(docker-machine env -u)" && \
 	docker-compose --file docker-compose.dev.yml run --rm api \
 	./node_modules/db-migrate/bin/db-migrate create --config migrations/database.json $(name)\
-	 && sudo chown -R ${whoami}:${whoami} api/migrations
+	 && sudo chown -R ${whoami}:${myGroup} api/migrations
 migration-up:
 	eval "$$(docker-machine env -u)" && \
 	docker-compose --file docker-compose.dev.yml run --rm api \
@@ -26,8 +27,8 @@ npm-install:
 	eval "$$(docker-machine env -u)" && \
 	docker-compose --file docker-compose.dev.yml run --rm api \
 	npm install --save-exact --save $(package) &&\
-	sudo chown ${whoami}:${whoami} api/package.json &&\
-	sudo chown -R ${whoami}:${whoami} api/node_modules
+	sudo chown ${whoami}:${myGroup} api/package.json &&\
+	sudo chown -R ${whoami}:${myGroup} api/node_modules
 
 api-test:
 	eval "$$(docker-machine env -u)" && \
@@ -44,13 +45,13 @@ api-push:
 client-npm-install:
 	eval "$$(docker-machine env -u)" && \
 	docker-compose --file docker-compose.build.yml run --rm appbuilder npm install --save-dev  ${package} && \
-	sudo chown -R ${whoami}:${whoami} ./client/node_modules && \
-	sudo chown -R ${whoami}:${whoami} ./client/package.json
+	sudo chown -R ${whoami}:${myGroup} ./client/node_modules && \
+	sudo chown -R ${whoami}:${myGroup} ./client/package.json
 
 client-bower-install:
 	eval "$$(docker-machine env -u)" && \
 	docker-compose --file docker-compose.build.yml run --rm appbuilder ./node_modules/.bin/bower install --save --allow-root ${package} && \
-	sudo chown -R ${whoami}:${whoami} ./client/bower_components
+	sudo chown -R ${whoami}:${myGroup} ./client/bower_components
 
 start:
 	eval "$$(docker-machine env -u)" && \

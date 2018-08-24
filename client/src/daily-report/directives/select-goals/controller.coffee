@@ -9,7 +9,7 @@ angular.module 'Scrumble.daily-report'
   $scope.errors = {}
   unless $scope.project?.columnMapping?.blocked?
     $scope.errors.blockedColumnMissing = true
-  unless $scope.project?.columnMapping?.doing?
+  unless $scope.project?.columnMapping?.doing? && $scope.project.columnMapping.doing.length > 0
     $scope.errors.doingColumnMissing = true
   unless $scope.project?.columnMapping?.toValidate?
     $scope.errors.toValidateColumnMissing = true
