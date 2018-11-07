@@ -1,6 +1,7 @@
 angular.module 'Scrumble.daily-report'
 .controller 'DailyReportCtrl', (
   $scope
+  $state
   $mdToast
   $mdDialog
   $mdMedia
@@ -29,6 +30,20 @@ angular.module 'Scrumble.daily-report'
   $scope.save = (ev) ->
     DailyReport.save(dailyReport).then ->
       $mdToast.show saveFeedback
+
+   $scope.$on(
+     '$stateChangeStart',
+    (event, next, current) ->
+      console.log
+      if $scope.daily.$dirty and !confirm("Are you sure that you want to leave this page?")
+        event.preventDefault()
+    );
+
+  window.onbeforeunload = () ->
+    "Are you sure that you want to leave this page?"
+  $scope.$on('$destroy', () ->
+    window.onbeforeunload = undefined;
+  )
 
   $scope.preview = (ev) ->
     $mdDialog.show
