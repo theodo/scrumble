@@ -99,10 +99,13 @@ angular.module 'Scrumble.common'
   ,
     title: 'Daily Mail'
     items: [
+      state: 'tab.privacy-policy'
+      title: 'Privacy Policy'
+      icon: 'lock'
+    ,
       state: 'tab.daily-report'
       title: 'Write Today\'s Daily'
       icon: 'gmail'
-    ,
     ]
   ]
 
