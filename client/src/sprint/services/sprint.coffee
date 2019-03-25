@@ -11,6 +11,7 @@ angular.module 'Scrumble.sprint'
       day = current.isoWeekday()
       if day isnt 6 and day isnt 7
         days.push {
+          timebox: 0,
           date: current.format()
         }
       current.add 1, 'days'
@@ -31,8 +32,11 @@ angular.module 'Scrumble.sprint'
       for cell in line
         total += cell
     total
-  calculateTotalPoints = (totalManDays, speed) ->
-    totalManDays * speed
+  calculateTotalPoints = (days, totalManDays, speed) ->
+    totalDispo = totalManDays
+    for day, i in days
+      totalDispo -= parseFloat(day.timebox) / 6
+    totalDispo * speed
   calculateSpeed = (totalPoints, totalManDays) ->
     return unless totalManDays > 0
     totalPoints / totalManDays
@@ -66,7 +70,8 @@ angular.module 'Scrumble.sprint'
         standard: standard
         done: fetchDone(date, i)
       }
-      standard += _.sumBy(resources.matrix[i]) * resources.speed
+
+      standard += (_.sumBy(resources.matrix[i]) - parseFloat(day.timebox) / 6 ) * resources.speed
 
     if day?
       # add last point for ceremony
@@ -140,8 +145,8 @@ angular.module 'Scrumble.sprint'
 
     if source is 'date' or source is 'resource' or source is 'speed'
       sprint.resources.totalManDays = getTotalManDays sprint.resources.matrix
-      sprint.resources.totalPoints = calculateTotalPoints sprint.resources.totalManDays, sprint.resources.speed
       sprint.bdcData = generateBDC sprint.dates?.days, sprint.resources, sprint.bdcData
+      sprint.resources.totalPoints = calculateTotalPoints sprint.dates?.days, sprint.resources.totalManDays, sprint.resources.speed
 
     if source is 'total'
       sprint.resources.speed = calculateSpeed sprint.resources.totalPoints, sprint.resources.totalManDays

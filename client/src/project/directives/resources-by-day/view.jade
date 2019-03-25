@@ -8,6 +8,7 @@ md-table-container
     thead(md-head)
       tr(md-row)
         th(md-column) &nbsp;
+        th(md-column) &nbsp;
         th(
           layout-align="center center"
           ng-repeat="(j, member) in members"
@@ -18,6 +19,14 @@ md-table-container
     tbody(md-body)
       tr(md-row md-select="day" md-select-id="{{day.date}}" ng-repeat="day in days")
         td(md-cell) {{ day.date | date : 'EEEE, MMMM d' }}
+        td(md-cell)
+          md-input-container
+            label Hours
+            input(
+              nss-round
+              ng-model="day.timebox"
+              ng-change="onUpdate()"
+            )
         td.cell-align(md-cell ng-repeat="member in members")
           md-slider.md-primary(
             min="0"
