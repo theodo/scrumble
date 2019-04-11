@@ -33,6 +33,33 @@ angular.module 'Scrumble.daily-report'
     emails = (member.email for member in project.team when member.daily is 'cc')
     _.filter emails
 
+  # Given the full list of recipients, return true if there is at least
+  # one theodo.fr email address.
+  # This function is used to send a copy of the daily mail to the CTO of Theodo.fr
+  # only if it is a theodo.fr project (Scrumble is used by other companies)
+  isTheodoFrSprint = (emailAdresses) ->
+    for email in emailAdresses
+      if email.endsWith("theodo.fr")
+        return true
+    return false
+
+
+  # If gap < 0 and end of sprint is in less than 2 days, returns true
+  # Used to send a copy to the CTO
+  shouldAddCto = (sprint) ->
+    if _.isArray sprint?.bdcData
+      index = sprintUtils.getCurrentDayIndex sprint.bdcData
+      diff = sprint.bdcData[index]?.done - sprint.bdcData[index]?.standard
+      Math.abs(diff).toFixed 1
+      if diff > 0 # Sprint is ok, no need to send a copy to the CTO
+        return false
+
+      if sprint?.dates?.end
+        if moment().diff(sprint.dates.end, 'days') < -2 # End of sprint is in more than 2 days
+          return false
+      return true
+
+
   _svg = null
   dynamicFieldsPromise = null
   prebuildMessage =
@@ -42,7 +69,6 @@ angular.module 'Scrumble.daily-report'
     body: null
   render: (sections, dailyReport, svg, project, sprint) ->
     _svg = svg
-
     markdownMessage = ""
     for section in [
       'intro'
@@ -65,9 +91,16 @@ angular.module 'Scrumble.daily-report'
     dynamicFieldsPromise = dynamicFields.ready sprint, project
 
     dynamicFieldsPromise.then (builtDict) ->
+      emailsTo = renderTo project
+      emailsCc = renderCc project
+
+      if isTheodoFrSprint(emailsTo.concat emailsCc) and shouldAddCto sprint
+        emailsCc.push 'maximet@theodo.fr'
+
+
       prebuildMessage =
-        to: renderTo project
-        cc: renderCc project
+        to: emailsTo
+        cc: emailsCc
         subject: dynamicFields.render sections.subject, builtDict
         body: dynamicFields.render htmlMessage, builtDict
 
