@@ -29,14 +29,20 @@ angular.module 'Scrumble.daily-report'
     emails = (member.email for member in project.team when member.daily is 'to')
     _.filter emails
 
-  renderCc = (project, copyCto = false) ->
+  renderCc = (project) ->
     emails = (member.email for member in project.team when member.daily is 'cc')
-   
-    # Send a copy to the CTO if sprint is RED and ending soon.
-    if copyCto
-      emails.push 'maximet@theodo.fr'
-
     _.filter emails
+
+  # Given the full list of recipients, return true if there is at least
+  # one theodo.fr email address.
+  # This function is used to send a copy of the daily mail to the CTO of Theodo.fr
+  # only if it is a theodo.fr project (Scrumble is used by other companies)
+  isTheodoFrSprint = (emailAdresses) ->
+    for email in emailAdresses
+      if email.endsWith("theodo.fr")
+        return true
+    return false
+
 
   # If gap < 0 and end of sprint is in less than 2 days, returns true
   # Used to send a copy to the CTO
@@ -51,7 +57,6 @@ angular.module 'Scrumble.daily-report'
       if sprint?.dates?.end
         if moment().diff(sprint.dates.end, 'days') < -2 # End of sprint is in more than 2 days
           return false
-
       return true
 
 
@@ -86,9 +91,16 @@ angular.module 'Scrumble.daily-report'
     dynamicFieldsPromise = dynamicFields.ready sprint, project
 
     dynamicFieldsPromise.then (builtDict) ->
+      emailsTo = renderTo project
+      emailsCc = renderCc project
+
+      if isTheodoFrSprint(emailsTo.concat emailsCc) and shouldAddCto sprint
+        emailsCc.push 'maximet@theodo.fr'
+
+
       prebuildMessage =
-        to: renderTo project
-        cc: renderCc project, shouldAddCto sprint
+        to: emailsTo
+        cc: emailsCc
         subject: dynamicFields.render sections.subject, builtDict
         body: dynamicFields.render htmlMessage, builtDict
 
