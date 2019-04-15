@@ -55,10 +55,32 @@ angular.module 'Scrumble.daily-report'
         return false
 
       if sprint?.dates?.end
-        if moment().diff(sprint.dates.end, 'days') < -2 # End of sprint is in more than 2 days
+        extraDay = if isLastDayAFullDay(sprint.resources.matrix) then -1 else 0
+        if (moment().diff(sprint.dates.end, 'days') + extraDay) <= -2 # End of sprint is in more than 2 days
           return false
-      return true
 
+      return true
+    return false
+
+  # The last day in Scrumble might not be the day of the ceremony.
+  # 
+  # Case 1 : Ceremony is Friday at 9am
+  # Team sets Thursday as the last day but Thursday is a full day of code.
+  # returns true
+  #
+  # Case 2 : Ceremony is Friday at 11am
+  # Team sets Friday as the last day but Friday is not a full day (only 2hours of code).
+  # returns false
+  #
+  # How it works ?
+  # Check if capacity of the team during the last day is over 0.5
+  isLastDayAFullDay = (matrix) ->
+    [..., lastDayCapacities] = matrix
+    # For the last day not to be a full day, every member must have a capacity <= 0.5
+    for capacity in lastDayCapacities
+      if capacity > 0.5
+        return true
+    return false
 
   _svg = null
   dynamicFieldsPromise = null

@@ -43,6 +43,12 @@ For Mac OS X users, the project folder must be in a subfolder of /Users, due to 
 make install
 ```
 
+**Launch the project**
+
+```
+make start
+```
+
 The project will be available at `http://0.0.0.0:8083/`
 
 If the app is stuck in the loading screen (with the Scrumble logo), go to this file :
@@ -66,12 +72,6 @@ angular.module 'Scrumble.login'
 ```
 
 DO NOT COMMIT THIS FILE
-
-**Launch the project**
-
-```
-make start
-```
 
 ## Provisioning
 
