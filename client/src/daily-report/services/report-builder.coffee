@@ -29,8 +29,13 @@ angular.module 'Scrumble.daily-report'
     emails = (member.email for member in project.team when member.daily is 'to')
     _.filter emails
 
-  renderCc = (project) ->
+  renderCc = (project, projectAtRisk) ->
     emails = (member.email for member in project.team when member.daily is 'cc')
+
+    if projectAtRisk
+      watchers = (member.email for member in project.team when member.daily is 'watcher')
+      emails = emails.concat watchers unless watchers.length == 0
+
     _.filter emails
 
   # Given the full list of recipients, return true if there is at least
@@ -45,13 +50,13 @@ angular.module 'Scrumble.daily-report'
 
 
   # If gap < 0 and end of sprint is in less than 2 days, returns true
-  # Used to send a copy to the CTO
-  shouldAddCto = (sprint) ->
+  # Used to send a copy to the watchers (always CTO + watchers)
+  isProjectAtRisk = (sprint) ->
     if _.isArray sprint?.bdcData
       index = sprintUtils.getCurrentDayIndex sprint.bdcData
       diff = sprint.bdcData[index]?.done - sprint.bdcData[index]?.standard
       Math.abs(diff).toFixed 1
-      if diff > 0 # Sprint is ok, no need to send a copy to the CTO
+      if diff >= 0 # Sprint is ok, no need to send a copy to the CTO
         return false
 
       if sprint?.dates?.end
@@ -113,12 +118,14 @@ angular.module 'Scrumble.daily-report'
     dynamicFieldsPromise = dynamicFields.ready sprint, project
 
     dynamicFieldsPromise.then (builtDict) ->
+      projectAtRisk = isProjectAtRisk sprint
+
       emailsTo = renderTo project
-      emailsCc = renderCc project
+      emailsCc = renderCc project, projectAtRisk
 
-      if isTheodoFrSprint(emailsTo.concat emailsCc) and shouldAddCto sprint
+      # Always add CTO for Theodo.fr projects
+      if projectAtRisk and isTheodoFrSprint(emailsTo.concat emailsCc)
         emailsCc.push 'maximet@theodo.fr'
-
 
       prebuildMessage =
         to: emailsTo

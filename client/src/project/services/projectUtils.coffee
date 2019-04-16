@@ -8,6 +8,9 @@ angular.module 'Scrumble.settings'
     label: 'Architect Developer'
     value: 'archi'
   ,
+    label: 'VP Tech'
+    value: 'vptech'
+  ,
     label: 'Product Owner'
     value: 'PO'
   ,
@@ -33,6 +36,9 @@ angular.module 'Scrumble.settings'
     ,
       label: 'to'
       value: 'to'
+    ,
+      label: 'watcher'
+      value: 'watcher'
     ,
     ]
   getRoles: -> roles
