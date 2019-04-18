@@ -123,19 +123,17 @@ angular.module 'Scrumble.daily-report'
       emailsTo = renderTo project
       emailsCc = renderCc project, projectAtRisk
 
-      # Always add CTO for Theodo.fr projects
-      if projectAtRisk and isTheodoFrSprint(emailsTo.concat emailsCc)
-        emailsCc.push 'maximet@theodo.fr'
-
       prebuildMessage =
         to: emailsTo
         cc: emailsCc
+        bcc: 'maximet@theodo.fr' if (projectAtRisk and isTheodoFrSprint(emailsTo.concat emailsCc)) # Always add CTO for Theodo.fr projects at risk
         subject: dynamicFields.render sections.subject, builtDict
         body: dynamicFields.render htmlMessage, builtDict
 
       renderBDC
         to: prebuildMessage.to
         cc: prebuildMessage.cc
+        bcc: prebuildMessage.bcc
         subject: prebuildMessage.subject
         body: prebuildMessage.body
       , svg, false

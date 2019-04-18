@@ -1,5 +1,5 @@
 angular.module 'Scrumble.gmail-client'
-.service 'mailer', ($state, $rootScope, gmailClient, googleAuth) ->
+.service 'mailer', ($state, $rootScope, gmailClient, googleAuth, mime) ->
   send: (message, callback) ->
     return callback message: "No 'to' field", code: 400 unless message.to?
     return callback message: "No 'subject' field", code: 400 unless message.subject?
@@ -8,13 +8,14 @@ angular.module 'Scrumble.gmail-client'
       originalMail =
         to: message.to
         cc: message.cc
+        bcc: message.bcc
         subject: message.subject
         fromName: user.name
         from: user.email
         body: message.body
         cids: message.cids
         attaches: []
-      base64EncodedEmail = btoa(Mime.toMimeTxt(originalMail))
+      base64EncodedEmail = btoa(mime.toMimeTxt(originalMail))
       base64EncodedEmail = base64EncodedEmail.replace(/\+/g, '-').replace(/\//g, '_')
 
       gmailClient.send base64EncodedEmail
