@@ -4,6 +4,7 @@ angular.module 'Scrumble.settings'
   templateUrl: 'project/directives/resources-by-day/view.html'
   scope:
     members: '='
+    timeboxActivated: '='
     matrix: '='
     days: '='
     onUpdate: '&'

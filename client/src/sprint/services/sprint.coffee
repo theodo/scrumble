@@ -32,11 +32,14 @@ angular.module 'Scrumble.sprint'
       for cell in line
         total += cell
     total
-  calculateTotalPoints = (days, totalManDays, speed) ->
-    totalDispo = totalManDays
+  calculateTotalPoints = (days, totalManDays, speed, timeboxActivated) ->
+    totalDispo = totalManDays * speed
+    if !timeboxActivated
+      return totalDispo
     for day, i in days
-      totalDispo -= parseFloat(day.timebox) / 6
-    totalDispo * speed
+      dayTimeboxToRemove = day.timebox || 0
+      totalDispo -= (parseFloat(dayTimeboxToRemove) / 6) * speed
+    totalDispo
   calculateSpeed = (totalPoints, totalManDays) ->
     return unless totalManDays > 0
     totalPoints / totalManDays
@@ -47,7 +50,7 @@ angular.module 'Scrumble.sprint'
       return Math.max i-1, 0 unless day.done?
     return i - 1
 
-  generateBDC = (days, resources, previous) ->
+  generateBDC = (days, resources, previous, timeboxActivated) ->
     return [] unless days? and resources?
     standard = 0
     bdc = []
@@ -71,7 +74,11 @@ angular.module 'Scrumble.sprint'
         done: fetchDone(date, i)
       }
 
-      standard += (_.sumBy(resources.matrix[i]) - parseFloat(day.timebox) / 6 ) * resources.speed
+      standard += _.sumBy(resources.matrix[i]) * resources.speed
+      if !timeboxActivated
+        continue
+      dayTimeboxToRemove = day.timebox || 0
+      standard -= (parseFloat(day.timebox) / 6) * resources.speed
 
     if day?
       # add last point for ceremony
@@ -81,7 +88,6 @@ angular.module 'Scrumble.sprint'
         standard: standard
         done: fetchDone date
     bdc
-  generateBDC: generateBDC
   computeSpeed: (sprint) ->
     return unless _.isArray sprint.bdcData
     [first, ..., last] = sprint.bdcData
@@ -134,20 +140,25 @@ angular.module 'Scrumble.sprint'
         matrix: sprint.resources.matrix
       sprint.dates.days = generateDayList sprint.dates.start, sprint.dates.end
       sprint.resources.matrix = generateResources sprint.dates.days, devTeam, previous
-      sprint.bdcData = generateBDC sprint.dates.days, sprint.resources, sprint.bdcData
+      sprint.bdcData = generateBDC sprint.dates.days, sprint.resources, sprint.bdcData, sprint.timeboxActivated
 
     if source is 'team'
       previous =
         days: sprint.dates.days
         matrix: sprint.resources.matrix
       sprint.resources.matrix = generateResources sprint.dates.days, devTeam, previous
-      sprint.bdcData = generateBDC sprint.dates.days, sprint.resources, sprint.bdcData
+      sprint.bdcData = generateBDC sprint.dates.days, sprint.resources, sprint.bdcData, sprint.timeboxActivated
 
     if source is 'date' or source is 'resource' or source is 'speed'
       sprint.resources.totalManDays = getTotalManDays sprint.resources.matrix
-      sprint.bdcData = generateBDC sprint.dates?.days, sprint.resources, sprint.bdcData
-      sprint.resources.totalPoints = calculateTotalPoints sprint.dates?.days, sprint.resources.totalManDays, sprint.resources.speed
+      sprint.bdcData = generateBDC sprint.dates?.days, sprint.resources, sprint.bdcData, sprint.timeboxActivated
+      sprint.resources.totalPoints = calculateTotalPoints(
+        sprint.dates?.days,
+        sprint.resources.totalManDays,
+        sprint.resources.speed,
+        sprint.timeboxActivated
+      )
 
     if source is 'total'
       sprint.resources.speed = calculateSpeed sprint.resources.totalPoints, sprint.resources.totalManDays
-      sprint.bdcData = generateBDC sprint.dates?.days, sprint.resources, sprint.bdcData
+      sprint.bdcData = generateBDC sprint.dates?.days, sprint.resources, sprint.bdcData, sprint.timeboxActivated

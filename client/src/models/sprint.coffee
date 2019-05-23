@@ -44,3 +44,4 @@ angular.module 'Scrumble.models'
         speed: null
         totalPoints: null
       isActive: false
+      timeboxActivated: false
