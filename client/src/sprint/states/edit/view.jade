@@ -39,6 +39,12 @@ div.sprint-body(layout="row" layout-align="center end")
     div(flex)
       md-datepicker(ng-model="editedSprint.dates.start", md-placeholder="Start Date" ng-change="checkSprint('date')")
       md-datepicker(ng-model="editedSprint.dates.end", md-placeholder="End date" ng-change="checkSprint('date')")
+      span(style="margin-left: 30px;")
+        span(style="margin-right: 15px;") Activate Timeboxes
+        md-checkbox(
+          ng-model="editedSprint.timeboxActivated"
+          ng-change="checkSprint('resource')"
+        )
     .man-days(
       ng-if="editedSprint.dates.days.length > 0"
     )
@@ -46,6 +52,7 @@ div.sprint-body(layout="row" layout-align="center end")
         days="editedSprint.dates.days"
         matrix="editedSprint.resources.matrix"
         members="devTeam"
+        timebox-activated="editedSprint.timeboxActivated"
         on-update="checkSprint('resource')"
       )
       md-input-container
