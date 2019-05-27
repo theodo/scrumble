@@ -5,10 +5,14 @@ header
         md-icon(md-svg-src="menu", aria-label="Open menu")
       h2
         span.clickable(ui-sref="tab.bdc") Scrumble
-        span  / 
+        span  /
         span.clickable(ui-sref="tab.project") {{ project.name }}
       span(flex)
-      a(href="https://theodo.github.io/splane" target="_blank" style="margin-right: 20px;")
+      a(href="https://caspr.theo.do" target="_blank" style="margin-right: 20px;")
+        md-icon(md-svg-src='ghost')
+        span(style="font-size: 16px;")  Caspr
+        md-tooltip(md-direction="left") Link to Caspr Ghost Programming
+      a(href="https://app.splane.io" target="_blank" style="margin-right: 20px;")
         md-icon(md-svg-src='eye')
         span(style="font-size: 16px;")  Splane
         md-tooltip(md-direction="left") Link to Splane Visibility Board
@@ -24,6 +28,10 @@ header
         md-icon(md-svg-src='clock')
         span(style="font-size: 16px;")  BDC Planning
         md-tooltip(md-direction="left") Link to BDC Planning
+      a(href="https://minishlink.github.io/DailyScrum" target="_blank" style="margin-right: 20px;")
+        md-icon(md-svg-src='sun')
+        span(style="font-size: 16px;")  DailyScrum
+        md-tooltip(md-direction="left") Link to DailyScrum
       #changelog
         md-icon(md-svg-src='bell')
       profil-info
