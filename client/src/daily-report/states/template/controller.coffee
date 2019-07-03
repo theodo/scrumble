@@ -64,3 +64,4 @@ angular.module 'Scrumble.daily-report'
           )
         dailyReport: -> dailyReport
         todaysGoals: -> $scope.sections.todaysGoals
+        sprint: -> $scope.sprint
