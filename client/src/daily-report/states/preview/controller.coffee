@@ -12,6 +12,8 @@ angular.module 'Scrumble.daily-report'
   DailyReport
   DailyReportPing
   todaysGoals
+  sprint
+  bigBenReport
 ) ->
   $scope.message = message
 
@@ -56,3 +58,5 @@ angular.module 'Scrumble.daily-report'
           $mdToast.show sentFeedback
           $mdDialog.cancel()
         $scope.sending = false
+    .then ->
+      bigBenReport.send(sprint)

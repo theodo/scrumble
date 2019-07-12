@@ -47,6 +47,9 @@ module.exports = (Sprint) ->
         where:
           projectId: user.projectId
           isActive: true
+        include: [
+          'project'
+        ]
     .then (sprint) ->
       return next(null, sprint) if sprint
       throw new createError.NotFound()
