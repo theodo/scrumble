@@ -13,7 +13,7 @@ angular.module 'Scrumble.daily-report'
       return teamMember.email)
     if isTheodoSprint teamMembersEmail
       filteredSprint = sprint.bdcData.filter((daily) ->
-        return daily.done
+        return daily.done != null
       )
       lastSprint = filteredSprint[ filteredSprint.length - 1 ]
       data = {
