@@ -5,7 +5,7 @@ angular.module 'Scrumble.indicators'
   Project
   trelloUtils
 ) ->
-  Project.get projectId: $stateParams.projectId
+  Project.getUserProject()
   .then (project) ->
     trelloUtils.getListIdsAndNames(project.boardId)
     .then (boardLists) ->
