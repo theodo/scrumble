@@ -25,7 +25,7 @@ app = angular.module 'Scrumble', [
   'Scrumble.organization'
   'Scrumble.common'
   'Scrumble.daily-report'
-  'Scrumble.privacy-policy'
+  'Scrumble.policy'
   'Scrumble.gmail-client'
   'Scrumble.feedback'
   'Scrumble.login'
