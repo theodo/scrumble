@@ -4,6 +4,7 @@ _ = require 'lodash'
 moment = require 'moment'
 
 module.exports = (Sprint) ->
+  Sprint.disableRemoteMethod 'find', true
   checkDates = (sprint) ->
     if sprint?.bdcData?
       # check start/end date consistency

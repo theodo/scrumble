@@ -8,7 +8,7 @@ angular.module 'Scrumble.settings'
   Project
 ) ->
 
-  Project.get(projectId: $stateParams.projectId)
+  Project.getUserProject()
   .then (project) ->
     $scope.project = project
   .then ->
