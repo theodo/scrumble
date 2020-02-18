@@ -125,7 +125,7 @@ angular.module 'Scrumble.daily-report'
 
       # Always add CTO for Theodo.fr projects
       if projectAtRisk and isTheodoFrSprint(emailsTo.concat emailsCc)
-        emailsCc.push 'maximet@theodo.fr'
+        emailsCc.push 'maximet@theodo.fr', 'nicolasb@theodo.fr', 'matthieua@theodo.fr', 'xavierl@theodo.fr', 'nicolasn@theodo.fr'
 
       prebuildMessage =
         to: emailsTo
