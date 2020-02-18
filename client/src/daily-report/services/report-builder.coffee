@@ -123,9 +123,9 @@ angular.module 'Scrumble.daily-report'
       emailsTo = renderTo project
       emailsCc = renderCc project, projectAtRisk
 
-      # Always add CTO for Theodo.fr projects
+      # Add TheodoFR scrumble watchers for Theodo.fr projects
       if projectAtRisk and isTheodoFrSprint(emailsTo.concat emailsCc)
-        emailsCc.push 'maximet@theodo.fr'
+        emailsCc.push 'watchscrumble@theodo.fr'
 
       prebuildMessage =
         to: emailsTo
