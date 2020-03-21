@@ -40,4 +40,5 @@ apptest:
     APP_PORT: "8083"
     GOOGLE_CLIENT_ID: aa
     TRELLO_KEY: aa
+    BIGBEN_API_KEY: '***'
   command: npm test

@@ -4,6 +4,12 @@ concat = require 'gulp-concat'
 
 bowerComponentsPath = "#{__dirname}/../bower_components"
 
+# bigbenAWSSDKPath: Local path where AWS SDK exported from BigBen AWS API Gateway is stored,
+# and which is needed to send reports to BigBen through signed HTTP requests.
+# This SDK needs to be re-exported and updated in local folder each time BigBen API is modified.
+#
+bigbenAWSSDKPath = "#{__dirname}/../bigben_aws_sdk"
+
 gulp.task 'vendor', (done) ->
   gulp.src [
     "#{bowerComponentsPath}/angular/angular.min.js"
@@ -31,6 +37,17 @@ gulp.task 'vendor', (done) ->
     "#{bowerComponentsPath}/jquery/dist/jquery.min.js"
     "#{bowerComponentsPath}/angular-trello/dist/angular-trello.min.js"
     "#{bowerComponentsPath}/highcharts/highcharts.js"
+    "#{bigbenAWSSDKPath}/lib/axios/dist/axios.standalone.js"
+    "#{bigbenAWSSDKPath}/lib/CryptoJS/rollups/hmac-sha256.js"
+    "#{bigbenAWSSDKPath}/lib/CryptoJS/rollups/sha256.js"
+    "#{bigbenAWSSDKPath}/lib/CryptoJS/components/hmac.js"
+    "#{bigbenAWSSDKPath}/lib/CryptoJS/components/enc-base64.js"
+    "#{bigbenAWSSDKPath}/lib/url-template/url-template.js"
+    "#{bigbenAWSSDKPath}/lib/apiGatewayCore/sigV4Client.js"
+    "#{bigbenAWSSDKPath}/lib/apiGatewayCore/apiGatewayClient.js"
+    "#{bigbenAWSSDKPath}/lib/apiGatewayCore/simpleHttpClient.js"
+    "#{bigbenAWSSDKPath}/lib/apiGatewayCore/utils.js"
+    "#{bigbenAWSSDKPath}/apigClient.js"
   ]
   .pipe(concat('vendor.js'))
   .on 'error', gutil.log

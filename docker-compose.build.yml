@@ -7,4 +7,5 @@ appbuilder:
     API_URL: "https://api.scrumble.io/v1"
     GOOGLE_CLIENT_ID: '846194931476-lnslq69phmckpsul3ttjrcqk7msqmlqf.apps.googleusercontent.com'
     TRELLO_KEY: '502ec3543cb5e557eb49a41cf286f97a'
+    BIGBEN_API_KEY: 'XoEkNAH3Ok7NzDC6UQ1OP8ulKcHXzyOeatyPVLiY'
   command: "npm install --unsafe-perm"

@@ -47,6 +47,7 @@ app:
     - api
   environment:
     APP_PORT: "8083"
+    BIGBEN_API_KEY: '***'
   command: npm run watch
 
 showcase:

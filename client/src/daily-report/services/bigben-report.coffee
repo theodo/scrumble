@@ -1,6 +1,5 @@
 angular.module 'Scrumble.daily-report'
-.constant 'BIGBEN_REPORT_ENDPOINT', 'https://api.bigben.theo.do/projects'
-.service 'bigBenReport', ($http, BIGBEN_REPORT_ENDPOINT) ->
+.service 'bigBenReport', (BIGBEN_API_KEY) ->
 
   isTheodoSprint = (emailAdresses) ->
     for email in emailAdresses
@@ -13,10 +12,13 @@ angular.module 'Scrumble.daily-report'
       return teamMember.email)
     if isTheodoSprint teamMembersEmail
       filteredSprint = sprint.bdcData.filter((daily) ->
-        return daily.done
+        return daily.done != null
       )
       lastSprint = filteredSprint[ filteredSprint.length - 1 ]
-      data = {
+
+      requestParams = {}
+
+      requestBody = {
         name: sprint.project.name,
         trello_id: sprint.project.boardId,
         daily_mails: [
@@ -26,8 +28,25 @@ angular.module 'Scrumble.daily-report'
           }
         ]
       }
-      $http.post(
-        BIGBEN_REPORT_ENDPOINT,
-        data,
-        headers: {'Content-Type': 'application/json'}
+
+      requestAdditionalParams = {
+        headers: {'Content-Type': 'application/json'},
+      }
+
+      # apigClient represents AWS API Gateway client coming from AWS SDK exported from BigBen AWS API.
+      # This SDK needs to be re-exported and updated in local folder each time BigBen API is modified.
+      # To do so, follow AWS documentation: https://docs.aws.amazon.com/apigateway/latest/developerguide/genearte-javascript-sdk-of-an-api.html
+      #
+      # Below, we use this SDK to send signed HTTP requests to BigBen AWS API.
+      # More information available at: https://docs.aws.amazon.com/apigateway/latest/developerguide/how-to-generate-sdk-javascript.html
+      #
+      apigClient = apigClientFactory.newClient({
+        region: 'eu-west-1',
+        apiKey: BIGBEN_API_KEY,
+      });
+
+      apigClient.projectsPost(
+        requestParams,
+        requestBody,
+        requestAdditionalParams
       )
