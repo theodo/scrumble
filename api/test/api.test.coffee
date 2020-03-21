@@ -99,6 +99,19 @@ tests = [
   method: "GET"
   model: "Problems"
   expect: 401
+,
+  method: "GET"
+  model: "BoardGroups"
+  expect: 401
+,
+  method: "GET"
+  model: "BoardGroups/mine"
+  expect: 401
+,
+  method: "GET"
+  model: "BoardGroups/mine"
+  token: "chuckDefinesHisOwnTokens"
+  expect: 200
 ]
 
 describe 'Status codes', ->

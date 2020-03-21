@@ -1,0 +1,13 @@
+md-input-container
+  label Groups
+  md-select(
+    ng-model="selectedGroupId"
+    ng-change="groupChanged(selectedGroupId)"
+  )
+    md-option(ng-value="null") Current Project
+    md-option(ng-repeat="group in groups" ng-value="group.id") {{ group.name }}
+md-icon(
+  md-svg-icon="pencil"
+  ui-sref="tab.board-groups"
+  aria-label="pencil"
+)

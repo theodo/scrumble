@@ -1,0 +1,32 @@
+[
+  {
+    "name": "B*Capital",
+    "boardId": "ok1",
+    "sprints": [],
+    "problems": [
+      {
+        "description": "We have no plan to achieve the project success"
+      }
+    ]
+  },
+  {
+    "name": "Parvest",
+    "boardId": "ok2",
+    "sprints": [],
+    "problems": [
+      {
+        "description": "The validation plateform is not ISO prod"
+      }
+    ]
+  },
+  {
+    "name": "LVH",
+    "boardId": "unauthorizedByTrello",
+    "sprints": [],
+    "problems": [
+      {
+        "description": "We are 5 points late"
+      }
+    ]
+  }
+]

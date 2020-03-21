@@ -1,0 +1,17 @@
+[
+  {
+    "name": "Theodo",
+    "username": "chuck_noris",
+    "boards": ["ok1", "ok2", "unauthorizedByTrello"]
+  },
+  {
+    "name": "Some boards",
+    "username": "chuck_noris",
+    "boards": ["ok1", "ok2", "ok3"]
+  },
+  {
+    "name": "Theodo",
+    "username": "nicolasg",
+    "boards": []
+  }
+]

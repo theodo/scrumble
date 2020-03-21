@@ -2,6 +2,7 @@ md-card(flex="100")
   md-tabs(md-selected='selectedIndex' md-border-bottom md-autoselect md-dynamic-height md-stretch-tabs='always')
     md-tab(label="Problems")
       md-subheader(style="color: red; text-align: center;") Problems must be visible. Continue using the problem sheet on your board!
+      group-selector
       
       div(layout="row" layout-sm="column" layout-align="space-around" ng-if="loading")
         md-progress-circular(md-mode="indeterminate")

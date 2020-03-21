@@ -1,0 +1,19 @@
+div(ng-if="!compact")
+  div(layout="row" layout-sm="column" layout-align="space-around" ng-if="loading")
+    md-progress-circular(md-mode="indeterminate")
+  
+  div.md-padding(ng-if="problems.length === 0" layout="column" layout-align="center")
+    p.description There is no problem in the boards you grouped
+  
+  div(ng-if="problems.length > 0")
+    div(layout="row" layout-align="center")
+      md-input-container
+        label Search a problem
+        input(ng-model="searchText")
+        
+    md-list
+      div(ng-repeat-start="problem in problems | filter : searchText")
+        md-list-item.md-3-line.md-long-text
+          include ./item.jade
+          
+      md-divider(ng-repeat-end ng-if="!$last")
