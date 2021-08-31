@@ -36,7 +36,7 @@ api-test:
 
 api-build:
 	eval "$$(docker-machine env -u)" && \
-	docker build -t bjan/scrumble-api api
+	docker build -t scrumble-legacy-api api
 
 api-push:
 	eval "$$(docker-machine env -u)" && \
