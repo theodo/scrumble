@@ -7,6 +7,6 @@ module.exports = {
     port: 5432,
     database: process.env.DB_DATABASE || 'postgres',
     username: process.env.DB_USERNAME || 'postgres',
-    password: process.env.DB_PASSWORD || ''
+    password: process.env.DB_PASSWORD || 'postgres',
   },
 };

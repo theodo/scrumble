@@ -1,7 +1,6 @@
 loopback = require 'loopback'
 boot = require 'loopback-boot'
 logger = require './logger'
-
 app = loopback()
 
 app.start = ->
