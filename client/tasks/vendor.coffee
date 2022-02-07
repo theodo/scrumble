@@ -7,6 +7,7 @@ bowerComponentsPath = "#{__dirname}/../bower_components"
 gulp.task 'vendor', (done) ->
   gulp.src [
     "#{bowerComponentsPath}/angular/angular.min.js"
+    "#{bowerComponentsPath}/angular-route/angular-route.min.js"
     "#{bowerComponentsPath}/angular-resource/angular-resource.min.js"
     "#{bowerComponentsPath}/angular-animate/angular-animate.min.js"
     "#{bowerComponentsPath}/angular-sanitize/angular-sanitize.min.js"
