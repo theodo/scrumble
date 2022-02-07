@@ -2,6 +2,7 @@
 
 app = angular.module 'Scrumble', [
   'ng'
+  'ngRoute'
   'ngResource'
   'ngAnimate'
   'ngSanitize'
