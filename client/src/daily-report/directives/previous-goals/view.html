@@ -1,0 +1,7 @@
+<div layout="column" layout-sm="column">
+    <md-input-container class="md-block"><textarea ng-model="markdown" aria-label="previous goals"></textarea>
+        <div ng-messages="errors" role="alert" md-auto-hide="false">
+            <div ng-message="doneColumnMissing">There is no done column set in the project settings</div>
+        </div>
+    </md-input-container>
+</div>

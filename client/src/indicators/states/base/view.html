@@ -1,0 +1,10 @@
+<md-card flex="100">
+    <md-tabs md-border-bottom="md-border-bottom" md-autoselect="md-autoselect" md-dynamic-height="md-dynamic-height" md-stretch-tabs="always">
+        <md-tab label="Satisfaction Survey">
+            <client-form template="clientSurveyTemplate" sprint="currentSprint" project="project"></client-form>
+        </md-tab>
+        <md-tab label="Celerity">
+            <celerity-graph project="project"></celerity-graph>
+        </md-tab>
+    </md-tabs>
+</md-card>

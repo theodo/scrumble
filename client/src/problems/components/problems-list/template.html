@@ -1,0 +1,33 @@
+<div ng-if="!compact">
+    <div layout="row" layout-align="center">
+        <md-input-container><label>Search a problem</label><input ng-model="searchText" /></md-input-container>
+    </div>
+    <md-list>
+        <div ng-repeat-start="problem in problems | filter : searchText">
+            <md-list-item class="md-3-line md-long-text">
+              <div class="md-list-item-text">
+                <h3 md-highlight-text="searchText">{{ problem.projectName }} {{ problem.description }}</h3><a ng-if="problem.link" href="{{ problem.link }}" target="_blank"><span ng-if="problem.card">
+                        <md-icon md-svg-src="trello" aria-label="trello"></md-icon>#{{ problem.card.number }} {{ problem.card.name }}
+                    </span><span ng-if="!problem.card">{{ problem.link }}</span></a>
+                <h4 md-highlight-text="searchText">{{ problem.happenedDate | date : 'longDate' }}</h4>
+                <p><strong>Cause Hypothesis:</strong><span md-highlight-text="searchText"> {{ problem.causeHypothesis }}</span></p>
+                <p><strong>Action:</strong><span md-highlight-text="searchText"> {{ problem.action }}</span></p>
+                <p><strong>Expected Result {{ problem.checkDate | date : 'shortDate' }}:</strong><span md-highlight-text="searchText"> {{ problem.expectedResult }}</span></p>
+                <md-chips ng-model="problem.tags" readonly="true">
+                    <md-chip-template md-highlight-text="searchText">{{ $chip.label }}</md-chip-template>
+                </md-chips>
+                <md-icon class="md-secondary" ng-if="editable" md-svg-icon="pencil" ng-click="problemClicked(problem, $event)" aria-label="pencil"></md-icon>
+                <md-icon class="md-secondary md-accent" ng-if="editable" md-svg-icon="delete" ng-click="deleteProblem(problem, $event)" aria-label="Delete"></md-icon>
+            </div>
+            </md-list-item>
+        </div>
+        <md-divider ng-repeat-end="ng-repeat-end" ng-if="!$last"></md-divider>
+    </md-list>
+</div>
+<div ng-if="compact">
+    <ul>
+        <li ng-repeat="problem in problems" ng-if="problem.action">
+            <p>{{ problem.action }} ({{ problem.happenedDate | date : 'shortDate' }})</p>
+        </li>
+    </ul>
+</div>

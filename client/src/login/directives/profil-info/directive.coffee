@@ -1,6 +1,8 @@
+template = require './view.html'
+
 angular.module 'Scrumble.login'
 .directive 'profilInfo', ->
   restrict: 'E'
-  templateUrl: 'login/directives/profil-info/view.html'
+  template: template
   scope: {}
   controller: 'ProfilInfoCtrl'

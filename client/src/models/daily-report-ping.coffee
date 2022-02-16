@@ -1,5 +1,5 @@
 angular.module 'Scrumble.models'
-.service 'DailyReportPing', ($resource, $q, $http, API_URL) ->
+.service 'DailyReportPing', ($resource, $q, $http) ->
   endpoint = "#{API_URL}/DailyReportPings"
   DailyReportPing = $resource(
     "#{endpoint}/:pingId",

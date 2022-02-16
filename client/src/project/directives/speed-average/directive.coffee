@@ -1,7 +1,7 @@
 angular.module 'Scrumble.settings'
 .directive 'speedAverage', ->
   restrict: 'E'
-  templateUrl: 'project/directives/speed-average/view.html'
+  template: require('./view.html')
   scope:
     projectId: '@'
   controller: ($scope, Speed) ->

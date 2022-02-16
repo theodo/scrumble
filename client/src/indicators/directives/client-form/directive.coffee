@@ -1,7 +1,9 @@
+require './style.less'
+
 angular.module 'Scrumble.indicators'
 .directive 'clientForm', ->
   restrict: 'E'
-  templateUrl: 'indicators/directives/client-form/view.html'
+  template: require('./view.html')
   scope:
     sprint: '='
     project: '='

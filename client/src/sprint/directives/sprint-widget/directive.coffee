@@ -1,7 +1,9 @@
+require './style.less'
+
 angular.module 'Scrumble.sprint'
 .directive 'sprintWidget', ->
   restrict: 'E'
-  templateUrl: 'sprint/directives/sprint-widget/view.html'
+  template: require('./view.html')
   scope:
     project: '='
     sprint: '='

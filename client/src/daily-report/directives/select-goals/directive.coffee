@@ -1,7 +1,10 @@
+template = require './view.html'
+require './style.less'
+
 angular.module 'Scrumble.daily-report'
 .directive 'selectGoals', ->
   restrict: 'E'
-  templateUrl: 'daily-report/directives/select-goals/view.html'
+  template: template
   scope:
     markdown: '='
     project: '='

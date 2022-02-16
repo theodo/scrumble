@@ -7,7 +7,6 @@ angular.module 'Scrumble.settings'
   Organization
   dailyCache
 ) ->
-
   $scope.isLoading = true
 
   TrelloClient.get('/members/me/organizations?fields=displayName').then (response) ->

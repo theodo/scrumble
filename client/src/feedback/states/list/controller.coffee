@@ -1,3 +1,5 @@
+template = require './dialog.html'
+
 angular.module 'Scrumble.feedback'
 .controller 'FeedbackListCtrl', ($scope, $mdDialog, Feedback) ->
   fetchFeedbacks = ->
@@ -21,7 +23,7 @@ angular.module 'Scrumble.feedback'
           $mdDialog.cancel()
         $scope.save = ->
           $mdDialog.hide $scope.feedback
-      templateUrl: 'feedback/states/list/dialog.html'
+      template: template
       parent: angular.element(document.body)
       targetEvent: ev
       clickOutsideToClose: true

@@ -1,0 +1,35 @@
+<md-card flex="100">
+    <md-tabs md-selected="selectedIndex" md-border-bottom="md-border-bottom" md-autoselect="md-autoselect" md-dynamic-height="md-dynamic-height" md-stretch-tabs="always">
+        <md-tab label="Problems">
+            <md-subheader style="color: red; text-align: center;">Problems must be visible. Continue using the problem sheet on your board!</md-subheader>
+            <div layout="row" layout-sm="column" layout-align="space-around" ng-if="loading">
+                <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+            </div>
+            <div class="md-padding" ng-if="problems.length === 0" layout="column" layout-align="center">
+                <p class="description">Here is the place to track the problems of your project.</p>
+                <section layout="row" layout-sm="column" layout-align="center center" layout-wrap="layout-wrap">
+                    <md-button ng-click="addProblem($event)">Create the first problem</md-button>
+                </section>
+            </div>
+            <problems-list project-id="{{ projectId }}"></problems-list>
+        </md-tab>
+        <md-tab label="Actions List">
+            <div class="md-toolbar-tools">
+                <h2 class="md-title pointer">Liste des actions</h2><span flex="flex"></span>
+                <div>
+                    <md-button class="md-icon-button" ng-click="printProblems()">
+                        <md-icon md-svg-icon="printer">Print</md-icon>
+                        <md-tooltip md-direction="bottom">Print</md-tooltip>
+                    </md-button>
+                </div>
+            </div>
+            <div>
+                <problems-list project-id="{{ projectId }}" compact="true"></problems-list>
+            </div>
+        </md-tab>
+    </md-tabs>
+    <md-button class="md-fab md-accent board-call-to-actions" ng-click="addProblem($event)">
+        <md-icon md-svg-icon="plus">Add</md-icon>
+        <md-tooltip md-direction="left">Add a problem</md-tooltip>
+    </md-button>
+</md-card>

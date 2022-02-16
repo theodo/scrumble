@@ -20,16 +20,16 @@ angular.module 'Scrumble.login'
 
   getTrelloInfo()
 
-  if googleAuth.isAuthenticated()
-    googleAuth.getUserInfo().then (user) ->
-      $scope.googleUser = user
+  # if googleAuth.isAuthenticated()
+  #   googleAuth.getUserInfo().then (user) ->
+  #     $scope.googleUser = user
 
-  $scope.googleLogin = ->
-    googleAuth.login().then ->
-      googleAuth.getUserInfo().then (user) ->
-        $scope.googleUser = user
-  $scope.googleLogout = ->
-    $scope.googleUser = null
-    $scope.googleUser =
-      picture: "images/default-profile.jpg"
-    googleAuth.logout()
+  # $scope.googleLogin = ->
+  #   googleAuth.login().then ->
+  #     googleAuth.getUserInfo().then (user) ->
+  #       $scope.googleUser = user
+  # $scope.googleLogout = ->
+  #   $scope.googleUser = null
+  #   $scope.googleUser =
+  #     picture: "images/default-profile.jpg"
+  #   googleAuth.logout()

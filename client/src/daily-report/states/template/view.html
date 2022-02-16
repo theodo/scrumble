@@ -1,0 +1,105 @@
+<form layout="column" flex="100" name="daily">
+    <md-card flex="80" flex-sm="100" flex-xs="100">
+        <md-card-title flex="nogrow">
+            <md-card-title-text flex="grow"><span class="md-headline">Subject</span><span class="md-subhead">The subject is very important. It will determine if your customer will read your report. Change it every day with the main point of your report</span></md-card-title-text>
+            <div flex="flex"></div>
+            <template-call-to-action sections="sections" section="subject"></template-call-to-action>
+            <dynamic-fields-call-to-action></dynamic-fields-call-to-action>
+        </md-card-title>
+        <md-card-content layout="column">
+            <md-input-container><input ng-model="sections.subject" aria-label="subject" /></md-input-container>
+        </md-card-content>
+    </md-card>
+    <md-card flex="80" flex-sm="100" flex-xs="100">
+        <md-card-title flex="nogrow">
+            <md-card-title-text><span class="md-headline">Introduction</span></md-card-title-text>
+            <div flex="flex"></div>
+            <markdown-helper></markdown-helper>
+            <template-call-to-action sections="sections" section="intro"></template-call-to-action>
+            <dynamic-fields-call-to-action></dynamic-fields-call-to-action>
+        </md-card-title>
+        <md-card-content>
+            <md-input-container class="md-block"><textarea ng-model="sections.intro" aria-label="intro"></textarea></md-input-container>
+        </md-card-content>
+    </md-card>
+    <md-card flex="80" flex-sm="100" flex-xs="100">
+        <md-card-title flex="nogrow">
+            <md-card-title-text><span class="md-headline">Sprint Progress</span></md-card-title-text>
+            <div flex="flex"></div>
+            <markdown-helper></markdown-helper>
+            <template-call-to-action sections="sections" section="progress"></template-call-to-action>
+            <dynamic-fields-call-to-action></dynamic-fields-call-to-action>
+        </md-card-title>
+        <md-card-content>
+            <md-input-container class="md-block"><textarea ng-model="sections.progress" aria-label="progress"></textarea></md-input-container>
+        </md-card-content>
+    </md-card>
+    <md-card flex="80" flex-sm="100" flex-xs="100">
+        <md-card-title flex="nogrow">
+            <md-card-title-text flex="grow"><span class="md-headline">Previous Goals</span><span class="md-subhead">The list of goals in the previous email. It's green if the trello ticket is in the "done column"</span></md-card-title-text>
+            <div flex="flex"></div>
+            <markdown-helper></markdown-helper>
+            <template-call-to-action sections="sections" section="previousGoalsIntro"></template-call-to-action>
+            <dynamic-fields-call-to-action></dynamic-fields-call-to-action>
+        </md-card-title>
+        <md-card-content flex="flex" layout="column">
+            <md-input-container><label>Previous goal introduction</label><input ng-model="sections.previousGoalsIntro" /></md-input-container>
+            <previous-goals markdown="sections.previousGoals" sprint="sprint"></previous-goals>
+        </md-card-content>
+    </md-card>
+    <md-card flex="80" flex-sm="100" flex-xs="100">
+        <md-card-title flex="nogrow">
+            <md-card-title-text flex="grow"><span class="md-headline">Today's Goals</span><span class="md-subhead">The list of tickets in "sprint", "doing", "blocked", "toValidate" columns</span></md-card-title-text>
+            <div flex="flex"></div>
+            <daily-inspiration></daily-inspiration>
+            <markdown-helper></markdown-helper>
+            <template-call-to-action sections="sections" section="todaysGoalsIntro"></template-call-to-action>
+            <dynamic-fields-call-to-action></dynamic-fields-call-to-action>
+        </md-card-title>
+        <md-card-content flex="flex" layout="column">
+            <md-input-container><label>Today's goal introduction</label><input ng-model="sections.todaysGoalsIntro" /></md-input-container>
+            <select-goals markdown="sections.todaysGoals" project="project" sprint="sprint"></select-goals>
+        </md-card-content>
+    </md-card>
+    <md-card flex="80" flex-sm="100" flex-xs="100">
+        <md-card-title flex="nogrow">
+            <md-card-title-text><span class="md-headline">Problems</span></md-card-title-text>
+            <div flex="flex"></div>
+            <markdown-helper></markdown-helper>
+            <template-call-to-action sections="sections" section="problemsIntro"></template-call-to-action>
+            <dynamic-fields-call-to-action></dynamic-fields-call-to-action>
+        </md-card-title>
+        <md-card-content flex="flex" layout="column">
+            <md-input-container><label>Today's problems introduction</label><input ng-model="sections.problemsIntro" /></md-input-container>
+            <select-problems markdown="sections.problems" project="project"></select-problems>
+        </md-card-content>
+    </md-card>
+    <md-card flex="80" flex-sm="100" flex-xs="100">
+        <md-card-title flex="nogrow">
+            <md-card-title-text><span class="md-headline">Conclusion</span></md-card-title-text>
+            <div flex="flex"></div>
+            <markdown-helper></markdown-helper>
+            <template-call-to-action sections="sections" section="conclusion"></template-call-to-action>
+            <dynamic-fields-call-to-action></dynamic-fields-call-to-action>
+        </md-card-title>
+        <md-card-content>
+            <md-input-container class="md-block"><textarea ng-model="sections.conclusion" aria-label="conclusion"></textarea></md-input-container>
+        </md-card-content>
+    </md-card>
+</form>
+<div class="hidden-bdc">
+    <sprint-widget project="project" sprint="sprint"></sprint-widget>
+</div>
+<md-fab-speed-dial class="md-scale board-call-to-actions" md-direction="up" md-open="isOpen" ng-mouseenter="isOpen=true" ng-mouseleave="isOpen=false">
+    <md-fab-trigger>
+        <md-button class="md-fab md-accent" ng-click="preview($event)" aria-label="menu">
+            <md-icon md-svg-icon="eye">Preview</md-icon>
+            <md-tooltip md-direction="left">Preview</md-tooltip>
+        </md-button>
+    </md-fab-trigger>
+    <md-fab-actions>
+        <md-button class="md-fab md-raised md-mini" aria-label="save" ng-click="save()">
+            <md-icon md-svg-src="content-save" aria-label="save"></md-icon>
+        </md-button>
+    </md-fab-actions>
+</md-fab-speed-dial>

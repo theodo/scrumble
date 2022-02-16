@@ -1,0 +1,20 @@
+<md-card-content class="md-padding satisfaction-survey">
+    <h2 class="md-title">Satisfaction survey: {{ project.name }} - Sprint {{ sprint.number }}
+        <md-button class="md-icon-button" ng-click="print()">
+            <md-icon md-svg-src="printer" aria-label="Print"></md-icon>
+        </md-button>
+    </h2>
+    <md-subheader style="color: red; text-align: center;">Attention les résultats de ce questionnaire ne sont pas enregistrés dans la Google Spreadsheet du bac rouge</md-subheader>
+    <div ng-repeat="question in template">
+        <p class="question">{{ question.label }}</p>
+        <div class="answer">
+            <md-radio-group ng-if="question.type == 'radio'" ng-model="question.answer">
+                <md-radio-button class="md-primary" ng-repeat="item in question.items" ng-value="item.value">{{ item.label }}</md-radio-button>
+            </md-radio-group>
+            <md-input-container class="md-block" ng-if="question.type == 'textarea'"><label>Your answer...</label><textarea ng-model="question.answer" aria-label="answer"></textarea></md-input-container>
+        </div>
+    </div>
+    <section layout="row" layout-sm="column" layout-align="center center" layout-wrap="layout-wrap">
+        <md-button class="md-raised md-primary" ng-click="save()" ng-disabled="saving">Save</md-button>
+    </section>
+</md-card-content>

@@ -1,0 +1,34 @@
+<h2>Daily Stats</h2>
+<h4>{{ pingsLength }} daily sent</h4>
+<div id="ping-per-day"></div>
+<h4>Time of the day</h4>
+<div id="ping-hour"></div>
+<h4>Alert daily mail not sent</h4>
+<md-datepicker
+  ng-model="selectedDate"
+  md-placeholder="Given date"
+  ng-change="computeDiff(selectedDate)"
+></md-datepicker>
+<md-list>
+  <md-list-item ng-repeat="daily in alertDailies"
+    >{{ daily.name }}</md-list-item
+  >
+</md-list>
+<div ng-repeat="(organization, projects) in projectsByOrganization">
+  <h3>{{ organization }}</h3>
+  <table>
+    <tr>
+      <th></th>
+      <th ng-repeat="day in days">{{ day }}</th>
+    </tr>
+    <tr ng-repeat="project in projects">
+      <td>{{ project.name }}</td>
+      <td
+        ng-repeat="day in days"
+        ng-style="{'background-color': project.pings[day] ? '#4caf50' : '#f44336'}"
+      >
+        &nbsp;
+      </td>
+    </tr>
+  </table>
+</div>

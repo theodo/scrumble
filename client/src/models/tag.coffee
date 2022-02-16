@@ -1,5 +1,5 @@
 angular.module 'Scrumble.models'
-.service 'Tag', ($resource, $q, $http, API_URL) ->
+.service 'Tag', ($resource, $q, $http) ->
   endpoint = "#{API_URL}/Tags"
   Tag = $resource(
     "#{endpoint}/:tagId",

@@ -1,0 +1,20 @@
+<style type="text/css">
+    @page {
+        size: portrait;
+    }
+</style>
+<md-card-content class="md-padding">
+    <h2 class="md-title">Checklists<md-button class="md-icon-button" ng-click="print()">
+            <md-icon md-svg-src="printer" aria-label="Print"></md-icon>
+        </md-button>
+    </h2>
+    <div ng-repeat="checklist in template">
+        <h2 class="md-title">{{ checklist.name }}</h2>
+        <div ng-repeat="item in checklist.list">
+            <md-checkbox ng-model="item.selected">{{ item.label }}</md-checkbox>
+        </div>
+    </div>
+    <section layout="row" layout-sm="column" layout-align="center center" layout-wrap="layout-wrap">
+        <md-button class="md-raised md-primary" ng-click="save()" ng-disabled="saving">Save</md-button>
+    </section>
+</md-card-content>

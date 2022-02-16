@@ -1,0 +1,52 @@
+<div>
+    <div class="md-toolbar-tools">
+        <h2 class="md-title">The team</h2><span flex="flex"></span>
+        <md-menu>
+            <md-button class="md-icon-button" aria-label="Open Project menu" ng-click="openMenu($mdOpenMenu, $event)">
+                <md-icon md-menu-origin="md-menu-origin" md-svg-icon="more"></md-icon>
+            </md-button>
+            <md-menu-content width="4">
+                <md-menu-item ui-sref="tab.project">
+                    <md-button>
+                        <md-icon md-svg-icon="settings"></md-icon>Settings
+                    </md-button>
+                </md-menu-item>
+                <md-menu-item ui-sref="tab.sprint-list({projectId: project.objectId})">
+                    <md-button>
+                        <md-icon md-svg-icon="view-list"></md-icon>Sprints
+                    </md-button>
+                </md-menu-item>
+                <md-menu-item ng-click="openEditTitle($event)">
+                    <md-button disabled="disabled">
+                        <md-icon md-svg-icon="printer"></md-icon>Print
+                    </md-button>
+                </md-menu-item>
+            </md-menu-content>
+        </md-menu>
+    </div>
+    <md-card-content>
+        <md-list>
+            <md-list-item class="md-3-line" ng-repeat="member in project.team">
+                <trello-avatar member="member"></trello-avatar>
+                <div class="md-list-item-text" layout="column">
+                    <h3>{{ member.fullName }} - {{ getRoleLabel(member.role) }}</h3>
+                    <p>{{ member.email }}</p>
+                    <p>{{ member.phone }}</p>
+                </div>
+            </md-list-item>
+            <md-list-item class="md-3-line" ng-repeat="member in project.team.rest">
+                <trello-avatar member="member"></trello-avatar>
+                <div class="md-list-item-text" layout="column">
+                    <h3>{{ member.fullName }} - {{ member.role }}</h3>
+                    <p>{{ member.email }}</p>
+                    <p>{{ member.phone }}</p>
+                </div>
+            </md-list-item>
+        </md-list>
+    </md-card-content>
+    <md-card-actions layout="row" layout-align="end center">
+        <md-button class="md-icon-button" aria-label="Trello Link"><a ng-href="https://trello.com/b/{{project.boardId}}" target="_blank">
+                <md-icon md-svg-icon="trello"></md-icon>
+            </a></md-button>
+    </md-card-actions>
+</div>

@@ -1,0 +1,44 @@
+<md-dialog flex="80">
+    <md-toolbar>
+        <div class="md-toolbar-tools">
+            <h2>Edit Problem</h2><span flex="flex"></span>
+            <md-button class="md-icon-button" ng-click="cancel()">
+                <md-icon md-svg-src="close" aria-label="Close dialog"></md-icon>
+            </md-button>
+        </div>
+    </md-toolbar>
+    <md-dialog-content>
+        <div class="md-padding">
+            <md-content class="fix-tags-input" layout="column">
+                <div layout="row" layout-align="center center">
+                    <md-datepicker ng-model="problem.happenedDate" md-placeholder="Date"></md-datepicker>
+                </div>
+                <md-input-container><label>Description</label>
+                    <md-icon md-svg-src="clipboard-text"></md-icon><input ng-model="problem.description" />
+                </md-input-container>
+                <md-input-container><label>Link (such as the Trello ticket link)</label>
+                    <md-icon md-svg-src="link"></md-icon><input ng-model="problem.link" />
+                </md-input-container>
+                <md-input-container><label>Cause hypothesis</label>
+                    <md-icon md-svg-src="flask-outline"></md-icon><textarea ng-model="problem.causeHypothesis" rows="2"></textarea>
+                </md-input-container>
+                <md-input-container><label>Action</label>
+                    <md-icon md-svg-src="hand-pointing-right"></md-icon><textarea ng-model="problem.action" rows="2"></textarea>
+                </md-input-container>
+                <md-input-container><label>Expected Result</label>
+                    <md-icon md-svg-src="checkbox-multiple-marked-outline"></md-icon><textarea ng-model="problem.expectedResult" rows="2"></textarea>
+                </md-input-container>
+                <div layout="row" layout-align="center center">
+                    <md-datepicker ng-model="problem.checkDate" md-placeholder="Check"></md-datepicker>
+                </div>
+                <div layout="row">
+                    <md-icon md-svg-src="tag-multiple" flex="initial"></md-icon>
+                    <tag-input problem="problem" flex="flex"></tag-input>
+                </div>
+            </md-content>
+        </div>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <md-button class="md-raised md-primary" ng-click="save(problem)">Save</md-button>
+    </md-dialog-actions>
+</md-dialog>

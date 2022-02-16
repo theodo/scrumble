@@ -1,9 +1,0 @@
-md-card(flex="100")
-  md-chips
-    md-chip(
-      ng-repeat='list in boardLists'
-      ng-click='toggleList(list)'
-      ng-class='{"md-focused": list.selected}'
-    ) {{ list.name }}
-  
-  hc-chart(options="chartOptions" ng-if="chartOptions" style="height: 600px") No Column selected for now

@@ -1,0 +1,16 @@
+<div class="trello-avatar">
+  <img
+    class="md-avatar member-avatar"
+    ng-if="hash"
+    alt="{{ member.username }}"
+    ng-src="https://trello-avatars.s3.amazonaws.com/{{hash}}/{{size}}.png"
+  />
+  <div
+    class="member-avatar initials"
+    ng-style="{'background-color': color}"
+    ng-if="!hash"
+  >
+    {{ member.initials }}
+  </div>
+  <md-tooltip ng-if="displayTooltip">{{ member.fullName }}</md-tooltip>
+</div>

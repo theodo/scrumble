@@ -1,0 +1,11 @@
+<div layout="column" layout-sm="column">
+    <md-input-container class="md-block">
+        <md-select multiple="true" placeholder="Select today's problems" ng-model="todaysProblems" md-on-close="update(todaysProblems)">
+            <md-option class="height-2-line" ng-repeat="problem in problems" ng-value="problem">
+                <div class="item-title"><strong>{{ problem.happenedDate | date : 'shortDate' }} </strong>{{ problem.description }}</div>
+                <div class="item-metadata"><em>{{ '&#8627;' + problem.action }}</em></div>
+            </md-option>
+        </md-select>
+    </md-input-container>
+    <md-input-container class="md-block"><textarea ng-model="markdown" aria-label="problems"></textarea></md-input-container>
+</div>

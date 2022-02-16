@@ -1,0 +1,116 @@
+<header>
+  <md-toolbar>
+    <div class="md-toolbar-tools">
+      <md-button
+        class="md-icon-button"
+        ng-click="toggleSidenav()"
+        hide-gt-md="hide-gt-md"
+      >
+        <md-icon md-svg-src="menu" aria-label="Open menu"></md-icon>
+      </md-button>
+      <h2>
+        <span class="clickable" ui-sref="tab.bdc">Scrumble</span><span> /</span
+        ><span class="clickable" ui-sref="tab.project" ng-if="project"
+          >{{ project.name }}</span
+        >
+      </h2>
+      <span flex="flex"></span
+      ><a
+        href="https://caspr.theo.do"
+        target="_blank"
+        style="margin-right: 20px"
+      >
+        <md-icon md-svg-src="ghost"></md-icon
+        ><span style="font-size: 16px"> Caspr</span>
+        <md-tooltip md-direction="left"
+          >Link to Caspr Ghost Programming</md-tooltip
+        > </a
+      ><a
+        href="https://app.splane.io"
+        target="_blank"
+        style="margin-right: 20px"
+      >
+        <md-icon md-svg-src="eye"></md-icon
+        ><span style="font-size: 16px"> Splane</span>
+        <md-tooltip md-direction="left"
+          >Link to Splane Visibility Board</md-tooltip
+        > </a
+      ><a
+        href="https://pbsolving.theo.do"
+        target="_blank"
+        style="margin-right: 20px"
+      >
+        <md-icon md-svg-src="pencil"></md-icon
+        ><span style="font-size: 16px"> Problem Solving</span>
+        <md-tooltip md-direction="left"
+          >Link to Problem Solving Spreadsheet</md-tooltip
+        > </a
+      ><a
+        href="https://theodo.github.io/ticket-dependency-graph"
+        target="_blank"
+        style="margin-right: 20px"
+      >
+        <md-icon md-svg-src="autorenew"></md-icon
+        ><span style="font-size: 16px"> Dependency Graph</span>
+        <md-tooltip md-direction="left"
+          >Link to Ticket Dependency Graph</md-tooltip
+        > </a
+      ><a
+        href="https://theodo.github.io/planning-bdc"
+        target="_blank"
+        style="margin-right: 20px"
+      >
+        <md-icon md-svg-src="clock"></md-icon
+        ><span style="font-size: 16px"> BDC Planning</span>
+        <md-tooltip md-direction="left">Link to BDC Planning</md-tooltip> </a
+      ><a
+        href="https://minishlink.github.io/DailyScrum"
+        target="_blank"
+        style="margin-right: 20px"
+      >
+        <md-icon md-svg-src="sun"></md-icon
+        ><span style="font-size: 16px"> DailyScrum</span>
+        <md-tooltip md-direction="left">Link to DailyScrum</md-tooltip>
+      </a>
+      <div id="changelog">
+        <md-icon md-svg-src="bell"></md-icon>
+      </div>
+      <profil-info></profil-info>
+    </div>
+  </md-toolbar>
+</header>
+<div flex="flex" layout="row">
+  <md-sidenav
+    class="md-sidenav-left md-whiteframe-z2"
+    layout="column"
+    md-component-id="left"
+    md-is-locked-open="$mdMedia('gt-md')"
+  >
+    <md-list>
+      <div ng-repeat="section in menu">
+        <md-subheader>{{ section.title }}</md-subheader>
+        <md-list-item
+          class="md-clickable"
+          ng-repeat="item in section.items"
+          ng-click="goTo(item)"
+          md-ink-ripple="md-ink-ripple"
+        >
+          <md-item-content layout="row" layout-align="start center">
+            <div class="inset">
+              <md-icon
+                md-svg-icon="{{item.icon}}"
+                ng-class="item.classes"
+              ></md-icon>
+            </div>
+            <div class="inset">{{item.title}}</div>
+          </md-item-content>
+        </md-list-item>
+        <md-divider></md-divider>
+      </div>
+    </md-list>
+  </md-sidenav>
+  <main class="md-padding" layout="row" flex="flex">
+    <div class="container" ui-view="ui-view"></div>
+  </main>
+</div>
+<feedback></feedback>

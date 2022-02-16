@@ -1,0 +1,31 @@
+<md-card-title>
+    <md-card-title-text><span class="md-headline">{{ member.fullName }} &nbsp;<a class="md-icon-button" aria-label="call" ng-href="tel:{{member.phone}}" ng-if="member.phone">
+                <md-icon md-svg-icon="phone"></md-icon>
+            </a></span></md-card-title-text>
+    <md-card-title-media>
+        <div class="md-media-sm card-media">
+            <trello-avatar member="member"></trello-avatar>
+        </div>
+    </md-card-title-media>
+</md-card-title>
+<md-card-content layout="column">
+    <md-input-container><label>Email (for daily mail)</label><input ng-model="member.email" /></md-input-container>
+    <md-input-container><label>Phone</label><input ng-model="member.phone" /></md-input-container>
+    <div layout="row">
+        <md-input-container flex="50"><label>Role</label>
+            <md-select ng-model="member.role">
+                <md-option ng-value="elt.value" ng-repeat="elt in roles">{{elt.label}}</md-option>
+            </md-select>
+        </md-input-container>
+        <md-input-container flex="50"><label>Daily Mail</label>
+            <md-select ng-model="member.daily">
+                <md-option ng-value="elt.value" ng-repeat="elt in daily">{{elt.label}}</md-option>
+            </md-select>
+        </md-input-container>
+    </div>
+</md-card-content>
+<md-card-actions layout="row" layout-align="end center">
+    <md-button class="md-icon-button" aria-label="delete" ng-click="delete()">
+        <md-icon md-svg-icon="delete"></md-icon>
+    </md-button>
+</md-card-actions>

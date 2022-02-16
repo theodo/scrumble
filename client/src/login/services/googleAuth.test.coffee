@@ -10,7 +10,6 @@ describe 'dynamicFields', ->
     $rootScope
     localStorageService
     googleAuth
-    API_URL
   ) ->
     @$state = $state
     @$rootScope = $rootScope

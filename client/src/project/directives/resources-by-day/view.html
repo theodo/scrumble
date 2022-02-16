@@ -1,0 +1,27 @@
+<md-data-table-toolbar><button class="md-icon-button md-button md-default-theme" ng-click="delete($event)" ng-show="selected.length">
+        <md-icon md-svg-icon="delete"></md-icon>
+    </button></md-data-table-toolbar>
+<md-table-container>
+    <table md-table="md-table" md-row-select="md-row-select" ng-model="selected">
+        <thead md-head="md-head">
+            <tr md-row="md-row">
+                <th md-column="md-column">&nbsp;</th>
+                <th class="timeBox__heading" md-column="md-column" ng-show="timeboxActivated">Time to Remove <br /> (1 dev-day = 6h)</th>
+                <th layout-align="center center" ng-repeat="(j, member) in members">
+                    <trello-avatar member="member"></trello-avatar>
+                </th>
+            </tr>
+        </thead>
+        <tbody md-body="md-body">
+            <tr md-row="md-row" md-select="day" md-select-id="{{day.date}}" ng-repeat="day in days">
+                <td md-cell="md-cell">{{ day.date | date : 'EEEE, MMMM d' }}</td>
+                <td md-cell="md-cell" ng-show="timeboxActivated">
+                    <md-input-container class="timeBox__input-container" md-no-float="md-no-float"><input nss-round="nss-round" ng-model="day.timebox" ng-change="onUpdate()" placeholder="hours" /></md-input-container>
+                </td>
+                <td class="cell-align" md-cell="md-cell" ng-repeat="member in members">
+                    <md-slider class="md-primary" min="0" max="1" step="0.1" ng-model="matrix[$parent.$index][$index]" ng-change="onUpdate()"></md-slider>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</md-table-container>

@@ -1,6 +1,8 @@
+template = require './call-to-action.html'
+
 angular.module 'Scrumble.feedback'
 .directive 'feedback', ->
   restrict: 'E'
-  templateUrl: 'feedback/directives/call-to-action.html'
+  template: template
   scope: {}
   controller: 'feedbackCallToActionCtrl'

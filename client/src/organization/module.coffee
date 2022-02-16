@@ -3,3 +3,7 @@ angular.module 'Scrumble.organization', [
   'trello-api-client'
   'Scrumble.problems'
 ]
+
+require './config/routes.coffee'
+require './states/problems/controller.coffee'
+require './states/settings/controller.coffee'

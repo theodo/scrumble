@@ -1,9 +1,11 @@
+require '../states/template/style.less'
+
 angular.module 'Scrumble.daily-report'
 .config ($stateProvider) ->
   $stateProvider
   .state 'tab.daily-report',
     url: '/daily-report'
-    templateUrl: 'daily-report/states/template/view.html'
+    template: require('../states/template/view.html')
     controller: 'DailyReportCtrl'
     resolve:
       dailyReport: (DailyReport) ->

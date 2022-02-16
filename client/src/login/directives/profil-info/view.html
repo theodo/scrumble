@@ -1,0 +1,41 @@
+<md-menu class="account-menu">
+  <md-button class="picture-link" ng-click="openMenu($mdOpenMenu, $event)">
+    <trello-avatar member="userInfo"></trello-avatar>
+  </md-button>
+  <md-menu-content class="account-details md-whiteframe-z2" width="5">
+    <div class="trello-account" layout="row">
+      <a href="{{userInfo.url}}" target="_blank">
+        <trello-avatar member="userInfo"></trello-avatar>
+      </a>
+      <div layout="column">
+        <h3 class="title">Trello Account</h3>
+        <p>{{ userInfo.fullName }}</p>
+        <p>{{ userInfo.email }}</p>
+      </div>
+      <md-button class="md-warn" ng-click="logout()">Logout</md-button>
+    </div>
+    <div class="gmail-account" layout="row">
+      <img
+        class="md-avatar member-avatar gmail-avatar"
+        alt="{{ googleUser.name }}"
+        ng-src="{{ googleUser.picture }}"
+      />
+      <div layout="column" layout-align="center start">
+        <h3 class="title">Gmail Account</h3>
+        <p>{{ googleUser.email }}</p>
+      </div>
+      <md-button
+        class="md-warn"
+        ng-click="googleLogout()"
+        ng-if="googleUser.email"
+        >Logout</md-button
+      >
+      <md-button
+        class="md-primary"
+        ng-click="googleLogin()"
+        ng-if="!googleUser.email"
+        >Login</md-button
+      >
+    </div>
+  </md-menu-content>
+</md-menu>

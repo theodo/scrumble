@@ -1,7 +1,9 @@
+template = require './view.html'
+
 angular.module 'Scrumble.daily-report'
 .directive 'selectProblems', ->
   restrict: 'E'
-  templateUrl: 'daily-report/directives/select-problems/view.html'
+  template: template
   scope:
     markdown: '='
     project: '='
