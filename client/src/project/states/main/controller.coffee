@@ -1,5 +1,5 @@
 angular.module 'Scrumble.settings'
-.controller 'ProjectCtrl', (
+.controller 'ProjectCtrl', ['$scope', 'TrelloClient', 'Project', 'ScrumbleUser2', 'Organization', 'dailyCache', (
   $scope
   TrelloClient
   Project
@@ -63,3 +63,4 @@ angular.module 'Scrumble.settings'
       $scope.project.boardId = null
       console.warn err
       $scope.saving = false
+]
