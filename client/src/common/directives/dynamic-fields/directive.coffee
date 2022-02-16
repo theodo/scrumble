@@ -1,6 +1,8 @@
+template = require './view.html'
+
 angular.module 'Scrumble.common'
 .directive 'dynamicFieldsList', ->
   restrict: 'E'
-  templateUrl: 'common/directives/dynamic-fields/view.html'
+  template: template
   scope:
     availableFields: '='

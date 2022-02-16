@@ -48,7 +48,7 @@ angular.module 'Scrumble.daily-report'
   $scope.preview = (ev) ->
     $mdDialog.show
       controller: 'PreviewCtrl'
-      templateUrl: 'daily-report/states/preview/view.html'
+      templateUrl: require('../preview/view.html')
       parent: angular.element document.body
       targetEvent: ev
       clickOutsideToClose: true

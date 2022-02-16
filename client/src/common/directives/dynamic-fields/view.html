@@ -1,0 +1,9 @@
+<md-list>
+    <md-list-item class="md-2-line" ng-repeat="field in availableFields">
+        <md-icon md-svg-icon="{{ field.icon }}"></md-icon>
+        <div class="md-list-item-text">
+            <h3>{{ field.key }} </h3>
+            <p ng-bind-html="field.description"></p>
+        </div>
+    </md-list-item>
+</md-list>

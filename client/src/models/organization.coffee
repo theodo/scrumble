@@ -1,5 +1,5 @@
 angular.module 'Scrumble.models'
-.service 'Organization', ($resource, $q, $http, TrelloClient, API_URL) ->
+.service 'Organization', ($resource, $q, $http, TrelloClient) ->
   endpoint = "#{API_URL}/Organizations"
   Organization = $resource(
     "#{endpoint}/:organizationId",

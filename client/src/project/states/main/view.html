@@ -1,0 +1,17 @@
+<h2 class="md-title" layout-align="center end">CHOOSE YOUR PROJECT</h2>
+<div layout="row" layout-sm="column" layout-align="space-around" ng-show="isLoading">
+    <md-progress-circular md-mode="indeterminate"></md-progress-circular>
+</div>
+<div ng-hide="isLoading">
+    <md-input-container class="md-block"><label>Search a project</label><input ng-model="searchInput" /></md-input-container>
+    <div ng-repeat="organization in organizations" ng-show="filteredBoards.length">
+        <h3>{{organization.displayName}}</h3>
+        <md-grid-list ng-cloak="ng-cloak" md-cols-xs="2" md-cols-sm="3" md-cols-md="4" md-cols-lg="5" md-cols-xl="8" md-row-height="6:3" md-gutter="4px">
+            <md-grid-tile class="project-tile clickable" ng-repeat="board in filteredBoards = (boards | filter:board.idOrganization=organization.id | filter: searchInput)" ng-click="selectBoard(board.id)" ng-style="{          'background-image':'url({{board.prefs.backgroundImageScaled[2].url || board.prefs.backgroundImage}})',          'background-color':'{{board.prefs.backgroundColor}}'        }">
+                <md-grid-tile-footer>
+                    <h5>{{board.name}}</h5>
+                </md-grid-tile-footer>
+            </md-grid-tile>
+        </md-grid-list>
+    </div>
+</div>

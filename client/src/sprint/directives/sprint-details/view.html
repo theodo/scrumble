@@ -1,0 +1,28 @@
+<md-card-title>
+    <md-card-title-text><span>
+            <md-icon class="check" md-svg-icon="check" ng-if="sprint.isActive"></md-icon><span class="md-title">Sprint {{ sprint.number }}: {{ sprint.goal }}</span>
+        </span><span class="md-subhead">{{ sprint.dates.start | date : 'MMMM d' }} to {{ sprint.dates.end | date : 'MMMM d' }}</span><span class="md-primary md-subhead" ng-if="sprint.speed">Real Speed: {{ sprint.speed }}</span><span class="md-primary md-subhead" ng-if="!sprint.speed">No Real Speed</span></md-card-title-text>
+    <md-card-title-media layout-align="end">
+        <md-card-content class="md-media-sm" ng-if="sprint.success == 'unknown'"><img class="card-media" src="images/progress.png" /></md-card-content>
+        <md-card-content class="md-media-sm" ng-if="sprint.success == 'ok'"><img class="card-media" src="images/success.png" /></md-card-content>
+        <md-card-content class="md-media-sm" ng-if="sprint.success == 'ko'"><img class="card-media" src="images/fail.png" /></md-card-content>
+    </md-card-title-media>
+</md-card-title>
+<md-card-actions layout="row" layout-align="end end">
+    <md-button class="md-primary md-hue-2 md-icon-button" ng-click="activateSprint(sprint)" ng-disabled="sprint.isActive">
+        <md-icon md-svg-icon="hexagon"></md-icon>
+        <md-tooltip md-direction="top">Activate This Sprint</md-tooltip>
+    </md-button>
+    <md-button class="md-accent md-hue-1 md-icon-button" ng-click="showBurndown($event, sprint)">
+        <md-icon md-svg-icon="trending-down"></md-icon>
+        <md-tooltip md-direction="top">See Burndown Chart</md-tooltip>
+    </md-button>
+    <md-button class="md-accent md-hue-1 md-icon-button" aria-label="indicators" ng-click="indicators(sprint)">
+        <md-icon md-svg-icon="chart-bar">Indicators</md-icon>
+        <md-tooltip md-direction="top">Go to indicators</md-tooltip>
+    </md-button>
+    <md-button class="md-warn md-hue-2 md-icon-button" aria-label="delete" ng-click="delete(sprint, $event)" ng-if="sprint.isActive">
+        <md-icon md-svg-icon="delete"></md-icon>
+        <md-tooltip md-direction="top">Delete this sprint</md-tooltip>
+    </md-button>
+</md-card-actions>

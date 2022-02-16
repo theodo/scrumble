@@ -1,0 +1,26 @@
+<md-dialog>
+    <form>
+        <md-toolbar>
+            <div class="md-toolbar-tools">
+                <h2>Daily Report Preview</h2><span flex=""></span>
+                <md-button class="md-icon-button" ng-click="cancel()">
+                    <md-icon md-svg-src="close" aria-label="Close dialog"></md-icon>
+                </md-button>
+            </div>
+        </md-toolbar>
+        <md-dialog-content>
+            <div class="md-padding">
+                <div layout="column">
+                    <md-input-container><label>To:</label><input ng-model="message.to" disabled="disabled" /></md-input-container>
+                    <md-input-container><label>Cc:</label><input ng-model="message.cc" disabled="disabled" /></md-input-container>
+                    <md-input-container><label>Subject:</label><input ng-model="message.subject" disabled="disabled" /></md-input-container>
+                    <div ng-bind-html="trustAsHtml(message.body)"></div>
+                </div>
+            </div>
+        </md-dialog-content>
+        <md-dialog-actions layout="row">
+            <md-button class="md-raised md-primary" ng-click="login()" ng-if="!isAuthenticated">Authorize Gmail</md-button>
+            <md-button class="md-raised md-primary" ng-click="send()" ng-disabled="!isAuthenticated || sending">Send</md-button>
+        </md-dialog-actions>
+    </form>
+</md-dialog>

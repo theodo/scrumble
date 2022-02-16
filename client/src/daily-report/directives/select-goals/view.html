@@ -1,0 +1,17 @@
+<div layout="column" layout-sm="column">
+    <md-input-container class="md-block">
+        <md-select multiple="true" placeholder="Select today's goals" ng-model="goals" md-on-close="update(goals)">
+            <md-option class="height-2-line" ng-repeat="card in trelloCards" ng-value="card">
+                <div class="item-title"><span class="trello-card-number"><strong>{{ '#' + card.idShort }}</strong></span>{{card.name}}</div>
+                <div class="item-metadata"><strong>{{ card.list }}</strong><span class="trello-label label-{{ label.color }}" ng-repeat="label in card.labels">{{ label.name }}</span></div>
+            </md-option>
+        </md-select>
+        <div ng-messages="errors" role="alert" md-auto-hide="false" ng-messages-multiple="ng-messages-multiple">
+            <div ng-message="sprintColumnMissing">There is no sprint column set in the sprint settings</div>
+            <div ng-message="doingColumnMissing">There is no doing column set in the sprint settings</div>
+            <div ng-message="blockedColumnMissing">There is no blocked column set in the sprint settings</div>
+            <div ng-message="toValidateColumnMissing">There is no "to validate" column set in the sprint settings</div>
+        </div>
+    </md-input-container>
+    <md-input-container class="md-block"><textarea ng-model="markdown" aria-label="goals"></textarea></md-input-container>
+</div>

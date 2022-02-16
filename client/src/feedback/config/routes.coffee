@@ -1,3 +1,5 @@
+template = require '../states/list/view.html'
+
 angular.module 'Scrumble.feedback'
 .config ($stateProvider) ->
   $stateProvider
@@ -5,4 +7,4 @@ angular.module 'Scrumble.feedback'
   .state 'tab.feedback',
     url: '/feedback'
     controller: 'FeedbackListCtrl'
-    templateUrl: 'feedback/states/list/view.html'
+    template: template

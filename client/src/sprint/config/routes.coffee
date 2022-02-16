@@ -5,7 +5,7 @@ angular.module 'Scrumble.sprint'
   .state 'tab.new-sprint',
     url: '/project/:projectId/sprint'
     controller: 'EditSprintCtrl'
-    templateUrl: 'sprint/states/edit/view.html'
+    template: require('../states/edit/view.html')
     resolve:
       sprint: ($stateParams, Sprint) ->
         Sprint.new($stateParams.projectId)
@@ -13,7 +13,7 @@ angular.module 'Scrumble.sprint'
   .state 'tab.edit-sprint',
     url: '/sprint/:sprintId/edit'
     controller: 'EditSprintCtrl'
-    templateUrl: 'sprint/states/edit/view.html'
+    template: require('../states/edit/view.html')
     resolve:
       sprint: ($stateParams, Sprint, $state) ->
         Sprint.get(sprintId: $stateParams.sprintId)
@@ -23,7 +23,7 @@ angular.module 'Scrumble.sprint'
   .state 'tab.sprint-list',
     url: '/project/:projectId/sprints'
     controller: 'SprintListCtrl'
-    templateUrl: 'sprint/states/list/view.html'
+    template: require('../states/list/view.html')
     resolve:
       project: (Project, $stateParams) ->
         Project.get(
@@ -38,7 +38,7 @@ angular.module 'Scrumble.sprint'
   .state 'tab.bdc',
     url: '/'
     controller: 'BoardCtrl'
-    templateUrl: 'sprint/states/bdc/view.html'
+    template: require('../states/bdc/view.html')
     resolve:
       checkProjectAndSprint: (project, sprint, $state) ->
         return $state.go 'tab.project' unless project?

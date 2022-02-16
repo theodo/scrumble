@@ -1,0 +1,22 @@
+<md-dialog aria-label="Edit BDC Title" ng-cloak="ng-cloak">
+    <form>
+        <md-toolbar>
+            <div class="md-toolbar-tools">
+                <h2>Edit Burndown Chart Title</h2><span flex="flex"></span>
+                <md-button class="md-icon-button" ng-click="cancel()">
+                    <md-icon md-svg-src="close" aria-label="Close dialog"></md-icon>
+                </md-button>
+            </div>
+        </md-toolbar>
+        <md-dialog-content>
+            <div class="md-dialog-content">
+                <md-input-container class="md-block"><label>Burndown chart title</label><input ng-model="title" /></md-input-container>
+                <h3>Available Dynamic Fields</h3>
+                <dynamic-fields-list available-fields="availableFields"></dynamic-fields-list>
+            </div>
+        </md-dialog-content>
+        <md-dialog-actions layout="row">
+            <md-button ng-click="save()">Save</md-button>
+        </md-dialog-actions>
+    </form>
+</md-dialog>

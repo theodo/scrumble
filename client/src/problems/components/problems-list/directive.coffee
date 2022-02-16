@@ -1,7 +1,9 @@
+template = require './template.html'
+
 angular.module 'Scrumble.problems'
 .directive 'problemsList', ->
   restrict: 'E'
-  templateUrl: 'problems/components/problems-list/template.html'
+  template: template
   scope:
     projectId: '@'
     organizationId: '@'

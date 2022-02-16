@@ -1,10 +1,12 @@
+template = require './dialog.html'
+
 angular.module 'Scrumble.feedback'
 .controller 'feedbackCallToActionCtrl', ($scope, $mdDialog, $mdMedia) ->
   $scope.customFullscreen = $mdMedia 'sm'
   $scope.openFeedbackModal = (ev) ->
     $mdDialog.show(
       controller: DialogController
-      templateUrl: 'feedback/directives/dialog.html'
+      template: template
       parent: angular.element(document.body)
       targetEvent: ev
       clickOutsideToClose: true

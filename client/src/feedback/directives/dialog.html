@@ -1,0 +1,22 @@
+<md-dialog>
+    <form>
+        <md-toolbar>
+            <div class="md-toolbar-tools">
+                <h2>Feedback Form</h2><span flex=""></span>
+                <md-button class="md-icon-button" ng-click="cancel()">
+                    <md-icon md-svg-src="close" aria-label="Close dialog"></md-icon>
+                </md-button>
+            </div>
+        </md-toolbar>
+        <md-dialog-content>
+            <div class="md-dialog-content">
+                <h2>Your feedback is precious</h2>
+                <p>Something is wrong? You're missing a feature? You like it that way? Please tell us!</p>
+                <md-input-container class="md-block"><label>Your Feedback</label><textarea ng-model="message" rows="5" cols="1"></textarea></md-input-container>
+            </div>
+        </md-dialog-content>
+        <md-dialog-actions layout="row">
+            <md-button class="md-raised md-accent" ng-click="send()" ng-disabled="doing">Send</md-button>
+        </md-dialog-actions>
+    </form>
+</md-dialog>

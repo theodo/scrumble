@@ -1,7 +1,9 @@
+template = require './view.html'
+
 angular.module 'Scrumble.daily-report'
 .directive 'templateCallToAction', ->
   restrict: 'E'
-  templateUrl: 'daily-report/directives/default-template/view.html'
+  template: template
   controller: 'DefaultTemplateCtrl'
   scope:
     sections: '='

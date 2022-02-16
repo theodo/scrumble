@@ -3,7 +3,6 @@ angular.module 'Scrumble.common'
   $scope
   $mdSidenav
   $state
-  $ngLoad
   Sprint
   Project
   sprint
@@ -11,13 +10,13 @@ angular.module 'Scrumble.common'
 ) ->
   # since views are nested, project and sprint objects will be available
   # for all child states
-  $scope.project = project
-  $scope.sprint = sprint
+  $scope.project = project or {}
+  $scope.sprint = sprint or {}
 
-  window.HW_config =
-    selector: '#changelog'
-    account: 'Wyprg7'
-  $ngLoad '//cdn.headwayapp.co/widget.js'
+  # window.HW_config =
+  #   selector: '#changelog'
+  #   account: 'Wyprg7'
+  # $ngLoad '//cdn.headwayapp.co/widget.js'
 
   $scope.toggleSidenav = ->
     $mdSidenav('left').toggle()

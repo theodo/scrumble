@@ -4,4 +4,4 @@ angular.module 'Scrumble.problems'
   .state 'tab.problems',
     url: '/project/:projectId/problems'
     controller: 'ProblemListCtrl'
-    templateUrl: 'problems/states/problem-list/view.html'
+    template: require('../states/problem-list/view.html')

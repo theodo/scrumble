@@ -1,0 +1,17 @@
+<h2>{{ organization.name }}</h2>
+<form layout="column">
+    <md-input-container class="md-block"><label>Enter the ID of the spreadsheet in which data will be saved</label><input ng-model="organization.spreadsheetId" /></md-input-container>
+    <div ng-repeat="item in organization.satisfactionSurvey">
+        <md-input-container class="md-block"><label>Question {{ $index + 1 }}</label><input ng-model="item.label" /></md-input-container>
+        <div ng-if="item.type == 'radio'" layout="row">
+            <div ng-repeat="choice in item.items">
+                <md-input-container><label>Answer {{ $index + 1 }}</label><input ng-model="choice.label" /></md-input-container>
+            </div>
+        </div>
+    </div>
+</form>
+<div layout="row" layout-align="center center" layout-wrap="layout-wrap">
+    <section>
+        <md-button class="md-raised md-primary" ng-click="save(organization)">Save</md-button>
+    </section>
+</div>

@@ -1,0 +1,63 @@
+<div class="sprint-body" layout="row" layout-align="center end">
+    <md-card class="layout-padding" flex="100">
+        <h2 class="md-title" layout-align="center end">{{ title }}</h2>
+        <div layout="row">
+            <md-input-container flex="20"><label>Sprint Number</label><input ng-model="editedSprint.number" ng-change="checkSprint('number')" type="number" /></md-input-container>
+            <md-input-container flex="80"><label>Sprint Goal</label><input ng-model="editedSprint.goal" /></md-input-container>
+        </div>
+        <div layout="row" layout-xs="column" layout-sm="column">
+            <md-input-container flex="50" flex-xs="100" flex-sm="100"><label>Select "sprint" column</label>
+                <md-select ng-model="project.columnMapping.sprint">
+                    <md-option ng-value="column.id" ng-repeat="column in boardColumns">{{ column.name }}</md-option>
+                </md-select>
+            </md-input-container>
+            <md-input-container flex="50" flex-xs="100" flex-sm="100"><label>Select "blocked" column</label>
+                <md-select ng-model="project.columnMapping.blocked">
+                    <md-option ng-value="column.id" ng-repeat="column in boardColumns">{{ column.name }}</md-option>
+                </md-select>
+            </md-input-container>
+        </div>
+        <div layout="row" layout-xs="column" layout-sm="column">
+            <md-input-container flex="50" flex-xs="100" flex-sm="100"><label>Select "doing" columns</label>
+                <md-select ng-model="project.columnMapping.doing" multiple="multiple">
+                    <md-option ng-value="column.id" ng-repeat="column in boardColumns">{{ column.name }}</md-option>
+                </md-select>
+            </md-input-container>
+            <md-input-container flex="50" flex-xs="100" flex-sm="100"><label>Select "to validate" column</label>
+                <md-select ng-model="project.columnMapping.toValidate">
+                    <md-option ng-value="column.id" ng-repeat="column in boardColumns">{{ column.name }}</md-option>
+                </md-select>
+            </md-input-container>
+        </div>
+        <div layout="row" layout-xs="column" layout-sm="column">
+            <md-input-container flex="50" flex-xs="100" flex-sm="100"><label>Select the done column</label>
+                <md-select ng-model="editedSprint.doneColumn" ng-change="checkSprint('done')">
+                    <md-option ng-value="column.id" ng-repeat="column in boardColumns">{{ column.name }}</md-option>
+                </md-select>
+            </md-input-container>
+            <div flex="flex" layout="row" layout-align="center center">
+                <md-button class="md-primary md-raised md-mini" ng-click="refresh()">
+                    <md-icon md-svg-src="autorenew" aria-label="Refresh"></md-icon>Refresh<md-tooltip>Refresh columns</md-tooltip>
+                </md-button>
+            </div>
+        </div>
+        <div flex="flex">
+            <md-datepicker ng-model="editedSprint.dates.start" md-placeholder="Start Date" ng-change="checkSprint('date')"></md-datepicker>
+            <md-datepicker ng-model="editedSprint.dates.end" md-placeholder="End date" ng-change="checkSprint('date')"></md-datepicker><span style="margin-left: 30px;"><span style="margin-right: 15px;">Activate Timeboxes</span>
+                <md-checkbox ng-model="editedSprint.timeboxActivated" ng-change="checkSprint('resource')"></md-checkbox>
+            </span>
+        </div>
+        <div class="man-days" ng-if="editedSprint.dates.days.length &gt; 0">
+            <resources-by-day days="editedSprint.dates.days" matrix="editedSprint.resources.matrix" members="devTeam" timebox-activated="editedSprint.timeboxActivated" on-update="checkSprint('resource')"></resources-by-day>
+            <md-input-container><label>Total sprint points</label><input nss-round="nss-round" ng-model="editedSprint.resources.totalPoints" ng-change="checkSprint('total')" /></md-input-container>
+            <md-input-container><label>Sprint speed</label><input nss-round="nss-round" ng-model="editedSprint.resources.speed" ng-change="checkSprint('speed')" />
+                <div class="speed-messages">
+                    <speed-info project-id="{{ editedSprint.projectId }}"></speed-info> / <speed-average project-id="{{ editedSprint.projectId }}"></speed-average>
+                </div>
+            </md-input-container>
+        </div>
+        <section layout="row" layout-sm="column" layout-align="center center" layout-wrap="layout-wrap">
+            <md-button class="md-raised md-primary" ng-disabled="!activable" ng-click="activate()">{{ saveLabel }}</md-button>
+        </section>
+    </md-card>
+</div>

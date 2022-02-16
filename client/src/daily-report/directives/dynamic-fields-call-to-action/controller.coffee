@@ -9,7 +9,7 @@ angular.module 'Scrumble.daily-report'
     useFullScreen = ($mdMedia 'sm' or $mdMedia 'xs')
     $mdDialog.show
       controller: 'DynamicFieldsModalCtrl'
-      templateUrl: 'daily-report/directives/dynamic-fields-dialog/view.html'
+      template: require('../dynamic-fields-dialog/view.html')
       parent: angular.element(document.body)
       targetEvent: ev
       clickOutsideToClose: true

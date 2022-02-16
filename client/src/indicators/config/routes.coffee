@@ -3,7 +3,7 @@ angular.module 'Scrumble.indicators'
   $stateProvider
   .state 'tab.indicators',
     url: '/sprint/:sprintId/indicators'
-    templateUrl: 'indicators/states/base/view.html'
+    template: require('../states/base/view.html')
     controller: 'IndicatorsCtrl'
     resolve:
       currentSprint: (Sprint, $stateParams) ->
@@ -14,5 +14,5 @@ angular.module 'Scrumble.indicators'
               project: 'organization'
   .state 'tab.labels',
     url: '/project/:projectId/labels'
-    templateUrl: 'indicators/states/labels/view.html'
+    template: require('../states/labels/view.html')
     controller: 'LabelsCtrl'

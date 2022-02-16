@@ -3,7 +3,7 @@ angular.module 'Scrumble.sprint'
   restrict: 'AE'
   scope:
     data: '='
-  templateUrl: 'sprint/directives/burndown/view.html'
+  template: '<div id="bdcgraph"></div>'
   controller: ($scope, $timeout, $mdMedia) ->
     whRatio = 0.54
 

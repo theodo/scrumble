@@ -1,7 +1,9 @@
+require('./style.less')
+
 angular.module 'Scrumble.settings'
 .directive 'resourcesByDay', ->
   restrict: 'E'
-  templateUrl: 'project/directives/resources-by-day/view.html'
+  template: require('./view.html')
   scope:
     members: '='
     timeboxActivated: '='

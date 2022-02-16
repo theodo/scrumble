@@ -1,0 +1,29 @@
+<style type="text/css">
+    @page {
+        size: landscape;
+    }
+</style>
+<div class="md-toolbar-tools">
+    <h2 class="md-title pointer" ng-click="openEditTitle($event)">{{ bdcTitle }}</h2><span flex="flex"></span>
+    <div>
+        <md-button class="md-icon-button" ng-click="printBDC()">
+            <md-icon md-svg-icon="printer">Print</md-icon>
+            <md-tooltip md-direction="bottom">Print</md-tooltip>
+        </md-button>
+    </div>
+</div>
+<md-card-content>
+    <burndown data="sprint.bdcData"></burndown>
+</md-card-content>
+<md-card-actions>
+    <div layout="row" layout-align="center center">
+        <md-button class="md-icon-button" aria-label="Update BDC" ng-click="backward()">
+            <md-icon md-svg-icon="step-backward">Update</md-icon>
+            <md-tooltip md-direction="bottom">Go backward</md-tooltip>
+        </md-button>
+        <md-button class="md-icon-button" aria-label="Update BDC" ng-click="forward()">
+            <md-icon md-svg-icon="step-forward">Update</md-icon>
+            <md-tooltip md-direction="bottom">Go forward</md-tooltip>
+        </md-button>
+    </div>
+</md-card-actions>

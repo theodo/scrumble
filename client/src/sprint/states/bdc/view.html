@@ -1,0 +1,44 @@
+<md-card flex="100">
+    <md-tabs md-selected="selectedIndex" md-border-bottom="md-border-bottom" md-autoselect="md-autoselect" md-dynamic-height="md-dynamic-height" md-stretch-tabs="always">
+        <md-tab label="Chart">
+            <sprint-widget project="project" sprint="sprint"></sprint-widget>
+        </md-tab>
+        <md-tab label="Table">
+            <md-table-container>
+                <table class="bdc-data" md-table="md-table">
+                    <thead md-head="md-head">
+                        <tr md-row="md-row">
+                            <th md-column="md-column">Day</th>
+                            <th md-column="md-column">Standard</th>
+                            <th md-column="md-column">Done</th>
+                            <th md-column="md-column"></th>
+                        </tr>
+                    </thead>
+                    <tbody md-body="md-body">
+                        <tr md-row="md-row" ng-repeat="day in tableData" ng-class="{'md-selected': currentDayIndex == $index}">
+                            <td md-cell="md-cell" ng-if="$first == true">Start</td>
+                            <td md-cell="md-cell" ng-if="$last == true">Ceremony</td>
+                            <td md-cell="md-cell" ng-if="$first == false &amp;&amp; $last == false">{{ day.date | date : 'EEEE' }}</td>
+                            <td md-cell="md-cell">{{ day.standard.toFixed(1) }}</td>
+                            <td md-cell="md-cell">
+                                <section layout="row" layout-sm="column" layout-wrap="layout-wrap">
+                                    <md-input-container flex="50" md-no-float="true"><label>Done</label><input ng-model="day.done" type="number" /></md-input-container>
+                                </section>
+                            </td>
+                            <td md-cell="md-cell">
+                                <div layout-align="center center" ng-if="currentDayIndex == $index">
+                                    <md-button class="md-raised md-primary" ng-click="fetchTrelloDonePoints()">
+                                        <md-icon md-svg-icon="trello"></md-icon>Fetch done
+                                    </md-button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </md-table-container>
+            <section layout="row" layout-sm="column" layout-align="center center" layout-wrap="layout-wrap">
+                <md-button class="md-raised md-primary" ng-click="save()">Save</md-button>
+            </section>
+        </md-tab>
+    </md-tabs>
+</md-card>

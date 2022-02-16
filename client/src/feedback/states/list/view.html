@@ -1,0 +1,16 @@
+<h2>Feedbacks</h2>
+<md-switch ng-model="hideDone">Hide Done</md-switch>
+<md-input-container class="md-block"><label>Search</label><textarea ng-model="searchString"></textarea></md-input-container>
+<md-list flex="flex">
+    <md-list-item class="md-3-line md-long-text" ng-repeat="feedback in feedbacks | filter : searchString" ng-hide="hideDone &amp;&amp; feedback.status === 'done'">
+        <div class="md-list-item-text">
+            <h3>{{ feedback.reporter }}</h3>
+            <h4>{{ feedback.status }} - {{ feedback.createdAt | date : 'medium' }}</h4>
+            <p>{{ feedback.message }}</p>
+        </div>
+        <md-button class="md-secondary md-icon-button" ng-click="openDialog(feedback, $event)" aria-label="edit">
+            <md-icon md-svg-icon="comment-text-outline"></md-icon>
+        </md-button>
+        <md-divider></md-divider>
+    </md-list-item>
+</md-list>

@@ -1,5 +1,5 @@
 angular.module 'Scrumble.login'
-.config ($authProvider, API_URL, GOOGLE_CLIENT_ID) ->
+.config ($authProvider) ->
   $authProvider.google
     clientId: GOOGLE_CLIENT_ID
     url: "#{API_URL}/ScrumbleUsers/auth/google"

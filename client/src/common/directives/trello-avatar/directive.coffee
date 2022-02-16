@@ -1,7 +1,9 @@
+require './style.less'
+
 angular.module 'Scrumble.common'
 .directive 'trelloAvatar', ->
   restrict: 'E'
-  templateUrl: 'common/directives/trello-avatar/view.html'
+  template: require('./view.html')
   scope:
     size: '@'
     member: '='

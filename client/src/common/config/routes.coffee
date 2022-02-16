@@ -1,13 +1,15 @@
+template = require '../states/base.html'
+
 angular.module 'Scrumble.common'
 .config ($stateProvider) ->
   $stateProvider
   .state 'tab',
     abstract: true
-    templateUrl: 'common/states/base.html'
+    template: template
     controller: 'BaseCtrl'
     resolve:
       sprint: ($state, Sprint) ->
-        Sprint.getActiveSprint().catch (err) -> return
+        Sprint.getActiveSprint().catch (err) -> return {}
       project: ($state, Project) ->
         Project.getUserProject()
           .then (project) ->
@@ -15,4 +17,4 @@ angular.module 'Scrumble.common'
             if project?.columnMapping?.doing? && typeof project.columnMapping.doing == 'string'
               project.columnMapping.doing = [project.columnMapping.doing]
             return project
-          .catch (err) -> return
+          .catch (err) -> return {}

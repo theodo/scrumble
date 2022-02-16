@@ -1,5 +1,7 @@
+template = require './view.html'
+
 angular.module 'Scrumble.daily-report'
 .directive 'dynamicFieldsCallToAction', ->
   restrict: 'E'
-  templateUrl: 'daily-report/directives/dynamic-fields-call-to-action/view.html'
+  template: template
   controller: 'DynamicFieldsCallToActionCtrl'

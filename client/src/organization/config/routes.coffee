@@ -1,12 +1,15 @@
+templateSettings = require '../states/settings/view.html'
+templateProblems = require '../states/problems/view.html'
+
 angular.module 'Scrumble.organization'
 .config ($stateProvider) ->
   $stateProvider
   .state 'tab.organization',
     url: '/organization/:organizationId'
     controller: 'OrganizationCtrl'
-    templateUrl: 'organization/states/settings/view.html'
+    template: templateSettings
 
   .state 'tab.organization-problems',
     url: '/organization/:organizationId/problems'
     controller: 'OrganizationProblemsCtrl'
-    templateUrl: 'organization/states/problems/view.html'
+    template: templateProblems

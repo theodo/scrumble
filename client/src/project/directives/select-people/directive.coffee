@@ -1,7 +1,9 @@
+require './style.less'
+
 angular.module 'Scrumble.settings'
 .directive 'selectPeople', ->
   restrict: 'E'
-  templateUrl: 'project/directives/select-people/view.html'
+  template: require('./view.html')
   scope:
     members: '='
     selectedMembers: '='

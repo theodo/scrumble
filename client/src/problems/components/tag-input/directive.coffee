@@ -1,7 +1,10 @@
+template = require './template.html'
+require './style.less'
+
 angular.module 'Scrumble.problems'
 .directive 'tagInput', ->
   restrict: 'E'
-  templateUrl: 'problems/components/tag-input/template.html'
+  template: template
   scope:
     problem: '='
   controller: ($scope, TagRepository, Tag) ->

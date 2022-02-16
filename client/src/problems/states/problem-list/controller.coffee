@@ -18,7 +18,7 @@ angular.module 'Scrumble.problems'
   open = (problem, ev) ->
     $mdDialog.show
       controller: 'AddProblemCtrl'
-      templateUrl: 'problems/states/problem-edit/view.html'
+      template: require('../problem-edit/view.html')
       parent: angular.element document.body
       targetEvent: ev
       clickOutsideToClose: true
