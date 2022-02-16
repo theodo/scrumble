@@ -12,6 +12,7 @@
     "node": "5.0.0"
   },
   "scripts": {
+    "install": "npm install --ignore-scripts",
     "watch": "gulp watch",
     "start": "gulp watch",
     "build": "gulp build",
