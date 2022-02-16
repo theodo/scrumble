@@ -3,15 +3,21 @@ jquery = require 'jquery';
 window.jQuery = jquery;
 window.$ = jquery;
 
+require 'angular-material/angular-material.min.css'
+require 'angular-material-data-table/dist/md-data-table.min.css'
+require 'mdi/css/materialdesignicons.min.css'
+require 'c3/c3.min.css'
+require './styles/app.less'
+require './styles/print.less'
+
 angular = require 'angular'
 ngResource = require 'angular-resource'
-ngRoute = require 'angular-route'
-ngAnimate = require 'angular-animate'
 ngSanitize = require 'angular-sanitize'
+ngAnimate = require 'angular-animate'
 ngMaterial = require 'angular-material'
 ngMessages = require 'angular-messages'
-mdDaraTable = require 'angular-material-data-table'
-ngUiRouter = require 'angular-ui-router'
+mdDataTable = require 'angular-material-data-table/dist/md-data-table.js'
+ngUiRouter = require 'angular-ui-router/release/angular-ui-router.js'
 localStorageModule = require 'angular-local-storage'
 satellizer = require 'satellizer'
 permission = require 'angular-permission'
@@ -19,13 +25,16 @@ trelloApiClient = require 'angular-trello-api-client/dist/angular-trello-api-cli
 angularDateInterceptor = require 'angular-date-interceptor'
 trello = require 'angular-trello'
 
-require 'angular-material/angular-material.min.css'
-require 'angular-material-data-table/dist/md-data-table.min.css'
-require 'mdi/css/materialdesignicons.min.css'
-require 'c3/c3.min.css'
+require 'angular-aria'
+require 'moment'
+require 'lodash'
+require 'd3'
+require 'd3-bdc'
+require 'c3'
+require 'MimeJS/dist/mime-js.js'
+require 'showdown'
+require 'highcharts'
 
-require './styles/app.less'
-require './styles/print.less'
 
 require './models/0-module.coffee'
 require './sprint/module.coffee'
@@ -44,16 +53,16 @@ require './admin/module.coffee'
 
 
 app = angular.module 'Scrumble', [
-  ngResource
-  ngRoute
-  ngAnimate
-  ngSanitize
-  ngMaterial
-  ngMessages
-  mdDaraTable # soon included in ngMaterial
-  ngUiRouter
+  'ng'
+  'ngResource'
+  'ngAnimate'
+  'ngSanitize'
+  'ngMaterial'
+  'ngMessages'
+  'md.data.table' # soon included in ngMaterial
+  'ui.router'
   'LocalStorageModule'
-  satellizer
+  'satellizer'
   'permission'
   'trello-api-client'
   'angularDateInterceptor'
