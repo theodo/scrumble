@@ -5,6 +5,7 @@ window.$ = jquery;
 
 angular = require 'angular'
 ngResource = require 'angular-resource'
+ngRoute = require 'angular-route'
 ngAnimate = require 'angular-animate'
 ngSanitize = require 'angular-sanitize'
 ngMaterial = require 'angular-material'
@@ -44,6 +45,7 @@ require './admin/module.coffee'
 
 app = angular.module 'Scrumble', [
   ngResource
+  ngRoute
   ngAnimate
   ngSanitize
   ngMaterial
