@@ -5,5 +5,8 @@ setup:
 build:
   docker:
     web: Dockerfile
+release:
+  command:
+    - ./node_modules/.bin/db-migrate up -e prod --config migrations/database.json
 run:
   web: npm start

@@ -15,5 +15,13 @@
     "database": "postgres",
     "schema": "public"
   },
-  "sql-file" : true
+  "prod": {
+    "overwrite": {
+      "driver": "pg",
+      "ssl": {
+        "rejectUnauthorized": false
+      }
+    }
+  },
+  "sql-file": true
 }
