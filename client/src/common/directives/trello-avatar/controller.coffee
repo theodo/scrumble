@@ -8,7 +8,7 @@ angular.module 'Scrumble.common'
     if member.uploadedAvatarHash
       $scope.hash = member.uploadedAvatarHash
     else if member.avatarHash
-      $scope.hash = member.avatarHash
+      $scope.hash = member.id + '/' + member.avatarHash
     else
       $scope.hash = null
 
