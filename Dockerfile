@@ -8,9 +8,10 @@ WORKDIR /app
 COPY ./client/package.json /app/
 COPY ./client/package-lock.json /app/
 
-RUN npm ci --ignore-scripts --loglevel verbose
+# Some bower scripts try to start, we need to fix/remove those dependencies
+RUN npm ci --ignore-scripts
 
-ARG API_URL='"/api"'
+ARG API_URL='"/api/v1"'
 ARG GOOGLE_CLIENT_ID='"846194931476-lnslq69phmckpsul3ttjrcqk7msqmlqf.apps.googleusercontent.com"'
 ARG TRELLO_KEY='"62bfdf783665fa1f28e1d3e324974106"'
 
@@ -33,7 +34,7 @@ WORKDIR /app
 # Install app dependencies
 COPY ./api/package.json /app/
 COPY ./api/package-lock.json /app/
-RUN npm ci --loglevel verbose
+RUN npm ci
 
 # Bundle app source
 COPY ./api /app
