@@ -2,6 +2,8 @@
 jquery = require 'jquery';
 window.jQuery = jquery;
 window.$ = jquery;
+lodash = require 'lodash'
+window._ = lodash
 
 require 'angular-material/angular-material.min.css'
 require 'angular-material-data-table/dist/md-data-table.min.css'
@@ -25,9 +27,9 @@ trelloApiClient = require 'angular-trello-api-client/dist/angular-trello-api-cli
 angularDateInterceptor = require 'angular-date-interceptor'
 trello = require 'angular-trello'
 
+
 require 'angular-aria'
 require 'moment'
-require 'lodash'
 require 'd3'
 require 'd3-bdc'
 require 'c3'
