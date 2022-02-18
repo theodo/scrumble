@@ -6,6 +6,8 @@ lodash = require 'lodash'
 window._ = lodash
 moment = require 'moment'
 window.moment = moment
+d3 = require 'd3'
+window.d3 = d3
 
 require 'angular-material/angular-material.min.css'
 require 'angular-material-data-table/dist/md-data-table.min.css'
@@ -31,7 +33,6 @@ trello = require 'angular-trello'
 
 require 'angular-aria'
 
-require 'd3'
 require 'd3-bdc'
 require 'c3'
 require 'MimeJS/dist/mime-js.js'
