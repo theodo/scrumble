@@ -1,6 +1,6 @@
 {
   "baseUri": "/",
-  "restApiRoot": "/v1",
+  "restApiRoot": "/api/v1",
   "host": "0.0.0.0",
   "port": "8000",
   "aclErrorStatus": 403,
