@@ -19,6 +19,7 @@
     "overwrite": {
       "driver": "pg",
       "ssl": {
+        "require": true,
         "rejectUnauthorized": false
       }
     }
