@@ -11,7 +11,7 @@ require('esbuild')
       },
       loader: {
         '.html': 'text',
-        '.svg': 'text',
+        '.svg': 'file',
         '.woff': 'file',
         '.woff2': 'file',
         '.eot': 'file',

@@ -1,5 +1,5 @@
 angular.module 'Scrumble.organization'
-.controller 'OrganizationProblemsCtrl', (
+.controller 'OrganizationProblemsCtrl', ['$scope', '$stateParams', 'Organization', (
   $scope
   $stateParams
   Organization
@@ -9,3 +9,4 @@ angular.module 'Scrumble.organization'
   Organization.get(organizationId: $stateParams.organizationId)
   .then (organization) ->
     $scope.organization = organization
+]

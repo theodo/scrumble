@@ -1,7 +1,7 @@
 template = require './dialog.html'
 
 angular.module 'Scrumble.feedback'
-.controller 'FeedbackListCtrl', ($scope, $mdDialog, Feedback) ->
+.controller 'FeedbackListCtrl', ['$scope', '$mdDialog', 'Feedback', ($scope, $mdDialog, Feedback) ->
   fetchFeedbacks = ->
     Feedback.find
       filter:
@@ -15,8 +15,8 @@ angular.module 'Scrumble.feedback'
 
   $scope.openDialog = (feedback, ev) ->
     $mdDialog.show
-      controller: ($scope, $mdDialog, feedback) ->
-        $scope.feedback = feedback
+      controller: ($scope, $mdDialog, Feedback) ->
+        $scope.feedback = Feedback
         $scope.hide = ->
           $mdDialog.hide()
         $scope.cancel = ->
@@ -32,3 +32,4 @@ angular.module 'Scrumble.feedback'
     .then (feedback) ->
       feedback.$update()
     .then fetchFeedbacks
+]

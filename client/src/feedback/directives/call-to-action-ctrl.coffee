@@ -1,7 +1,7 @@
 template = require './dialog.html'
 
 angular.module 'Scrumble.feedback'
-.controller 'feedbackCallToActionCtrl', ($scope, $mdDialog, $mdMedia) ->
+.controller 'feedbackCallToActionCtrl', ['$scope', '$mdDialog', '$mdMedia', ($scope, $mdDialog, $mdMedia) ->
   $scope.customFullscreen = $mdMedia 'sm'
   $scope.openFeedbackModal = (ev) ->
     $mdDialog.show(
@@ -23,7 +23,7 @@ angular.module 'Scrumble.feedback'
       return
     return
 
-  DialogController = ($scope, $mdDialog, $controller, Feedback, localStorageService) ->
+  DialogController = ['$scope', '$mdDialog', '$controller', 'Feedback', 'localStorageService', ($scope, $mdDialog, $controller, Feedback, localStorageService) ->
     angular.extend @, $controller('ModalCtrl', $scope: $scope)
     $scope.message = null
 
@@ -36,3 +36,5 @@ angular.module 'Scrumble.feedback'
         feedback.message = $scope.message
         feedback.$save().then ->
           $mdDialog.hide()
+  ]
+]
