@@ -27,7 +27,6 @@ trello = require 'angular-trello'
 
 require 'angular-aria'
 require 'moment'
-require 'lodash'
 require 'd3'
 require 'd3-bdc'
 require 'c3'

@@ -14,7 +14,7 @@ require('esbuild').build({
     '.ttf': 'file',
   },
   define: {
-    API_URL: process.env.API_URL || '"http://localhost:8000/v1"',
+    API_URL: process.env.API_URL || '"http://localhost:8000/api/v1"',
     GOOGLE_CLIENT_ID:
       process.env.GOOGLE_CLIENT_ID ||
       '"846194931476-lnslq69phmckpsul3ttjrcqk7msqmlqf.apps.googleusercontent.com"',
