@@ -8,5 +8,6 @@ build:
 release:
   command:
     - ./node_modules/.bin/db-migrate up -e prod --config migrations/database.json
+  image: web
 run:
   web: npm start
