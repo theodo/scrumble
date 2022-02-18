@@ -2,7 +2,7 @@
 module.exports = {
   db: {
     name: 'scrumble',
-    connector: 'postgresql',
+    connector: 'loopback-connector-postgresql',
     url: process.env.DATABASE_URL,
     ssl: true,
   },

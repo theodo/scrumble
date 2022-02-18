@@ -12,7 +12,7 @@
     "node": "5.0.0"
   },
   "scripts": {
-    "start": "npm run migrate:up && coffee ./src/server.coffee",
+    "start": "coffee ./src/server.coffee",
     "watch": "nodemon --watch src ./src/server.coffee",
     "test": "sleep 30 && db-migrate --config migrations/database.json reset -e test && db-migrate up --config migrations/database.json -e test; mocha \"test/**/*.test.coffee\"",
     "migrate:up": "db-migrate up --config migrations/database.json"
@@ -20,11 +20,11 @@
   "dependencies": {
     "bluebird": "3.3.5",
     "coffee-script": "1.10.0",
-    "db-migrate": "0.10.0-beta.11",
-    "db-migrate-pg": "0.1.9",
+    "db-migrate": "^0.11.13",
+    "db-migrate-pg": "^1.2.2",
     "http-error": "0.0.6",
-    "jwt-simple": "0.5.0",
-    "lodash": "4.11.1",
+    "jwt-simple": "^0.5.6",
+    "lodash": "^4.17.21",
     "loopback": "2.27.0",
     "loopback-boot": "2.18.1",
     "loopback-component-explorer": "2.4.0",
