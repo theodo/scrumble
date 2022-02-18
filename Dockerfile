@@ -20,7 +20,7 @@ ENV TRELLO_KEY=$TRELLO_KEY
 
 # Bundle app source
 COPY ./client /app
-RUN npm build
+RUN npm run build
 
 
 ## API Stage

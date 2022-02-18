@@ -45,6 +45,7 @@
     "d3-bdc": "theodo/d3-burn-down-chart#1.2.2",
     "highcharts": "~5.0.6",
     "jquery": "^3.6.0",
+    "lodash": "^4.17.21",
     "mdi": "1.3.41",
     "moment": "2.10.6",
     "please-wait": "0.0.5",
