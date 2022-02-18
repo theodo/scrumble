@@ -7,7 +7,7 @@ angular.module 'Scrumble.common'
       if response.data.uploadedAvatarHash
         hash = response.data.uploadedAvatarHash
       else if response.data.avatarHash
-        hash = response.data.avatarHash
+        hash = response.data.id + '/' + response.data.avatarHash
       else
         hash = null
       return {
