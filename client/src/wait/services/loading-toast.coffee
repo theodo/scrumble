@@ -3,7 +3,7 @@ savingToastTemplate = require '../views/saving-toast.html'
 deleteToastTemplate = require '../views/delete-toast.html'
 
 angular.module 'Scrumble.wait'
-.service 'loadingToast', ($mdToast, $document) ->
+.service 'loadingToast', ['$mdToast', '$document', ($mdToast, $document) ->
   toastLoading = $mdToast.build(
     template: loadingToastTemplate
     position: 'top left'
@@ -34,3 +34,4 @@ angular.module 'Scrumble.wait'
       $mdToast.hide toastDeleting
     else
       $mdToast.hide toastSaving
+]

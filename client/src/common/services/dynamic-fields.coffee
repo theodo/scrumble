@@ -1,5 +1,5 @@
 angular.module 'Scrumble.common'
-.service 'dynamicFields', ($q, trelloUtils, TrelloClient, sprintUtils) ->
+.service 'dynamicFields', ['$q', 'trelloUtils', 'TrelloClient', 'sprintUtils', ($q, trelloUtils, TrelloClient, sprintUtils) ->
 
   dict =
     '{sprintNumber}':
@@ -128,3 +128,4 @@ angular.module 'Scrumble.common'
     result = replaceBehindAhead result, builtDict.__sprint
 
     result
+]

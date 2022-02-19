@@ -1,5 +1,5 @@
 angular.module 'Scrumble.login'
-.controller 'TrelloLoginCtrl', (
+.controller 'TrelloLoginCtrl', ['$scope', '$rootScope', 'TrelloApi', '$state', '$auth', '$mdToast', '$document', 'ScrumbleUser2', 'ApiAccessToken', (
   $scope
   $rootScope
   TrelloApi
@@ -32,3 +32,5 @@ angular.module 'Scrumble.login'
           .parent($document[0].querySelector 'main')
         )
       $scope.doing = false
+
+]

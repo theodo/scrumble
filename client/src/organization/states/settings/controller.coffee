@@ -1,5 +1,5 @@
 angular.module 'Scrumble.organization'
-.controller 'OrganizationCtrl', (
+.controller 'OrganizationCtrl', ['$scope', '$stateParams', 'Organization', (
   $scope
   $stateParams
   Organization
@@ -89,3 +89,4 @@ angular.module 'Scrumble.organization'
 
   $scope.save = (organization) ->
     Organization.update organization
+]

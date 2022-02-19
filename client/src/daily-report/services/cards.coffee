@@ -1,5 +1,5 @@
 angular.module 'Scrumble.daily-report'
-.service 'trelloCards', (
+.service 'trelloCards', ['$q', 'TrelloClient', (
   $q
   TrelloClient
 ) ->
@@ -42,3 +42,4 @@ angular.module 'Scrumble.daily-report'
     else
       deferred.resolve []
     deferred.promise
+]

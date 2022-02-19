@@ -1,5 +1,5 @@
 angular.module 'Scrumble.common'
-.service 'nssModal', ($mdDialog, $mdMedia) ->
+.service 'nssModal', ['$mdDialog', '$mdMedia', ($mdDialog, $mdMedia) ->
   show: (options) ->
     useFullScreen = $mdMedia('sm') or $mdMedia('xs')
 
@@ -11,3 +11,4 @@ angular.module 'Scrumble.common'
       parent: angular.element(document.body)
       clickOutsideToClose: true
       fullscreen: useFullScreen
+]

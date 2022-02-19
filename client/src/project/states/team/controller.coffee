@@ -1,5 +1,5 @@
 angular.module 'Scrumble.settings'
-.controller 'TeamCtrl', (
+.controller 'TeamCtrl', ['$mdDialog', '$scope', '$stateParams', 'TrelloClient', 'TeamValidator', 'Project', (
   $mdDialog
   $scope
   $stateParams
@@ -33,3 +33,4 @@ angular.module 'Scrumble.settings'
     $scope.project.$update().then ->
       $scope.saving = false
       $scope.$emit 'project:update', nextState: 'tab.bdc'
+]

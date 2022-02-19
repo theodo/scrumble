@@ -1,5 +1,5 @@
 angular.module 'Scrumble.models'
-.service 'ScrumbleUser2', ($resource) ->
+.service 'ScrumbleUser2', ['$resource', ($resource) ->
   $resource(
     "#{API_URL}/ScrumbleUsers/:userId:action",
     {userId: '@id'},
@@ -12,3 +12,4 @@ angular.module 'Scrumble.models'
       params:
         action: 'project'
   )
+]

@@ -1,5 +1,5 @@
 angular.module 'Scrumble.models'
-.service 'Project', ($resource, $http) ->
+.service 'Project', ['$resource', '$http', ($resource, $http) ->
   endpoint = "#{API_URL}/Projects"
   Project = $resource(
     "#{endpoint}/:projectId:action",
@@ -29,3 +29,5 @@ angular.module 'Scrumble.models'
     project.settings.bdcTitle = title
     project.save().then ->
       title
+
+]

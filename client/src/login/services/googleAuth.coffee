@@ -1,5 +1,5 @@
 angular.module 'Scrumble.login'
-.service 'googleAuth', (
+.service 'googleAuth', ['$state', '$auth', '$http', '$q', 'localStorageService', (
   $state
   $auth
   $http
@@ -53,3 +53,4 @@ angular.module 'Scrumble.login'
     else
       deferred.resolve false
     deferred.promise
+]

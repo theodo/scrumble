@@ -1,5 +1,5 @@
 angular.module 'Scrumble.sprint'
-.controller 'SprintListCtrl', (
+.controller 'SprintListCtrl', ['$scope', 'sprintUtils', 'project', (
   $scope
   sprintUtils
   project
@@ -10,3 +10,5 @@ angular.module 'Scrumble.sprint'
 
   $scope.sprints = project.sprints
   $scope.project = project
+
+]

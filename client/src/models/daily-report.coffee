@@ -1,5 +1,5 @@
 angular.module 'Scrumble.models'
-.service 'DailyReport', ($resource, $http, API_URL) ->
+.service 'DailyReport', ['$resource', '$http', ($resource, $http) ->
   endpoint = "#{API_URL}/DailyReports"
   DailyReport = $resource(
     "#{endpoint}/:dailyReportId:action",
@@ -23,3 +23,4 @@ angular.module 'Scrumble.models'
     return dailyReport.$save()
   new: () ->
     new DailyReport()
+]

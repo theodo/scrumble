@@ -1,6 +1,6 @@
 angular.module 'Scrumble.common'
 .controller 'TrelloAvatarCtrl',
-(Avatar, $scope) ->
+['Avatar', '$scope', (Avatar, $scope) ->
   $scope.size = '50' unless $scope.size
   $scope.$watch 'member', (member) ->
     unless member?
@@ -31,3 +31,4 @@ angular.module 'Scrumble.common'
     colors[hash%9]
 
   $scope.color = getColor $scope.member?.initials
+]

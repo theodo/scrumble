@@ -1,5 +1,5 @@
 angular.module 'Scrumble.models'
-.service 'Tag', ($resource, $q, $http) ->
+.service 'Tag', ['$resource', '$q', '$http', ($resource, $q, $http) ->
   endpoint = "#{API_URL}/Tags"
   Tag = $resource(
     "#{endpoint}/:tagId",
@@ -14,3 +14,4 @@ angular.module 'Scrumble.models'
     tag.$findOrCreate()
   query: (parameters, success, error) ->
     Tag.query(parameters, success, error).$promise
+]

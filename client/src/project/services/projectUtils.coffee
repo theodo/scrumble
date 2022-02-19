@@ -1,5 +1,5 @@
 angular.module 'Scrumble.settings'
-.service 'projectUtils', ($q, Project) ->
+.service 'projectUtils', ['$q', 'Project', ($q, Project) ->
   currentProject = null
   roles = [
     label: 'Developer'
@@ -52,3 +52,4 @@ angular.module 'Scrumble.settings'
     result?.label
   setCurrentProject: (project) ->
     currentProject = project
+]

@@ -4,7 +4,7 @@ angular.module 'Scrumble.sprint'
   scope:
     data: '='
   template: '<div id="bdcgraph"></div>'
-  controller: ($scope, $timeout, $mdMedia) ->
+  controller: ['$scope', '$timeout', '$mdMedia', ($scope, $timeout, $mdMedia) ->
     whRatio = 0.54
 
     computeDimensions = ->
@@ -76,3 +76,4 @@ angular.module 'Scrumble.sprint'
       config = computeDimensions()
       renderBDC $scope.data, config
     , 200
+  ]

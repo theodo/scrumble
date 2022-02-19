@@ -1,10 +1,11 @@
 template = require '../states/daily-stats/view.html'
 
 angular.module 'Scrumble.admin'
-.config ($stateProvider) ->
+.config ['$stateProvider', ($stateProvider) ->
   $stateProvider
 
   .state 'tab.admin',
     url: '/stats'
     controller: 'StatsCtrl'
     template: template
+]

@@ -1,5 +1,5 @@
 angular.module 'Scrumble.indicators'
-.config ($stateProvider) ->
+.config ['$stateProvider', ($stateProvider) ->
   $stateProvider
   .state 'tab.indicators',
     url: '/sprint/:sprintId/indicators'
@@ -16,3 +16,4 @@ angular.module 'Scrumble.indicators'
     url: '/project/:projectId/labels'
     template: require('../states/labels/view.html')
     controller: 'LabelsCtrl'
+]

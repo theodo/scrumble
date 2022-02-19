@@ -8,7 +8,7 @@ angular.module 'Scrumble.problems'
     projectId: '@'
     organizationId: '@'
     compact: '@'
-  controller: ($scope, $mdDialog, Problem, Organization, trelloUtils) ->
+  controller: ['$scope', '$mdDialog', 'Problem', 'Organization', 'trelloUtils', ($scope, $mdDialog, Problem, Organization, trelloUtils) ->
     $scope.editable = $scope.projectId?
 
     $scope.problemClicked = (problem, ev) ->
@@ -69,3 +69,4 @@ angular.module 'Scrumble.problems'
         .cancel('No')
       ).then ->
         Problem.delete(problemId: problem.id).then fetchProblems
+  ]

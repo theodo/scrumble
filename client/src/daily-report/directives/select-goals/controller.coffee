@@ -1,5 +1,5 @@
 angular.module 'Scrumble.daily-report'
-.controller 'SelectGoalsCtrl', (
+.controller 'SelectGoalsCtrl', ['$scope', '$mdToas', 'trelloCards', 'markdownGenerator', (
   $scope
   $mdToast
   trelloCards
@@ -28,3 +28,4 @@ angular.module 'Scrumble.daily-report'
   $scope.update = (goals) ->
     loadCards()
     generateMarkdown(goals)
+]

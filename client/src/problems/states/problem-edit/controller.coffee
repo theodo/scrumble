@@ -1,5 +1,5 @@
 angular.module 'Scrumble.problems'
-.controller 'AddProblemCtrl', (
+.controller 'AddProblemCtrl', ['$scope', '$mdDialog', 'problem', 'Problem', 'TagRepository', '$stateParams', (
   $scope,
   $mdDialog,
   problem,
@@ -22,3 +22,4 @@ angular.module 'Scrumble.problems'
     problem.type = 'null'
     problem.projectId = $stateParams.projectId
     Problem.save(problem).then $mdDialog.hide
+]

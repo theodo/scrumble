@@ -1,5 +1,5 @@
 angular.module 'Scrumble.common'
-.service 'trelloUtils', (TrelloClient, $q) ->
+.service 'trelloUtils', ['TrelloClient', '$q', (TrelloClient, $q) ->
   getCardPoints = (card) ->
     return 0 unless _.isString card?.name
     match = card.name.match /\(([-+]?[0-9]*\.?[0-9]+)\)/
@@ -91,3 +91,4 @@ angular.module 'Scrumble.common'
     TrelloClient.get "/boards/#{boardId}/lists?fields=id,name"
     .then (response) ->
       response.data
+]

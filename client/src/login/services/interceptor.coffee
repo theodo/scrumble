@@ -1,5 +1,5 @@
 angular.module 'Scrumble.login'
-.config ($httpProvider) ->
+.config ['$httpProvider', ($httpProvider) ->
   $httpProvider.interceptors.push (ApiAccessToken, $q, $rootScope) ->
     request: (config) ->
       return config unless config.url.startsWith API_URL
@@ -7,3 +7,4 @@ angular.module 'Scrumble.login'
       if token?
         config.headers.Authorization = token
       config
+]

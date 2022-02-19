@@ -1,5 +1,5 @@
 angular.module 'Scrumble.daily-report'
-.service 'reportBuilder', (
+.service 'reportBuilder', ['$q','Sprint', 'Project', 'trelloUtils', 'dynamicFields', 'sprintUtils', 'bdc', (
   $q
   Sprint
   Project
@@ -142,3 +142,4 @@ angular.module 'Scrumble.daily-report'
   buildCid: ->
     dynamicFieldsPromise.then (builtDict) ->
       renderBDC prebuildMessage, _svg, true
+]

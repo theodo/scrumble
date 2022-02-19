@@ -1,5 +1,5 @@
 angular.module 'Scrumble.common'
-.controller 'BaseCtrl', (
+.controller 'BaseCtrl', ['$scope', '$mdSidenav', '$state', 'Sprint', 'Project', 'sprint', 'project', (
   $scope
   $mdSidenav
   $state
@@ -119,3 +119,4 @@ angular.module 'Scrumble.common'
         icon: 'bell-ring'
       ,
       ]
+]

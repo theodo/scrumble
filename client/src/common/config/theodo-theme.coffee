@@ -1,5 +1,5 @@
 angular.module 'Scrumble.common'
-.config ($mdThemingProvider) ->
+.config ['$mdThemingProvider', ($mdThemingProvider) ->
     customPrimary =
         '50': '#4b91e8'
         '100': '#3483e6'
@@ -26,3 +26,4 @@ angular.module 'Scrumble.common'
         .accentPalette 'red'
         .warnPalette 'red'
         .backgroundPalette 'grey'
+]
