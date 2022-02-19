@@ -1,6 +1,5 @@
 angular.module 'Scrumble.models', [
   'ngResource'
-  # 'Scrumble.constants'
 ]
 
 require './daily-report.coffee'

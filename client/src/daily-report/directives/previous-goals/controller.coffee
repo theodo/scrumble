@@ -1,5 +1,5 @@
 angular.module 'Scrumble.daily-report'
-.controller 'PreviousGoalsCtrl', (
+.controller 'PreviousGoalsCtrl', ['$scope', 'trelloCards', (
   $scope
   trelloCards
 ) ->
@@ -16,3 +16,4 @@ angular.module 'Scrumble.daily-report'
             return "style='color: green;'"
           else
             return "style='color: red;'"
+]

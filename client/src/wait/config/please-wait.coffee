@@ -1,5 +1,5 @@
 angular.module 'Scrumble.wait'
-.run ($rootScope, $state, $window, loadingToast) ->
+.run ['$rootScope', '$state', '$window', 'loadingToast', ($rootScope, $state, $window, loadingToast) ->
   finish = ->
     unless $window.loading_screen.finishing
       $window.loading_screen.finish()
@@ -16,3 +16,4 @@ angular.module 'Scrumble.wait'
   # $rootScope.$on '$stateChangeStart', ->
   #   loadingToast.show 'loading'
   #   finish()
+]

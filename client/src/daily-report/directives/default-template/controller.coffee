@@ -1,5 +1,5 @@
 angular.module 'Scrumble.daily-report'
-.controller 'DefaultTemplateCtrl', (
+.controller 'DefaultTemplateCtrl', ['$scope', '$mdDialog', 'defaultTemplates', (
   $scope
   $mdDialog
   defaultTemplates
@@ -16,3 +16,4 @@ angular.module 'Scrumble.daily-report'
 
     $mdDialog.show(confirm).then ->
       $scope.sections[$scope.section] = defaultTemplates.getDefaultTemplate $scope.section
+]

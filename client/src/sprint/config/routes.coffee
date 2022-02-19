@@ -1,5 +1,5 @@
 angular.module 'Scrumble.sprint'
-.config ($stateProvider) ->
+.config ['$stateProvider', ($stateProvider) ->
   $stateProvider
 
   .state 'tab.new-sprint',
@@ -43,3 +43,4 @@ angular.module 'Scrumble.sprint'
       checkProjectAndSprint: (project, sprint, $state) ->
         return $state.go 'tab.project' unless project?
         return $state.go('tab.new-sprint', projectId: project.id) unless sprint?
+]

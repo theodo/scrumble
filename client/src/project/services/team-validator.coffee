@@ -1,5 +1,5 @@
 angular.module 'Scrumble.settings'
-.service 'TeamValidator', ($mdDialog) ->
+.service 'TeamValidator', ['$mdDialog', ($mdDialog) ->
   hasTechTeam = (team) ->
     techRoles = ['dev', 'archi']
     _.intersection(techRoles, (member.role for member in team)).length > 0
@@ -22,3 +22,4 @@ angular.module 'Scrumble.settings'
       .textContent(messages[cause])
       .ariaLabel('alert')
       .ok('Got it!')
+]

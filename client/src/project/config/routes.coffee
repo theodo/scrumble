@@ -2,7 +2,7 @@ templateMain = require '../states/main/view.html'
 templateTeam = require '../states/team/view.html'
 
 angular.module 'Scrumble.settings'
-.config ($stateProvider) ->
+.config ['$stateProvider', ($stateProvider) ->
   $stateProvider
   .state 'tab.project',
     url: '/project'
@@ -12,3 +12,4 @@ angular.module 'Scrumble.settings'
     url: '/project/:projectId/team'
     controller: 'TeamCtrl'
     template: templateTeam
+]

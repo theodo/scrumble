@@ -1,5 +1,5 @@
 angular.module 'Scrumble.sprint'
-.service 'bdc', ($q, trelloUtils, Sprint) ->
+.service 'bdc', ['$q', 'trelloUtils', 'Sprint', ($q, trelloUtils, Sprint) ->
 
   getPngBase64 = (svg) ->
     $q (resolve) ->
@@ -45,3 +45,4 @@ angular.module 'Scrumble.sprint'
         break
     Sprint.save(sprint)
   getPngBase64: getPngBase64
+]

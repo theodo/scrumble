@@ -1,5 +1,5 @@
 angular.module 'Scrumble.daily-report'
-.controller 'DynamicFieldsModalCtrl', (
+.controller 'DynamicFieldsModalCtrl', ['$scope', '$mdDialog', 'availableFields', (
   $scope
   $mdDialog
   availableFields
@@ -8,3 +8,4 @@ angular.module 'Scrumble.daily-report'
 
   $scope.cancel = ->
     $mdDialog.cancel()
+]

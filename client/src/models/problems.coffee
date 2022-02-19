@@ -1,5 +1,5 @@
 angular.module 'Scrumble.models'
-.service 'Problem', ($resource, $q, $http) ->
+.service 'Problem', ['$resource', '$q', '$http', ($resource, $q, $http) ->
   endpoint = "#{API_URL}/Problems"
   Problem = $resource(
     "#{endpoint}/:problemId",
@@ -23,3 +23,4 @@ angular.module 'Scrumble.models'
       problem.$update()
     else
       problem.$save()
+]

@@ -1,5 +1,10 @@
 angular.module 'Scrumble.daily-report'
-.controller 'DynamicFieldsCallToActionCtrl', (
+.controller 'DynamicFieldsCallToActionCtrl', [
+  '$scope',
+  '$mdDialog',
+  '$mdMedia',
+  'dynamicFields',
+(
   $scope
   $mdDialog
   $mdMedia
@@ -16,3 +21,4 @@ angular.module 'Scrumble.daily-report'
       fullscreen: useFullScreen
       resolve:
         availableFields: -> dynamicFields.getAvailableFields()
+]

@@ -1,5 +1,5 @@
 angular.module 'Scrumble.settings'
-.service 'Speed', (Project) ->
+.service 'Speed', ['Project', (Project) ->
   promise = null
 
   lastSpeeds = (projectId) ->
@@ -30,3 +30,4 @@ angular.module 'Scrumble.settings'
     formattedSpeedInfo
     average
   }
+]

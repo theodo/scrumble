@@ -1,5 +1,5 @@
 angular.module 'Scrumble.models'
-.service 'Organization', ($resource, $q, $http, TrelloClient) ->
+.service 'Organization', ['$resource', '$q', '$http', 'TrelloClient', ($resource, $q, $http, TrelloClient) ->
   endpoint = "#{API_URL}/Organizations"
   Organization = $resource(
     "#{endpoint}/:organizationId",
@@ -34,3 +34,4 @@ angular.module 'Scrumble.models'
     Organization.query(parameters, success, error).$promise
   update: Organization.update
   findOrCreate: findOrCreate
+]

@@ -1,5 +1,5 @@
 angular.module 'Scrumble.problems'
-.controller 'ProblemListCtrl', (
+.controller 'ProblemListCtrl', ['$scope', '$mdDialog', '$mdMedia', '$stateParams', (
   $scope,
   $mdDialog,
   $mdMedia,
@@ -30,3 +30,4 @@ angular.module 'Scrumble.problems'
 
   $scope.printProblems = ->
     window.print()
+]

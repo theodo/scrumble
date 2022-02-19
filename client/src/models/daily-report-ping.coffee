@@ -1,5 +1,5 @@
 angular.module 'Scrumble.models'
-.service 'DailyReportPing', ($resource, $q, $http) ->
+.service 'DailyReportPing', ['$resource', '$q', '$http', ($resource, $q, $http) ->
   endpoint = "#{API_URL}/DailyReportPings"
   DailyReportPing = $resource(
     "#{endpoint}/:pingId",
@@ -14,3 +14,4 @@ angular.module 'Scrumble.models'
     DailyReportPing.get(parameters, success, error).$promise
   find: (parameters, success, error) ->
     DailyReportPing.query(parameters, success, error).$promise
+]

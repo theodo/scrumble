@@ -1,7 +1,7 @@
 require '../states/template/style.less'
 
 angular.module 'Scrumble.daily-report'
-.config ($stateProvider) ->
+.config ['$stateProvider', ($stateProvider) ->
   $stateProvider
   .state 'tab.daily-report',
     url: '/daily-report'
@@ -13,3 +13,4 @@ angular.module 'Scrumble.daily-report'
         .catch (error) ->
           if error.status is 404
             DailyReport.new().$save()
+]

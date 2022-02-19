@@ -1,5 +1,5 @@
 angular.module 'Scrumble.common'
-.factory 'Avatar', (TrelloClient) ->
+.factory 'Avatar', ['TrelloClient', (TrelloClient) ->
   getMember: (memberId) ->
     return unless memberId
     TrelloClient.get('/members/' + memberId)
@@ -16,3 +16,4 @@ angular.module 'Scrumble.common'
         hash: hash
         initials: response.data.initials
       }
+]

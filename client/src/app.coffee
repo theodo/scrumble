@@ -27,7 +27,7 @@ ngUiRouter = require 'angular-ui-router/release/angular-ui-router.js'
 localStorageModule = require 'angular-local-storage'
 satellizer = require 'satellizer'
 permission = require 'angular-permission'
-trelloApiClient = require 'angular-trello-api-client/dist/angular-trello-api-client.js'
+trelloApiClient = require './angular-trello-api-client.js'
 angularDateInterceptor = require 'angular-date-interceptor'
 trello = require 'angular-trello'
 
@@ -88,19 +88,16 @@ app = angular.module 'Scrumble', [
   'Scrumble.problems'
 ]
 
-app.config (
-  $locationProvider
-  $urlRouterProvider
-) ->
-
+app.config ['$locationProvider', '$urlRouterProvider', ($locationProvider, $urlRouterProvider) ->
   $locationProvider.hashPrefix '!'
-
   $urlRouterProvider.otherwise '/'
+]
 
-app.config (localStorageServiceProvider) ->
+app.config ['localStorageServiceProvider', (localStorageServiceProvider) ->
   localStorageServiceProvider.setPrefix ''
+]
 
-app.config (TrelloClientProvider) ->
+app.config ['TrelloClientProvider', (TrelloClientProvider) ->
   TrelloClientProvider.init {
     key: TRELLO_KEY
     appName: 'Scrumble'
@@ -108,12 +105,15 @@ app.config (TrelloClientProvider) ->
     scope: ['read', 'account'] #, 'write']
     returnUrl: window.location.origin
   }
+]
 
-app.config ($mdIconProvider) ->
+app.config ['$mdIconProvider', ($mdIconProvider) ->
   $mdIconProvider
     .defaultIconSet 'icons/mdi.light.svg'
+]
 
-app.run ($rootScope, $state) ->
+app.run ['$rootScope', '$state', ($rootScope, $state) ->
   $rootScope.$state = $state
+]
 
 module.exports = app

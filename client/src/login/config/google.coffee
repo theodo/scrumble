@@ -1,5 +1,5 @@
 angular.module 'Scrumble.login'
-.config ($authProvider) ->
+.config ['$authProvider', ($authProvider) ->
   $authProvider.google
     clientId: GOOGLE_CLIENT_ID
     url: "#{API_URL}/ScrumbleUsers/auth/google"
@@ -10,3 +10,4 @@ angular.module 'Scrumble.login'
     redirectUri: window.location.origin + window.location.pathname
     optionalUrlParams: ['display', 'access_type']
     accessType: 'offline'
+]

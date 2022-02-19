@@ -1,6 +1,6 @@
 angular.module 'Scrumble.daily-report'
 .constant 'BIGBEN_REPORT_ENDPOINT', 'https://api.bigben.theo.do/projects'
-.service 'bigBenReport', ($http, BIGBEN_REPORT_ENDPOINT) ->
+.service 'bigBenReport', ['$http', 'BIGBEN_REPORT_ENDPOINT', ($http, BIGBEN_REPORT_ENDPOINT) ->
 
   isTheodoSprint = (emailAdresses) ->
     for email in emailAdresses
@@ -31,3 +31,4 @@ angular.module 'Scrumble.daily-report'
         data,
         headers: {'Content-Type': 'application/json'}
       )
+]

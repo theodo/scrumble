@@ -1,5 +1,5 @@
 angular.module 'Scrumble.sprint'
-.controller 'SprintDetailsCtrl', (
+.controller 'SprintDetailsCtrl', ['$scope', '$state', '$mdMedia', '$mdDialog', 'Sprint', 'loadingToast', (
   $scope
   $state
   $mdMedia
@@ -50,3 +50,5 @@ angular.module 'Scrumble.sprint'
       bdc.getPngBase64(svg)
       .then (pngBase64) ->
         $scope.pngBase64 = pngBase64
+
+]

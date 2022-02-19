@@ -1,5 +1,5 @@
 angular.module 'Scrumble.daily-report'
-.controller 'PreviewCtrl', (
+.controller 'PreviewCtrl', ['$scope', '$sce', '$mdDialog', '$mdToast', 'googleAuth', 'mailer', 'message', 'reportBuilder', 'dailyReport', 'DailyReport', 'DailyReportPing', 'todaysGoals', 'sprint', 'bigBenReport', (
   $scope
   $sce
   $mdDialog
@@ -60,3 +60,5 @@ angular.module 'Scrumble.daily-report'
         $scope.sending = false
     .then ->
       bigBenReport.send(sprint)
+]
+

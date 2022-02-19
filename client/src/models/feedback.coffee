@@ -1,5 +1,5 @@
 angular.module 'Scrumble.models'
-.service 'Feedback', ($resource, $q, $http) ->
+.service 'Feedback', ['$resource', '$q', '$http', ($resource, $q, $http) ->
   endpoint = "#{API_URL}/Feedbacks"
   Feedback = $resource(
     "#{endpoint}/:feedbackId",
@@ -14,3 +14,4 @@ angular.module 'Scrumble.models'
     Feedback.get(parameters, success, error).$promise
   find: (parameters, success, error) ->
     Feedback.query(parameters, success, error).$promise
+]

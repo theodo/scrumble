@@ -1,5 +1,5 @@
 angular.module 'Scrumble.sprint'
-.controller 'SprintWidgetCtrl', (
+.controller 'SprintWidgetCtrl', ['$scope', '$mdToast', '$document', 'nssModal', 'dynamicFields', 'bdc', 'Project', 'Sprint', (
   $scope
   $mdToast
   $document
@@ -18,7 +18,7 @@ angular.module 'Scrumble.sprint'
   $scope.openEditTitle = (ev) ->
     nssModal.show
       controller: DialogController
-      templateUrl: 'sprint/directives/sprint-widget/editBDCTitle.html'
+      template: require('./editBDCTitle.html')
       targetEvent: ev
       resolve:
         title: -> $scope.project.settings?.bdcTitle
@@ -60,3 +60,4 @@ angular.module 'Scrumble.sprint'
 
   $scope.printBDC = ->
     window.print()
+]

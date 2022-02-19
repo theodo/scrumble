@@ -1,5 +1,5 @@
 angular.module 'Scrumble.models'
-.service 'Sprint', ($resource, $http) ->
+.service 'Sprint', ['$resource', '$http', ($resource, $http) ->
   endpoint = "#{API_URL}/Sprints"
   resource = $resource(
     "#{endpoint}/:sprintId:action",
@@ -45,3 +45,4 @@ angular.module 'Scrumble.models'
         totalPoints: null
       isActive: false
       timeboxActivated: false
+]

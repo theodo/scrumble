@@ -1,5 +1,5 @@
 angular.module 'Scrumble.sprint'
-.controller 'EditSprintCtrl', (
+.controller 'EditSprintCtrl', ['$scope', '$state', '$mdToast', 'TrelloClient', 'sprintUtils', 'projectUtils', 'Project', 'Sprint', 'sprint', 'bdc', (
   $scope
   $state
   $mdToast
@@ -49,3 +49,4 @@ angular.module 'Scrumble.sprint'
     sprintUtils.ensureDataConsistency source, $scope.editedSprint, $scope.devTeam
 
   $scope.checkSprint 'team'
+]

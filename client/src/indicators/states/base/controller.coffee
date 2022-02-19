@@ -1,5 +1,5 @@
 angular.module 'Scrumble.indicators'
-.controller 'IndicatorsCtrl', (
+.controller 'IndicatorsCtrl', ['$scope', 'currentSprint', 'Sprint', (
   $scope
   currentSprint
   Sprint
@@ -13,3 +13,4 @@ angular.module 'Scrumble.indicators'
     return unless $scope.sprint?
     $scope.sprint.indicators = indicators
     Sprint.save $scope.sprint
+]

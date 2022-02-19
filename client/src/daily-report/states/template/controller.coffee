@@ -1,5 +1,5 @@
 angular.module 'Scrumble.daily-report'
-.controller 'DailyReportCtrl', (
+.controller 'DailyReportCtrl', ['$scope', '$state', '$mdToast', '$mdDialog', '$mdMedia', '$document', 'reportBuilder', 'DailyReport', 'dailyReport', 'dailyCache', (
   $scope
   $state
   $mdToast
@@ -48,7 +48,7 @@ angular.module 'Scrumble.daily-report'
   $scope.preview = (ev) ->
     $mdDialog.show
       controller: 'PreviewCtrl'
-      templateUrl: require('../preview/view.html')
+      template: require('../preview/view.html')
       parent: angular.element document.body
       targetEvent: ev
       clickOutsideToClose: true
@@ -65,3 +65,4 @@ angular.module 'Scrumble.daily-report'
         dailyReport: -> dailyReport
         todaysGoals: -> $scope.sections.todaysGoals
         sprint: -> $scope.sprint
+]

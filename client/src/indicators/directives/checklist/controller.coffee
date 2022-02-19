@@ -1,5 +1,5 @@
 angular.module 'Scrumble.indicators'
-.controller 'ChecklistCtrl', (
+.controller 'ChecklistCtrl', ['$scope', 'loadingToast', 'Sprint', (
   $scope
   loadingToast
   Sprint
@@ -21,3 +21,5 @@ angular.module 'Scrumble.indicators'
 
   $scope.print = ->
     window.print()
+
+]

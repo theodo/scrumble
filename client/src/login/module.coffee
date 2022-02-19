@@ -5,7 +5,6 @@ angular.module 'Scrumble.login', [
   'permission'
   'trello-api-client'
   'trello'
-  # 'Scrumble.constants'
 ]
 
 require './config/google.coffee'

@@ -1,5 +1,5 @@
 angular.module 'Scrumble.indicators'
-.controller 'CelerityCtrl', (
+.controller 'CelerityCtrl', ['$scope', 'Project', 'Sprint', 'sprintUtils', (
   $scope
   Project
   Sprint
@@ -27,3 +27,4 @@ angular.module 'Scrumble.indicators'
       axis:
         y:
           min: 0
+]

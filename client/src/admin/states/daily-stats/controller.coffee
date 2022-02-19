@@ -1,5 +1,5 @@
 angular.module 'Scrumble.admin'
-.controller 'StatsCtrl', ($scope, DailyReportPing, Project) ->
+.controller 'StatsCtrl', ['$scope', 'DailyReportPing', 'Project', ($scope, DailyReportPing, Project) ->
   pings = []
 
   #
@@ -105,3 +105,4 @@ angular.module 'Scrumble.admin'
       moment(date).subtract(1, 'day').isSame(ping.createdAt, 'day')
 
     $scope.alertDailies = _.differenceBy(previousDayPings, datePings, 'name')
+]

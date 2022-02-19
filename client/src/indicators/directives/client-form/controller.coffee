@@ -1,5 +1,5 @@
 angular.module 'Scrumble.indicators'
-.controller 'ClientFormCtrl', (
+.controller 'ClientFormCtrl', ['$scope', 'loadingToast', 'Sprint', (
   $scope
   loadingToast
   Sprint
@@ -22,3 +22,4 @@ angular.module 'Scrumble.indicators'
 
   $scope.print = ->
     window.print()
+]

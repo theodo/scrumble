@@ -1,5 +1,5 @@
 angular.module 'Scrumble.login'
-.service 'trelloAuth', (
+.service 'trelloAuth', ['localStorageService', 'TrelloClient', '$state', (
   localStorageService
   TrelloClient
   $state
@@ -15,3 +15,5 @@ angular.module 'Scrumble.login'
   isLoggedUnsafe: ->
     token = localStorageService.get 'trello_token'
     token?
+
+]

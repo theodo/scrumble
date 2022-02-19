@@ -1,5 +1,5 @@
 angular.module 'Scrumble.problems'
-.service 'TagRepository', (Tag) ->
+.service 'TagRepository', ['Tag', (Tag) ->
   tagsPromise = null
   format: (label) ->
     _.kebabCase(label)
@@ -12,3 +12,4 @@ angular.module 'Scrumble.problems'
     return tagsPromise
   resetCache: ->
     tagsPromise = null
+]

@@ -7,7 +7,7 @@ angular.module 'Scrumble.problems'
   template: template
   scope:
     problem: '='
-  controller: ($scope, TagRepository, Tag) ->
+  controller: ['$scope', 'TagRepository', 'Tag', ($scope, TagRepository, Tag) ->
     $scope.newTag = (input) ->
       if _.isString input
         label: TagRepository.format(input)
@@ -23,3 +23,4 @@ angular.module 'Scrumble.problems'
       Tag.findOrCreate(tag)
 
     $scope.problem?.inputTags = $scope.problem?.tags or []
+  ]

@@ -1,5 +1,5 @@
 angular.module 'Scrumble.login'
-.controller 'ProfilInfoCtrl', (
+.controller 'ProfilInfoCtrl', ['$scope', '$timeout', '$rootScope', 'trelloAuth', 'googleAuth', (
   $scope
   $timeout
   $rootScope
@@ -33,3 +33,5 @@ angular.module 'Scrumble.login'
     $scope.googleUser =
       picture: "images/default-profile.jpg"
     googleAuth.logout()
+
+]

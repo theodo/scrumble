@@ -1,7 +1,7 @@
 template = require '../states/base.html'
 
 angular.module 'Scrumble.common'
-.config ($stateProvider) ->
+.config ['$stateProvider', ($stateProvider) ->
   $stateProvider
   .state 'tab',
     abstract: true
@@ -18,3 +18,4 @@ angular.module 'Scrumble.common'
               project.columnMapping.doing = [project.columnMapping.doing]
             return project
           .catch (err) -> return {}
+]
