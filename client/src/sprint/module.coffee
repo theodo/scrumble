@@ -6,6 +6,7 @@ angular.module 'Scrumble.sprint', [
 
 require './config/routes.coffee'
 require './directives/burndown/directive.coffee'
+require './directives/sprint-details/controller.coffee'
 require './directives/sprint-details/directive.coffee'
 require './directives/sprint-widget/controller.coffee'
 require './directives/sprint-widget/directive.coffee'

@@ -11,7 +11,7 @@ angular.module 'Scrumble.sprint'
     useFullScreen = $mdMedia('sm') or $mdMedia('xs')
     $mdDialog.show
       controller: ['$scope', '$mdDialog', 'sprint', 'bdc', '$timeout', BDCDialogController]
-      template: require('../states/list/bdc.dialog.html')
+      template: require('../../states/list/bdc.dialog.html')
       parent: angular.element document.body
       targetEvent: ev
       clickOutsideToClose: true
