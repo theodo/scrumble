@@ -6,12 +6,13 @@ angular.module 'Scrumble.indicators'
     template: require('../states/base/view.html')
     controller: 'IndicatorsCtrl'
     resolve:
-      currentSprint: (Sprint, $stateParams) ->
+      currentSprint: ['Sprint', '$stateParams', (Sprint, $stateParams) ->
         Sprint.get
           sprintId: $stateParams.sprintId
           filter:
             include:
               project: 'organization'
+      ]
   .state 'tab.labels',
     url: '/project/:projectId/labels'
     template: require('../states/labels/view.html')

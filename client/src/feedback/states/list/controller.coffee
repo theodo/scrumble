@@ -15,7 +15,7 @@ angular.module 'Scrumble.feedback'
 
   $scope.openDialog = (feedback, ev) ->
     $mdDialog.show
-      controller: ($scope, $mdDialog, Feedback) ->
+      controller: ['$scope', '$mdDialog', 'Feedback', ($scope, $mdDialog, Feedback) ->
         $scope.feedback = Feedback
         $scope.hide = ->
           $mdDialog.hide()
@@ -23,6 +23,7 @@ angular.module 'Scrumble.feedback'
           $mdDialog.cancel()
         $scope.save = ->
           $mdDialog.hide $scope.feedback
+      ]
       template: template
       parent: angular.element(document.body)
       targetEvent: ev

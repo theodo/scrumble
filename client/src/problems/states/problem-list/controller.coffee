@@ -24,7 +24,7 @@ angular.module 'Scrumble.problems'
       clickOutsideToClose: true
       fullscreen: $mdMedia 'sm'
       resolve:
-        problem: (Problem) -> angular.copy(problem) or Problem.new()
+        problem: ['Problem', (Problem) -> angular.copy(problem) or Problem.new()]
     .then ->
       $scope.$broadcast('problem:saved')
 

@@ -17,9 +17,8 @@ angular
   .module('trello-api-client')
   .factory('TrelloInterceptor', [
     '$q',
-    'SatellizerShared',
     'TrelloClientConfig',
-    function ($q, shared, TrelloClientConfig) {
+    function ($q, TrelloClientConfig) {
       return {
         request: function (request) {
           var token;
@@ -90,51 +89,58 @@ angular.module('trello-api-client').provider('TrelloClient', [
         expiration: TrelloClientConfig.tokenExpiration,
       });
     };
-    this.$get = function ($location, $http, $window, $auth, $q) {
-      var TrelloClient, baseURL, fn, i, len, method, ref;
-      baseURL =
-        TrelloClientConfig.apiEndpoint + '/' + TrelloClientConfig.version;
-      TrelloClient = {};
-      TrelloClient.authenticate = function () {
-        return $auth
-          .authenticate(TrelloClientConfig.appName)
-          .then(function (response) {
-            localStorage.setItem(
-              TrelloClientConfig.localStorageTokenName,
-              response.token
-            );
-            return response;
+    this.$get = [
+      '$location',
+      '$http',
+      '$window',
+      '$auth',
+      '$q',
+      function ($location, $http, $window, $auth, $q) {
+        var TrelloClient, baseURL, fn, i, len, method, ref;
+        baseURL =
+          TrelloClientConfig.apiEndpoint + '/' + TrelloClientConfig.version;
+        TrelloClient = {};
+        TrelloClient.authenticate = function () {
+          return $auth
+            .authenticate(TrelloClientConfig.appName)
+            .then(function (response) {
+              localStorage.setItem(
+                TrelloClientConfig.localStorageTokenName,
+                response.token
+              );
+              return response;
+            });
+        };
+        ref = ['get', 'post', 'put', 'delete'];
+        fn = function (method) {
+          return (TrelloClient[method] = function (endpoint, config) {
+            var deferred;
+            if (config == null) {
+              config = {};
+            }
+            config.trelloRequest = true;
+            deferred = $q.defer();
+            if (
+              localStorage.getItem(TrelloClientConfig.localStorageTokenName) ==
+              null
+            ) {
+              deferred.reject('Not authenticated');
+            } else {
+              $http[method](baseURL + endpoint, config)
+                .then(function (response) {
+                  return deferred.resolve(response);
+                })
+                ['catch'](deferred.reject);
+            }
+            return deferred.promise;
           });
-      };
-      ref = ['get', 'post', 'put', 'delete'];
-      fn = function (method) {
-        return (TrelloClient[method] = function (endpoint, config) {
-          var deferred;
-          if (config == null) {
-            config = {};
-          }
-          config.trelloRequest = true;
-          deferred = $q.defer();
-          if (
-            localStorage.getItem(TrelloClientConfig.localStorageTokenName) ==
-            null
-          ) {
-            deferred.reject('Not authenticated');
-          } else {
-            $http[method](baseURL + endpoint, config)
-              .then(function (response) {
-                return deferred.resolve(response);
-              })
-              ['catch'](deferred.reject);
-          }
-          return deferred.promise;
-        });
-      };
-      for (i = 0, len = ref.length; i < len; i++) {
-        method = ref[i];
-        fn(method);
-      }
-      return TrelloClient;
-    };
+        };
+        for (i = 0, len = ref.length; i < len; i++) {
+          method = ref[i];
+          fn(method);
+        }
+        return TrelloClient;
+      },
+    ];
   },
 ]);

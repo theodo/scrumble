@@ -4,7 +4,8 @@ angular.module 'Scrumble.settings'
   template: require('./view.html')
   scope:
     projectId: '@'
-  controller: ($scope, Speed) ->
+  controller: ['$scope', 'Speed', ($scope, Speed) ->
     Speed.formattedSpeedInfo($scope.projectId)
     .then (formattedSpeedInfo) ->
       $scope.info = formattedSpeedInfo
+  ]
