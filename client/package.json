@@ -12,9 +12,9 @@
     "node": "5.0.0"
   },
   "scripts": {
-    "watch": "node watch.js",
-    "start": "node watch.js",
-    "build": "node build.js",
+    "watch": "node esbuild.watch.js",
+    "start": "node esbuild.watch.js",
+    "build": "node esbuild.js",
     "test": "NODE_ENV=test karma start",
     "tdd": "NODE_ENV=test karma start --no-single-run"
   },
