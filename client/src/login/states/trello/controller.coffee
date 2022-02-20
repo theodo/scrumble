@@ -18,7 +18,6 @@ angular.module 'Scrumble.login'
     .then ->
       ScrumbleUser2.login(trelloToken: TrelloApi.Token()).$promise
     .then (response) ->
-      console.log 'YOOO, GOT TOKEN', response.token
       ApiAccessToken.set response.token
       $state.go 'tab.bdc'
     .catch (err) ->

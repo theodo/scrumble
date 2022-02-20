@@ -8,9 +8,10 @@ angular.module 'Scrumble.common'
     template: template
     controller: 'BaseCtrl'
     resolve:
-      sprint: ($state, Sprint) ->
+      sprint: ['$state', 'Sprint', ($state, Sprint) ->
         Sprint.getActiveSprint().catch (err) -> return {}
-      project: ($state, Project) ->
+      ]
+      project: ['$state', 'Project', ($state, Project) ->
         Project.getUserProject()
           .then (project) ->
             # Migrate projects with only one doing colum
@@ -18,4 +19,5 @@ angular.module 'Scrumble.common'
               project.columnMapping.doing = [project.columnMapping.doing]
             return project
           .catch (err) -> return {}
-]
+      ]
+]       

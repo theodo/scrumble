@@ -17,7 +17,7 @@ angular.module 'Scrumble.sprint'
 
   $scope.openEditTitle = (ev) ->
     nssModal.show
-      controller: DialogController
+      controller: ['$scope', '$mdDialog', 'title', 'availableFields', DialogController]
       template: require('./editBDCTitle.html')
       targetEvent: ev
       resolve:

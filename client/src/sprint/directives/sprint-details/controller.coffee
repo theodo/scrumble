@@ -10,7 +10,7 @@ angular.module 'Scrumble.sprint'
   $scope.showBurndown = (ev, sprint) ->
     useFullScreen = $mdMedia('sm') or $mdMedia('xs')
     $mdDialog.show
-      controller: BDCDialogController
+      controller: ['$scope', '$mdDialog', 'sprint', 'bdc', '$timeout', BDCDialogController]
       template: require('../states/list/bdc.dialog.html')
       parent: angular.element document.body
       targetEvent: ev
