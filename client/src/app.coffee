@@ -6,6 +6,7 @@ window._ = require 'lodash'
 window.moment = require 'moment'
 window.d3 = require 'd3'
 window.showdown = require 'showdown'
+window.pleaseWait = require('please-wait').pleaseWait
 
 require 'angular-material/angular-material.min.css'
 require 'angular-material-data-table/dist/md-data-table.min.css'
@@ -13,6 +14,7 @@ require 'mdi/css/materialdesignicons.min.css'
 require 'c3/c3.min.css'
 require './styles/app.less'
 require './styles/print.less'
+require 'please-wait/build/please-wait.css'
 
 angular = require 'angular'
 ngResource = require 'angular-resource'
@@ -34,7 +36,6 @@ require 'angular-aria'
 require 'd3-bdc'
 require 'c3'
 require 'MimeJS/dist/mime-js.js'
-
 require 'highcharts'
 
 
@@ -51,7 +52,7 @@ require './policy/module.coffee'
 require './indicators/module.coffee'
 require './gmail-client/module.coffee'
 require './admin/module.coffee'
-# require './wait/module.coffee'
+require './wait/module.coffee'
 
 
 app = angular.module 'Scrumble', [
@@ -81,7 +82,7 @@ app = angular.module 'Scrumble', [
   'Scrumble.login'
   'Scrumble.settings'
   'Scrumble.indicators'
-  # 'Scrumble.wait'
+  'Scrumble.wait'
   'Scrumble.admin'
   'Scrumble.problems'
 ]
