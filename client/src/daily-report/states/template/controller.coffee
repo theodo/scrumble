@@ -1,3 +1,5 @@
+require './style.less'
+
 angular.module 'Scrumble.daily-report'
 .controller 'DailyReportCtrl', ['$scope', '$state', '$mdToast', '$mdDialog', '$mdMedia', '$document', 'reportBuilder', 'DailyReport', 'dailyReport', 'dailyCache', (
   $scope
