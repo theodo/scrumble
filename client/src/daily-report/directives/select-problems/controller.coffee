@@ -1,5 +1,5 @@
 angular.module 'Scrumble.daily-report'
-.controller 'SelectProblemsCtrl', (
+.controller 'SelectProblemsCtrl', ['$scope', '$mdToast', 'Problem', 'markdownGenerator', (
   $scope
   $mdToast
   Problem
@@ -25,3 +25,4 @@ angular.module 'Scrumble.daily-report'
   $scope.update = (problems) ->
     loadProblems()
     generateMarkdown(problems)
+]
