@@ -7,6 +7,7 @@ window.moment = require 'moment'
 window.d3 = require 'd3'
 window.showdown = require 'showdown'
 window.pleaseWait = require('please-wait').pleaseWait
+window.Highcharts = require 'highcharts'
 
 require 'angular-material/angular-material.min.css'
 require 'angular-material-data-table/dist/md-data-table.min.css'
@@ -36,7 +37,6 @@ require 'angular-aria'
 require 'd3-bdc'
 require 'c3'
 require 'MimeJS/dist/mime-js.js'
-require 'highcharts'
 
 
 require './models/0-module.coffee'
