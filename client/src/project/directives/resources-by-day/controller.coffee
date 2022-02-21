@@ -1,5 +1,5 @@
 angular.module 'Scrumble.settings'
-.controller 'ResourcesByDayCtrl', ($scope) ->
+.controller 'ResourcesByDayCtrl', ['$scope', ($scope) ->
   $scope.selected = []
   $scope.delete = ->
     for day in $scope.selected
@@ -8,3 +8,4 @@ angular.module 'Scrumble.settings'
       $scope.matrix.splice index, 1
     $scope.selected = []
     $scope.onUpdate()
+]

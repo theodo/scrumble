@@ -29,3 +29,6 @@ require './services/dailyCache.coffee'
 require './services/default-template.coffee'
 require './services/markdown-generator.coffee'
 require './services/report-builder.coffee'
+
+require './states/preview/controller.coffee'
+require './states/template/controller.coffee'
