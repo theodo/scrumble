@@ -2,6 +2,7 @@ angular.module 'Scrumble.models', [
   'ngResource'
 ]
 
+require './daily-report-ping.coffee'
 require './daily-report.coffee'
 require './feedback.coffee'
 require './organization.coffee'
