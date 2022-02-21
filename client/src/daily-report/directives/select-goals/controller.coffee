@@ -1,5 +1,5 @@
 angular.module 'Scrumble.daily-report'
-.controller 'SelectGoalsCtrl', ['$scope', '$mdToas', 'trelloCards', 'markdownGenerator', (
+.controller 'SelectGoalsCtrl', ['$scope', '$mdToast', 'trelloCards', 'markdownGenerator', (
   $scope
   $mdToast
   trelloCards
