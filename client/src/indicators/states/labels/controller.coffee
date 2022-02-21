@@ -1,5 +1,5 @@
 angular.module 'Scrumble.indicators'
-.controller 'LabelsCtrl', (
+.controller 'LabelsCtrl', ['$scope', '$stateParams', 'Project', 'trelloUtils', (
   $scope
   $stateParams
   Project
@@ -49,3 +49,4 @@ angular.module 'Scrumble.indicators'
               format: '#{point.name}'
               color: 'white'
         series: result.data
+]
