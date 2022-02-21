@@ -1,6 +1,6 @@
 angular.module 'Scrumble.settings'
 .controller 'SelectPeopleCtrl',
-($scope) ->
+['$scope', ($scope) ->
   $scope.teamCheck ?= {}
 
   $scope.toggle = (member) ->
@@ -19,3 +19,4 @@ angular.module 'Scrumble.settings'
       for member in newVal
         $scope.teamCheck[member.id] = true
   , true
+]
