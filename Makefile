@@ -11,7 +11,7 @@ migration-down:
 	./node_modules/db-migrate/bin/db-migrate down --config migrations/database.json
 
 install:
-	cd client && npm ci
+	cd client && npm ci --ignore-scripts
 
 start:
 	docker-compose up -d
