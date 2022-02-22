@@ -79,7 +79,8 @@
     "karma-phantomjs-launcher": "0.2.1",
     "phantomjs": "^2.1.7",
     "run-sequence": "0.3.x",
-    "webdriver-manager": "0.0.4"
+    "webdriver-manager": "0.0.4",
+    "zlib": "^1.0.5"
   },
   "version": "1.0.0",
   "main": "gulpfile.js"
