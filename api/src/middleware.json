@@ -14,8 +14,14 @@
     }
   },
   "files": {
-    "loopback#static": {
-      "params": "$!../public"
+    "express-static-gzip": {
+      "params": [
+        "$!../public",
+        {
+          "enableBrotli": true,
+          "orderPreference": ["br", "gz"]
+        }
+      ]
     }
   },
   "final:after": {
