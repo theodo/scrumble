@@ -4,7 +4,8 @@ angular.module 'Scrumble.settings'
   template: require('./view.html')
   scope:
     projectId: '@'
-  controller: ($scope, Speed) ->
+  controller: ['$scope', 'Speed', ($scope, Speed) ->
     Speed.average($scope.projectId)
     .then (averageSpeed) ->
       $scope.average = averageSpeed
+  ]
