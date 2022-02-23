@@ -10,26 +10,26 @@ angular.module 'Scrumble.daily-report'
 )->
   converter = new showdown.Converter()
 
-  addImageInCid = (message, type, name, base64, id) ->
-    message.cids = (message.cids || []).concat([{type: type, name: name, base64: base64, id: id}])
+  addImageInMessageCid = (message, type, name, base64, id) ->
+    return (message.cids || []).concat([{type: type, name: name, base64: base64, id: id}])
 
   renderEmbeddedImages = (message, useCid) -> 
     images = message.body.match(/data:image\/(.*);base64,([^"]*)/gm)
 
     if images.length > 0
-      for imageIdx of images
-        match = /data:image\/(.*);base64,(.*)$/.exec(images[imageIdx])
+      for imageIndex of images
+        match = /data:image\/(.*);base64,(.*)$/.exec(images[imageIndex])
 
         if match != null
           imageBase64 = match[0]
           imageType = match[1]
 
-          src = if useCid then "cid:image#{imageIdx}" else imageBase64
+          src = if useCid then "cid:image#{imageIndex}" else imageBase64
 
-          message.body = message.body.replace(imageBase64, "#{src}")
+          message.body = message.body.replace(imageBase64, src)
 
           if useCid
-            addImageInCid(message, "image/#{imageType}", "Image #{imageIdx}", imageBase64.split(',')[1], "image#{imageIdx}")
+            message.cids = addImageInMessageCid(message, "image/#{imageType}", "Image #{imageIndex}", imageBase64.split(',')[1], "image#{imageIdx}")
 
     return message
     
@@ -41,7 +41,7 @@ angular.module 'Scrumble.daily-report'
       message.body = message.body.replace '{bdc}', "<img src='#{src}' />"
 
       if useCid
-        addImageInCid(message, 'image/png','BDC', bdcBase64.split(',')[1], 'bdc')
+        message.cids = addImageInMessageCid(message, 'image/png','BDC', bdcBase64.split(',')[1], 'bdc')
       return message
   
   renderImages = (message, svg, useCid) -> 
