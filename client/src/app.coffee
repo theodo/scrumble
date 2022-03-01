@@ -8,6 +8,7 @@ window.d3 = require 'd3'
 window.showdown = require 'showdown'
 window.pleaseWait = require('please-wait').pleaseWait
 window.Highcharts = require 'highcharts'
+window.Base64 = require 'MimeJS/src/base64.js'
 
 require 'angular-material/angular-material.min.css'
 require 'angular-material-data-table/dist/md-data-table.min.css'
