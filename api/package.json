@@ -26,7 +26,7 @@
     "http-error": "0.0.6",
     "jwt-simple": "^0.5.6",
     "lodash": "^4.17.21",
-    "loopback": "2.27.0",
+    "loopback": "3.25.1",
     "loopback-boot": "2.18.1",
     "loopback-component-explorer": "2.4.0",
     "loopback-connector-postgresql": "kraynel/loopback-connector-postgresql#2.x",
