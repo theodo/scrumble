@@ -37,8 +37,7 @@ require 'angular-aria'
 require 'd3-bdc'
 require 'c3'
 
-window.Base64 = require('./base64.js').Base64
-require 'MimeJS/dist/mime-js.js'
+require 'MimeJS/dist/mime.js'
 
 
 require './models/0-module.coffee'
