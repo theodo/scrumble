@@ -12,12 +12,12 @@ angular.module 'Scrumble.daily-report'
 
 
   addImageInMessageCid = (message, type, name, base64, id) ->
-    return (message.cids || []).concat([{type: type, name: name, base64: base64, id: id}])
+    return [...(message.cids || []), {type: type, name: name, base64: base64, id: id}];
 
   renderEmbeddedImages = (message, useCid) ->
     images = message.body.match(/data:image\/(.*);base64,([^"]*)/gm)
 
-    if images != null && images.length > 0
+    if images?.length
       for imageIndex of images
         match = /data:image\/(.*);base64,(.*)$/.exec(images[imageIndex])
 
