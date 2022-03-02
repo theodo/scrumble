@@ -25,9 +25,9 @@ services:
       HOST: '0.0.0.0'
       PORT: '8000'
       DATABASE_URL: postgres://postgres:postgres@db:5432/postgres
-      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
-      GOOGLE_API_SECRET: ${GOOGLE_API_SECRET}
-      TRELLO_KEY: ${TRELLO_KEY}
+      GOOGLE_CLIENT_ID: '846194931476-lnslq69phmckpsul3ttjrcqk7msqmlqf.apps.googleusercontent.com'
+      GOOGLE_API_SECRET: '***'
+      TRELLO_KEY: '62bfdf783665fa1f28e1d3e324974106'
       TRELLO_SECRET: '***'
       SMTP_HOST: '***'
       SMTP_USER: '***'

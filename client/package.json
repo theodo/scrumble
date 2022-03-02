@@ -19,7 +19,6 @@
     "tdd": "NODE_ENV=test karma start --no-single-run"
   },
   "dependencies": {
-    "dotenv": "16.0.0",
     "MimeJS": "nicgirault/mime-js#1.0.0",
     "angular": "1.6.7",
     "angular-animate": "^1.8.2",

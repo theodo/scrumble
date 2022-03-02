@@ -9,4 +9,3 @@ docker-compose.dev.yml
 docker-compose.prod.yml
 .idea/
 client/meta.json
-.env
