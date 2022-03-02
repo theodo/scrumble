@@ -26,10 +26,10 @@ Make sure your Docker installation is working fine by typing `docker ps`.
 git clone git@github.com:theodo/scrumble.git && cd scrumble
 ```
 
-**Specify environment variables in docker-compose.dev.yml**
+**Specify environment variables in .env file**
 
 ```
- cp docker-compose.dev.yml.dist docker-compose.dev.yml
+ cp .env.example .env
 ```
 
 **Launch the installation**
