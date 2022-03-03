@@ -1,0 +1,13 @@
+{
+  "name": "Scrumble",
+  "description": "A Heroku version of Scrumble",
+  "repository": "https://github.com/theodo/scrumble",
+  "stack": "container",
+  "addons": ["heroku-postgresql:hobby-dev"],
+  "formation": {
+    "web": {
+      "quantity": 1,
+      "size": "free"
+    }
+  }
+}
