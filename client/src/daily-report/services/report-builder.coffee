@@ -45,7 +45,29 @@ angular.module 'Scrumble.daily-report'
         message.cids = addImageInMessageCid(message, 'image/png','BDC', bdcBase64.split(',')[1], 'bdc')
       return message
 
+  renderUploadedImage = (rawImage, index, message, useCid) ->
+    match = /data:image\/(.*);base64,(.*)$/.exec(rawImage)
+
+    if match != null
+      imageBase64 = match[0]
+      imageType = match[1]
+      imageBase64 = match[2]
+      src = if useCid then "cid:uploaded_image#{index}" else rawImage
+      message.body = message.body.replace "{image#{index}}", "<img src='#{src}' style='max-width: 900px;' />"
+
+      if useCid
+        message.cids = addImageInMessageCid(message, "image/#{imageType}","Uploaded Image #{index}", imageBase64, "uploaded_image#{index}")
+
+    return message
+
+  renderUploadedImages = (message, useCid) ->
+    for imgIndex, rawImage of uploadedImages
+      if rawImage != undefined
+        renderUploadedImage(rawImage, imgIndex, message, useCid)
+    return message
+
   renderImages = (message, svg, useCid) ->
+    renderUploadedImages(message, useCid)
     renderEmbeddedImages(message, useCid)
     renderBDC(message, svg, useCid)
 
@@ -118,6 +140,7 @@ angular.module 'Scrumble.daily-report'
     cc: null
     subject: null
     body: null
+  uploadedImages = {}
   render: (sections, dailyReport, svg, project, sprint) ->
     _svg = svg
     markdownMessage = ""
@@ -138,6 +161,11 @@ angular.module 'Scrumble.daily-report'
           continue
       markdownMessage += sections[section] + "\n\n"
     htmlMessage = converter.makeHtml markdownMessage
+    uploadedImages = []
+    uploadedImages =
+      1: sections["progressImage"]?.raw,
+      2: sections["progressImage2"]?.raw,
+      3: sections["progressImage3"]?.raw
 
     dynamicFieldsPromise = dynamicFields.ready sprint, project
 
@@ -157,11 +185,20 @@ angular.module 'Scrumble.daily-report'
         subject: dynamicFields.render sections.subject, builtDict
         body: dynamicFields.render htmlMessage, builtDict
 
-      renderBDC
+      # copy of prebuildMessage
+      previewMessage =
         to: prebuildMessage.to
         cc: prebuildMessage.cc
         subject: prebuildMessage.subject
         body: prebuildMessage.body
+
+      prebuildMessageWithUploadedImages = renderUploadedImages(previewMessage, false)
+
+      renderBDC
+        to: previewMessage.to
+        cc: previewMessage.cc
+        subject: previewMessage.subject
+        body: previewMessage.body
       , svg, false
   buildCid: ->
     dynamicFieldsPromise.then (builtDict) ->

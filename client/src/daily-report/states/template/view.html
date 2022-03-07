@@ -36,6 +36,45 @@
     </md-card>
     <md-card flex="80" flex-sm="100" flex-xs="100">
         <md-card-title flex="nogrow">
+            <md-card-title-text><span class="md-headline">Images to insert in sprint progress</span></md-card-title-text>
+        </md-card-title>
+        <md-card-content>
+            <div flex="100" style="display: flex; align-items: center;">
+                <div style="margin-right: 50px; display: flex; flex-direction: column; flex-grow: 1; flex-shrink: 0;">
+                    <div style="width: 100%; display: flex; ">
+                        <p style="font-weight: bold; margin-right: 15px;" for="image1">{image1}</label>
+                        <p>{{sections.progressImage.name || "No image selected"}}</p>
+                    </div>
+                    <div>
+                        <label style="border: 1px solid; border-radius: 5px; padding: 5px; cursor: pointer;" for="image1">Upload a new image</label>
+                        <input type="file" id="image1" name="image1" fileread="sections.progressImage" accept="image/*" style="width: 1px; height: 1px;"/>
+                    </div>
+                </div>
+                <div style="margin-right: 50px; display: flex; flex-direction: column; flex-grow: 1; flex-shrink: 0;">
+                    <div style="width: 100%; display: flex; ">
+                        <p style="font-weight: bold; margin-right: 15px;" for="image2">{image2}</label>
+                        <p>{{sections.progressImage2.name || "No image selected"}}</p>
+                    </div>
+                    <div>
+                        <label style="border: 1px solid; border-radius: 5px; padding: 5px; cursor: pointer;" for="image2">Upload a new image</label>
+                        <input type="file" id="image2" name="image2" fileread="sections.progressImage2" accept="image/*" style="width: 1px; height: 1px;"/>
+                    </div>
+                </div>
+                <div style="display: flex; flex-direction: column; flex-grow: 1; flex-shrink: 0;">
+                    <div style="width: 100%; display: flex;">
+                        <p style="font-weight: bold; margin-right: 15px;" for="image3">{image3}</label>
+                        <p>{{sections.progressImage3.name || "No image selected"}}</p>
+                    </div>
+                    <div>
+                        <label style="border: 1px solid; border-radius: 5px; padding: 5px; cursor: pointer;" for="image3">Upload a new image</label>
+                        <input type="file" id="image3" name="image3" fileread="sections.progressImage3" accept="image/*" style="width: 1px; height: 1px;"/>
+                    </div>
+                </div>
+            </div>
+        </md-card-content>
+    </md-card>
+    <md-card flex="80" flex-sm="100" flex-xs="100">
+        <md-card-title flex="nogrow">
             <md-card-title-text flex="grow"><span class="md-headline">Previous Goals</span><span class="md-subhead">The list of goals in the previous email. It's green if the trello ticket is in the "done column"</span></md-card-title-text>
             <div flex="flex"></div>
             <markdown-helper></markdown-helper>
