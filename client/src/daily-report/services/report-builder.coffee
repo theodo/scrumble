@@ -10,20 +10,44 @@ angular.module 'Scrumble.daily-report'
 )->
   converter = new showdown.Converter()
 
+
+  addImageInMessageCid = (message, type, name, base64, id) ->
+    return [...(message.cids || []), {type: type, name: name, base64: base64, id: id}];
+
+  renderEmbeddedImages = (message, useCid) ->
+    images = message.body.match(/data:image\/(.*);base64,([^"]*)/gm)
+
+    if images?.length
+      for imageIndex of images
+        match = /data:image\/(.*);base64,(.*)$/.exec(images[imageIndex])
+
+        if match != null
+          imageBase64 = match[0]
+          imageType = match[1]
+
+          src = if useCid then "cid:image#{imageIndex}" else imageBase64
+
+          message.body = message.body.replace(imageBase64, src)
+
+          if useCid
+            message.cids = addImageInMessageCid(message, "image/#{imageType}", "Image #{imageIndex}", imageBase64.split(',')[1], "image#{imageIndex}")
+
+    return message
+
   renderBDC = (message, svg, useCid) ->
     bdc.getPngBase64(svg)
     .then (bdcBase64) ->
       src = if useCid then 'cid:bdc' else bdcBase64
 
       message.body = message.body.replace '{bdc}', "<img src='#{src}' />"
+
       if useCid
-        message.cids = [ {
-          type: 'image/png'
-          name: 'BDC'
-          base64: bdcBase64.split(',')[1]
-          id: 'bdc'
-        } ]
-      message
+        message.cids = addImageInMessageCid(message, 'image/png','BDC', bdcBase64.split(',')[1], 'bdc')
+      return message
+
+  renderImages = (message, svg, useCid) ->
+    renderEmbeddedImages(message, useCid)
+    renderBDC(message, svg, useCid)
 
   renderTo = (project) ->
     emails = (member.email for member in project.team when member.daily is 'to')
@@ -141,5 +165,5 @@ angular.module 'Scrumble.daily-report'
       , svg, false
   buildCid: ->
     dynamicFieldsPromise.then (builtDict) ->
-      renderBDC prebuildMessage, _svg, true
+      renderImages(prebuildMessage, _svg, true)
 ]
