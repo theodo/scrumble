@@ -49,11 +49,10 @@ angular.module 'Scrumble.daily-report'
     match = /data:image\/(.*);base64,(.*)$/.exec(rawImage)
 
     if match != null
-      imageBase64 = match[0]
       imageType = match[1]
       imageBase64 = match[2]
       src = if useCid then "cid:uploaded_image#{index}" else rawImage
-      message.body = message.body.replace "{image#{index}}", "<img src='#{src}' style='max-width: 900px;' />"
+      message.body = message.body.replace "{image#{index}}", "<div style='width: 100%;'><img src='#{src}' style='max-width: 900px;' /></div>"
 
       if useCid
         message.cids = addImageInMessageCid(message, "image/#{imageType}","Uploaded Image #{index}", imageBase64, "uploaded_image#{index}")
@@ -161,7 +160,6 @@ angular.module 'Scrumble.daily-report'
           continue
       markdownMessage += sections[section] + "\n\n"
     htmlMessage = converter.makeHtml markdownMessage
-    uploadedImages = []
     uploadedImages =
       1: sections["progressImage"]?.raw,
       2: sections["progressImage2"]?.raw,
@@ -192,14 +190,9 @@ angular.module 'Scrumble.daily-report'
         subject: prebuildMessage.subject
         body: prebuildMessage.body
 
-      prebuildMessageWithUploadedImages = renderUploadedImages(previewMessage, false)
+      renderUploadedImages(previewMessage, false)
 
-      renderBDC
-        to: previewMessage.to
-        cc: previewMessage.cc
-        subject: previewMessage.subject
-        body: previewMessage.body
-      , svg, false
+      renderBDC previewMessage, svg, false
   buildCid: ->
     dynamicFieldsPromise.then (builtDict) ->
       renderImages(prebuildMessage, _svg, true)
