@@ -5,3 +5,46 @@
   height: 0;
   overflow: hidden;
 }
+
+.subhead {
+  color: #757575;
+  padding-top: 0 !important;
+}
+
+.progress-images-section {
+  .progress-images {
+    display: flex;
+    align-items: center;
+    &:not(:last-child) {
+      margin-right: 50px;
+    }
+  }
+
+  .progress-image {
+    &-container {
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+      flex-shrink: 0;
+    }
+    &-label {
+      font-weight: bold;
+      margin-right: 15px;
+    }
+    &-upload-input {
+      border: 1px solid;
+      border-radius: 5px;
+      padding: 5px;
+      cursor: pointer;
+    }
+  }
+
+  .hidden-input {
+    width: 1px;
+    height: 1px;
+  }
+
+  .no-image-selected {
+    color: #7b7b7b;
+  }
+}
