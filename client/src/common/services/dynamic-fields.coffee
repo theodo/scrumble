@@ -1,4 +1,3 @@
-
 import DOMPurify from 'dompurify';
 
 angular.module 'Scrumble.common'
