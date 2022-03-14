@@ -1,4 +1,6 @@
 require './style.less'
+import DOMPurify from 'dompurify';
+
 
 angular.module 'Scrumble.daily-report'
 .directive "fileread",  () ->
@@ -13,7 +15,7 @@ angular.module 'Scrumble.daily-report'
                     scope.$apply(() ->
                         scope.fileread =
                           raw: loadEvent.target.result
-                          name: changeEvent.target.files[0].name
+                          name: DOMPurify.sanitize(changeEvent.target.files[0].name)
                     );
                 reader.readAsDataURL(changeEvent.target.files[0])
             );
