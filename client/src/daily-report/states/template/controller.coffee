@@ -1,6 +1,25 @@
 require './style.less'
+import DOMPurify from 'dompurify';
+
 
 angular.module 'Scrumble.daily-report'
+.directive "fileread",  () ->
+    {
+        scope: {
+            fileread: "="
+        },
+        link: (scope, element, attributes) ->
+            element.bind("change", (changeEvent) ->
+                reader = new FileReader();
+                reader.onload = (loadEvent) ->
+                    scope.$apply(() ->
+                        scope.fileread =
+                          raw: loadEvent.target.result
+                          name: DOMPurify.sanitize(changeEvent.target.files[0].name)
+                    );
+                reader.readAsDataURL(changeEvent.target.files[0])
+            );
+    }
 .controller 'DailyReportCtrl', ['$scope', '$state', '$mdToast', '$mdDialog', '$mdMedia', '$document', 'reportBuilder', 'DailyReport', 'dailyReport', 'dailyCache', (
   $scope
   $state
@@ -27,13 +46,19 @@ angular.module 'Scrumble.daily-report'
   else
     dailyReport.sections ?= {}
     $scope.sections = dailyReport.sections
+    dailyReportToCache = $scope.sections
+
+    # Don't cache progressImage
+    dailyReportToCache.progressImage = undefined
+    dailyReportToCache.progressImage2 = undefined
+    dailyReportToCache.progressImage3 = undefined
     dailyCache.put 'sections', $scope.sections
 
   $scope.save = (ev) ->
     DailyReport.save(dailyReport).then ->
       $mdToast.show saveFeedback
 
-   $scope.$on(
+  $scope.$on(
      '$stateChangeStart',
     (event, next, current) ->
       console.log

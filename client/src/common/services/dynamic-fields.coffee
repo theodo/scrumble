@@ -1,3 +1,5 @@
+import DOMPurify from 'dompurify';
+
 angular.module 'Scrumble.common'
 .service 'dynamicFields', ['$q', 'trelloUtils', 'TrelloClient', 'sprintUtils', ($q, trelloUtils, TrelloClient, sprintUtils) ->
 
@@ -114,6 +116,8 @@ angular.module 'Scrumble.common'
 
   render: (text, builtDict) ->
     result = text or ''
+
+    result = DOMPurify.sanitize(result)
 
     for key, elt of builtDict
       result = result.split(key).join(elt)
