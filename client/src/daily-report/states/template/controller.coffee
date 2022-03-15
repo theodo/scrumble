@@ -13,9 +13,13 @@ angular.module 'Scrumble.daily-report'
                 reader = new FileReader();
                 reader.onload = (loadEvent) ->
                     scope.$apply(() ->
+                        sanitizedTitle = DOMPurify.sanitize(changeEvent.target.files[0].name)
+                        fileExtension = sanitizedTitle.substring(sanitizedTitle.length - 4, sanitizedTitle.length)
+                        filename = if sanitizedTitle.length > 17 then (sanitizedTitle.substring(0, 10) + '...' +  fileExtension) else sanitizedTitle
                         scope.fileread =
                           raw: loadEvent.target.result
-                          name: DOMPurify.sanitize(changeEvent.target.files[0].name)
+                          name: filename
+                          localUrl: URL.createObjectURL(changeEvent.target.files[0])
                     );
                 reader.readAsDataURL(changeEvent.target.files[0])
             );

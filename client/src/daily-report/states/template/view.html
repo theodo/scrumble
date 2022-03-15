@@ -44,37 +44,55 @@
         <md-card-content>
             <div flex="100" class="progress-images">
                 <div class="progress-image-container">
-                    <div style="width: 100%; display: flex; ">
+                    <div class="progress-image-preview">
                         <p class="progress-image-label">{image1}</p>
-                        <p ng-if="sections.progressImage.name !== undefined">{{sections.progressImage.name}}</p>
-                        <p ng-if="sections.progressImage.name === undefined" class="no-image-selected">No image selected</p>
+                        <label class="progress-image-upload" for="image1">
+                            <div class="progress-image-upload-preview">
+                                <img class="image-preview" ng-if="sections.progressImage.localUrl" ng-src="{{sections.progressImage.localUrl}}" />
+                                <md-icon ng-if="sections.progressImage.localUrl == undefined" md-svg-src="icons/document-file-download.svg"></md-icon>
+                            </div>
+                            <div class="progress-image-upload-info">
+                                <p ng-if="sections.progressImage.name !== undefined" class="filename">{{sections.progressImage.name}}</p>
+                                <p ng-if="sections.progressImage.name !== undefined" class="upload-another-image">Re-upload an image</p>
+                                <p ng-if="sections.progressImage.name === undefined" class="no-image-selected">Upload image</p>
+                            </div>
+                        </label>
                     </div>
-                    <div>
-                        <label class="progress-image-upload-input" for="image1">Upload a new image</label>
-                        <input type="file" id="image1" name="image1" fileread="sections.progressImage" accept="image/*" class="hidden-input"/>
-                    </div>
+                    <input type="file" id="image1" name="image1" fileread="sections.progressImage" accept="image/*" class="hidden-input"/>
                 </div>
                 <div class="progress-image-container">
-                    <div style="width: 100%; display: flex; ">
-                        <p class="progress-image-label" >{image2}</p>
-                        <p ng-if="sections.progressImage2.name !== undefined">{{sections.progressImage2.name}}</p>
-                        <p ng-if="sections.progressImage2.name === undefined" class="no-image-selected">No image selected</p>
+                    <div class="progress-image-preview">
+                        <p class="progress-image-label">{image2}</p>
+                        <label class="progress-image-upload" for="image2">
+                            <div class="progress-image-upload-preview">
+                                <img class="image-preview" ng-if="sections.progressImage2.localUrl" ng-src="{{sections.progressImage2.localUrl}}" />
+                                <md-icon ng-if="sections.progressImage2.localUrl == undefined" md-svg-src="icons/document-file-download.svg"></md-icon>
+                            </div>
+                            <div class="progress-image-upload-info">
+                                <p ng-if="sections.progressImage2.name !== undefined" class="filename">{{sections.progressImage2.name}}</p>
+                                <p ng-if="sections.progressImage2.name !== undefined" class="upload-another-image">Re-upload an image</p>
+                                <p ng-if="sections.progressImage2.name === undefined" class="no-image-selected">Upload image</p>
+                            </div>
+                        </label>
                     </div>
-                    <div>
-                        <label class="progress-image-upload-input" for="image2">Upload a new image</label>
-                        <input type="file" id="image2" name="image2" fileread="sections.progressImage2" accept="image/*" class="hidden-input"/>
-                    </div>
+                    <input type="file" id="image2" name="image2" fileread="sections.progressImage2" accept="image/*" class="hidden-input"/>
                 </div>
                 <div class="progress-image-container">
-                    <div style="width: 100%; display: flex;">
+                    <div class="progress-image-preview">
                         <p class="progress-image-label">{image3}</p>
-                        <p ng-if="sections.progressImage3.name !== undefined">{{sections.progressImage3.name}}</p>
-                        <p ng-if="sections.progressImage3.name === undefined" class="no-image-selected">No image selected</p>
+                        <label class="progress-image-upload" for="image3">
+                            <div class="progress-image-upload-preview">
+                                <img class="image-preview" ng-if="sections.progressImage3.localUrl" ng-src="{{sections.progressImage3.localUrl}}" />
+                                <md-icon ng-if="sections.progressImage3.localUrl == undefined" md-svg-src="icons/document-file-download.svg"></md-icon>
+                            </div>
+                            <div class="progress-image-upload-info">
+                                <p ng-if="sections.progressImage3.name !== undefined" class="filename">{{sections.progressImage3.name}}</p>
+                                <p ng-if="sections.progressImage3.name !== undefined" class="upload-another-image">Re-upload an image</p>
+                                <p ng-if="sections.progressImage3.name === undefined" class="no-image-selected">Upload image</p>
+                            </div>
+                        </label>
                     </div>
-                    <div>
-                        <label class="progress-image-upload-input" for="image3">Upload a new image</label>
-                        <input type="file" id="image3" name="image3" fileread="sections.progressImage3" accept="image/*" class="hidden-input"/>
-                    </div>
+                    <input type="file" id="image3" name="image3" fileread="sections.progressImage3" accept="image/*" class="hidden-input"/>
                 </div>
             </div>
         </md-card-content>
