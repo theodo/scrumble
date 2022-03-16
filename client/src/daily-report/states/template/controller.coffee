@@ -14,7 +14,7 @@ angular.module 'Scrumble.daily-report'
                 reader.onload = (loadEvent) ->
                     scope.$apply(() ->
                         sanitizedTitle = DOMPurify.sanitize(changeEvent.target.files[0].name)
-                        fileExtension = sanitizedTitle.substring(sanitizedTitle.length - 4, sanitizedTitle.length)
+                        fileExtension = sanitizedTitle..match(/.[^.]*$/)[0]
                         filename = if sanitizedTitle.length > 17 then (sanitizedTitle.substring(0, 10) + '...' +  fileExtension) else sanitizedTitle
                         scope.fileread =
                           raw: loadEvent.target.result
