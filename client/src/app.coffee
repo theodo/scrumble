@@ -111,10 +111,7 @@ app.config ['$mdIconProvider', ($mdIconProvider) ->
   $mdIconProvider
     .defaultIconSet 'icons/mdi.light.svg'
 ]
-app.config ['$mdIconProvider', ($mdIconProvider) ->
-  $mdIconProvider
-    .defaultIconSet 'icons/document-file-download.svg'
-]
+
 app.run ['$rootScope', '$state', ($rootScope, $state) ->
   $rootScope.$state = $state
 ]
