@@ -61,7 +61,7 @@ angular.module 'Scrumble.daily-report'
 
   renderUploadedImages = (message, useCid) ->
     for imgIndex, rawImage of uploadedImages
-      if rawImage != undefined
+      if rawImage != undefined && message.body.match("{image#{imgIndex}}") != null
         renderUploadedImage(rawImage, imgIndex, message, useCid)
     return message
 
