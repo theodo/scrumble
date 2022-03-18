@@ -12,11 +12,16 @@ angular.module 'Scrumble.daily-report'
             element.bind("change", (changeEvent) ->
                 reader = new FileReader();
                 reader.onload = (loadEvent) ->
-                    scope.$apply(() ->
-                        scope.fileread =
-                          raw: loadEvent.target.result
-                          name: DOMPurify.sanitize(changeEvent.target.files[0].name)
-                    );
+                    if loadEvent.target.result.match(/data:image/) != null
+                        scope.$apply(() ->
+                          sanitizedFileName = DOMPurify.sanitize(changeEvent.target.files[0].name)
+                          fileExtension = sanitizedFileName.match(/.[^.]*$/)[0]
+                          filename = if sanitizedFileName.length > 17 then (sanitizedFileName.substring(0, 10) + '...' +  fileExtension) else sanitizedFileName
+                          scope.fileread =
+                            raw: loadEvent.target.result
+                            name: filename
+                            localUrl: URL.createObjectURL(changeEvent.target.files[0])
+                       );
                 reader.readAsDataURL(changeEvent.target.files[0])
             );
     }
