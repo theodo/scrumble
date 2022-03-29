@@ -67,9 +67,10 @@ angular.module 'Scrumble.daily-report'
 
   renderImages = (message, svg, useCid) ->
     renderUploadedImages(message, useCid)
-    if message.body.match("{bdc}") != null
-      renderBDC(message, svg, useCid)
     renderEmbeddedImages(message, useCid)
+    if message.body.match("{bdc}") != null
+      await renderBDC(message, svg, useCid)
+    return message;
 
   renderTo = (project) ->
     emails = (member.email for member in project.team when member.daily is 'to')
