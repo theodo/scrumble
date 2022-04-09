@@ -47,7 +47,7 @@
     "jquery": "^3.6.0",
     "lodash": "^4.17.21",
     "mdi": "1.3.41",
-    "moment": "2.10.6",
+    "moment": "2.29.2",
     "please-wait": "0.0.5",
     "satellizer": "^0.15.5",
     "showdown": "1.3.0"
