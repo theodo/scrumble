@@ -31,7 +31,7 @@
     "loopback-component-explorer": "2.4.0",
     "loopback-connector-postgresql": "kraynel/loopback-connector-postgresql#2.x",
     "loopback-promisify": "0.2.0",
-    "moment": "2.22.2",
+    "moment": "2.29.2",
     "nodemailer": "2.4.2",
     "supertest": "1.2.0"
   },
