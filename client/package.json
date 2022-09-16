@@ -37,7 +37,7 @@
     "angular-trello": "acidstudios/angular-trello#master",
     "angular-trello-api-client": "nicgirault/angular-trello-api-client#2.1.1",
     "angular-ui-router": "0.4.2",
-    "bootstrap": "3.3.6",
+    "bootstrap": "3.4.1",
     "c3": "0.4.11",
     "coffee-script": "1.10.0",
     "d3": "3.5.10",
