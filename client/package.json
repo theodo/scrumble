@@ -58,7 +58,7 @@
     "esbuild": "^0.14.21",
     "esbuild-coffeescript": "^2.0.0",
     "esbuild-plugin-less": "^1.1.6",
-    "jasmine": "2.4.1",
+    "jasmine": "2.99.0",
     "jasmine-core": "2.4.1",
     "karma": "0.13.19",
     "karma-coffee-preprocessor": "0.3.0",
