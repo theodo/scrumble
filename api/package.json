@@ -33,7 +33,7 @@
     "loopback-promisify": "0.2.0",
     "moment": "2.22.2",
     "nodemailer": "2.4.2",
-    "supertest": "1.2.0"
+    "supertest": "6.3.3"
   },
   "devDependencies": {
     "chai": "3.5.0",
