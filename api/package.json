@@ -39,10 +39,10 @@
     "chai": "3.5.0",
     "sinon": "1.17.4",
     "jade": "1.3.x",
-    "mocha": "2.4.5",
+    "mocha": "10.2.0",
     "nodemon": "1.9.1",
     "run-sequence": "0.3.x",
-    "webdriver-manager": "0.0.4"
+    "webdriver-manager": "12.1.9"
   },
   "version": "1.0.0",
   "main": "gulpfile.js"
